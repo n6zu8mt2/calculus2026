@@ -5,3 +5,10 @@
 *.swp
 *.swo
 *~
+
+# Secrets
+.env
+.env.local
+
+# Logs
+*.log
