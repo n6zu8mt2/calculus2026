@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3 放物線 | 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式 1.3章：二次関数の応用">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+</head>
+<body class="chapter ch3">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html" class="active" aria-current="page"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 54 Q30 -6 58 54" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="6 6" stroke-linecap="round"/><circle cx="44" cy="26" r="7" fill="currentColor"/><path d="M4 56 H60" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+    <div>
+      <div class="eyebrow">第1回 多項式 ／ 1.3章</div>
+      <h1><span class="chap-no">1.3</span>放物線：ボールを投げる</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>投げたボールの軌跡が、$x$ の二次関数（上に凸の放物線）になることを説明できる。</li>
+      <li>頂点＝最高点を求め、重力 $g$ を変えると軌跡がどう変わるかを説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 1つ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="projectile">
+    <p>
+      二次関数が最もよく現れる場面が、<b>投げたボールの軌跡</b> です。
+      1.2章で学んだ頂点・対称軸・平方完成が、そのまま「最高点」や「飛距離」の計算になります。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>投げたボールの軌跡は二次関数</h2>
+    <p>
+      ボールを斜め上に投げると、その軌跡は放物線になります。これは二次関数そのものです。
+      ボールを、高さ $h_0$ の位置から、速さ $v_0$、水平から測った角度 $\theta$ で投げ出したとします。
+      重力加速度を $g$（地球では約 $9.8\ \mathrm{m/s^2}$）とすると、$t$ 秒後の位置は次のようになります。
+    </p>
+    <div class="eq-box">
+      $$\begin{aligned}
+      x &= \teal{v_x}\,t \qquad\qquad\ \ (\teal{v_x}=v_0\cos\theta)\ \ \text{水平方向は等速}\\
+      y &= h_0 + \red{v_y}\,t - \tfrac12 g\,t^2 \quad (\red{v_y}=v_0\sin\theta)\ \ \text{鉛直方向は重力で減速・加速}
+      \end{aligned}$$
+    </div>
+    <p>
+      $x=v_x t$ より $t=\dfrac{x}{v_x}$ を $y$ の式に代入して時間 $t$ を消すと、
+    </p>
+    <div class="eq-box">$$y=-\dfrac{g}{2v_x^{\,2}}\,x^2+\dfrac{v_y}{v_x}\,x+h_0$$</div>
+    <p>
+      という <b>$x$ の二次関数</b>（$x^2$ の係数は負なので上に凸）になります。
+      1.2章(2)の頂点形に直すと、頂点 $(p,q)$ が <b>最高点</b> です：
+      $p=\dfrac{v_xv_y}{g}$、$q=h_0+\dfrac{v_y^{\,2}}{2g}$。
+    </p>
+    <div class="widget" id="w-ball">
+      <div class="widget-head">ボールを投げる <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 水平の速さ</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ 鉛直の速さ</span><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 初速</span></span> <span class="hint">金色の点＝初速の矢印の先（ドラッグで速さと角度）／黒い点＝投げる高さ</span></div>
+      <div class="stage"><canvas aria-label="放物線を描くボールの動き"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">位置</span><span class="tex" data-r="xy"></span></div>
+          <div class="row"><span class="k">軌道の式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">頂点＝最高点</span><span class="tex" data-r="apex"></span></div>
+          <div class="row"><span class="k">飛距離</span><span class="tex" data-r="range"></span></div>
+          <div class="row"><span class="k">滞空時間</span><span class="tex" data-r="time"></span></div>
+        </div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="ratio-cap" style="padding:0 0 6px">天体ごとの比較（いまの $h_0$, $v_0$, $\theta$ で投げたとき）　<span style="font-weight:500">行をクリックすると、その重力に切り替わります</span></div>
+        <div class="table-wrap" style="margin:0">
+          <table class="cmp">
+            <thead><tr><th>天体</th><th>重力加速度 g</th><th>地球の何倍</th><th>飛距離</th><th>最高点の高さ</th><th>滞空時間</th></tr></thead>
+            <tbody data-r="cmp"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="btn-row">
+          <label class="check"><input type="checkbox" data-r="ghost">地球（g = 9.8）の軌跡を薄く重ねて表示</label>
+          <label class="check"><input type="checkbox" data-r="arrows" checked>いまの速度の矢印を表示</label>
+          <button class="btn small" data-a="reset">初期値に戻す</button>
+        </div>
+      </div>
+    </div>
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li><span class="t-teal">緑の矢印</span>（水平方向の速さ $v_x$）は飛んでいる間ずっと同じ長さ。<span class="t-red">赤の矢印</span>（鉛直方向の速さ $v_y$）は、上昇中は短くなり、最高点で $0$、落下中は下向きに長くなる。</li>
+        <li>投げる高さ $h_0=0$ で、速さを固定して角度を変えると、いちばん遠くへ飛ぶのは何度のとき？</li>
+        <li>角度が同じでも速さを2倍にすると、飛距離と最高点の高さはそれぞれ何倍になる？</li>
+        <li>重力 $g$ を「月」（地球の約 $\tfrac16$）や「木星」に変えたり、「地球の $a$ 倍」（小数も可）と入力したりして、比較表と見比べよう。$g$ が変わると、軌道の式の $x^2$ の係数と、飛距離・滞空時間はどう変わる？（画面の広さは自動で調整され、月では長い時間をかけて動くので、アニメは最長 6 秒に早送りしています）「地球の軌跡を薄く重ねて表示」をオンにすると、同じ投げ方をした地球でのボールが薄い色で同時に動き、違いを見比べられる。</li>
+      </ul>
+    </div>
+    <details class="think">
+      <summary>考えてみよう：$h_0=0$ のとき、飛距離を $v_0,\theta,g$ で表すと？</summary>
+      <p>着地は $y=0$ のときなので、$x\left(-\dfrac{g}{2v_x^{\,2}}x+\dfrac{v_y}{v_x}\right)=0$ から $x=\dfrac{2v_xv_y}{g}=\dfrac{v_0^{\,2}\sin 2\theta}{g}$。$\sin 2\theta$ が最大になる $\theta=45^\circ$ のとき最も遠くへ届きます。速さが2倍なら飛距離は $2^2=4$ 倍です。</p>
+    </details>
+    
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>$h_0=0$、$v_0=10\ \mathrm{m/s}$、$\theta=45^\circ$、$g=9.8\ \mathrm{m/s^2}$ のとき、飛距離と最高点の高さを求めよ（小数第2位を四捨五入）。</li>
+        <li>軌道の式が $y=-0.1x^2+x+1.5$ のとき、最高点の座標を求めよ。</li>
+        <li>$h_0=0$ で、重力が地球の $\tfrac14$ になると、飛距離は何倍になるか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) 飛距離 $\dfrac{v_0^{\,2}\sin 2\theta}{g}\approx 10.2\ \mathrm{m}$、最高点 $\dfrac{(v_0\sin\theta)^2}{2g}\approx 2.6\ \mathrm{m}$　(2) $y=-0.1(x-5)^2+4$ より $(5,4)$　(3) $4$ 倍</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="1-2.html"><span class="dir">← 前の章</span><span class="nm">1.2 二次関数</span></a>
+    <a class="next" href="1-4.html"><span class="dir">次の章 →</span><span class="nm">1.4 イージング</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261003"></script>
+<script src="../assets/plot.js?v=20261003"></script>
+<script src="polynomial.js?v=20261003"></script>
+</body>
+</html>

@@ -204,9 +204,18 @@
     secs.forEach(function (s) { io.observe(s); });
   }
 
+  // 章の一覧が横スクロール(スマホ)のとき、いまの章が見える位置まで送る
+  function revealChapter() {
+    const nav = document.querySelector('.chapnav'), a = nav && nav.querySelector('a.active');
+    if (!a || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollLeft = a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2;
+  }
+
   function init() {
     buildHeader();
     buildToc();
+    revealChapter();
+    window.addEventListener('load', revealChapter);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

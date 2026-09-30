@@ -1,0 +1,179 @@
+/* 章ページ(第1回 1.1〜1.6 など)用のスタイル */
+
+/* --- 案4: 本文は狭く、図は広く --- */
+.chapter main { max-width: 920px; }
+.chapter .prose, .chapter .sec > p, .chapter .sec > ul, .chapter .sec > ol,
+.chapter .sec > .callout, .chapter .sec > details, .chapter .sec > .eq-box, .chapter .goal {
+  max-width: 40em;
+}
+body.chapter { font-size: 17px; line-height: 1.9; }
+.chapter .widget { margin: 26px 0 30px; }
+
+/* 章見出し */
+.chap-hero { display: flex; align-items: center; gap: 18px; padding: 26px 0 10px; }
+.chap-icon {
+  flex: 0 0 auto; width: 72px; height: 72px; border-radius: 20px; display: grid; place-items: center;
+  color: #fff; background: linear-gradient(135deg, var(--c1, var(--primary)), var(--c2, var(--teal)));
+  box-shadow: var(--shadow);
+}
+.chap-icon svg { width: 44px; height: 44px; }
+.chap-hero h1 { font-size: clamp(30px, 7vw, 44px); }
+@media (max-width: 480px) { .chap-icon { width: 56px; height: 56px; border-radius: 16px; } .chap-icon svg { width: 34px; height: 34px; } }
+
+/* 章のゴール */
+.goal {
+  margin: 18px 0 8px; padding: 16px 18px 12px; border-radius: 16px;
+  background: var(--primary-soft); border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+}
+.goal-ttl { font-size: 13px; font-weight: 800; letter-spacing: .1em; color: var(--primary); margin-bottom: 4px; }
+.goal ol { margin: 0 0 6px; padding-left: 1.3em; }
+.goal-meta { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+/* 節見出し(章ページでは h2) */
+.chapter .sec { margin-top: 44px; }
+.chapter .sec.first { margin-top: 28px; }
+.h-sub { font-size: clamp(20px, 4.4vw, 24px); margin: 0 0 14px; }
+.h-sub .tag {
+  font-size: 13px; font-weight: 800; color: #fff; background: var(--primary);
+  padding: 2px 10px; border-radius: 8px; margin-right: 10px; vertical-align: 3px;
+}
+:root[data-theme="dark"] .h-sub .tag { color: #0e1120; }
+
+/* --- 案7: 色の凡例を図の見出し帯に --- */
+.widget-head .legend { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.lg {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
+  padding: 3px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border);
+  transition: background .12s, border-color .12s, box-shadow .12s;
+}
+.lg i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.lg[data-hl] { cursor: pointer; }
+.lg.on { border-color: var(--text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--text) 15%, transparent); }
+.widget-head .hint.wide { flex-basis: 100%; }
+
+/* --- 案8(簡易版): 式の色つき文字の強調 --- */
+.tx-teal, .tx-red { transition: background .12s; border-radius: 4px; }
+#w-linear .tx-teal, #w-linear .tx-red { cursor: pointer; }
+.glow.tx-teal { background: color-mix(in srgb, var(--teal) 22%, transparent); }
+.glow.tx-red { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+
+/* 章の一覧(左) */
+.chapnav a { display: flex; align-items: center; gap: 8px; }
+.chapnav .cn {
+  width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; flex: 0 0 auto;
+  font-size: 12px; font-weight: 800; background: var(--surface-2); color: var(--muted);
+}
+.chapnav a.active .cn { background: var(--primary); color: #fff; }
+@media (max-width: 1023px) { .chapnav a.active .cn { background: #fff; color: var(--primary); } }
+
+/* 確認問題 */
+.quiz li { margin: .4em 0; }
+
+/* 前後の章 */
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 56px 0 0; }
+.pager a {
+  display: block; text-decoration: none; color: var(--text); padding: 14px 16px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); transition: border-color .15s, transform .15s;
+}
+.pager a:hover { border-color: var(--primary); transform: translateY(-2px); }
+.pager .next { text-align: right; }
+.pager .dir { display: block; font-size: 13px; color: var(--muted); font-weight: 700; }
+.pager .nm { display: block; font-size: 17px; font-weight: 800; }
+
+/* 章ごとのテーマ色(アイコン) */
+.ch1 { --c1: #3355d6; --c2: #0d9c86; }
+.ch2 { --c1: #0d9c86; --c2: #3b8f3a; }
+.ch3 { --c1: #d98a00; --c2: #d81b4a; }
+.ch4 { --c1: #8a4fd6; --c2: #3355d6; }
+.ch5 { --c1: #d6449b; --c2: #8a4fd6; }
+.ch6 { --c1: #0b7285; --c2: #3355d6; }
+
+.chap-hero .chap-no {
+  display: inline-block; font-size: .5em; font-weight: 800; color: var(--muted);
+  margin-right: 12px; vertical-align: .35em; letter-spacing: .02em;
+}
+.chapnav .cn { width: auto; min-width: 26px; padding: 0 5px; }
+
+/* 目次ページの章カード */
+.chap-card { display: flex; gap: 14px; align-items: flex-start; }
+.chap-icon.sm { width: 52px; height: 52px; border-radius: 14px; }
+.chap-icon.sm svg { width: 32px; height: 32px; }
+.chapter .page-hero .lead { max-width: 40em; }
+
+/* 節見出し: 番号タグと見出し文を1行の文章として流す */
+.chapter .sec > h2.h-sub { display: block; }
+.h-sub .tag { white-space: nowrap; display: inline-block; }
+
+/* 比の帯の見出しを目立たせる */
+.ratio-cap.strong { font-size: 15px; font-weight: 800; color: var(--text); padding: 14px 14px 8px; }
+.ratio-cap.strong .one {
+  display: inline-block; min-width: 1.6em; text-align: center; border-radius: 6px;
+  background: var(--text); color: var(--surface); padding: 0 4px; margin: 0 2px;
+}
+
+/* 1.1(2) 割合の表 */
+.ratio-table-wrap { padding: 10px 14px 0; overflow-x: auto; }
+table.ratio-table { min-width: 0; width: 100%; font-variant-numeric: tabular-nums; border: 1px solid var(--border); border-radius: 10px; border-collapse: separate; border-spacing: 0; overflow: hidden; }
+.ratio-table th, .ratio-table td { padding: 7px 12px; text-align: center; }
+.ratio-table tbody th { text-align: left; }
+.ratio-table tr.ra th, .ratio-table tr.ra td:first-of-type { color: var(--accent); font-weight: 800; }
+.ratio-table tr.rb th, .ratio-table tr.rb td:first-of-type { color: var(--teal); font-weight: 800; }
+.ratio-table tr.rs { background: var(--surface-2); font-weight: 700; }
+
+/* 1.1(3) 補足 */
+.note-small { font-size: 14px; color: var(--muted); }
+
+/* 1.4 冒頭：スマホのメニューの実例 */
+.ui-demo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 20px 14px; background: var(--plot-bg); }
+.phone { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.screen {
+  position: relative; width: 100%; max-width: 210px; aspect-ratio: 9 / 16; overflow: hidden;
+  border-radius: 24px; border: 6px solid var(--text); background: var(--surface);
+}
+.screen .bar { height: 34px; background: var(--primary); color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; padding: 0 12px; }
+:root[data-theme="dark"] .screen .bar { color: #0e1120; }
+.screen .content i { display: block; height: 10px; border-radius: 5px; background: var(--track); margin: 12px; }
+.screen .content i:nth-child(odd) { width: 60%; }
+.drawer {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 72%; padding: 42px 10px 10px;
+  background: var(--surface-2); box-shadow: 6px 0 18px rgba(0, 0, 0, .22); transform: translateX(-104%);
+}
+.drawer b { display: block; padding: 9px 6px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.drawer.lin { transition: transform .8s linear; }
+.drawer.eo { transition: transform .8s ease-out; }
+#w-uidemo.slow .drawer { transition-duration: 2.4s; }
+#w-uidemo.open .drawer { transform: translateX(0); }
+.phone figcaption { font-size: 13.5px; font-weight: 700; text-align: center; line-height: 1.5; }
+.phone figcaption span { font-weight: 500; color: var(--muted); font-size: 12.5px; }
+
+/* 実装例のコード */
+.code-grid { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); margin: 14px 0 22px; }
+@media (min-width: 860px) { .code-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.code-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow); min-width: 0; }
+.code-ttl { font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+.code-card pre, .heart-side pre {
+  margin: 0 0 8px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); overflow-x: auto;
+  font-size: 13px; line-height: 1.6;
+}
+.code-card pre code, .heart-side pre code { background: none; padding: 0; font-size: 13px; }
+.code-card p { font-size: 13.5px; color: var(--muted); margin: 0; line-height: 1.6; }
+
+/* 1.5 冒頭：ハート */
+.heart-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 16px 14px; background: var(--plot-bg); }
+@media (min-width: 760px) { .heart-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; } }
+.heart-svg { width: 100%; max-width: 340px; display: block; margin: 0 auto; touch-action: pan-y; }
+.h-path { fill: color-mix(in srgb, var(--accent) 22%, transparent); stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; }
+.h-arm { stroke: var(--muted); stroke-width: .6; stroke-dasharray: 2 1.5; }
+.h-cp { fill: var(--amber); stroke: #fff; stroke-width: .6; cursor: grab; }
+.h-anchor { fill: var(--text); stroke: #fff; stroke-width: .6; cursor: grab; }
+.heart-side { font-size: 14.5px; line-height: 1.75; }
+.heart-side p { margin: 0 0 .6em; }
+
+/* 1.6 定理：3つの図 */
+.mini3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mini3 .mini + .mini { border-left: 1px solid var(--border); }
+.mini-cap { text-align: center; font-size: 13.5px; padding: 8px 6px 10px; border-top: 1px solid var(--border); }
+@media (max-width: 560px) {
+  .mini3 { grid-template-columns: minmax(0, 1fr); }
+  .mini3 .mini + .mini { border-left: none; border-top: 1px solid var(--border); }
+}

@@ -7,7 +7,11 @@
 - `assets/style.css` … 共通デザイン（スマホ〜PC対応、ダークモード対応）
 - `assets/common.js` … ヘッダー・目次・数式・スライダー等の共通部品
 - `assets/plot.js` … Canvas グラフとドラッグ可能なハンドル
-- `polynomial/` … 第1回「多項式」（一次関数・二次関数・イージング・ベジェ曲線）
+- `assets/chapter.css` … 章ページ用のスタイル（章の一覧・ゴール・前後の章ボタンなど）
+- `polynomial/` … 第1回「多項式」
+  - `index.html` … 第1回の目次とまとめ
+  - `1-1.html` 〜 `1-6.html` … 1.1章 一次関数／1.2章 二次関数／1.3章 放物線／1.4章 イージング／1.5章 ベジェ曲線／1.6章 ラグランジュ補間
+  - `polynomial.js` … 各章の図（ページにある図だけが動きます）
 
 ## GitHub Pages で公開
 リポジトリの Settings → Pages で Branch を `main`（または現在のブランチ）/ `(root)` に設定するだけです。
@@ -19,6 +23,7 @@ python3 -m http.server 8000
 ```
 → http://localhost:8000/ を開く（`index.html` を直接開いても動作します）。
 
-## 新しいトピックの追加
-1. `polynomial/` をコピーして新しいフォルダを作る
-2. `assets/common.js` の `pages` 配列にリンクを追加、`index.html` のカードを追加
+## 新しい回の追加
+1. `polynomial/` をコピーして新しいフォルダ（例：`differential/`）を作り、`2-1.html` のように章ページを作る
+2. `assets/common.js` の `pages` 配列にリンクを追加し、トップの `index.html` にカードを追加する
+3. CSS・JS を変更したときは、各 HTML の `?v=...` の数字を更新する（利用者のブラウザに古いファイルが残らないように）

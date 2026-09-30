@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>多項式 | 解析学 2026</title>
-<meta name="description" content="一次関数・二次関数・イージング・ベジェ曲線・ラグランジュ補間を、動かしながら理解する。">
+<title>第1回 多項式 | 解析学 2026</title>
+<meta name="description" content="一次関数・二次関数・放物線・イージング・ベジェ曲線・ラグランジュ補間を、動かしながら理解する。">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   window.MathJax = {
@@ -34,610 +34,96 @@
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
 </head>
-<body>
+<body class="chapter">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
-<nav id="toc" class="toc" aria-label="ページ内目次"></nav>
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html" class="active" aria-current="page"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
 
 <main>
   <div class="page-hero">
-    <div class="eyebrow">第1回 ／ 多項式</div>
+    <div class="eyebrow">第1回</div>
     <h1>多項式を「動かして」理解する</h1>
     <p class="lead">
       多項式 $a_n x^n + \cdots + a_1 x + a_0$ は、いちばん身近で、いちばん使い道の広い関数です。
-      次数を1つずつ上げながら、「まっすぐ」→「曲がる」→「なめらかに加速・減速する」→「思い通りの曲線を描く」→「データを通る曲線を作る」へ進みます。
+      6つの章で、次数を1つずつ上げながら、「まっすぐ」→「曲がる」→「なめらかに加速・減速する」→「思い通りの曲線を描く」→「データを通る曲線を作る」へ進みます。
       図の中の <b>丸いつまみ</b> はドラッグでき、<b>スライダー</b> でも同じ操作ができます。
       <b>文章・数式・図・スライダーで同じ色が同じ量を表す</b> ので、色をたどって対応を確かめてください。
     </p>
-    <div class="roadmap">
-      <a href="#linear"><span class="deg">1次</span><span class="name">一次関数</span><span class="desc">直線・傾き・補間</span></a>
-      <a href="#quadratic"><span class="deg">2次</span><span class="name">二次関数</span><span class="desc">頂点・平行移動</span></a>
-      <a href="#projectile"><span class="deg">2次の応用</span><span class="name">放物線</span><span class="desc">ボールを投げる</span></a>
-      <a href="#easing"><span class="deg">3次〜</span><span class="name">イージング</span><span class="desc">動きに強弱をつける</span></a>
-      <a href="#bezier"><span class="deg">n次</span><span class="name">ベジェ曲線</span><span class="desc">点で曲線をデザイン</span></a>
-      <a href="#lagrange"><span class="deg">n−1次</span><span class="name">ラグランジュ補間</span><span class="desc">データを通る曲線・過学習</span></a>
-    </div>
   </div>
 
-  <!-- ==================== 1. 一次関数 ==================== -->
-  <section class="sec" id="linear" data-toc="1 一次関数">
-    <h2><span class="num">1</span>一次関数</h2>
-
-    <p>
-      $y = \teal{a}x + \red{b}$ のグラフは直線です。決めるべき数は2つだけ:
-    </p>
-    <ul>
-      <li><span class="t-teal">傾き $\teal{a}$</span>：$x$ が $1$ 増えたとき、$y$ がどれだけ変化するか</li>
-      <li><span class="t-red">$y$ 切片 $\red{b}$</span>：$x=0$ のときの $y$（直線が $y$ 軸と交わる高さ）</li>
-    </ul>
-
-    <h3><span class="tag">1.1</span>傾きと切片</h3>
-    <div class="widget" id="w-linear">
-      <div class="widget-head">直線 $y=\teal{a}x+\red{b}$ <span class="hint"><span class="t-red">赤い点</span>（b）と<span class="t-teal">緑の点</span>（a）を上下にドラッグ</span></div>
-      <div class="stage"><canvas aria-label="一次関数のグラフ"></canvas></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
-          <div class="row"><span class="k t-teal">傾き a</span><span class="tex" data-r="slope"></span></div>
-          <div class="row"><span class="k t-red">y切片 b</span><span class="tex" data-r="yint"></span></div>
-          <div class="row"><span class="k">x切片</span><span class="tex" data-r="xint"></span></div>
+  <section class="sec first" id="chapters">
+    <h2 class="h-sub"><span class="tag">章</span>第1回の章</h2>
+    <div class="cards">
+      <a class="card chap-card ch1" href="1-1.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 52 L56 12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="20" cy="42" r="5" fill="currentColor"/><circle cx="44" cy="22" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">1.1章</span>
+          <h3>一次関数</h3>
+          <p>直線・傾き・補間・回帰直線</p>
         </div>
-      </div>
-      <div class="panel" style="padding-top:0">
-        <div class="btn-row">
-          <button class="btn primary" data-a="quiz">🎯 チャレンジ：目標の直線に合わせる</button>
-          <button class="btn" data-a="reset">リセット</button>
+      </a>
+      <a class="card chap-card ch2" href="1-2.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M10 10 Q32 80 54 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="45" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">1.2章</span>
+          <h3>二次関数</h3>
+          <p>頂点・平行移動</p>
         </div>
-        <div class="msg ng" data-r="msg"></div>
-      </div>
-    </div>
-    <div class="callout try">
-      <div class="ttl">触ってみよう</div>
-      <ul>
-        <li>図の中の <b>赤い矢印</b> が $y$ 切片 $\red{b}$ です。$\red{b}$ を動かすと、直線は上下に平行移動する。</li>
-        <li>「$x$ 方向に $1$ 進む」ときの <b>$y$ 方向の変化量</b> が <b>緑の矢印</b> で、その大きさが傾き $\teal{a}$。$\teal{a}$ が負なら矢印は下向き。</li>
-        <li>$\teal{a}=0$ にすると、グラフはどうなる？</li>
-        <li>「チャレンジ」で金色の点線が現れる。その直線に重なるよう $\teal{a}$, $\red{b}$ を合わせよう。</li>
-      </ul>
-    </div>
-
-    <h3><span class="tag">1.2</span>2点から直線を作る ― 補間（lerp）</h3>
-    <p>
-      2点 $\boldsymbol{A}$, $\boldsymbol{B}$ が決まると直線が1本決まります。
-      パラメータ $t$ を使って、線分 $\boldsymbol{A}\boldsymbol{B}$ 上の点 $\boldsymbol{P}(t)$ を次のように定めます。
-    </p>
-    <div class="eq-box">$$\boldsymbol{P}(t) = (1-t)\,\boldsymbol{A} + t\,\boldsymbol{B}\qquad (0\leqq t\leqq 1)$$</div>
-    <ul>
-      <li>$t=0$ のとき $\boldsymbol{P}(0)=\boldsymbol{A}$、$t=1$ のとき $\boldsymbol{P}(1)=\boldsymbol{B}$。</li>
-      <li>$t$ を $0$ から $1$ へ動かすと、$\boldsymbol{P}(t)$ は $\boldsymbol{A}$ から $\boldsymbol{B}$ まで <b>一定の速さ</b> で進む（$t$ の1次式なので）。</li>
-      <li>$\boldsymbol{P}(t)-\boldsymbol{A}=t(\boldsymbol{B}-\boldsymbol{A})$ なので、
-        <span class="t-red">$\overline{\mathrm{AP}}=t\,\overline{\mathrm{AB}}$</span>、
-        <span class="t-teal">$\overline{\mathrm{PB}}=(1-t)\,\overline{\mathrm{AB}}$</span>。
-        つまり <b>$\mathrm{AP}:\mathrm{PB}=t:(1-t)$</b>（線分 $\mathrm{AB}$ を $t:(1-t)$ に <b>内分</b> する点）。</li>
-    </ul>
-    <p>この「$t:(1-t)$ に分ける」操作が、あとで登場するベジェ曲線のすべての土台になります。</p>
-    <div class="widget" id="w-lerp">
-      <div class="widget-head">2点を結ぶ <span class="hint">点 A, B をドラッグ／<b>t</b> を動かす</span></div>
-      <div class="stage"><canvas aria-label="2点間の補間"></canvas></div>
-      <div class="ratio-cap">線分 AB 全体を 1 としたときの長さ</div>
-      <div class="ratio-bar"><span class="rb-a"></span><span class="rb-b"></span></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">点P(t)</span><span class="tex" data-r="p"></span></div>
-          <div class="row"><span class="k">長さの比</span><span class="tex" data-r="ratio"></span></div>
-          <div class="row"><span class="k">長さ</span><span class="tex" data-r="len"></span></div>
-          <div class="row"><span class="k">直線の式</span><span class="tex" data-r="eq"></span></div>
+      </a>
+      <a class="card chap-card ch3" href="1-3.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 54 Q30 -6 58 54" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="6 6" stroke-linecap="round"/><circle cx="44" cy="26" r="7" fill="currentColor"/><path d="M4 56 H60" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+        <div>
+          <span class="badge">1.3章</span>
+          <h3>放物線</h3>
+          <p>二次関数の応用</p>
         </div>
-      </div>
-    </div>
-    <details class="think">
-      <summary>考えてみよう：$t=\tfrac12$、$t=\tfrac13$ の点は？</summary>
-      <p>$t=\tfrac12$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac12:\tfrac12=1:1$ で <b>中点</b>。$t=\tfrac13$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac13:\tfrac23=1:2$、つまり $\boldsymbol{A}$ から全体の $\tfrac13$ の位置です。
-      $t<0$ や $t>1$ にすると線分の外側の点（外分点）になります。</p>
-    </details>
-  </section>
-
-  <!-- ==================== 2. 二次関数 ==================== -->
-  <section class="sec" id="quadratic" data-toc="2 二次関数">
-    <h2><span class="num">2</span>二次関数</h2>
-
-    <p>
-      $y = ax^2 + bx + c$（$a\neq 0$）のグラフは <b>放物線</b> です。直線と違って「曲がる」ので、
-      <b>頂点</b>（いちばん高い／低いところ）と <b>対称軸</b> が現れます。
-      まず最も単純な $y=x^2$ を出発点にして、それを動かす方法（平行移動）から見ていきます。
-    </p>
-
-    <h3><span class="tag">2.1</span>グラフを平行移動する</h3>
-    <p>
-      グラフ $y=f(x)$ を、<b><span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span></b> だけ動かします（右・上が正）。
-      このとき動かしたグラフの式は、もとの式の $x$ を $x-\teal{p}$ に、$y$ を $y-\red{q}$ に置き換えたものになります。
-    </p>
-    <div class="eq-box">$$y=f(x)\quad\xrightarrow{\ x\text{方向に}\ \teal{p},\ y\text{方向に}\ \red{q}\ }\quad y-\red{q}=f(x-\teal{p})$$</div>
-    <p>
-      $f(x)=x^2$ なら、$y-\red{q}=(x-\teal{p})^2$、つまり $y=(x-\teal{p})^2+\red{q}$ で、頂点は $(0,0)$ から <b>$(\teal{p},\ \red{q})$</b> に動きます。
-    </p>
-    <div class="widget" id="w-shift">
-      <div class="widget-head">$y-\red{q}=(x-\teal{p})^2$ <span class="hint">頂点（黒い点）をドラッグ／灰色の曲線上の青い点 Q も動かせる</span></div>
-      <div class="stage"><canvas aria-label="放物線の平行移動"></canvas></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">移動後の式</span><span class="tex big" data-r="eq"></span></div>
-          <div class="row"><span class="k">移動</span><span class="tex" data-r="vec"></span></div>
-          <div class="row"><span class="k">頂点</span><span class="tex" data-r="vertex"></span></div>
-          <div class="row"><span class="k">点の対応</span><span class="tex" data-r="pt"></span></div>
+      </a>
+      <a class="card chap-card ch4" href="1-4.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 54 C 34 54, 30 10, 56 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="8" cy="54" r="4" fill="currentColor"/><circle cx="56" cy="10" r="4" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">1.4章</span>
+          <h3>イージング</h3>
+          <p>動きに強弱をつける</p>
         </div>
-      </div>
-      <div class="panel" style="padding-top:0">
-        <div class="btn-row">
-          <button class="btn primary" data-a="quiz">🎯 チャレンジ：目標の放物線に合わせる</button>
-          <button class="btn" data-a="reset">リセット</button>
+      </a>
+      <a class="card chap-card ch5" href="1-5.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 52 L18 10 L46 10 L56 52" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4" opacity=".75"/><path d="M8 52 C 18 10, 46 10, 56 52" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="18" cy="10" r="4" fill="currentColor"/><circle cx="46" cy="10" r="4" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">1.5章</span>
+          <h3>ベジェ曲線</h3>
+          <p>点で曲線をデザイン</p>
         </div>
-        <div class="msg ng" data-r="msg"></div>
-      </div>
-    </div>
-    <div class="callout point">
-      <div class="ttl">ポイント</div>
-      <p>
-        灰色の点線がもとの $y=x^2$。その上の青い点 $\mathrm{Q}(s,\,s^2)$ は、平行移動で
-        $\mathrm{Q}'(s+\teal{p},\ s^2+\red{q})$ に移ります。<b>すべての点が同じだけ動く</b> ので、形は変わりません。
-        <span class="t-teal">緑の矢印</span>が $x$ 方向の移動 $\teal{p}$、<span class="t-red">赤い矢印</span>が $y$ 方向の移動 $\red{q}$ です。
-      </p>
-    </div>
-    <details class="think">
-      <summary>考えてみよう：右に動かすのに、なぜ式は $x+p$ でなく $x-p$ ？</summary>
-      <p>
-        動かした後のグラフ上の点 $(X,Y)$ は、もとのグラフ上の点 $(X-p,\ Y-q)$ を $p,\,q$ だけ動かしたものです。
-        もとのグラフでは $Y-q=(X-p)^2$ が成り立つので、これが動かした後の式になります。
-        「式の中で $x$ を $x-p$ に置き換える」と「グラフが $+p$ 動く」は、セットで覚えましょう。
-      </p>
-    </details>
-
-    <h3><span class="tag">2.2</span>頂点と平方完成</h3>
-    <p>
-      $y=ax^2$ を <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、前節と同じ置き換えで
-    </p>
-    <div class="eq-box">$$y-\red{q}=\blue{a}(x-\teal{p})^2\quad\Longleftrightarrow\quad y=\blue{a}(x-\teal{p})^2+\red{q}\qquad(\text{頂点形})$$</div>
-    <p>
-      頂点は $(\teal{p},\ \red{q})$ です。これを展開した $y=\blue{a}x^2+\amber{b}x+\slate{c}$ が <b>一般形</b>。
-      一般形から頂点形を作る操作が <b>平方完成</b> です。
-    </p>
-    <div class="eq-box">
-      $$\begin{aligned}
-      y &= \blue{a}x^2 + \amber{b}x + \slate{c} = \blue{a}\left(x + \frac{\amber{b}}{2\blue{a}}\right)^2 + \slate{c} - \frac{\amber{b}^2}{4\blue{a}}\\
-      &\Longrightarrow\quad \teal{p} = -\frac{\amber{b}}{2\blue{a}},\qquad \red{q} = \slate{c} - \frac{\amber{b}^2}{4\blue{a}}
-      \end{aligned}$$
-    </div>
-    <div class="widget" id="w-quad">
-      <div class="widget-head">$y=\blue{a}(x-\teal{p})^2+\red{q} = \blue{a}x^2+\amber{b}x+\slate{c}$ <span class="hint">上の3本と下の2本は連動します</span></div>
-      <div class="stage"><canvas aria-label="二次関数のグラフ"></canvas></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">頂点形</span><span class="tex" data-r="vform"></span></div>
-          <div class="row"><span class="k">一般形</span><span class="tex" data-r="gform"></span></div>
-          <div class="row"><span class="k">頂点</span><span class="tex" data-r="vertex"></span></div>
-          <div class="row"><span class="k">判別式</span><span class="tex" data-r="disc"></span></div>
-          <div class="row"><span class="k">x軸との交点</span><span class="tex" data-r="roots"></span></div>
+      </a>
+      <a class="card chap-card ch6" href="1-6.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 44 C 16 4, 28 64, 40 24 S 56 12, 60 18" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="10" cy="26" r="5" fill="currentColor"/><circle cx="30" cy="40" r="5" fill="currentColor"/><circle cx="48" cy="17" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">1.6章</span>
+          <h3>ラグランジュ補間</h3>
+          <p>データを通る曲線・過学習</p>
         </div>
-      </div>
-    </div>
-    <div class="callout try">
-      <div class="ttl">触ってみよう</div>
-      <ul>
-        <li><span class="t-teal">$p$</span>, <span class="t-red">$q$</span> を動かすと、図の矢印（灰色の $y=ax^2$ の頂点 → 頂点）が変わり、<span class="t-amber">$b$</span>, <span class="t-slate">$c$</span> がどう変わるか見よう。</li>
-        <li>逆に <span class="t-amber">$b$</span> を動かすと頂点は左右どちらへ動く？　式 $p=-\frac{b}{2a}$ と見比べよう。</li>
-        <li>$a>0$ なら下に凸（頂点が最小）、$a<0$ なら上に凸（頂点が最大）。</li>
-        <li>グラフが $x$ 軸に触れる瞬間、判別式 $D=b^2-4ac$ はいくつ？</li>
-      </ul>
-    </div>
-  
-</section>
-
-  <!-- ==================== 3. 放物線 ==================== -->
-  <section class="sec" id="projectile" data-toc="3 放物線">
-    <h2><span class="num">3</span>放物線：ボールを投げる</h2>
-    <p>
-      二次関数が最もよく現れる場面が、<b>投げたボールの軌跡</b> です。
-      2章で学んだ頂点・対称軸・平方完成が、そのまま「最高点」や「飛距離」の計算になります。
-    </p>
-    <h3><span class="tag">3.1</span>投げたボールの軌跡は二次関数</h3>
-    <p>
-      ボールを斜め上に投げると、その軌跡は放物線になります。これは二次関数そのものです。
-      ボールを、高さ $h_0$ の位置から、速さ $v_0$、水平から測った角度 $\theta$ で投げ出したとします。
-      重力加速度を $g$（地球では約 $9.8\ \mathrm{m/s^2}$）とすると、$t$ 秒後の位置は次のようになります。
-    </p>
-    <div class="eq-box">
-      $$\begin{aligned}
-      x &= \teal{v_x}\,t \qquad\qquad\ \ (\teal{v_x}=v_0\cos\theta)\ \ \text{水平方向は等速}\\
-      y &= h_0 + \red{v_y}\,t - \tfrac12 g\,t^2 \quad (\red{v_y}=v_0\sin\theta)\ \ \text{鉛直方向は重力で減速・加速}
-      \end{aligned}$$
-    </div>
-    <p>
-      $x=v_x t$ より $t=\dfrac{x}{v_x}$ を $y$ の式に代入して時間 $t$ を消すと、
-    </p>
-    <div class="eq-box">$$y=-\dfrac{g}{2v_x^{\,2}}\,x^2+\dfrac{v_y}{v_x}\,x+h_0$$</div>
-    <p>
-      という <b>$x$ の二次関数</b>（$x^2$ の係数は負なので上に凸）になります。
-      2.2節の頂点形に直すと、頂点 $(p,q)$ が <b>最高点</b> です：
-      $p=\dfrac{v_xv_y}{g}$、$q=h_0+\dfrac{v_y^{\,2}}{2g}$。
-    </p>
-    <div class="widget" id="w-ball">
-      <div class="widget-head">ボールを投げる <span class="hint">金色の点＝初速の矢印の先（ドラッグで速さと角度）／黒い点＝投げる高さ</span></div>
-      <div class="stage"><canvas aria-label="放物線を描くボールの動き"></canvas></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">位置</span><span class="tex" data-r="xy"></span></div>
-          <div class="row"><span class="k">軌道の式</span><span class="tex" data-r="eq"></span></div>
-          <div class="row"><span class="k">頂点＝最高点</span><span class="tex" data-r="apex"></span></div>
-          <div class="row"><span class="k">飛距離</span><span class="tex" data-r="range"></span></div>
-          <div class="row"><span class="k">滞空時間</span><span class="tex" data-r="time"></span></div>
-        </div>
-      </div>
-      <div class="panel" style="padding-top:0">
-        <div class="ratio-cap" style="padding:0 0 6px">天体ごとの比較（いまの $h_0$, $v_0$, $\theta$ で投げたとき）　<span style="font-weight:500">行をクリックすると、その重力に切り替わります</span></div>
-        <div class="table-wrap" style="margin:0">
-          <table class="cmp">
-            <thead><tr><th>天体</th><th>重力加速度 g</th><th>地球の何倍</th><th>飛距離</th><th>最高点の高さ</th><th>滞空時間</th></tr></thead>
-            <tbody data-r="cmp"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="panel" style="padding-top:0">
-        <div class="btn-row">
-          <label class="check"><input type="checkbox" data-r="ghost">地球（g = 9.8）の軌跡を薄く重ねて表示</label>
-          <label class="check"><input type="checkbox" data-r="arrows" checked>いまの速度の矢印を表示</label>
-          <button class="btn small" data-a="reset">初期値に戻す</button>
-        </div>
-      </div>
-    </div>
-    <div class="callout try">
-      <div class="ttl">触ってみよう</div>
-      <ul>
-        <li><span class="t-teal">緑の矢印</span>（水平方向の速さ $v_x$）は飛んでいる間ずっと同じ長さ。<span class="t-red">赤の矢印</span>（鉛直方向の速さ $v_y$）は、上昇中は短くなり、最高点で $0$、落下中は下向きに長くなる。</li>
-        <li>投げる高さ $h_0=0$ で、速さを固定して角度を変えると、いちばん遠くへ飛ぶのは何度のとき？</li>
-        <li>角度が同じでも速さを2倍にすると、飛距離と最高点の高さはそれぞれ何倍になる？</li>
-        <li>重力 $g$ を「月」（地球の約 $\tfrac16$）や「木星」に変えたり、「地球の $a$ 倍」（小数も可）と入力したりして、比較表と見比べよう。$g$ が変わると、軌道の式の $x^2$ の係数と、飛距離・滞空時間はどう変わる？（画面の広さは自動で調整され、月では長い時間をかけて動くので、アニメは最長 6 秒に早送りしています）「地球の軌跡を薄く重ねて表示」をオンにすると、同じ投げ方をした地球でのボールが薄い色で同時に動き、違いを見比べられる。</li>
-      </ul>
-    </div>
-    <details class="think">
-      <summary>考えてみよう：$h_0=0$ のとき、飛距離を $v_0,\theta,g$ で表すと？</summary>
-      <p>着地は $y=0$ のときなので、$x\left(-\dfrac{g}{2v_x^{\,2}}x+\dfrac{v_y}{v_x}\right)=0$ から $x=\dfrac{2v_xv_y}{g}=\dfrac{v_0^{\,2}\sin 2\theta}{g}$。$\sin 2\theta$ が最大になる $\theta=45^\circ$ のとき最も遠くへ届きます。速さが2倍なら飛距離は $2^2=4$ 倍です。</p>
-    </details>
-    </section>
-
-    <!-- ==================== 4. イージング ==================== -->
-  <section class="sec" id="easing" data-toc="4 イージング">
-    <h2><span class="num">4</span>イージング</h2>
-
-    <p>
-      アプリの画面で物が滑らかに動くとき、その動きは「時間 $t$ ($0\to1$) から、位置（進み具合）$f(t)$ ($0\to1$) への関数」で決まっています。
-      これを <b>イージング関数</b> といいます。$f(t)=t$（一次関数）は <b>等速</b> ですが、機械的で不自然です。
-      2次・3次の多項式を使うと、<b>ゆっくり動き出す（ease-in）</b>、<b>ゆっくり止まる（ease-out）</b> 動きが作れます。
-    </p>
-
-    <h3><span class="tag">4.1</span>並べて比べる ― 同じ距離を同じ時間で</h3>
-    <p>
-      下の図では、いくつかの球が <b>同時にスタートし、同じ時間で</b> スタートからゴールまで進みます。
-      まずは <b>球の動き方（速さの変わり方）の違い</b> を見比べてみましょう。
-      球の後ろの灰色の点は、<b>時間を10等分</b> したときの位置です。点の間隔が広いところほど速く動いています。
-      その下のグラフは、この動きを表す関数 $f(t)$（時刻 $t$ での位置）で、色は球と対応しています。
-    </p>
-    <div class="widget" id="w-race">
-      <div class="widget-head">イージングの比較 <span class="hint">下のボタンで並べる種類を選ぶ（複数選択できます）</span></div>
-      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="chips"></div></div>
-      <div class="stage"><span class="cap l">実際の動き</span><canvas aria-label="イージングの比較レース"></canvas></div>
-      <div class="stage"><span class="cap">位置 f(t)</span><canvas aria-label="位置のグラフ"></canvas></div>
-      <div class="panel"><div class="controls"></div></div>
-      <div class="panel" style="padding-top:0"><div class="race-legend" data-r="legend"></div></div>
-    </div>
-    <div class="callout point">
-      <div class="ttl">ポイント：速さ＝グラフの傾き＝微分</div>
-      <p>
-        $f(t)$ のグラフの <b>傾き</b> $f'(t)$ が、その瞬間の <b>速さ</b> です。傾きが急なところで速く、水平に近いところでゆっくり動きます。
-        $\mathrm{smoothstep}\;3t^2-2t^3$ は、<b>始まりと終わりで速さが $0$</b>（$f'(0)=f'(1)=0$）になるよう調整した3次式です。
-      </p>
-    </div>
-
-    <h3><span class="tag">4.2</span>3次関数でイージングを設計する</h3>
-    <p>
-      「出発するときの速さ $\amber{v_0}$」と「到着するときの速さ $\teal{v_1}$」を決めると、次の4条件を満たす3次多項式がただ1つに決まります。
-    </p>
-    <div class="eq-box">$$f(0)=0,\quad f(1)=1,\quad f'(0)=\amber{v_0},\quad f'(1)=\teal{v_1}$$
-      $$f(t) = (\amber{v_0}+\teal{v_1}-2)\,t^3 + (3-2\amber{v_0}-\teal{v_1})\,t^2 + \amber{v_0}\,t$$</div>
-    <p>
-      上段の <b>球の動き</b> を見ながら、<span class="t-amber">$v_0$</span>（出だしの速さ）と <span class="t-teal">$v_1$</span>（終わりの速さ）を変えてみましょう。
-      グラフ上の矢印は、その点での <b>傾き（＝速さ）</b> を表します。
-    </p>
-    <div class="widget" id="w-design">
-      <div class="widget-head">出だし・終わりの速さを決める <span class="hint">グラフ上の<span class="t-amber">黄</span>・<span class="t-teal">緑</span>のつまみをドラッグ</span></div>
-      <div data-r="demo"></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">式</span><span class="tex" data-r="tex"></span></div>
-          <div class="row"><span class="k">確認</span><span class="tex" data-r="check"></span></div>
-          <div class="row"><span class="k">つまみの位置</span><span class="tex" data-r="ctrl"></span></div>
-        </div>
-      </div>
-    </div>
-    <details class="think">
-      <summary>考えてみよう：グラフの上の2つのつまみは何？</summary>
-      <p>
-        つまみの位置は $\left(\tfrac13,\ \tfrac{v_0}{3}\right)$ と $\left(\tfrac23,\ 1-\tfrac{v_1}{3}\right)$ です。
-        始点 $(0,0)$ からつまみへ引いた線の傾きが $v_0$、終点 $(1,1)$ へ入ってくる線の傾きが $v_1$ になっています。
-        実はこの4点 $(0,0),\ (\tfrac13,\tfrac{v_0}{3}),\ (\tfrac23,1-\tfrac{v_1}{3}),\ (1,1)$ を制御点とする <b>3次ベジェ曲線</b> の $y$ 成分が、この $f(t)$ そのものです。次の章でその正体を見ます。
-      </p>
-    </details>
-  </section>
-
-  <!-- ==================== 5. ベジェ曲線 ==================== -->
-  <section class="sec" id="bezier" data-toc="5 ベジェ曲線">
-    <h2><span class="num">5</span>ベジェ曲線</h2>
-
-    <p>
-      1.2節の補間 $\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$ を <b>繰り返す</b> と曲線が生まれます。
-      制御点 $\boldsymbol{P}_0,\dots,\boldsymbol{P}_n$ があるとき、次の操作を1点になるまで続けます（<b>ド・カステリョのアルゴリズム</b>）。
-    </p>
-    <div class="callout point">
-      <div class="ttl">操作：隣り合う2点を $t:(1-t)$ に内分して、点を1つ減らす</div>
-      <p>
-        隣り合う2点 $\boldsymbol{X},\boldsymbol{Y}$ に対し、<b>$\boldsymbol{X}$ からの距離が全体の $t$ 倍</b>の点、つまり
-        $(1-t)\boldsymbol{X}+t\boldsymbol{Y}$ を作ります。線分 $\boldsymbol{X}\boldsymbol{Y}$ は
-        <span class="t-red">$\boldsymbol{X}$ 側の長さ $=t$</span>（赤）と
-        <span class="t-teal">$\boldsymbol{Y}$ 側の長さ $=1-t$</span>（青緑）に分かれます。
-        <b>どの線分でも、同じ $t$ で同じ比に分けます</b>。
-      </p>
-    </div>
-
-    <h3><span class="tag">5.1</span>1次から3次のベジェ曲線：$t:(1-t)$ がどこに現れるか</h3>
-    <p>
-      まずは1次から3次まで、それぞれ図で確かめましょう。<b>図ごとに再生／停止と $t$ のスライダー</b> があります。
-      $t$ を動かすと、すべての線分が赤と青緑に <b>同じ比 $t:(1-t)$</b> で分かれることが見えます。
-      内分を重ねるほど、線は <b>細く薄く</b> 描いています（薄い線ほど後の段）。点はドラッグできます。
-    </p>
-    <div class="widget" id="w-dc">
-      <div class="widget-head">1次・2次・3次のベジェ曲線 <span class="hint">点をドラッグ／再生・停止と t は各図の下</span></div>
-      <div class="legend-line">
-        <span><i class="swatch" style="background:var(--accent)"></i>赤：<b>t</b> の長さ（手前側）</span>
-        <span><i class="swatch" style="background:var(--teal)"></i>青緑：<b>1−t</b> の長さ（向こう側）</span>
-        <span><i class="swatch" style="background:var(--primary)"></i>青：ベジェ曲線と、いま求めている点 P(t)</span>
-        <span>薄い線ほど、あとの段の内分</span>
-      </div>
-
-      <div class="dc-block" data-n="1">
-        <div class="dc-fig"><div class="stage"><canvas aria-label="1次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
-        <div class="dc-text">
-          <h4>1次ベジェ曲線（点2個）：線分</h4>
-          <p>$\boldsymbol{P}_0\boldsymbol{P}_1$ を $t:(1-t)$ に内分した点が $\boldsymbol{P}(t)$。1.2節の補間そのものです。</p>
-          $$\boldsymbol{P}(t)=(1-t)\boldsymbol{P}_0+t\boldsymbol{P}_1$$
-          <p><span class="t-red">$\overline{\boldsymbol{P}_0\boldsymbol{P}}=t\,\overline{\boldsymbol{P}_0\boldsymbol{P}_1}$</span>、<span class="t-teal">$\overline{\boldsymbol{P}\boldsymbol{P}_1}=(1-t)\,\overline{\boldsymbol{P}_0\boldsymbol{P}_1}$</span>。</p>
-        </div>
-      </div>
-
-      <div class="dc-block" data-n="2">
-        <div class="dc-fig"><div class="stage"><canvas aria-label="2次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
-        <div class="dc-text">
-          <h4>2次ベジェ曲線（点3個）：内分を2段重ねる</h4>
-          <p><b>1段目</b>：$\boldsymbol{P}_0\boldsymbol{P}_1$ を $t:(1-t)$ に分けて $\boldsymbol{P}_{01}$、$\boldsymbol{P}_1\boldsymbol{P}_2$ を $t:(1-t)$ に分けて $\boldsymbol{P}_{12}$。</p>
-          <p><b>2段目</b>：線分 $\boldsymbol{P}_{01}\boldsymbol{P}_{12}$ を $t:(1-t)$ に分けた点が $\boldsymbol{P}(t)$。</p>
-          $$\begin{aligned}\boldsymbol{P}(t)&=(1-t)\boldsymbol{P}_{01}+t\boldsymbol{P}_{12}\\&=(1-t)^2\boldsymbol{P}_0+2(1-t)t\,\boldsymbol{P}_1+t^2\boldsymbol{P}_2\end{aligned}$$
-        </div>
-      </div>
-
-      <div class="dc-block" data-n="3">
-        <div class="dc-fig"><div class="stage"><canvas aria-label="3次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
-        <div class="dc-text">
-          <h4>3次ベジェ曲線（点4個）：内分を3段重ねる</h4>
-          <p><b>1段目</b>：3本の線分から $\boldsymbol{P}_{01},\boldsymbol{P}_{12},\boldsymbol{P}_{23}$。<b>2段目</b>：その2本の線分から $\boldsymbol{P}_{012},\boldsymbol{P}_{123}$。<b>3段目</b>：最後の1本を $t:(1-t)$ に分けて $\boldsymbol{P}(t)$。</p>
-          $$\begin{aligned}\boldsymbol{P}(t)&=(1-t)\boldsymbol{P}_{012}+t\boldsymbol{P}_{123}\\&=(1-t)^3\boldsymbol{P}_0+3(1-t)^2t\,\boldsymbol{P}_1\\&\quad+3(1-t)t^2\boldsymbol{P}_2+t^3\boldsymbol{P}_3\end{aligned}$$
-        </div>
-      </div>
-    </div>
-    <p>
-      段数を重ねるほど、$(1-t)$ と $t$ のかけ算が増えて式の次数が上がります。
-      $n$ 段（$n+1$ 個の点）で $t$ の <b>$n$ 次多項式</b> になり、係数には二項係数が現れます。
-    </p>
-
-    <h3><span class="tag">5.2</span>好きな次数で曲線をデザインする</h3>
-    <p>次数を <b>1〜8次</b> から選べます。制御点をドラッグして形を作り、重み（棒グラフ）と基底関数の関係を観察しましょう。</p>
-    <div class="widget" id="w-bezier">
-      <div class="widget-head">ベジェ曲線 <span class="hint">制御点をドラッグ／次数を切り替え</span></div>
-      <div class="panel" style="padding-bottom:0">
-        <div class="btn-row">
-          <span style="font-size:13px;font-weight:700;color:var(--muted)">次数</span>
-          <div class="chips" data-r="degs"></div>
-        </div>
-      </div>
-      <div class="stage"><canvas aria-label="ベジェ曲線"></canvas></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="weights" data-r="weights"></div>
-      </div>
-      <div class="panel" style="padding-top:0">
-        <div class="readout"><div class="row"><span class="k">式</span><span class="tex" data-r="tex"></span></div>
-          <div class="row"><span class="k">点P(t)</span><span class="tex" data-r="pt"></span></div></div>
-      </div>
-      <div class="stage"><span class="cap">重み関数 $B_{n,i}(t)$（ベルンシュタイン基底）</span><canvas aria-label="ベルンシュタイン基底多項式"></canvas></div>
-    </div>
-    <div class="eq-box">
-      $$\boldsymbol{P}(t)=\sum_{i=0}^{n} B_{n,i}(t)\,\boldsymbol{P}_i,\qquad B_{n,i}(t)={}_n\mathrm{C}_i\,t^{i}(1-t)^{n-i}$$
-    </div>
-    <div class="callout point">
-      <div class="ttl">ポイント：曲線の座標は $t$ の多項式</div>
-      <p>
-        $B_{n,i}(t)$ は $t$ の $n$ 次多項式で、$t$ を動かしたときの重みの合計はいつも $1$ です（棒グラフの合計）。
-        つまり $\boldsymbol{P}(t)$ は制御点の <b>重みつき和</b> で、曲線は制御点の作る多角形の内側に収まります。
-        $x$ 座標も $y$ 座標も、それぞれ $t$ の $n$ 次多項式です。
-      </p>
-    </div>
-    <div class="callout try">
-      <div class="ttl">触ってみよう</div>
-      <ul>
-        <li>曲線は端点 $\boldsymbol{P}_0$, $\boldsymbol{P}_n$ を通る。途中の点は通らないが、引っ張られる。</li>
-        <li>$t=0$ のとき、曲線は最初の線分 $\boldsymbol{P}_0\boldsymbol{P}_1$ の向きに動き出す。</li>
-        <li>次数を上げると曲線はどう変わる？　1点を動かしたとき、曲線全体に影響が及ぶ範囲は？</li>
-      </ul>
-    </div>
-
-    <h3><span class="tag">5.3</span>CSSの <code>cubic-bezier()</code> ― イージングとの再会</h3>
-    <p>
-      4.2節のイージングは、$x$ 軸を「時間」、$y$ 軸を「位置」とみなした <b>3次ベジェ曲線</b> でした。
-      始点 $(0,0)$ と終点 $(1,1)$ を固定し、2つの制御点 $(x_1,y_1)$, $(x_2,y_2)$ だけを指定する書き方が
-      Webページの <code>transition-timing-function: cubic-bezier(x1, y1, x2, y2)</code> です。
-      下の図の <span class="t-blue">青い球</span> は上のグラフから <b>計算</b> した位置、<span class="t-teal">青緑の球</span> は <b>ブラウザのCSS</b> が動かしたものです。両者は一致します。
-    </p>
-    <div class="widget" id="w-cssbezier">
-      <div class="widget-head">cubic-bezier エディタ <span class="hint">2つのつまみをドラッグ（時間 $x$ は $0\sim1$ に制限）</span></div>
-      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="chips"></div></div>
-      <div data-r="demo"></div>
-      <div class="css-label">CSS の transition で動かした球（ブラウザの実装）</div>
-      <div class="css-track"><div class="css-ball" style="background:var(--teal)"></div></div>
-      <div class="panel">
-        <div class="btn-row">
-          <div class="code-line" data-r="code" style="flex:1 1 260px"></div>
-          <button class="btn small" data-a="copy">コピー</button>
-        </div>
-      </div>
-    </div>
-    <div class="callout warn">
-      <div class="ttl">注意</div>
-      <p>
-        $y_1$, $y_2$ を $[0,1]$ の外に出すと、目的地を <b>行き過ぎてから戻る</b>（オーバーシュート）動きになります。
-        一方 $x_1$, $x_2$ を $[0,1]$ の外に出すと、時間が逆戻りする場合があるため CSS では許されません。
-      </p>
+      </a>
     </div>
   </section>
 
-  <!-- ==================== 5. ラグランジュ補間 ==================== -->
-  <section class="sec" id="lagrange" data-toc="6 ラグランジュ補間">
-    <h2><span class="num">6</span>ラグランジュ補間とデータサイエンス</h2>
-
-    <p>
-      これまでは「式」から「グラフ」を作りました。逆に、<b>与えられた点をすべて通る多項式</b> を作るにはどうすればよいでしょうか。
-    </p>
-    <div class="callout point">
-      <div class="ttl">定理：$n$ 個の点を通る多項式</div>
-      <p>
-        $x$ 座標がすべて異なる $n$ 個の点 $(x_1,y_1),\dots,(x_n,y_n)$ に対し、これらをすべて通る <b>$(n-1)$ 次以下の多項式</b> がただ1つ存在する。
-        （2点 → 直線（1次）、3点 → 放物線（2次）、4点 → 3次…）
-      </p>
-    </div>
-
-    <h3><span class="tag">6.1</span>ラグランジュ補間多項式</h3>
-    <p>
-      アイデアは、<b>「点 $x_i$ でだけ $1$、ほかの点 $x_j$（$j\neq i$）では $0$」となる多項式 $L_i(x)$</b> を先に作ることです。
-      すると $y_i\,L_i(x)$ は「点 $(x_i,y_i)$ を通り、ほかの点では $0$」になるので、これらを足し合わせれば <b>すべての点を通る多項式</b> $P(x)$ ができます。
-    </p>
-    <p>
-      2点のとき、$L_1(x)=\dfrac{x-x_2}{x_1-x_2}$、$L_2(x)=\dfrac{x-x_1}{x_2-x_1}$ です。
-      $x=(1-t)x_1+t\,x_2$ とおくと $L_1=1-t,\ L_2=t$ となり、<b>1.2節の補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$ と同じ</b> です。
-    </p>
-    <p>
-      下の図で点の数（2〜4）を切り替えて、式と図の対応を確かめましょう。
-      分子は「自分以外の点で $0$ にする」ための因数、分母は「$x=x_i$ でちょうど $1$ にする」ための調整です。
-      <b>式の中の <span class="t-red">赤い文字 $x$</span> が変数</b> です。
-    </p>
-    <div class="widget" id="w-lag">
-      <div class="widget-head">ラグランジュ補間 <span class="hint">点の数を選ぶ／点をドラッグ</span></div>
-      <div class="panel" style="padding-bottom:0">
-        <div class="btn-row">
-          <span style="font-size:13px;font-weight:700;color:var(--muted)">点の数 n</span>
-          <div class="chips" data-r="ns"></div>
-        </div>
-      </div>
-      <div class="panel"><div class="readout lag-formulas" data-r="formulas"></div></div>
-      <div class="stage"><canvas aria-label="ラグランジュ補間多項式"></canvas></div>
-      <div class="panel">
-        <div class="btn-row">
-          <label class="check"><input type="checkbox" data-r="basis">薄い色の曲線 <i>y = y<sub>i</sub>L<sub>i</sub>(x)</i> を表示（各項 1 本ずつ）</label>
-          <button class="btn small" data-a="reset">点をリセット</button>
-        </div>
-        <div class="msg ng" data-r="note"></div>
-      </div>
-    </div>
-    <div class="callout try">
-      <div class="ttl">触ってみよう</div>
-      <ul>
-        <li>「薄い色の曲線」をオンにすると、$y=y_1L_1(x)$、$y=y_2L_2(x)$、… が1本ずつ現れる。各曲線は自分の点 $(x_i,y_i)$ を通り、<b>ほかの点の $x$ 座標ではちょうど $0$</b>（$x$ 軸を横切る）。</li>
-        <li>これらを <b>すべて足すと</b> 太い青の曲線 $y=P(x)$ になる。$P(x)$ は、どの点も通っている。</li>
-        <li>1点を動かすと、曲線全体が変わる。点の数を増やしたときの変化にも注目しよう。</li>
-      </ul>
-    </div>
-
-    <h3><span class="tag">6.2</span>データサイエンスとの関係：補間・回帰・過学習</h3>
-    <p>
-      データ点を通る曲線を作ることは、次のような場面で使われます。
-    </p>
-    <ul>
-      <li><b>補間</b>：測定していない点の値を推定する（欠測値の補完、センサ値の間引き・再構成、画像の拡大縮小）。</li>
-      <li><b>数値計算</b>：関数を多項式で近似して、微分・積分を計算する。</li>
-      <li><b>回帰</b>：実際のデータには測定誤差（ランダムなずれ）がある。すべての点を通す必要はなく、<b>全体の傾向</b> をつかみたい。
-        そこで次数 $m$ を決め、<b>各データ点と曲線との縦のずれを2乗して足した値</b>（二乗誤差の合計）が最も小さい $m$ 次多項式を選ぶ。これが最小二乗法（多項式回帰）。</li>
-    </ul>
-    <p>
-      ここで大切な落とし穴が <b>過学習</b> です。次数を上げるほど、手元のデータ（<b>訓練データ</b>）とのずれは必ず小さくなり、
-      $10$ 点に対して $9$ 次にするとラグランジュ補間そのもの（ずれ $0$）になります。
-      しかしそれは「測定誤差までまるごと覚えた」状態で、<b>本当の傾向</b> からは大きくずれてしまいます。
-    </p>
-
-    <div class="callout point">
-      <div class="ttl">図の見方</div>
-      <ul>
-        <li><span class="t-dark">黒い点</span>：測定データ（測定誤差を含む）。実際に手元にある情報はこれだけ。</li>
-        <li><span class="t-gray">灰色の点線</span>：<b>本当の傾向</b>。実際には分からないが、この図では答え合わせのために描いている。</li>
-        <li><span class="t-blue">青い線</span>：黒い点にあてはめた多項式（次数 $m$ はスライダーで変える）。</li>
-        <li><span class="t-red">赤い縦線</span>：<b>訓練誤差</b>。各黒い点と青い線との縦のずれ。長さを2乗して足したものを数値で表示。</li>
-        <li><span class="t-teal">青緑の帯</span>：<b>本当の傾向とのずれ</b>。青い線と灰色の点線の間の領域。この差を2乗して足した値を数値で表示。</li>
-      </ul>
-    </div>
-
-    <div class="widget" id="w-fit">
-      <div class="widget-head">多項式で近似する <span class="hint">次数 m を変える／データを取り直す</span></div>
-      <div class="legend-line">
-        <span><i class="swatch dot" style="background:var(--text)"></i>黒い点：測定データ</span>
-        <span><i class="swatch line" style="background:var(--muted)"></i>灰色の点線：本当の傾向</span>
-        <span><i class="swatch line" style="background:var(--primary)"></i>青い線：あてはめた多項式</span>
-        <span><i class="swatch" style="background:var(--accent)"></i>赤い縦線：訓練誤差</span>
-        <span><i class="swatch" style="background:var(--teal)"></i>青緑の帯：本当の傾向とのずれ</span>
-      </div>
-      <div class="stage"><canvas aria-label="データへの多項式のあてはめ"></canvas></div>
-      <div class="panel two">
-        <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k t-red">訓練誤差</span><span data-r="etrain"></span></div>
-          <div class="row"><span class="k t-teal">本当の傾向とのずれ</span><span data-r="etrue"></span></div>
-          <div class="row"><span class="k">判定</span><span data-r="note" style="font-size:14px;line-height:1.7"></span></div>
-        </div>
-      </div>
-    </div>
-    <div class="callout try">
-      <div class="ttl">読み取ろう</div>
-      <ul>
-        <li><span class="t-red">赤い縦線</span>は、次数を上げるほど <b>短くなり続け</b>、$m=9$ では消える（訓練誤差 $0$）。</li>
-        <li>一方 <span class="t-teal">青緑の帯</span>（本当の傾向とのずれ）は、ちょうどよい次数で最も細くなり、そこを超えると <b>太くなる</b>。$m=9$ では青い線が暴れて、帯が大きく広がる。</li>
-        <li>「データにぴったり合う」ことと「予測が当たる」ことは別。<b>モデルの複雑さ（次数）を選ぶ</b> ことが、データサイエンス・機械学習の中心課題のひとつです。</li>
-      </ul>
-    </div>
-    <details class="think">
-      <summary>考えてみよう：データを取り直すと最適な次数は変わる？</summary>
-      <p>「データを取り直す」を何度か押して、青緑の帯が最も細くなる次数を観察しましょう。誤差の出方が変わっても、だいたい低めの次数（3〜5次付近）が安定して良く、$m=9$ はほぼ毎回大きく暴れるはずです。「本当の傾向に最も近い次数にする」ボタンで確かめられます。</p>
-    </details>
-  </section>
-
-  <!-- ==================== まとめ ==================== -->
-  <section class="sec" id="summary" data-toc="まとめ">
-    <h2><span class="num">★</span>まとめ</h2>
+  <section class="sec" id="summary">
+    <h2 class="h-sub"><span class="tag">まとめ</span>第1回のまとめ</h2>
     <div class="table-wrap">
       <table>
         <thead><tr><th>次数</th><th>式</th><th>グラフ・動き</th><th>使いどころ</th></tr></thead>
         <tbody>
-          <tr><td>1次</td><td>$y=\teal{a}x+\red{b}$</td><td>直線。傾き $a$ は一定</td><td>等速運動、補間（lerp）</td></tr>
+          <tr><td>1次</td><td>$y=\teal{a}x+\red{b}$</td><td>直線。傾き $a$ は一定</td><td>等速運動、補間（lerp）、回帰直線</td></tr>
           <tr><td>2次</td><td>$y-\red{q}=a(x-\teal{p})^2$</td><td>放物線。頂点 $(p,q)$ を持つ</td><td>ease-in / ease-out、放物運動</td></tr>
           <tr><td>3次</td><td>$y=at^3+bt^2+ct+d$</td><td>S字。両端の位置と速さを指定できる</td><td>smoothstep、3次ベジェ</td></tr>
           <tr><td>$n$次</td><td>$\sum B_{n,i}(t)\boldsymbol{P}_i$</td><td>制御点で形を自由に設計</td><td>フォント、ベクター図形、CAD</td></tr>
@@ -645,27 +131,26 @@
         </tbody>
       </table>
     </div>
-    <details class="think">
-      <summary>復習問題（クリックで表示）</summary>
-      <ol>
-        <li>$y=x^2$ を $x$ 方向に $3$、$y$ 方向に $-2$ だけ平行移動したグラフの式を、$y-q=(x-p)^2$ の形で書け。</li>
-        <li>$y=2x^2-8x+5$ の頂点を平方完成で求めよ。</li>
-        <li>$\boldsymbol{A}=(0,0)$, $\boldsymbol{B}=(6,3)$ のとき、$t=\tfrac13$ の点 $\boldsymbol{P}(t)$ を求めよ。また $\mathrm{AP}:\mathrm{PB}$ はいくつか。</li>
-        <li>smoothstep $f(t)=3t^2-2t^3$ について $f(0),\ f(1),\ f'(0),\ f'(1)$ を求めよ。</li>
-        <li>3点 $(0,1),\ (1,3),\ (2,7)$ を通る二次関数を求めよ。</li>
-      </ol>
-      <p style="font-size:14px;color:var(--muted)">
-        答え：(1) $y+2=(x-3)^2$、すなわち $p=3,\ q=-2$　(2) $y=2(x-2)^2-3$ より頂点 $(2,-3)$　(3) $(2,1)$、$\mathrm{AP}:\mathrm{PB}=1:2$　(4) $0,\ 1,\ 0,\ 0$　(5) $y=x^2+x+1$
-      </p>
-    </details>
   </section>
+
+  <nav class="pager" aria-label="最初の章へ">
+    <a class="prev" href="../index.html"><span class="dir">← トップ</span><span class="nm">解析学 2026</span></a>
+    <a class="next" href="1-1.html"><span class="dir">最初の章 →</span><span class="nm">1.1 一次関数</span></a>
+  </nav>
 </main>
 </div>
 
-<footer class="site-footer">解析学 2026 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式</footer>
 
-<script src="../assets/common.js"></script>
-<script src="../assets/plot.js"></script>
-<script src="polynomial.js"></script>
+<script>
+  // 以前の1ページ版へのリンク(#quadratic など)を、対応する章ページへ転送する
+  (function () {
+    var map = { linear: '1-1', quadratic: '1-2', projectile: '1-3', easing: '1-4', bezier: '1-5', lagrange: '1-6' };
+    function go() { var id = location.hash.slice(1); if (map[id]) location.replace(map[id] + '.html'); }
+    go();
+    window.addEventListener('hashchange', go);
+  })();
+</script>
+<script src="../assets/common.js?v=20261003"></script>
 </body>
 </html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.4 イージング | 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式 1.4章：動きに強弱をつける">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+</head>
+<body class="chapter ch4">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html" class="active" aria-current="page"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 54 C 34 54, 30 10, 56 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="8" cy="54" r="4" fill="currentColor"/><circle cx="56" cy="10" r="4" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第1回 多項式 ／ 1.4章</div>
+      <h1><span class="chap-no">1.4</span>イージング</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>位置の関数 $f(t)$ のグラフの傾きが「速さ」を表すことを説明できる。</li>
+      <li>出だしの速さ <span class="t-amber">$v_0$</span> と終わりの速さ <span class="t-teal">$v_1$</span> から、3次のイージング関数を作れる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="easing">
+    <p>
+      スマホでメニューを開くとき、メニューは一定の速さで動くのではなく、<b>勢いよく出てきて、最後はゆっくり止まります</b>。
+      この「動きの緩急」を決めているのが、この章で学ぶ <b>イージング関数</b> です。まずは実物を見比べてみましょう。
+    </p>
+    <div class="widget" id="w-uidemo">
+      <div class="widget-head">実例：スマホのメニューが開く動き <span class="hint">「メニューを開く」を押して、左右を見比べよう</span></div>
+      <div class="ui-demo">
+        <figure class="phone">
+          <div class="screen"><div class="bar">≡ アプリ</div><div class="content"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="drawer lin"><b>ホーム</b><b>お知らせ</b><b>設定</b><b>ヘルプ</b></div></div>
+          <figcaption>等速（linear）<br><span>$f(t)=t$</span></figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="screen"><div class="bar">≡ アプリ</div><div class="content"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="drawer eo"><b>ホーム</b><b>お知らせ</b><b>設定</b><b>ヘルプ</b></div></div>
+          <figcaption>ゆっくり止まる（ease-out）<br><span>CSS の標準の ease-out</span></figcaption>
+        </figure>
+      </div>
+      <div class="panel">
+        <div class="btn-row">
+          <button class="btn primary" data-a="toggle">メニューを開く</button>
+          <label class="check"><input type="checkbox" data-r="slow">スローモーション</label>
+        </div>
+      </div>
+    </div>
+    <p>実際のプログラムでは、次のように書きます。どれも「時間の割合 $t$（$0\to1$）を関数 $f$ に通してから位置を決める」という同じ考え方です。</p>
+    <div class="code-grid">
+      <div class="code-card">
+        <div class="code-ttl">Webページ（CSS）</div>
+<pre><code>.menu {
+  transition: transform 0.3s ease-out;
+}</code></pre>
+        <p>ease-out の中身は 3次ベジェ曲線 <code>cubic-bezier(0, 0, 0.58, 1)</code>（1.5章）。</p>
+      </div>
+      <div class="code-card">
+        <div class="code-ttl">ゲーム（JavaScript）</div>
+<pre><code>// t: 経過時間の割合（0→1）
+const f = t => 1 - (1 - t) ** 3;
+x = start + (goal - start) * f(t);</code></pre>
+        <p>1.1章(2) の補間の $t$ を $f(t)$ に置き換えただけ。</p>
+      </div>
+      <div class="code-card">
+        <div class="code-ttl">ゲームエンジン（Unity／C#）</div>
+<pre><code>float s = Mathf.SmoothStep(0f, 1f, t);
+pos = Vector3.Lerp(a, b, s);</code></pre>
+        <p><code>SmoothStep</code> の中身は $3t^2-2t^3$（この章の smoothstep）。</p>
+      </div>
+    </div>
+
+    <p>
+      このように、画面の中の物の動きは「時間の割合 $t$ ($0\to1$) から、位置（進み具合）$f(t)$ ($0\to1$) への関数」で決まっています。
+      これを <b>イージング関数</b> といいます。$f(t)=t$（一次関数）は <b>等速</b> ですが、機械的で不自然です。
+      2次・3次の多項式を使うと、<b>ゆっくり動き出す（ease-in）</b>、<b>ゆっくり止まる（ease-out）</b> 動きが作れます。
+    </p>
+    <div class="callout point">
+      <div class="ttl">身近なイージングの例</div>
+      <ul>
+        <li><b>スマホの画面</b>：メニューや通知がスッと出てきて、ゆっくり止まる。アプリを開くときに画面が広がる動き。</li>
+        <li><b>Webページのスクロール</b>：目次のリンクを押すと、目的の場所まで滑らかに移動して止まる（このページの目次もそうです）。</li>
+        <li><b>プレゼンのアニメーション</b>：PowerPoint などの「滑らかに開始」「滑らかに終了」という設定。</li>
+        <li><b>ゲーム</b>：キャラクターの加速・減速、カメラがキャラクターを追いかける動き、ボタンを押したときに少し弾む動き。</li>
+        <li><b>乗り物</b>：エレベーターや電車は、急に動き出したり止まったりすると乗っている人が揺れるので、ゆっくり加速・減速するよう制御されている。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>並べて比べる ― 同じ距離を同じ時間で</h2>
+    <p>
+      下の図では、いくつかの球が <b>同時にスタートし、同じ時間で</b> スタートからゴールまで進みます。
+      まずは <b>球の動き方（速さの変わり方）の違い</b> を見比べてみましょう。
+      球の後ろの灰色の点は、<b>時間を10等分</b> したときの位置です。点の間隔が広いところほど速く動いています。
+      その下のグラフは、この動きを表す関数 $f(t)$（時刻 $t$ での位置）で、色は球と対応しています。
+    </p>
+    <div class="widget" id="w-race">
+      <div class="widget-head">イージングの比較 <span class="hint">下のボタンで並べる種類を選ぶ（複数選択できます）</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="chips"></div></div>
+      <div class="stage"><span class="cap l">実際の動き</span><canvas aria-label="イージングの比較レース"></canvas></div>
+      <div class="stage"><span class="cap">位置 f(t)</span><canvas aria-label="位置のグラフ"></canvas></div>
+      <div class="panel"><div class="controls"></div></div>
+      <div class="panel" style="padding-top:0"><div class="race-legend" data-r="legend"></div></div>
+    </div>
+    <div class="callout point">
+      <div class="ttl">ポイント：速さ＝グラフの傾き＝微分</div>
+      <p>
+        $f(t)$ のグラフの <b>傾き</b> $f'(t)$ が、その瞬間の <b>速さ</b> です。傾きが急なところで速く、水平に近いところでゆっくり動きます。
+        $\mathrm{smoothstep}\;3t^2-2t^3$ は、<b>始まりと終わりで速さが $0$</b>（$f'(0)=f'(1)=0$）になるよう調整した3次式です。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>3次関数でイージングを設計する</h2>
+    <p>
+      「出発するときの速さ $\amber{v_0}$」と「到着するときの速さ $\teal{v_1}$」を決めると、次の4条件を満たす3次多項式がただ1つに決まります。
+    </p>
+    <div class="eq-box">$$f(0)=0,\quad f(1)=1,\quad f'(0)=\amber{v_0},\quad f'(1)=\teal{v_1}$$
+      $$f(t) = (\amber{v_0}+\teal{v_1}-2)\,t^3 + (3-2\amber{v_0}-\teal{v_1})\,t^2 + \amber{v_0}\,t$$</div>
+    <p>
+      上段の <b>球の動き</b> を見ながら、<span class="t-amber">$v_0$</span>（出だしの速さ）と <span class="t-teal">$v_1$</span>（終わりの速さ）を変えてみましょう。
+      グラフ上の矢印は、その点での <b>傾き（＝速さ）</b> を表します。
+    </p>
+    <div class="widget" id="w-design">
+      <div class="widget-head">出だし・終わりの速さを決める <span class="legend"><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 出だしの速さ $v_0$</span><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 終わりの速さ $v_1$</span></span> <span class="hint">グラフ上の<span class="t-amber">黄</span>・<span class="t-teal">緑</span>のつまみをドラッグ</span></div>
+      <div data-r="demo"></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex" data-r="tex"></span></div>
+          <div class="row"><span class="k">確認</span><span class="tex" data-r="check"></span></div>
+          <div class="row"><span class="k">つまみの位置</span><span class="tex" data-r="ctrl"></span></div>
+        </div>
+      </div>
+    </div>
+    <details class="think">
+      <summary>考えてみよう：グラフの上の2つのつまみは何？</summary>
+      <p>
+        つまみの位置は $\left(\tfrac13,\ \tfrac{v_0}{3}\right)$ と $\left(\tfrac23,\ 1-\tfrac{v_1}{3}\right)$ です。
+        始点 $(0,0)$ からつまみへ引いた線の傾きが $v_0$、終点 $(1,1)$ へ入ってくる線の傾きが $v_1$ になっています。
+        実はこの4点 $(0,0),\ (\tfrac13,\tfrac{v_0}{3}),\ (\tfrac23,1-\tfrac{v_1}{3}),\ (1,1)$ を制御点とする <b>3次ベジェ曲線</b> の $y$ 成分が、この $f(t)$ そのものです。1.5章でその正体を見ます。
+      </p>
+    </details>
+  
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>smoothstep $f(t)=3t^2-2t^3$ について、$f(0),\ f(1),\ f'(0),\ f'(1)$ を求めよ。</li>
+        <li>$f(t)=t^2$（easeInQuad）のとき、時間の半分 $t=\tfrac12$ で、全体のどれだけ進んでいるか。</li>
+        <li>1.4章(2) の式 $$f(t)=(v_0+v_1-2)t^3+(3-2v_0-v_1)t^2+v_0t$$ で、$v_0=v_1=0$ とするとどうなるか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $0,\ 1,\ 0,\ 0$　(2) $\tfrac14$（前半はゆっくり）　(3) $f(t)=-2t^3+3t^2$（smoothstep と同じ）</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="1-3.html"><span class="dir">← 前の章</span><span class="nm">1.3 放物線</span></a>
+    <a class="next" href="1-5.html"><span class="dir">次の章 →</span><span class="nm">1.5 ベジェ曲線</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261003"></script>
+<script src="../assets/plot.js?v=20261003"></script>
+<script src="polynomial.js?v=20261003"></script>
+</body>
+</html>

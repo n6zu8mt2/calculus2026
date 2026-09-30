@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2 二次関数 | 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式 1.2章：頂点・平行移動">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+</head>
+<body class="chapter ch2">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html" class="active" aria-current="page"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M10 10 Q32 80 54 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="45" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第1回 多項式 ／ 1.2章</div>
+      <h1><span class="chap-no">1.2</span>二次関数</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>グラフを <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、式が $y-q=f(x-p)$ になることを説明できる。</li>
+      <li>平方完成で、一般形 $y=ax^2+bx+c$ の頂点を求められる。</li>
+    </ol>
+    <div class="goal-meta">図 2つ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="quadratic">
+    <p>
+      $y = ax^2 + bx + c$（$a\neq 0$）のグラフは <b>放物線</b> です。直線と違って「曲がる」ので、
+      <b>頂点</b>（いちばん高い／低いところ）と <b>対称軸</b> が現れます。
+      まず最も単純な $y=x^2$ を出発点にして、それを動かす方法（平行移動）から見ていきます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>グラフを平行移動する</h2>
+    <p>
+      グラフ $y=f(x)$ を、<b><span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span></b> だけ動かします（右・上が正）。
+      このとき動かしたグラフの式は、もとの式の $x$ を $x-\teal{p}$ に、$y$ を $y-\red{q}$ に置き換えたものになります。
+    </p>
+    <div class="eq-box">$$y=f(x)\quad\xrightarrow{\ x\text{方向に}\ \teal{p},\ y\text{方向に}\ \red{q}\ }\quad y-\red{q}=f(x-\teal{p})$$</div>
+    <p>
+      $f(x)=x^2$ なら、$y-\red{q}=(x-\teal{p})^2$、つまり $y=(x-\teal{p})^2+\red{q}$ で、頂点は $(0,0)$ から <b>$(\teal{p},\ \red{q})$</b> に動きます。
+    </p>
+    <div class="widget" id="w-shift">
+      <div class="widget-head">$y-\red{q}=(x-\teal{p})^2$ <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ x方向の移動 $p$</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ y方向の移動 $q$</span></span> <span class="hint">頂点（黒い点）をドラッグ／灰色の曲線上の青い点 Q も動かせる</span></div>
+      <div class="stage"><canvas aria-label="放物線の平行移動"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">移動後の式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">移動</span><span class="tex" data-r="vec"></span></div>
+          <div class="row"><span class="k">頂点</span><span class="tex" data-r="vertex"></span></div>
+          <div class="row"><span class="k">点の対応</span><span class="tex" data-r="pt"></span></div>
+        </div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="btn-row">
+          <button class="btn primary" data-a="quiz">🎯 チャレンジ：目標の放物線に合わせる</button>
+          <button class="btn" data-a="reset">リセット</button>
+        </div>
+        <div class="msg ng" data-r="msg"></div>
+      </div>
+    </div>
+    <div class="callout point">
+      <div class="ttl">ポイント</div>
+      <p>
+        灰色の点線がもとの $y=x^2$。その上の青い点 $\mathrm{Q}(s,\,s^2)$ は、平行移動で
+        $\mathrm{Q}'(s+\teal{p},\ s^2+\red{q})$ に移ります。<b>すべての点が同じだけ動く</b> ので、形は変わりません。
+        <span class="t-teal">緑の矢印</span>が $x$ 方向の移動 $\teal{p}$、<span class="t-red">赤い矢印</span>が $y$ 方向の移動 $\red{q}$ です。
+      </p>
+    </div>
+    <details class="think">
+      <summary>考えてみよう：右に動かすのに、なぜ式は $x+p$ でなく $x-p$ ？</summary>
+      <p>
+        動かした後のグラフ上の点 $(X,Y)$ は、もとのグラフ上の点 $(X-p,\ Y-q)$ を $p,\,q$ だけ動かしたものです。
+        もとのグラフでは $Y-q=(X-p)^2$ が成り立つので、これが動かした後の式になります。
+        「式の中で $x$ を $x-p$ に置き換える」と「グラフが $+p$ 動く」は、セットで覚えましょう。
+      </p>
+    </details>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>頂点と平方完成</h2>
+    <p>
+      $y=ax^2$ を <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、(1) と同じ置き換えで
+    </p>
+    <div class="eq-box">$$y-\red{q}=\blue{a}(x-\teal{p})^2\quad\Longleftrightarrow\quad y=\blue{a}(x-\teal{p})^2+\red{q}\qquad(\text{頂点形})$$</div>
+    <p>
+      頂点は $(\teal{p},\ \red{q})$ です。これを展開した $y=\blue{a}x^2+\amber{b}x+\slate{c}$ が <b>一般形</b>。
+      一般形から頂点形を作る操作が <b>平方完成</b> です。
+    </p>
+    <div class="eq-box">
+      $$\begin{aligned}
+      y &= \blue{a}x^2 + \amber{b}x + \slate{c} = \blue{a}\left(x + \frac{\amber{b}}{2\blue{a}}\right)^2 + \slate{c} - \frac{\amber{b}^2}{4\blue{a}}\\
+      &\Longrightarrow\quad \teal{p} = -\frac{\amber{b}}{2\blue{a}},\qquad \red{q} = \slate{c} - \frac{\amber{b}^2}{4\blue{a}}
+      \end{aligned}$$
+    </div>
+    <div class="widget" id="w-quad">
+      <div class="widget-head">$y=\blue{a}(x-\teal{p})^2+\red{q} = \blue{a}x^2+\amber{b}x+\slate{c}$ <span class="legend"><span class="lg"><i style="background:var(--primary)"></i>$a$</span><span class="lg"><i style="background:var(--teal)"></i>$p$</span><span class="lg"><i style="background:var(--accent)"></i>$q$</span><span class="lg"><i style="background:var(--amber)"></i>$b$</span><span class="lg"><i style="background:var(--pink)"></i>$c$</span></span> <span class="hint">上の3本と下の2本は連動します</span></div>
+      <div class="stage"><canvas aria-label="二次関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">頂点形</span><span class="tex" data-r="vform"></span></div>
+          <div class="row"><span class="k">一般形</span><span class="tex" data-r="gform"></span></div>
+          <div class="row"><span class="k">頂点</span><span class="tex" data-r="vertex"></span></div>
+          <div class="row"><span class="k">判別式</span><span class="tex" data-r="disc"></span></div>
+          <div class="row"><span class="k">x軸との交点</span><span class="tex" data-r="roots"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li><span class="t-teal">$p$</span>, <span class="t-red">$q$</span> を動かすと、図の矢印（灰色の $y=ax^2$ の頂点 → 頂点）が変わり、<span class="t-amber">$b$</span>, <span class="t-slate">$c$</span> がどう変わるか見よう。</li>
+        <li>逆に <span class="t-amber">$b$</span> を動かすと頂点は左右どちらへ動く？　式 $p=-\frac{b}{2a}$ と見比べよう。</li>
+        <li>$a>0$ なら下に凸（頂点が最小）、$a<0$ なら上に凸（頂点が最大）。</li>
+        <li>グラフが $x$ 軸に触れる瞬間、判別式 $D=b^2-4ac$ はいくつ？</li>
+      </ul>
+    </div>
+  
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>$y=x^2$ を $x$ 方向に $3$、$y$ 方向に $-2$ だけ平行移動したグラフの式を、$y-q=(x-p)^2$ の形で書け。</li>
+        <li>$y=2x^2-8x+5$ の頂点を平方完成で求めよ。</li>
+        <li>$y=(x-1)^2+2$ を $x$ 方向に $-3$、$y$ 方向に $1$ だけ平行移動したグラフの式と頂点を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $y+2=(x-3)^2$　(2) $y=2(x-2)^2-3$ より頂点 $(2,-3)$　(3) $y=(x+2)^2+3$、頂点 $(-2,3)$</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="1-1.html"><span class="dir">← 前の章</span><span class="nm">1.1 一次関数</span></a>
+    <a class="next" href="1-3.html"><span class="dir">次の章 →</span><span class="nm">1.3 放物線</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261003"></script>
+<script src="../assets/plot.js?v=20261003"></script>
+<script src="polynomial.js?v=20261003"></script>
+</body>
+</html>

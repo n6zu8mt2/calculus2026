@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.5 ベジェ曲線 | 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式 1.5章：点で曲線をデザイン">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+</head>
+<body class="chapter ch5">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html" class="active" aria-current="page"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 52 L18 10 L46 10 L56 52" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4" opacity=".75"/><path d="M8 52 C 18 10, 46 10, 56 52" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="18" cy="10" r="4" fill="currentColor"/><circle cx="46" cy="10" r="4" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第1回 多項式 ／ 1.5章</div>
+      <h1><span class="chap-no">1.5</span>ベジェ曲線</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>$t:(1-t)$ の内分を重ねるとベジェ曲線が描けること（ド・カステリョのアルゴリズム）を説明できる。</li>
+      <li>CSS の <code>cubic-bezier(x1, y1, x2, y2)</code> の4つの数が何を表すか説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 4つ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="bezier">
+    <p>
+      パソコンやスマホに表示される <b>文字の形（フォント）</b>、イラストソフトで描く線、Webページのアイコン。
+      これらのなめらかな曲線の多くは、<b>ベジェ曲線</b> という多項式の曲線をつないで作られています。
+      まずは実例を見てみましょう。
+    </p>
+    <div class="widget" id="w-heart">
+      <div class="widget-head">実例：3次ベジェ曲線4本で描いたハート <span class="legend"><span class="lg"><i style="background:var(--text)"></i>四角 ＝ 端点</span><span class="lg"><i style="background:var(--amber)"></i>丸 ＝ 制御点</span></span> <span class="hint">制御点をドラッグすると形が変わる</span></div>
+      <div class="heart-wrap">
+        <div class="heart-fig"></div>
+        <div class="heart-side">
+          <p>四角は曲線の <b>端点</b>、丸は形を決める <b>制御点</b> です。曲線は制御点を通りませんが、制御点の方へ引っ張られます。</p>
+          <p>このハートを SVG（Webの画像形式）で書くと次のとおりです。<code>C</code> が「3次ベジェ曲線を描く」という命令です。</p>
+          <pre><code data-r="code"></code></pre>
+        </div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="btn-row">
+          <label class="check"><input type="checkbox" data-r="ctrl" checked>制御点と補助線を表示</label>
+          <button class="btn small" data-a="reset">形を元に戻す</button>
+        </div>
+      </div>
+    </div>
+    <div class="callout point">
+      <div class="ttl">ベジェ曲線が使われているところ</div>
+      <ul>
+        <li><b>フォント（文字の形）</b>：文字の輪郭はベジェ曲線をつないで記録されている（TrueType 形式は2次、OpenType の CFF 形式は3次）。点の座標だけを保存しているので、<b>どれだけ拡大してもギザギザにならない</b>。</li>
+        <li><b>イラスト・デザイン</b>：Illustrator や Figma の「ペンツール」、Web の SVG 画像（上の <code>C</code> 命令）。</li>
+        <li><b>アニメーション</b>：CSS の <code>cubic-bezier()</code> で動きの緩急を指定する（この章の(3)、1.4章のイージング）。</li>
+        <li><b>工業デザイン</b>：自動車のボディのなめらかな曲面の設計。もともとルノーの技術者ピエール・ベジェが考案した。</li>
+      </ul>
+    </div>
+
+    <p>
+      1.1章(2)の補間 $\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$ を <b>繰り返す</b> と曲線が生まれます。
+      制御点 $\boldsymbol{P}_0,\dots,\boldsymbol{P}_n$ があるとき、次の操作を1点になるまで続けます（<b>ド・カステリョのアルゴリズム</b>）。
+    </p>
+    <div class="callout point">
+      <div class="ttl">操作：隣り合う2点を $t:(1-t)$ に内分して、点を1つ減らす</div>
+      <p>
+        隣り合う2点 $\boldsymbol{X},\boldsymbol{Y}$ に対し、<b>$\boldsymbol{X}$ からの距離が全体の $t$ 倍</b>の点、つまり
+        $(1-t)\boldsymbol{X}+t\boldsymbol{Y}$ を作ります。線分 $\boldsymbol{X}\boldsymbol{Y}$ は
+        <span class="t-red">$\boldsymbol{X}$ 側の長さ $=t$</span>（赤）と
+        <span class="t-teal">$\boldsymbol{Y}$ 側の長さ $=1-t$</span>（青緑）に分かれます。
+        <b>どの線分でも、同じ $t$ で同じ比に分けます</b>。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>1次から3次のベジェ曲線：$t:(1-t)$ がどこに現れるか</h2>
+    <p>
+      まずは1次から3次まで、それぞれ図で確かめましょう。<b>図ごとに再生／停止と $t$ のスライダー</b> があります。
+      $t$ を動かすと、すべての線分が赤と青緑に <b>同じ比 $t:(1-t)$</b> で分かれることが見えます。
+      内分を重ねるほど、線は <b>細く薄く</b> 描いています（薄い線ほど後の段）。点はドラッグできます。
+    </p>
+    <div class="widget" id="w-dc">
+      <div class="widget-head">1次・2次・3次のベジェ曲線 <span class="hint">点をドラッグ／再生・停止と t は各図の下</span></div>
+      <div class="legend-line">
+        <span><i class="swatch" style="background:var(--accent)"></i>赤：<b>t</b> の長さ（手前側）</span>
+        <span><i class="swatch" style="background:var(--teal)"></i>青緑：<b>1−t</b> の長さ（向こう側）</span>
+        <span><i class="swatch" style="background:var(--primary)"></i>青：ベジェ曲線と、いま求めている点 P(t)</span>
+        <span>薄い線ほど、あとの段の内分</span>
+      </div>
+
+      <div class="dc-block" data-n="1">
+        <div class="dc-fig"><div class="stage"><canvas aria-label="1次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
+        <div class="dc-text">
+          <h4>1次ベジェ曲線（点2個）：線分</h4>
+          <p>$\boldsymbol{P}_0\boldsymbol{P}_1$ を $t:(1-t)$ に内分した点が $\boldsymbol{P}(t)$。1.1章(2)の補間そのものです。</p>
+          $$\boldsymbol{P}(t)=(1-t)\boldsymbol{P}_0+t\boldsymbol{P}_1$$
+          <p><span class="t-red">$\overline{\boldsymbol{P}_0\boldsymbol{P}}=t\,\overline{\boldsymbol{P}_0\boldsymbol{P}_1}$</span>、<span class="t-teal">$\overline{\boldsymbol{P}\boldsymbol{P}_1}=(1-t)\,\overline{\boldsymbol{P}_0\boldsymbol{P}_1}$</span>。</p>
+        </div>
+      </div>
+
+      <div class="dc-block" data-n="2">
+        <div class="dc-fig"><div class="stage"><canvas aria-label="2次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
+        <div class="dc-text">
+          <h4>2次ベジェ曲線（点3個）：内分を2段重ねる</h4>
+          <p><b>1段目</b>：$\boldsymbol{P}_0\boldsymbol{P}_1$ を $t:(1-t)$ に分けて $\boldsymbol{P}_{01}$、$\boldsymbol{P}_1\boldsymbol{P}_2$ を $t:(1-t)$ に分けて $\boldsymbol{P}_{12}$。</p>
+          <p><b>2段目</b>：線分 $\boldsymbol{P}_{01}\boldsymbol{P}_{12}$ を $t:(1-t)$ に分けた点が $\boldsymbol{P}(t)$。</p>
+          $$\begin{aligned}\boldsymbol{P}(t)&=(1-t)\boldsymbol{P}_{01}+t\boldsymbol{P}_{12}\\&=(1-t)^2\boldsymbol{P}_0+2(1-t)t\,\boldsymbol{P}_1+t^2\boldsymbol{P}_2\end{aligned}$$
+        </div>
+      </div>
+
+      <div class="dc-block" data-n="3">
+        <div class="dc-fig"><div class="stage"><canvas aria-label="3次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
+        <div class="dc-text">
+          <h4>3次ベジェ曲線（点4個）：内分を3段重ねる</h4>
+          <p><b>1段目</b>：3本の線分から $\boldsymbol{P}_{01},\boldsymbol{P}_{12},\boldsymbol{P}_{23}$。<b>2段目</b>：その2本の線分から $\boldsymbol{P}_{012},\boldsymbol{P}_{123}$。<b>3段目</b>：最後の1本を $t:(1-t)$ に分けて $\boldsymbol{P}(t)$。</p>
+          $$\begin{aligned}\boldsymbol{P}(t)&=(1-t)\boldsymbol{P}_{012}+t\boldsymbol{P}_{123}\\&=(1-t)^3\boldsymbol{P}_0+3(1-t)^2t\,\boldsymbol{P}_1\\&\quad+3(1-t)t^2\boldsymbol{P}_2+t^3\boldsymbol{P}_3\end{aligned}$$
+        </div>
+      </div>
+    </div>
+    <p>
+      段数を重ねるほど、$(1-t)$ と $t$ のかけ算が増えて式の次数が上がります。
+      $n$ 段（$n+1$ 個の点）で $t$ の <b>$n$ 次多項式</b> になり、係数には二項係数が現れます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>好きな次数で曲線をデザインする</h2>
+    <p>次数を <b>1〜8次</b> から選べます。制御点をドラッグして形を作り、重み（棒グラフ）と基底関数の関係を観察しましょう。</p>
+    <div class="widget" id="w-bezier">
+      <div class="widget-head">ベジェ曲線 <span class="hint">制御点をドラッグ／次数を切り替え</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row">
+          <span style="font-size:13px;font-weight:700;color:var(--muted)">次数</span>
+          <div class="chips" data-r="degs"></div>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="ベジェ曲線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="weights" data-r="weights"></div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="readout"><div class="row"><span class="k">式</span><span class="tex" data-r="tex"></span></div>
+          <div class="row"><span class="k">点P(t)</span><span class="tex" data-r="pt"></span></div></div>
+      </div>
+      <div class="stage"><span class="cap">重み関数 $B_{n,i}(t)$（ベルンシュタイン基底）</span><canvas aria-label="ベルンシュタイン基底多項式"></canvas></div>
+    </div>
+    <div class="eq-box">
+      $$\boldsymbol{P}(t)=\sum_{i=0}^{n} B_{n,i}(t)\,\boldsymbol{P}_i,\qquad B_{n,i}(t)={}_n\mathrm{C}_i\,t^{i}(1-t)^{n-i}$$
+    </div>
+    <div class="callout point">
+      <div class="ttl">ポイント：曲線の座標は $t$ の多項式</div>
+      <p>
+        $B_{n,i}(t)$ は $t$ の $n$ 次多項式で、$t$ を動かしたときの重みの合計はいつも $1$ です（棒グラフの合計）。
+        つまり $\boldsymbol{P}(t)$ は制御点の <b>重みつき和</b> で、曲線は制御点の作る多角形の内側に収まります。
+        $x$ 座標も $y$ 座標も、それぞれ $t$ の $n$ 次多項式です。
+      </p>
+    </div>
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li>曲線は端点 $\boldsymbol{P}_0$, $\boldsymbol{P}_n$ を通る。途中の点は通らないが、引っ張られる。</li>
+        <li>$t=0$ のとき、曲線は最初の線分 $\boldsymbol{P}_0\boldsymbol{P}_1$ の向きに動き出す。</li>
+        <li>次数を上げると曲線はどう変わる？　1点を動かしたとき、曲線全体に影響が及ぶ範囲は？</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>ベジェ曲線とイージングの関係（CSS の <code>cubic-bezier()</code>）</h2>
+    <p>
+      1.4章(2)のイージングは、$x$ 軸を「時間」、$y$ 軸を「位置」とみなした <b>3次ベジェ曲線</b> でした。
+      始点 $(0,0)$ と終点 $(1,1)$ を固定し、2つの制御点 $(x_1,y_1)$, $(x_2,y_2)$ だけを指定する書き方が
+      Webページの <code>transition-timing-function: cubic-bezier(x1, y1, x2, y2)</code> です。
+      下の図の <span class="t-blue">青い球</span> は上のグラフから <b>計算</b> した位置、<span class="t-teal">青緑の球</span> は <b>ブラウザのCSS</b> が動かしたものです。両者は一致します。
+    </p>
+    <div class="widget" id="w-cssbezier">
+      <div class="widget-head">cubic-bezier エディタ <span class="legend"><span class="lg"><i style="background:var(--amber)"></i>金 ＝ $P_1$</span><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ $P_2$</span></span> <span class="hint">2つのつまみをドラッグ（時間 $x$ は $0\sim1$ に制限）</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="chips"></div></div>
+      <div data-r="demo"></div>
+      <div class="css-label">CSS の transition で動かした球（ブラウザの実装）</div>
+      <div class="css-track"><div class="css-ball" style="background:var(--teal)"></div></div>
+      <div class="panel">
+        <div class="btn-row">
+          <div class="code-line" data-r="code" style="flex:1 1 260px"></div>
+          <button class="btn small" data-a="copy">コピー</button>
+        </div>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="ttl">注意</div>
+      <p>
+        $y_1$, $y_2$ を $[0,1]$ の外に出すと、目的地を <b>行き過ぎてから戻る</b>（オーバーシュート）動きになります。
+        一方 $x_1$, $x_2$ を $[0,1]$ の外に出すと、時間が逆戻りする場合があるため CSS では許されません。
+      </p>
+    </div>
+  
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>$\boldsymbol{P}_0=(0,0)$, $\boldsymbol{P}_1=(2,4)$, $\boldsymbol{P}_2=(4,0)$ の2次ベジェ曲線で、$t=\tfrac12$ の点を求めよ。</li>
+        <li>3次のベルンシュタイン基底 $B_{3,1}(t)=3(1-t)^2t$ について、$B_{3,1}(\tfrac12)$ を求めよ。</li>
+        <li><code>cubic-bezier(0, 0, 1, 1)</code> はどんな動きになるか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $\tfrac14\boldsymbol{P}_0+\tfrac12\boldsymbol{P}_1+\tfrac14\boldsymbol{P}_2=(2,2)$　(2) $\tfrac38$　(3) 4つの制御点が直線 $y=x$ 上に並ぶので、等速（linear と同じ）</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="1-4.html"><span class="dir">← 前の章</span><span class="nm">1.4 イージング</span></a>
+    <a class="next" href="1-6.html"><span class="dir">次の章 →</span><span class="nm">1.6 ラグランジュ補間</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261003"></script>
+<script src="../assets/plot.js?v=20261003"></script>
+<script src="polynomial.js?v=20261003"></script>
+</body>
+</html>

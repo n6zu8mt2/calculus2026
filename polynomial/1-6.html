@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.6 ラグランジュ補間 | 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式 1.6章：データを通る曲線・過学習">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+</head>
+<body class="chapter ch6">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html" class="active" aria-current="page"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 44 C 16 4, 28 64, 40 24 S 56 12, 60 18" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="10" cy="26" r="5" fill="currentColor"/><circle cx="30" cy="40" r="5" fill="currentColor"/><circle cx="48" cy="17" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第1回 多項式 ／ 1.6章</div>
+      <h1><span class="chap-no">1.6</span>ラグランジュ補間とデータサイエンス</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>与えられた点をすべて通る多項式を、ラグランジュ補間で作れる。</li>
+      <li>多項式の次数を上げすぎると「過学習」が起きることを、図を使って説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="lagrange">
+    <p>
+      これまでは「式」から「グラフ」を作りました。逆に、<b>与えられた点をすべて通る多項式</b> を作るにはどうすればよいでしょうか。
+    </p>
+    <div class="callout point">
+      <div class="ttl">定理：$n$ 個の点を通る多項式</div>
+      <p>
+        $x$ 座標がすべて異なる $n$ 個の点 $(x_1,y_1),\dots,(x_n,y_n)$ に対し、これらをすべて通る <b>$(n-1)$ 次以下の多項式</b> がただ1つ存在する。
+        （2点 → 直線（1次）、3点 → 放物線（2次）、4点 → 3次…）
+      </p>
+    </div>
+    <div class="widget" id="w-lagmini">
+      <div class="widget-head">点の数と、それらを通る多項式 <span class="hint">点はドラッグできます</span></div>
+      <div class="mini3">
+        <div class="mini" data-n="2"><div class="stage"><canvas aria-label="2点を通る直線"></canvas></div><div class="mini-cap">2点 → <b>1次関数</b>（直線）</div></div>
+        <div class="mini" data-n="3"><div class="stage"><canvas aria-label="3点を通る放物線"></canvas></div><div class="mini-cap">3点 → <b>2次関数</b>（放物線）</div></div>
+        <div class="mini" data-n="4"><div class="stage"><canvas aria-label="4点を通る3次関数"></canvas></div><div class="mini-cap">4点 → <b>3次関数</b></div></div>
+      </div>
+    </div>
+    <p>
+      どの場合も、点をどう動かしても、それらを通る曲線がちょうど1本だけ決まります。
+      では、その多項式は <b>具体的にどんな式</b> でしょうか。それを与えるのが、次のラグランジュ補間多項式です。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>ラグランジュ補間多項式</h2>
+    <p>
+      アイデアは、<b>「点 $x_i$ でだけ $1$、ほかの点 $x_j$（$j\neq i$）では $0$」となる多項式 $L_i(x)$</b> を先に作ることです。
+      すると $y_i\,L_i(x)$ は「点 $(x_i,y_i)$ を通り、ほかの点では $0$」になるので、これらを足し合わせれば <b>すべての点を通る多項式</b> $P(x)$ ができます。
+    </p>
+    <p>
+      2点のとき、$L_1(x)=\dfrac{x-x_2}{x_1-x_2}$、$L_2(x)=\dfrac{x-x_1}{x_2-x_1}$ です。
+      $x=(1-t)x_1+t\,x_2$ とおくと $L_1=1-t,\ L_2=t$ となり、<b>1.1章(2)の補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$ と同じ</b> です。
+    </p>
+    <p>
+      下の図で点の数（2〜4）を切り替えて、式と図の対応を確かめましょう。
+      分子は「自分以外の点で $0$ にする」ための因数、分母は「$x=x_i$ でちょうど $1$ にする」ための調整です。
+      <b>式の中の <span class="t-red">赤い文字 $x$</span> が変数</b> です。
+    </p>
+    <div class="widget" id="w-lag">
+      <div class="widget-head">ラグランジュ補間 <span class="legend"><span class="lg"><i style="background:var(--primary)"></i>太い青線 ＝ $y=P(x)$</span><span class="lg"><i style="background:var(--accent)"></i>赤い文字 ＝ 変数 $x$</span></span> <span class="hint">点の数を選ぶ／点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row">
+          <span style="font-size:13px;font-weight:700;color:var(--muted)">点の数 n</span>
+          <div class="chips" data-r="ns"></div>
+        </div>
+      </div>
+      <div class="panel"><div class="readout lag-formulas" data-r="formulas"></div></div>
+      <div class="stage"><canvas aria-label="ラグランジュ補間多項式"></canvas></div>
+      <div class="panel">
+        <div class="btn-row">
+          <label class="check"><input type="checkbox" data-r="basis">薄い色の曲線 <i>y = y<sub>i</sub>L<sub>i</sub>(x)</i> を表示（各項 1 本ずつ）</label>
+          <button class="btn small" data-a="reset">点をリセット</button>
+        </div>
+        <div class="msg ng" data-r="note"></div>
+      </div>
+    </div>
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li>「薄い色の曲線」をオンにすると、$y=y_1L_1(x)$、$y=y_2L_2(x)$、… が1本ずつ現れる。各曲線は自分の点 $(x_i,y_i)$ を通り、<b>ほかの点の $x$ 座標ではちょうど $0$</b>（$x$ 軸を横切る）。</li>
+        <li>これらを <b>すべて足すと</b> 太い青の曲線 $y=P(x)$ になる。$P(x)$ は、どの点も通っている。</li>
+        <li>1点を動かすと、曲線全体が変わる。点の数を増やしたときの変化にも注目しよう。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>データサイエンスとの関係：補間・回帰・過学習</h2>
+    <p>
+      データ点を通る曲線を作ることは、次のような場面で使われます。
+    </p>
+    <ul>
+      <li><b>補間</b>：測定していない点の値を推定する（欠測値の補完、センサ値の間引き・再構成、画像の拡大縮小）。</li>
+      <li><b>数値計算</b>：関数を多項式で近似して、微分・積分を計算する。</li>
+      <li><b>回帰</b>：実際のデータには測定誤差（ランダムなずれ）がある。すべての点を通す必要はなく、<b>全体の傾向</b> をつかみたい。
+        そこで次数 $m$ を決め、<b>各データ点と曲線との縦のずれを2乗して足した値</b>（二乗誤差の合計）が最も小さい $m$ 次多項式を選ぶ。これが最小二乗法（多項式回帰）。</li>
+    </ul>
+    <p>
+      ここで大切な落とし穴が <b>過学習</b> です。次数を上げるほど、手元のデータ（<b>訓練データ</b>）とのずれは必ず小さくなり、
+      $10$ 点に対して $9$ 次にするとラグランジュ補間そのもの（ずれ $0$）になります。
+      しかしそれは「測定誤差までまるごと覚えた」状態で、<b>本当の傾向</b> からは大きくずれてしまいます。
+    </p>
+
+    <div class="callout point">
+      <div class="ttl">図の見方</div>
+      <ul>
+        <li><span class="t-dark">黒い点</span>：測定データ（測定誤差を含む）。実際に手元にある情報はこれだけ。</li>
+        <li><span class="t-gray">灰色の点線</span>：<b>本当の傾向</b>。実際には分からないが、この図では答え合わせのために描いている。</li>
+        <li><span class="t-blue">青い線</span>：黒い点にあてはめた多項式（次数 $m$ はスライダーで変える）。</li>
+        <li><span class="t-red">赤い縦線</span>：<b>訓練誤差</b>。各黒い点と青い線との縦のずれ。長さを2乗して足したものを数値で表示。</li>
+        <li><span class="t-teal">青緑の帯</span>：<b>本当の傾向とのずれ</b>。青い線と灰色の点線の間の領域。この差を2乗して足した値を数値で表示。</li>
+      </ul>
+    </div>
+
+    <div class="widget" id="w-fit">
+      <div class="widget-head">多項式で近似する <span class="hint">次数 m を変える／データを取り直す</span></div>
+      <div class="legend-line">
+        <span><i class="swatch dot" style="background:var(--text)"></i>黒い点：測定データ</span>
+        <span><i class="swatch line" style="background:var(--muted)"></i>灰色の点線：本当の傾向</span>
+        <span><i class="swatch line" style="background:var(--primary)"></i>青い線：あてはめた多項式</span>
+        <span><i class="swatch" style="background:var(--accent)"></i>赤い縦線：訓練誤差</span>
+        <span><i class="swatch" style="background:var(--teal)"></i>青緑の帯：本当の傾向とのずれ</span>
+      </div>
+      <div class="stage"><canvas aria-label="データへの多項式のあてはめ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k t-red">訓練誤差</span><span data-r="etrain"></span></div>
+          <div class="row"><span class="k t-teal">本当の傾向とのずれ</span><span data-r="etrue"></span></div>
+          <div class="row"><span class="k">判定</span><span data-r="note" style="font-size:14px;line-height:1.7"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout try">
+      <div class="ttl">読み取ろう</div>
+      <ul>
+        <li><span class="t-red">赤い縦線</span>は、次数を上げるほど <b>短くなり続け</b>、$m=9$ では消える（訓練誤差 $0$）。</li>
+        <li>一方 <span class="t-teal">青緑の帯</span>（本当の傾向とのずれ）は、ちょうどよい次数で最も細くなり、そこを超えると <b>太くなる</b>。$m=9$ では青い線が暴れて、帯が大きく広がる。</li>
+        <li>「データにぴったり合う」ことと「予測が当たる」ことは別。<b>モデルの複雑さ（次数）を選ぶ</b> ことが、データサイエンス・機械学習の中心課題のひとつです。</li>
+      </ul>
+    </div>
+    <details class="think">
+      <summary>考えてみよう：データを取り直すと最適な次数は変わる？</summary>
+      <p>「データを取り直す」を何度か押して、青緑の帯が最も細くなる次数を観察しましょう。誤差の出方が変わっても、だいたい低めの次数（3〜5次付近）が安定して良く、$m=9$ はほぼ毎回大きく暴れるはずです。「本当の傾向に最も近い次数にする」ボタンで確かめられます。</p>
+    </details>
+  
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>3点 $(0,1),\ (1,3),\ (2,7)$ を通る二次関数を求めよ。</li>
+        <li>$x$ 座標が異なる5点をすべて通る多項式は、何次以下のものがただ1つ存在するか。</li>
+        <li>1.6章(2) の図で、次数 $m$ を上げていくと、訓練誤差と「本当の傾向とのずれ」はそれぞれどう変化するか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $y=x^2+x+1$　(2) $4$ 次以下　(3) 訓練誤差は減り続け $m=9$ で $0$。本当の傾向とのずれは、ある次数までは減るが、それを超えると増える（過学習）</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="1-5.html"><span class="dir">← 前の章</span><span class="nm">1.5 ベジェ曲線</span></a>
+    <a class="next" href="index.html#summary"><span class="dir">第1回のまとめ →</span><span class="nm">多項式のまとめ</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261003"></script>
+<script src="../assets/plot.js?v=20261003"></script>
+<script src="polynomial.js?v=20261003"></script>
+</body>
+</html>

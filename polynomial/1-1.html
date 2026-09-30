@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1 一次関数 | 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式 1.1章：直線・傾き・補間・回帰直線">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+</head>
+<body class="chapter ch1">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html" class="active" aria-current="page"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 52 L56 12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="20" cy="42" r="5" fill="currentColor"/><circle cx="44" cy="22" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第1回 多項式 ／ 1.1章</div>
+      <h1><span class="chap-no">1.1</span>一次関数</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>$y=\teal{a}x+\red{b}$ の <span class="t-teal">傾き $a$</span> と <span class="t-red">切片 $b$</span> を、グラフから読み取れる。</li>
+      <li>2点 $\boldsymbol{A},\boldsymbol{B}$ を $t:(1-t)$ に分ける点 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$ を説明できる。</li>
+      <li>データに最もよく合う直線（回帰直線）が、どのような考え方で決まるかを説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="linear">
+    <p>
+      $y = \teal{a}x + \red{b}$ のグラフは直線です。決めるべき数は2つだけ:
+    </p>
+    <ul>
+      <li><span class="t-teal">傾き $\teal{a}$</span>：$x$ が $1$ 増えたとき、$y$ がどれだけ変化するか</li>
+      <li><span class="t-red">$y$ 切片 $\red{b}$</span>：$x=0$ のときの $y$（直線が $y$ 軸と交わる高さ）</li>
+    </ul>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>傾きと切片</h2>
+    <div class="widget" id="w-linear">
+      <div class="widget-head">直線 $y=\teal{a}x+\red{b}$ <span class="legend"><span class="lg" data-hl="a"><i style="background:var(--teal)"></i>緑 ＝ 傾き $a$</span><span class="lg" data-hl="b"><i style="background:var(--accent)"></i>赤 ＝ y切片 $b$</span></span> <span class="hint wide">凡例や式の色つき文字に触れると、図の対応する矢印が太くなります</span></div>
+      <div class="stage"><canvas aria-label="一次関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k t-teal">傾き a</span><span class="tex" data-r="slope"></span></div>
+          <div class="row"><span class="k t-red">y切片 b</span><span class="tex" data-r="yint"></span></div>
+          <div class="row"><span class="k">x切片</span><span class="tex" data-r="xint"></span></div>
+        </div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="btn-row">
+          <button class="btn primary" data-a="quiz">🎯 チャレンジ：目標の直線に合わせる</button>
+          <button class="btn" data-a="reset">リセット</button>
+        </div>
+        <div class="msg ng" data-r="msg"></div>
+      </div>
+    </div>
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li>図の中の <b>赤い矢印</b> が $y$ 切片 $\red{b}$ です。$\red{b}$ を動かすと、直線は上下に平行移動する。</li>
+        <li>「$x$ 方向に $1$ 進む」ときの <b>$y$ 方向の変化量</b> が <b>緑の矢印</b> で、その大きさが傾き $\teal{a}$。$\teal{a}$ が負なら矢印は下向き。</li>
+        <li>$\teal{a}=0$ にすると、グラフはどうなる？</li>
+        <li>「チャレンジ」で金色の点線が現れる。その直線に重なるよう $\teal{a}$, $\red{b}$ を合わせよう。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>2点から直線を作る ― 補間（lerp）</h2>
+    <p>
+      2点 $\boldsymbol{A}$, $\boldsymbol{B}$ が決まると直線が1本決まります。
+      パラメータ $t$ を使って、線分 $\boldsymbol{A}\boldsymbol{B}$ 上の点 $\boldsymbol{P}(t)$ を次のように定めます。
+    </p>
+    <div class="eq-box">$$\boldsymbol{P}(t) = (1-t)\,\boldsymbol{A} + t\,\boldsymbol{B}\qquad (0\leqq t\leqq 1)$$</div>
+    <ul>
+      <li>$t=0$ のとき $\boldsymbol{P}(0)=\boldsymbol{A}$、$t=1$ のとき $\boldsymbol{P}(1)=\boldsymbol{B}$。</li>
+      <li>$t$ を $0$ から $1$ へ動かすと、$\boldsymbol{P}(t)$ は $\boldsymbol{A}$ から $\boldsymbol{B}$ まで <b>一定の速さ</b> で進む（$t$ の1次式なので）。</li>
+      <li>$\boldsymbol{P}(t)-\boldsymbol{A}=t(\boldsymbol{B}-\boldsymbol{A})$ なので、
+        <span class="t-red">$\overline{\mathrm{AP}}=t\,\overline{\mathrm{AB}}$</span>、
+        <span class="t-teal">$\overline{\mathrm{PB}}=(1-t)\,\overline{\mathrm{AB}}$</span>。
+        つまり <b>$\mathrm{AP}:\mathrm{PB}=t:(1-t)$</b>（線分 $\mathrm{AB}$ を $t:(1-t)$ に <b>内分</b> する点）。</li>
+    </ul>
+    <p>この「$t:(1-t)$ に分ける」操作が、あとで登場するベジェ曲線のすべての土台になります。</p>
+    <div class="widget" id="w-lerp">
+      <div class="widget-head">2点を結ぶ <span class="legend"><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ AP（長さ t）</span><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ PB（長さ 1−t）</span></span> <span class="hint">点 A, B をドラッグ／<b>t</b> を動かす</span></div>
+      <div class="stage"><canvas aria-label="2点間の補間"></canvas></div>
+      <div class="ratio-cap strong">線分 AB 全体の長さを <span class="one">1</span> としたときの、AP と PB の長さの割合</div>
+      <div class="ratio-bar"><span class="rb-a"></span><span class="rb-b"></span></div>
+      <div class="ratio-table-wrap">
+        <table class="ratio-table">
+          <thead><tr><th></th><th>長さの割合（AB 全体を 1）</th><th>実際の長さ</th></tr></thead>
+          <tbody>
+            <tr class="ra"><th>AP</th><td data-r="ra-p"></td><td data-r="ra-l"></td></tr>
+            <tr class="rb"><th>PB</th><td data-r="rb-p"></td><td data-r="rb-l"></td></tr>
+            <tr class="rs"><th>合計（AB）</th><td>1</td><td data-r="rs-l"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">点P(t)</span><span class="tex" data-r="p"></span></div>
+          <div class="row"><span class="k">長さの比</span><span class="tex" data-r="ratio"></span></div>
+          <div class="row"><span class="k">直線の式</span><span class="tex" data-r="eq"></span></div>
+        </div>
+      </div>
+    </div>
+    <details class="think">
+      <summary>考えてみよう：$t=\tfrac12$、$t=\tfrac13$ の点は？</summary>
+      <p>$t=\tfrac12$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac12:\tfrac12=1:1$ で <b>中点</b>。$t=\tfrac13$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac13:\tfrac23=1:2$、つまり $\boldsymbol{A}$ から全体の $\tfrac13$ の位置です。
+      $t<0$ や $t>1$ にすると線分の外側の点（外分点）になります。</p>
+    </details>
+  
+    <h2 class="h-sub"><span class="tag">(3)</span>データに直線をあてはめる ― 回帰直線</h2>
+    <p>
+      一次関数は、<b>データの傾向</b> を表すのにも使われます。
+      たとえば「気温が高い日ほどアイスがよく売れる」「勉強時間が長いほど点数が高い」のように、データの点がだいたい直線状に並ぶことがあります。
+      その直線を式 $y=\teal{a}x+\red{b}$ で表せば、まだ測っていない $x$ に対する $y$ を <b>予測</b> できます。
+    </p>
+    <p>
+      (2) の補間は2点を <b>ちょうど通る</b> 直線でしたが、データの点はたくさんあり、すべてを通る直線はふつう引けません。
+      そこで、各データ点と直線との <span class="t-amber">縦のずれ</span>（下の図の金色の線）を2乗して足した値が <b>最も小さくなる</b> 直線を選びます。
+      これを <b>回帰直線</b> といい、この選び方を <b>最小二乗法</b> といいます。
+    </p>
+    <div class="widget" id="w-reg">
+      <div class="widget-head">データに直線をあてはめる <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 傾き $a$</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ 切片 $b$</span><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 縦のずれ</span><span class="lg"><i style="background:var(--text)"></i>黒い点 ＝ データ</span></span> <span class="hint">スライダーで直線を動かす／黒い点（データ）もドラッグできる</span></div>
+      <div class="stage"><canvas aria-label="データと回帰直線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">あなたの直線</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k t-amber">ずれの2乗の合計</span><span data-r="sse"></span></div>
+          <div class="row"><span class="k">回帰直線</span><span class="tex" data-r="best"></span></div>
+        </div>
+      </div>
+      <div class="panel" style="padding-top:0">
+        <div class="btn-row">
+          <button class="btn primary" data-a="reveal">答え合わせ：回帰直線を表示</button>
+          <button class="btn" data-a="shuffle">データを変える</button>
+          <button class="btn" data-a="reset">リセット</button>
+        </div>
+        <div class="msg ng" data-r="msg"></div>
+      </div>
+    </div>
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li>スライダーで <span class="t-teal">$a$</span>, <span class="t-red">$b$</span> を動かして、<span class="t-amber">金色の線</span>のずれの2乗の合計をできるだけ小さくしよう。</li>
+        <li>「答え合わせ」で回帰直線（灰色の点線）を表示。データの点をドラッグすると、回帰直線も動く。</li>
+        <li>1点だけを大きく外れた位置（外れ値）に動かすと、回帰直線はどう変わる？</li>
+      </ul>
+    </div>
+    <p class="note-small">
+      回帰直線の $a,\ b$ を式で求める方法は、確率統計論で詳しく扱います。
+      1.6章(2) では、この考え方を2次以上の多項式に広げた「多項式回帰」と、その落とし穴（過学習）を見ます。
+    </p>
+  
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>直線 $y=-2x+3$ の傾きと $y$ 切片を答えよ。</li>
+        <li>2点 $(0,1)$, $(2,5)$ を通る直線の式を求めよ。</li>
+        <li>$\boldsymbol{A}=(0,0)$, $\boldsymbol{B}=(6,3)$ のとき、$t=\tfrac13$ の点 $\boldsymbol{P}(t)$ と、$\mathrm{AP}:\mathrm{PB}$ を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) 傾き $-2$、$y$ 切片 $3$　(2) $y=2x+1$　(3) $(2,1)$、$\mathrm{AP}:\mathrm{PB}=1:2$</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="index.html"><span class="dir">← 第1回の目次</span><span class="nm">多項式</span></a>
+    <a class="next" href="1-2.html"><span class="dir">次の章 →</span><span class="nm">1.2 二次関数</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261003"></script>
+<script src="../assets/plot.js?v=20261003"></script>
+<script src="polynomial.js?v=20261003"></script>
+</body>
+</html>

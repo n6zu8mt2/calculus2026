@@ -108,24 +108,37 @@
     sa.on((v) => { st.a = v; update(); });
     sb.on((v) => { st.b = v; update(); });
 
-    plot.addHandle({ get x() { return 0; }, get y() { return st.b; }, get color() { return plot.c.accent; }, r: 5, halo: 3,
+    const hB = plot.addHandle({ get x() { return 0; }, get y() { return st.b; }, get color() { return plot.c.accent; }, r: 5, halo: 3,
       drag(x, y) { st.b = clamp(snap(y, 0.1), -5, 5); sb.set(st.b); update(); } });
-    plot.addHandle({ get x() { return 1; }, get y() { return st.a + st.b; }, get color() { return plot.c.teal; }, r: 5, halo: 3,
+    const hA = plot.addHandle({ get x() { return 1; }, get y() { return st.a + st.b; }, get color() { return plot.c.teal; }, r: 5, halo: 3,
       drag(x, y) { st.a = clamp(snap(y - st.b, 0.1), -4, 4); sa.set(st.a); update(); } });
+
+    // 式・凡例・図の連動ハイライト: 式の緑(a)や赤(b)、凡例に触れる／つまみを掴むと、対応する部分を強調
+    const hlOf = (el) => !el ? null : el.closest('[data-hl="a"], .tx-teal') ? 'a' : el.closest('[data-hl="b"], .tx-red') ? 'b' : null;
+    root.addEventListener('pointerover', function (e) { const h = hlOf(e.target); if (h !== st.hl) { st.hl = h; plot.invalidate(); } });
+    root.addEventListener('pointerleave', function () { st.hl = null; plot.invalidate(); });
+    function syncHl(h) {
+      root.querySelectorAll('[data-hl]').forEach((e) => e.classList.toggle('on', e.dataset.hl === h));
+      root.querySelectorAll('.tx-teal').forEach((e) => e.classList.toggle('glow', h === 'a'));
+      root.querySelectorAll('.tx-red').forEach((e) => e.classList.toggle('glow', h === 'b'));
+    }
 
     plot.draw = function (g) {
       const c = g.c, { a, b } = st;
+      const hl = plot.active === hA ? 'a' : plot.active === hB ? 'b' : st.hl;
+      const wA = hl === 'a' ? 7 : 4, wB = hl === 'b' ? 7 : 4;
+      syncHl(hl);
       g.grid({ xlabel: 'x', ylabel: 'y' });
       if (st.quiz) g.fn((x) => st.quiz.a * x + st.quiz.b, { color: c.amber, dash: [7, 6], width: 3.5 });
       g.fn((x) => a * x + b, { color: c.primary, width: 4 });
       // y切片 b：原点から (0,b) までの赤い矢印
-      if (Math.abs(b) > 0.15) g.arrow(0, 0, 0, b, { color: c.accent, width: 4 });
+      if (Math.abs(b) > 0.15) g.arrow(0, 0, 0, b, { color: c.accent, width: wB });
       g.text('y切片 b = ' + L.minus(num(b)), 0, b, { dx: -16, dy: b >= 0 ? -14 : 14, color: c.accent, bold: true, align: 'right', size: 13 });
       // x方向に1進む矢印
       g.arrow(0, b, 1, b, { color: c.text, width: 3 });
       g.text('x方向に 1', 0.5, b, { dy: a >= 0 ? 20 : -18, color: c.text, bold: true, align: 'center', size: 13 });
       // y方向に a だけ変化する矢印
-      if (Math.abs(a) > 0.1) g.arrow(1, b, 1, a + b, { color: c.teal, width: 4 });
+      if (Math.abs(a) > 0.1) g.arrow(1, b, 1, a + b, { color: c.teal, width: wA });
       g.text('y方向に a = ' + L.minus(num(a)), 1, b + a / 2, { dx: 14, color: c.teal, bold: true, align: 'left', size: 13 });
       g.text('（これが傾き）', 1, b + a / 2, { dx: 14, dy: 16, color: c.teal, align: 'left', size: 12 });
       if (a !== 0) {
@@ -152,6 +165,14 @@
     const plot = new Plot(root.querySelector('canvas'), { xmin: -6, xmax: 6, equal: true, yc: 0, ratio: [0.85, 0.5] });
     const st = { A: [-3.5, -1.5], B: [3.5, 2.2], t: 0.35 };
     const ba = root.querySelector('.rb-a'), bb = root.querySelector('.rb-b');
+    // 帯の幅に応じて表示を短くする（「AP：t」だと比のように読めるので「割合 ＝ 値（t）」と書く）
+    function barLabels() {
+      const t = st.t, W = ba.parentElement.clientWidth || 600;
+      const lab = (nm, v, sym, w) => w > 190 ? nm + ' の割合 ＝ ' + v.toFixed(2) + '（' + sym + '）' : w > 110 ? nm + ' ＝ ' + v.toFixed(2) : w > 40 ? v.toFixed(2) : '';
+      ba.textContent = lab('AP', t, 't', t * W);
+      bb.textContent = lab('PB', 1 - t, '1−t', (1 - t) * W);
+    }
+    new ResizeObserver(barLabels).observe(ba.parentElement);
     const player = Player(root, root.querySelector('.controls'), {
       dur: 2.6, hold: 0.8, autoplay: false,
       onT(t) { st.t = t; update(); },
@@ -163,15 +184,17 @@
       const t = st.t, p = P(), dx = st.B[0] - st.A[0], dy = st.B[1] - st.A[1], len = Math.hypot(dx, dy);
       tex(root, 'p', '\\boldsymbol{P}(' + num(t) + ') = (' + num(p[0]) + ',\\ ' + num(p[1]) + ')');
       tex(root, 'ratio', '\\mathrm{AP}:\\mathrm{PB}=' + C('red', 't') + ':' + C('teal', '(1-t)') + '=' + C('red', num(t)) + ':' + C('teal', num(1 - t)));
-      tex(root, 'len', C('red', '\\mathrm{AP}=' + num(t * len)) + ',\\ ' + C('teal', '\\mathrm{PB}=' + num((1 - t) * len)) + '\\ (\\mathrm{AB}=' + num(len) + ')');
+      const put = (k, v) => { const e = R(root, k); if (e) e.textContent = v; };
+      put('ra-p', 't = ' + t.toFixed(2)); put('ra-l', (t * len).toFixed(2));
+      put('rb-p', '1 − t = ' + (1 - t).toFixed(2)); put('rb-l', ((1 - t) * len).toFixed(2));
+      put('rs-l', len.toFixed(2));
       if (Math.abs(dx) < 1e-6) tex(root, 'eq', 'x = ' + num(st.A[0]) + '\\ (\\text{関数のグラフではない})');
       else {
         const a = Math.round((dy / dx) * 100) / 100, b = Math.round((st.A[1] - (dy / dx) * st.A[0]) * 100) / 100;
         tex(root, 'eq', linTeX(a, b));
       }
       ba.style.width = t * 100 + '%'; bb.style.width = (1 - t) * 100 + '%';
-      ba.textContent = t > 0.2 ? 'AP：t = ' + t.toFixed(2) : t > 0.07 ? 'AP' : '';
-      bb.textContent = 1 - t > 0.2 ? 'PB：1−t = ' + (1 - t).toFixed(2) : 1 - t > 0.07 ? 'PB' : '';
+      barLabels();
       plot.invalidate();
     }
     const dragTo = (pt) => (x, y) => { pt[0] = clamp(snap(x, 0.25), -5.5, 5.5); pt[1] = clamp(snap(y, 0.25), plot.ymin + 0.5, plot.ymax - 0.5); update(); };
@@ -1121,7 +1144,7 @@
     }
     function update() {
       const n = st.n;
-      R(root, 'note').textContent = (n === 2 ? '2点 → 直線（1次）。1.2節の補間と同じ式になる。' :
+      R(root, 'note').textContent = (n === 2 ? '2点 → 直線（1次）。1.1章(2)の補間と同じ式になる。' :
         n === 3 ? '3点 → 放物線（2次）。二次関数がただ1つ決まる。' : '4点 → 3次関数。4点をぴったり通る。') +
         '　点 P₁, P₂, … の座標が (x₁,y₁), (x₂,y₂), … 。';
       plot.invalidate();
@@ -1245,9 +1268,194 @@
     regen();
   }
 
+  /* ==========================================================
+     1.1(3) 回帰直線(最小二乗法)
+     ========================================================== */
+  function initReg() {
+    const root = $id('w-reg');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -0.8, xmax: 10.6, ymin: -0.8, ymax: 10, ratio: [0.85, 0.55] });
+    const DX = [1, 2, 3, 4, 5, 6, 7, 8, 9], DY = [2.3, 2.2, 3.9, 3.6, 5.2, 5.0, 6.6, 6.4, 7.9];
+    const st = { a: 0.3, b: 3, show: false, pts: [] };
+    const ctl = root.querySelector('.controls');
+    const sa = slider(ctl, { tex: '\\teal{a}', min: -2, max: 3, step: 0.05, value: st.a, color: 'teal', aria: '傾き a' });
+    const sb = slider(ctl, { tex: '\\red{b}', min: -3, max: 8, step: 0.05, value: st.b, color: 'accent', aria: '切片 b' });
+    const sse = (a, b) => st.pts.reduce((s, p) => s + Math.pow(p[1] - (a * p[0] + b), 2), 0);
+    function best() {
+      // 誤差の2乗和を最小にする a, b(連立一次方程式の解)
+      const n = st.pts.length; let sx = 0, sy = 0, sxx = 0, sxy = 0;
+      st.pts.forEach((p) => { sx += p[0]; sy += p[1]; sxx += p[0] * p[0]; sxy += p[0] * p[1]; });
+      const d = n * sxx - sx * sx;
+      const a = Math.abs(d) < 1e-9 ? 0 : (n * sxy - sx * sy) / d;
+      return { a, b: (sy - a * sx) / n };
+    }
+    const lineTeX = (a, b, col) => 'y=' + (col ? C('teal', num(a, 2)) : num(a, 2)) + 'x' + (b < 0 ? '-' : '+') + (col ? C('red', num(Math.abs(b), 2)) : num(Math.abs(b), 2));
+    function update() {
+      const e = sse(st.a, st.b), bb = best(), emin = sse(bb.a, bb.b);
+      tex(root, 'eq', lineTeX(st.a, st.b, true));
+      R(root, 'sse').textContent = e.toFixed(2) + (st.show ? '　（最小の値は ' + emin.toFixed(2) + '）' : '');
+      tex(root, 'best', st.show ? lineTeX(bb.a, bb.b, false) : '\\text{「答え合わせ」で表示}');
+      const m = R(root, 'msg');
+      if (e <= emin * 1.02 + 1e-6) { m.className = 'msg ok'; m.textContent = '✔ ほぼ最小です！ あなたの直線は回帰直線とほぼ一致しています。'; }
+      else { m.className = 'msg ng'; m.textContent = 'ずれの2乗の合計は、まだ ' + (e - emin).toFixed(2) + ' 小さくできます。'; }
+      plot.invalidate();
+    }
+    function setPts(ys) {
+      st.pts = DX.map((x, i) => [x, ys[i]]);
+      plot.handles.length = 0;
+      st.pts.forEach(function (pt) {
+        plot.addHandle({ get x() { return pt[0]; }, get y() { return pt[1]; }, get color() { return plot.c.text; }, r: 6, halo: 3,
+          drag(x, y) { pt[0] = clamp(snap(x, 0.1), 0, 10); pt[1] = clamp(snap(y, 0.1), 0, 9.6); update(); } });
+      });
+      update();
+    }
+    sa.on((v) => { st.a = v; update(); });
+    sb.on((v) => { st.b = v; update(); });
+    root.querySelector('[data-a="reveal"]').addEventListener('click', function (e) {
+      st.show = !st.show; e.currentTarget.textContent = st.show ? '回帰直線を隠す' : '答え合わせ：回帰直線を表示'; update();
+    });
+    root.querySelector('[data-a="shuffle"]').addEventListener('click', function () {
+      const a = 0.2 + Math.random() * 0.8, b = 0.5 + Math.random() * 2.5;
+      setPts(DX.map((x) => clamp(Math.round((a * x + b + (Math.random() - 0.5) * 2.4) * 10) / 10, 0.2, 9.4)));
+    });
+    root.querySelector('[data-a="reset"]').addEventListener('click', function () {
+      st.a = 0.3; st.b = 3; st.show = false; sa.set(st.a); sb.set(st.b);
+      root.querySelector('[data-a="reveal"]').textContent = '答え合わせ：回帰直線を表示';
+      setPts(DY);
+    });
+
+    plot.draw = function (g) {
+      const c = g.c, { a, b } = st;
+      g.grid({ xlabel: 'x', ylabel: 'y' });
+      // 縦のずれ(金)
+      st.pts.forEach((p) => g.line(p[0], p[1], p[0], a * p[0] + b, { color: c.amber, width: 3.5 }));
+      if (st.show) {
+        const bb = best();
+        g.fn((x) => bb.a * x + bb.b, { color: c.muted, width: 3, dash: [8, 6] });
+        g.textPx('灰色の点線：回帰直線（ずれの2乗の合計が最小）', 10, 16, { size: 12.5, bold: true, color: c.muted });
+      }
+      g.fn((x) => a * x + b, { color: c.primary, width: 4 });
+      g.textPx('青い線：あなたの直線　金色の線：縦のずれ', 10, st.show ? 34 : 16, { size: 12.5, bold: true, color: c.primary });
+    };
+    setPts(DY);
+  }
+
+  /* ==========================================================
+     1.4 冒頭：スマホのメニューの実例
+     ========================================================== */
+  function initUiDemo() {
+    const root = $id('w-uidemo');
+    const btn = root.querySelector('[data-a="toggle"]');
+    btn.addEventListener('click', function () {
+      const open = root.classList.toggle('open');
+      btn.textContent = open ? 'メニューを閉じる' : 'メニューを開く';
+    });
+    R(root, 'slow').addEventListener('change', (e) => root.classList.toggle('slow', e.target.checked));
+  }
+
+  /* ==========================================================
+     1.5 冒頭：3次ベジェ曲線4本で描いたハート
+     ========================================================== */
+  const HEART = [[[50, 88], [22, 70], [4, 46], [14, 26]], [[14, 26], [24, 6], [46, 10], [50, 30]],
+    [[50, 30], [54, 10], [76, 6], [86, 26]], [[86, 26], [96, 46], [78, 70], [50, 88]]];
+  function initHeart() {
+    const root = $id('w-heart');
+    const NS = 'http://www.w3.org/2000/svg';
+    let seg = HEART.map((s) => s.map((p) => p.slice()));
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '-2 -2 104 96');
+    svg.setAttribute('class', 'heart-svg');
+    root.querySelector('.heart-fig').append(svg);
+    const mk = (tag, cls) => { const e = document.createElementNS(NS, tag); if (cls) e.setAttribute('class', cls); return e; };
+    const path = mk('path', 'h-path'), gc = mk('g', 'h-ctrl');
+    svg.append(path, gc);
+    const f = (v) => String(Math.round(v * 10) / 10);
+    // 端点は隣り合う曲線で共有する。制御点は各曲線に2つずつ
+    const nodes = [];
+    function build() {
+      gc.innerHTML = '';
+      nodes.length = 0;
+      seg.forEach(function (s, i) {
+        [[0, 1], [3, 2]].forEach(function (pr) {
+          const l = mk('line', 'h-arm'); l.dataset.s = i; l.dataset.a = pr[0]; l.dataset.b = pr[1]; gc.append(l);
+        });
+      });
+      seg.forEach(function (s, i) {
+        [1, 2].forEach(function (k) { const e = mk('circle', 'h-cp'); e.setAttribute('r', 2.6); e.dataset.s = i; e.dataset.k = k; gc.append(e); nodes.push(e); });
+        const e = mk('rect', 'h-anchor'); e.setAttribute('width', 4.4); e.setAttribute('height', 4.4); e.dataset.s = i; e.dataset.k = 0; gc.append(e); nodes.push(e);
+      });
+    }
+    function draw() {
+      let d = 'M ' + f(seg[0][0][0]) + ' ' + f(seg[0][0][1]);
+      const lines = ['M ' + f(seg[0][0][0]) + ' ' + f(seg[0][0][1])];
+      seg.forEach(function (s) {
+        const t = 'C ' + [1, 2, 3].map((k) => f(s[k][0]) + ' ' + f(s[k][1])).join(', ');
+        d += ' ' + t; lines.push(t);
+      });
+      path.setAttribute('d', d + ' Z');
+      R(root, 'code').textContent = lines.join('\n') + '\nZ';
+      gc.querySelectorAll('.h-arm').forEach(function (l) {
+        const s = seg[+l.dataset.s], a = s[+l.dataset.a], b = s[+l.dataset.b];
+        l.setAttribute('x1', a[0]); l.setAttribute('y1', a[1]); l.setAttribute('x2', b[0]); l.setAttribute('y2', b[1]);
+      });
+      nodes.forEach(function (e) {
+        const p = seg[+e.dataset.s][+e.dataset.k];
+        if (e.tagName === 'circle') { e.setAttribute('cx', p[0]); e.setAttribute('cy', p[1]); }
+        else { e.setAttribute('x', p[0] - 2.2); e.setAttribute('y', p[1] - 2.2); }
+      });
+    }
+    // ドラッグ(端点を動かすときは、つながっている前の曲線の終点も一緒に動かす)
+    let drag = null;
+    const toSvg = (e) => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    svg.addEventListener('pointerdown', function (e) {
+      const t = e.target.closest('.h-cp, .h-anchor');
+      if (!t || gc.style.display === 'none') return;
+      drag = { s: +t.dataset.s, k: +t.dataset.k }; svg.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    svg.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      const q = toSvg(e), x = clamp(q.x, 0, 100), y = clamp(q.y, 0, 92);
+      seg[drag.s][drag.k] = [x, y];
+      if (drag.k === 0) { const pv = seg[(drag.s + 3) % 4]; pv[3] = [x, y]; }
+      draw();
+    });
+    const end = () => { drag = null; };
+    svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+    svg.addEventListener('touchstart', (e) => { if (e.target.closest('.h-cp, .h-anchor')) e.preventDefault(); }, { passive: false });
+    R(root, 'ctrl').addEventListener('change', (e) => { gc.style.display = e.target.checked ? '' : 'none'; });
+    root.querySelector('[data-a="reset"]').addEventListener('click', function () { seg = HEART.map((s) => s.map((p) => p.slice())); draw(); });
+    build(); draw();
+  }
+
+  /* ==========================================================
+     1.6 定理の図：2点・3点・4点を通る多項式
+     ========================================================== */
+  function initLagMini() {
+    const root = $id('w-lagmini');
+    root.querySelectorAll('.mini').forEach(function (box) {
+      const n = +box.dataset.n, pts = LAG_DEFAULT[n].map((p) => p.slice());
+      const plot = new Plot(box.querySelector('canvas'), { xmin: -5, xmax: 5, ymin: -4.5, ymax: 4.5, ratio: [0.75, 0.85] });
+      pts.forEach(function (pt) {
+        plot.addHandle({ get x() { return pt[0]; }, get y() { return pt[1]; }, get color() { return plot.c.text; }, r: 7, halo: 4,
+          drag(x, y) {
+            const nx = clamp(snap(x, 0.05), -4.7, 4.7);
+            if (pts.every((o) => o === pt || Math.abs(o[0] - nx) >= 0.4)) pt[0] = nx;
+            pt[1] = clamp(snap(y, 0.05), -4.2, 4.2);
+          } });
+      });
+      plot.draw = function (g) {
+        g.grid({ labels: false });
+        g.fn((x) => lagrange(pts, x), { color: g.c.primary, width: 4 });
+      };
+      plot.invalidate();
+    });
+  }
+
   function boot() {
-    [initLinear, initLerp, initShift, initQuad, initBall, initRace, initDesign, initDC, initBezier, initCssBezier, initLagrange, initFit].forEach(function (f) {
-      try { f(); } catch (e) { console.error(f.name, e); }
+    // 図が置かれているものだけ初期化する(章ごとのページでも共通で使えるように)
+    [[initLinear, 'w-linear'], [initLerp, 'w-lerp'], [initReg, 'w-reg'], [initUiDemo, 'w-uidemo'], [initHeart, 'w-heart'], [initLagMini, 'w-lagmini'], [initShift, 'w-shift'], [initQuad, 'w-quad'], [initBall, 'w-ball'], [initRace, 'w-race'],
+      [initDesign, 'w-design'], [initDC, 'w-dc'], [initBezier, 'w-bezier'], [initCssBezier, 'w-cssbezier'], [initLagrange, 'w-lag'], [initFit, 'w-fit']].forEach(function (e) {
+      if (!$id(e[1])) return;
+      try { e[0](); } catch (err) { console.error(e[0].name, err); }
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
