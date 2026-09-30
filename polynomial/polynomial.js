@@ -47,7 +47,7 @@
     const bp = el('button', 'btn primary', st.playing ? '⏸ 一時停止' : '▶ 再生');
     bp.type = 'button';
     row.append(bp); ctl.append(row);
-    const stT = slider(ctl, { tex: 't', min: 0, max: 1, step: 0.005, value: 0, color: 'accent', fmt: (v) => v.toFixed(2) });
+    const stT = slider(ctl, { tex: 't', min: 0, max: 1, step: 0.005, value: 0, color: 'accent', fmt: o.tFmt || ((v) => v.toFixed(2)) });
     const stD = o.durSlider ? slider(ctl, { tex: 'T', min: 0.5, max: 4, step: 0.1, value: st.dur, color: 'primary', fmt: (v) => v.toFixed(1) + '秒', aria: '所要時間' }) : null;
     const anim = L.animate(host, function (dt) {
       if (!st.playing) return false;
@@ -337,6 +337,204 @@
   }
 
   /* ==========================================================
+     3 放物線：ボールを投げる
+     ========================================================== */
+  function initBall() {
+    const root = $id('w-ball');
+    let G = 9.8;
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -2, xmax: 30, equal: true, yc: 5, ratio: [0.6, 0.56] });
+    const D = { h0: 1.5, v: 12, th: 45, g: 9.8 };
+    const st = { h0: D.h0, v: D.v, th: D.th, g: D.g, arrows: true, ghost: false, step: 2 };
+    let K0 = 0.5; // 初速の矢印: 1 m/s あたりの長さ(m)
+    let T = 0, player;
+    // アニメの全体時間（地球の軌跡を重ねるときは、地球側が着地するまで）
+    const Ttot = () => (st.ghost && Math.abs(st.g - 9.8) > 0.005 ? Math.max(T, calc(9.8).T) : T);
+    const niceStep = (x) => { const e = Math.pow(10, Math.floor(Math.log10(x))), m = x / e; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * e; };
+    // 重力や初速が変わっても軌道が画面に収まるよう、表示範囲を合わせる
+    function fit() {
+      const q0 = phys(), p = plot;
+      if (!p.w) return;
+      const q = { R: q0.R, ymax: q0.ymax };
+      if (st.ghost) { const e = calc(G_EARTH); q.R = Math.max(q.R, e.R); q.ymax = Math.max(q.ymax, e.ymax); }
+      const hw = p.h / p.w, gm = 0.09;
+      let span = Math.max((q.R * 1.12 + 1) * 17 / 16, ((q.ymax * 1.15 + 2)) / Math.max(0.2, hw - gm), 34 * 0.3);
+      st.step = niceStep(span / 15);
+      span = Math.ceil(span / st.step) * st.step;
+      p.o.xmin = -span / 17; p.o.xmax = span * 16 / 17;
+      p.o.yc = -gm * span + (span * hw) / 2;
+      p._layout();
+      K0 = 0.5 * span / 32;
+    }
+    plot.onResize = fit;
+    const ctl = root.querySelector('.controls');
+
+    function phys() {
+      G = st.g;
+      const r = (st.th * Math.PI) / 180;
+      const vx = st.v * Math.cos(r), vy = st.v * Math.sin(r);
+      T = (vy + Math.sqrt(vy * vy + 2 * G * st.h0)) / G;
+      return { vx, vy, T, R: vx * T, tp: Math.max(0, vy / G), ymax: st.h0 + (vy > 0 ? (vy * vy) / (2 * G) : 0) };
+    }
+    phys();
+    player = Player(root, ctl, {
+      dur: Math.min(6, Math.max(T, 0.8)), hold: 0.9, tFmt: (v) => (v * Ttot()).toFixed(2) + '秒',
+      onT() { plot.invalidate(); },
+    });
+    const sh = slider(ctl, { tex: 'h_0', min: 0, max: 4, step: 0.1, value: st.h0, color: 'primary', fmt: (v) => v.toFixed(1) + 'm', aria: '投げる高さ h0' });
+    const sv = slider(ctl, { tex: 'v_0', min: 2, max: 14, step: 0.1, value: st.v, color: 'primary', fmt: (v) => v.toFixed(1), aria: '初速 v0 (m/s)' });
+    const sth = slider(ctl, { tex: '\\theta', min: 0, max: 90, step: 1, value: st.th, color: 'primary', fmt: (v) => v + '°', aria: '投げる角度' });
+    const sg = slider(ctl, { tex: 'g', min: 1, max: 30, step: 0.1, value: st.g, color: 'primary', fmt: (v) => v.toFixed(1), aria: '重力加速度 g (m/s^2)' });
+    const G_EARTH = 9.8;
+    const fa = (v) => String(+v.toPrecision(4));
+    // 極端に小さい・大きい値でも表が崩れない表示
+    const fv = (v, d) => (v !== 0 && (Math.abs(v) < 0.01 || Math.abs(v) >= 1e6) ? v.toExponential(2) : v.toFixed(d));
+    const BODIES = [['月', 1.62], ['水星', 3.7], ['火星', 3.71], ['金星', 8.87], ['地球', 9.8], ['土星', 10.4], ['木星', 24.8]];
+    const PLANETS = [['地球', 9.8], ['月', 1.62], ['火星', 3.71], ['木星', 24.8]];
+    const grow = el('div', 'btn-row');
+    grow.style.marginTop = '8px';
+    grow.append(el('span', '', '<span style="font-size:13px;font-weight:700;color:var(--muted)">重力 g（m/s²）</span>'));
+    const pchips = el('div', 'chips');
+    const pbtn = PLANETS.map(function (pl) {
+      const b = el('button', 'chip', pl[0] + ' ' + pl[1]);
+      b.type = 'button';
+      b.addEventListener('click', function () { st.g = pl[1]; sg.set(st.g); update(); });
+      pchips.append(b); return b;
+    });
+    grow.append(pchips); ctl.append(grow);
+    // 地球の a 倍（小数可）で指定
+    const arow = el('div', 'btn-row');
+    arow.style.marginTop = '8px';
+    arow.innerHTML = '<label class="check" style="gap:6px">重力を地球の <input type="number" class="numin" min="0.1" step="0.1" inputmode="decimal" aria-label="地球の何倍か a"> 倍</label><span class="a-note"></span>';
+    ctl.append(arow);
+    const ain = arow.querySelector('input'), anote = arow.querySelector('.a-note');
+    ain.addEventListener('input', function () {
+      const v = parseFloat(ain.value);
+      if (isFinite(v) && v > 0) { anote.textContent = ''; st.g = v * G_EARTH; sg.set(clamp(st.g, 1, 30)); update(); }
+      else anote.textContent = '0 より大きい数を入力してください（小数も可）';
+    });
+    ain.addEventListener('blur', function () { ain.value = fa(st.g / G_EARTH); anote.textContent = ''; });
+    // 天体別の比較表
+    const cmp = R(root, 'cmp');
+    const calc = function (gg) {
+      const r = (st.th * Math.PI) / 180, vx = st.v * Math.cos(r), vy = st.v * Math.sin(r);
+      const Tt = (vy + Math.sqrt(vy * vy + 2 * gg * st.h0)) / gg;
+      return { R: vx * Tt, ymax: st.h0 + (vy > 0 ? (vy * vy) / (2 * gg) : 0), T: Tt };
+    };
+    function renderCmp() {
+      const rows = BODIES.map((b) => [b[0], b[1], false]);
+      let cur = rows.findIndex((r) => Math.abs(r[1] - st.g) < 0.005);
+      if (cur < 0) { rows.push(['いまの設定', st.g, true]); cur = rows.length - 1; }
+      cmp.innerHTML = '';
+      rows.forEach(function (r, i) {
+        const c = calc(r[1]), tr = document.createElement('tr');
+        if (i === cur) tr.className = 'on';
+        tr.innerHTML = '<td>' + r[0] + '</td><td>' + fv(r[1], 2) + ' m/s²</td><td>× ' + fv(r[1] / G_EARTH, 2) + '</td><td>' + fv(c.R, 1) + ' m</td><td>' + fv(c.ymax, 1) + ' m</td><td>' + fv(c.T, 2) + ' 秒</td>';
+        tr.addEventListener('click', function () { st.g = r[1]; sg.set(clamp(st.g, 1, 30)); update(); });
+        cmp.append(tr);
+      });
+    }
+
+    function update() {
+      const q = phys();
+      player.st.dur = Math.min(6, Math.max(Ttot(), 0.8));
+      pbtn.forEach((b, i) => b.setAttribute('aria-pressed', String(Math.abs(PLANETS[i][1] - st.g) < 0.005)));
+      if (document.activeElement !== ain) ain.value = fa(st.g / G_EARTH);
+      renderCmp();
+      fit();
+      const vx = q.vx, vy = q.vy, th = st.th;
+      tex(root, 'xy', 'x=' + C('teal', num(vx, 2)) + '\\,t,\\quad y=' + num(st.h0, 1) + ' + ' + C('red', num(vy, 2)) + '\\,t-' + num(G / 2, 2) + 't^2');
+      if (th >= 90) tex(root, 'eq', '\\text{真上に投げる（}x\\text{ は動かない）}');
+      else {
+        const a = -G / (2 * vx * vx), b = vy / vx;
+        tex(root, 'eq', 'y=' + num(a, 3) + 'x^2' + signed(b, 2) + 'x' + signed(st.h0, 1));
+      }
+      const p = vx * vy / G, qq = st.h0 + (vy > 0 ? (vy * vy) / (2 * G) : 0);
+      tex(root, 'apex', '(' + C('teal', 'p') + ',\\ ' + C('red', 'q') + ')=(' + C('teal', num(vy > 0 ? p : 0, 2)) + ',\\ ' + C('red', num(qq, 2)) + ')');
+      tex(root, 'range', num(q.R, 2) + '\\ \\mathrm{m}');
+      tex(root, 'time', num(q.T, 2) + '\\ \\text{秒}');
+      plot.invalidate();
+      if (player.st.playing) player.restart();
+    }
+    sh.on((v) => { st.h0 = v; update(); });
+    sv.on((v) => { st.v = v; update(); });
+    sth.on((v) => { st.th = v; update(); });
+    sg.on((v) => { st.g = v; update(); });
+
+    // 投げる高さ(黒) と 初速の矢印の先(金)
+    plot.addHandle({ get x() { return 0; }, get y() { return st.h0; }, get color() { return plot.c.text; }, r: 8,
+      label: '投げる位置', ldx: 14, ldy: 22,
+      drag(x, y) { st.h0 = clamp(snap(y, 0.1), 0, 4); sh.set(st.h0); update(); } });
+    plot.addHandle({ get x() { const q = phys(); return q.vx * K0; }, get y() { const q = phys(); return st.h0 + q.vy * K0; }, get color() { return plot.c.amber; }, r: 9,
+      label: () => 'v₀ = ' + st.v.toFixed(1) + ' m/s, θ = ' + st.th + '°', ldx: 14, ldy: -14,
+      drag(x, y) {
+        const dx = Math.max(0, x) / K0, dy = (y - st.h0) / K0;
+        st.v = clamp(snap(Math.hypot(dx, dy), 0.1), 2, 14);
+        st.th = clamp(Math.round((Math.atan2(Math.max(dy, 0), dx) * 180) / Math.PI), 0, 90);
+        sv.set(st.v); sth.set(st.th); update();
+      } });
+
+    R(root, 'arrows').addEventListener('change', (e) => { st.arrows = e.target.checked; plot.invalidate(); });
+    R(root, 'ghost').addEventListener('change', (e) => { st.ghost = e.target.checked; player.st.dur = Math.min(6, Math.max(Ttot(), 0.8)); fit(); plot.invalidate(); if (player.st.playing) player.restart(); });
+    root.querySelector('[data-a="reset"]').addEventListener('click', function () {
+      st.h0 = D.h0; st.v = D.v; st.th = D.th; st.g = D.g; sh.set(st.h0); sv.set(st.v); sth.set(st.th); sg.set(st.g); update();
+    });
+
+    plot.draw = function (g) {
+      const c = g.c, q = phys(), ctx = g.ctx;
+      const ttAll = player.st.t * Ttot(), tt = Math.min(q.T, ttAll), sc = (g.xmax - g.xmin) / 32;
+      const pos = (t) => [q.vx * t, st.h0 + q.vy * t - 0.5 * G * t * t];
+      g.grid({ step: st.step, xlabel: 'x (m)', ylabel: 'y (m)' });
+      // 地面
+      ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.22;
+      ctx.fillRect(0, g.Y(0), g.w, g.h - g.Y(0)); ctx.restore();
+      g.line(g.xmin, 0, g.xmax, 0, { color: c.muted, width: 2.5 });
+      // 地球(g = 9.8)での同じ投げ方の軌跡を薄く重ねる
+      if (st.ghost && Math.abs(st.g - G_EARTH) > 0.005) {
+        const e = calc(G_EARTH), posE = (t) => [q.vx * t, st.h0 + q.vy * t - 0.5 * G_EARTH * t * t];
+        const pe = []; for (let i = 0; i <= 80; i++) pe.push(posE((e.T * i) / 80));
+        g.poly(pe, { color: c.amber, width: 3.5, dash: [7, 6], alpha: 0.55 });
+        const be = posE(Math.min(ttAll, e.T));
+        g.dot(be[0], be[1], { r: 9, ring: true, color: c.amber, lw: 3 });
+        if (q.vy > 0) { const xe = q.vx * (q.vy / G_EARTH); g.text('地球 (g = 9.8) の軌跡', xe, e.ymax, { dy: -14, align: 'center', color: c.amber, bold: true, size: 12 }); }
+        else g.text('地球 (g = 9.8) の軌跡', e.R, 0, { dy: -14, align: 'right', color: c.amber, bold: true, size: 12 });
+      }
+      // 軌道(全体は薄く、通過済みは濃く)
+      const all = [], done = [];
+      for (let i = 0; i <= 80; i++) { const t = (q.T * i) / 80; all.push(pos(t)); if (t <= tt) done.push(pos(t)); }
+      done.push(pos(tt));
+      g.poly(all, { color: c.primary, width: 4, alpha: 0.3 });
+      g.poly(done, { color: c.primary, width: 4.5 });
+      // 一定の時間間隔ごとの位置(水平方向には等間隔に並ぶ)
+      const dtDot = [0.1, 0.2, 0.5, 1, 2, 5].find((d) => q.T / d <= 40) || 5;
+      for (let t = 0; t <= q.T + 1e-9; t += dtDot) { const p = pos(t); g.dot(p[0], p[1], { r: 2.8, color: c.muted, stroke: false }); }
+      // 最高点・着地点
+      if (q.vy > 0) {
+        const xp = q.vx * q.tp;
+        g.line(xp, q.ymax, xp, 0, { color: c.accent, dash: [5, 5], width: 1.6 });
+        g.dot(xp, q.ymax, { r: 6, color: c.accent });
+        g.text('最高点 (' + num(xp, 1) + ', ' + num(q.ymax, 1) + ')', xp, q.ymax, { dy: -16, align: 'center', color: c.accent, bold: true, size: 13 });
+      }
+      g.dot(q.R, 0, { r: 5, color: c.text });
+      g.text('着地 x = ' + num(q.R, 1), q.R, 0, { dy: 20, align: q.R > g.xmax - 0.19 * (g.xmax - g.xmin) ? 'right' : 'center', color: c.text, bold: true, size: 13 });
+      // ボール
+      const b = pos(tt), vyNow = q.vy - G * tt;
+      if (st.arrows && ttAll < q.T - 1e-6) {
+        const k = 0.28 * sc;
+        g.arrow(b[0], b[1], b[0] + q.vx * k, b[1], { color: c.teal, width: 3.5 });
+        if (Math.abs(vyNow) > 0.3) g.arrow(b[0], b[1], b[0], b[1] + vyNow * k, { color: c.accent, width: 3.5 });
+      }
+      g.dot(b[0], b[1], { r: 10, color: c.amber });
+      // 初速の矢印(ドラッグ用)
+      g.arrow(0, st.h0, q.vx * K0, st.h0 + q.vy * K0, { color: c.amber, width: 3, dash: [6, 4] });
+      g.textPx('t = ' + ttAll.toFixed(2) + ' 秒　　x = ' + num(b[0], 1) + ' m　　y = ' + num(b[1], 1) + ' m', 10, 16, { bold: true, size: 13, color: c.text });
+      if (st.arrows) g.textPx('矢印：水平の速さ（緑）　鉛直の速さ（赤）', 10, 34, { size: 12, bold: true, color: c.muted });
+    };
+    fit();
+    update();
+    player.start();
+  }
+
+  /* ==========================================================
      イージング: 共通の定義
      ========================================================== */
   const EASE = [
@@ -515,7 +713,7 @@
   }
 
   /* ==========================================================
-     3.2 3次でイージングを設計
+     4.2 3次でイージングを設計
      ========================================================== */
   function initDesign() {
     const root = $id('w-design');
@@ -1048,7 +1246,7 @@
   }
 
   function boot() {
-    [initLinear, initLerp, initShift, initQuad, initRace, initDesign, initDC, initBezier, initCssBezier, initLagrange, initFit].forEach(function (f) {
+    [initLinear, initLerp, initShift, initQuad, initBall, initRace, initDesign, initDC, initBezier, initCssBezier, initLagrange, initFit].forEach(function (f) {
       try { f(); } catch (e) { console.error(f.name, e); }
     });
   }
