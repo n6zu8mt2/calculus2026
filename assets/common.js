@@ -87,6 +87,8 @@
     input.setAttribute('aria-label', o.aria || o.tex);
     row.append(lab, input, out);
     parent.append(row);
+    // バー(塗り・つまみ)と右の数値を、パラメータの色にそろえる
+    row.style.setProperty('--sl', 'var(--' + (o.color || 'primary') + ')');
     Lab.setTex(lab, o.tex);
     const dec = (String(o.step).split('.')[1] || '').length;
     const get = () => +(+input.value).toFixed(dec);
@@ -96,6 +98,8 @@
       out.textContent = Lab.minus(o.fmt ? o.fmt(get()) : get().toFixed(dec));
     };
     show();
+    // 値の表示は常に追従させる(on() で処理を登録していなくても数字が動くように)
+    input.addEventListener('input', show);
     return {
       row, input, get,
       set(v) { input.value = v; show(); },
@@ -124,6 +128,35 @@
     return { kick };
   };
 
+  /* ---------- 進み具合(★)の記録 ---------- */
+  // ブラウザに保存する。キーは「章:課題」(例 '1-3:game')、値は {ステージ番号: ★の数}
+  const PROG = 'calc2026-progress';
+  Lab.progress = {
+    all() { try { return JSON.parse(localStorage.getItem(PROG) || '{}'); } catch (e) { return {}; } },
+    get(key) { return this.all()[key]; },
+    set(key, val) {
+      const a = this.all(); a[key] = val;
+      try { localStorage.setItem(PROG, JSON.stringify(a)); } catch (e) { /* noop */ }
+      document.dispatchEvent(new Event('progress'));
+    },
+  };
+  // 章の一覧・章カードに、その章で取った★の数を表示する
+  function renderStars() {
+    const all = Lab.progress.all();
+    Lab.$$('.chapnav a, a.chap-card').forEach(function (a) {
+      const m = (a.getAttribute('href') || '').match(/(\d+-\d+)\.html$/);
+      if (!m) return;
+      let n = 0;
+      Object.keys(all).forEach(function (k) {
+        if (k.indexOf(m[1] + ':') === 0) Object.values(all[k] || {}).forEach(function (v) { n += +v || 0; });
+      });
+      let b = a.querySelector('.stars');
+      if (n > 0) { if (!b) { b = Lab.el('span', 'stars'); a.append(b); } b.textContent = '★' + n; }
+      else if (b) b.remove();
+    });
+  }
+  document.addEventListener('progress', renderStars);
+
   /* ---------- テーマ ---------- */
   const root = document.documentElement;
   function isDark() {
@@ -143,6 +176,7 @@
     const pages = [
       { id: 'home', href: rootPath + 'index.html', title: 'トップ' },
       { id: 'polynomial', href: rootPath + 'polynomial/index.html', title: '多項式' },
+      { id: 'explog', href: rootPath + 'explog/index.html', title: '指数・対数' },
     ];
     host.className = 'site-header';
     host.innerHTML =
@@ -215,6 +249,7 @@
     buildHeader();
     buildToc();
     revealChapter();
+    renderStars();
     window.addEventListener('load', revealChapter);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

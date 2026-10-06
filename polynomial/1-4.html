@@ -33,8 +33,8 @@
   };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
 </head>
 <body class="chapter ch4">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -66,7 +66,7 @@
       <li>位置の関数 $f(t)$ のグラフの傾きが「速さ」を表すことを説明できる。</li>
       <li>出だしの速さ <span class="t-amber">$v_0$</span> と終わりの速さ <span class="t-teal">$v_1$</span> から、3次のイージング関数を作れる。</li>
     </ol>
-    <div class="goal-meta">図 3つ ・ 確認問題 3問</div>
+    <div class="goal-meta">図 3つ ・ チャレンジ 4ステージ ・ 確認問題 3問</div>
   </div>
 
   <section class="sec first" id="easing">
@@ -189,6 +189,27 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
       </p>
     </details>
   
+  
+    <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：お手本と同じ動きを作れ</h2>
+    <p>
+      UIデザイナーになったつもりで、<b>お手本の動き</b> と同じ動きを、出だしの速さ <span class="t-amber">$v_0$</span> と終わりの速さ <span class="t-teal">$v_1$</span> を決めて作りましょう。
+      小さな点は、ボールの <b>0.1秒ごとの位置</b>（時間を10等分した位置）です。点の間隔が広いところほど速く動いています。<b>あなたの点はスライダーに合わせて動く</b> ので、お手本の点と並び方がそろうように調整しましょう（同じ時刻の点どうしを細い点線で結んでいます）。
+      「判定」は3回まで。<b>お手本とのずれが小さいほど★が増えます</b>（最も良い結果が記録されます）。
+    </p>
+    <div class="widget" id="w-game-ease">
+      <div class="widget-head">お手本と同じ動きを作れ <span class="game-total" data-r="total"></span><span class="hint">$v_0,\ v_1$ を決めて「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="お手本と同じ動きを作れ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="sec" id="check">
@@ -213,8 +234,9 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261003"></script>
-<script src="../assets/plot.js?v=20261003"></script>
-<script src="polynomial.js?v=20261003"></script>
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="polynomial.js?v=20261018"></script>
 </body>
 </html>

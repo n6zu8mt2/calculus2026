@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.6 ネイピア数 e | 指数・対数 | 解析学 2026</title>
+<meta name="description" content="第2回 指数関数・対数関数 2.6章：複利・リボ払い・e の正体">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+</head>
+<body class="chapter ch6">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html" class="active" aria-current="page"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><text x="32" y="44" text-anchor="middle" font-size="36" font-style="italic" font-family="Georgia, serif" fill="currentColor" font-weight="700">e</text></svg></div>
+    <div>
+      <div class="eyebrow">第2回 指数関数・対数関数 ／ 2.6章</div>
+      <h1><span class="chap-no">2.6</span>ネイピア数 e</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>単利と複利の違いを式で表し、複利が指数関数になることを説明できる。</li>
+      <li>$\left(1+\frac1n\right)^n$ が $n\to\infty$ で $e\approx2.718$ に近づくことを、利息の話と結びつけて説明できる。</li>
+      <li>$y=a^x$ の $x=0$ での接線の傾きがちょうど 1 になる底が $e$ であることを、図で確かめる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ チャレンジ 3ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <section class="sec first" id="main">
+
+    <p>
+      数学でいちばん大切な定数の一つが <b>ネイピア数</b> $e=2.71828\ldots$ です。
+      $e$ は「お金の利息」と「接線の傾き」という、一見関係なさそうな2つの場面から自然に現れます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>単利と複利：お金はどう増える？</h2>
+
+    <p>
+      お金を銀行に預けると、預けたお金に <b>利息</b>（りそく）がつきます。
+    </p>
+    <ul>
+      <li><b>元金</b>（がんきん）：最初に預けた（または借りた）お金そのもの。ここでは $P$ 円とします。</li>
+      <li><b>利息</b>（りそく）：お金を預けたお礼として銀行が上乗せしてくれるお金（借りた場合は、借りたお礼として払うお金）。
+        1年あたり元金の何%の利息がつくかを <b>年利</b> といいます。例：元金 100 万円・年利 5% なら、1年間の利息は $100\times0.05=5$ 万円。</li>
+    </ul>
+    <p>利息のつけ方には次の2通りがあります。</p>
+    <ul>
+      <li><b class="t-teal">単利</b>：利息は <b>最初の元金にだけ</b> つく。毎年同じ額ずつ増える → $n$ 年後に $P(1+rn)$ 円（<b>1次関数</b>）。</li>
+      <li><b class="t-blue">複利</b>：ついた利息も元金に加えて、<b>利息にも利息がつく</b> → $n$ 年後に $P(1+r)^n$ 円（<b>指数関数</b>）。</li>
+    </ul>
+    <p>ここで $P$ は元金、$r$ は年利（5% なら $r=0.05$）。条件を変えて、どのくらい差がつくか確かめましょう。</p>
+    <div class="widget" id="w-compound">
+      <div class="widget-head">単利・複利シミュレーター <span class="hint">条件を入力／表の行をクリックするとグラフで確認</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="sim-form">
+          <label>元金（円）<input type="number" data-r="P" value="1000000" min="0" step="10000" inputmode="numeric"></label>
+          <label>年利（%）<input type="number" data-r="rate" value="5" min="0" max="100" step="0.1" inputmode="decimal"></label>
+          <label>年数<input type="number" data-r="years" value="30" min="1" max="100" step="1" inputmode="numeric"></label>
+        </div>
+        <div class="btn-row" style="margin-top:10px"><span class="lbl-sm">複利の回数</span><div class="chips" data-r="ms"></div></div>
+        <div class="btn-row" style="margin-top:8px"><span class="lbl-sm">例</span>
+          <button class="btn" type="button" data-preset="0.2">定期預金 0.2%</button>
+          <button class="btn" type="button" data-preset="5">投資 5%</button>
+          <button class="btn" type="button" data-preset="15">リボ払い・借金 15%</button>
+        </div>
+      </div>
+      <div class="sum-grid" data-r="summary"></div>
+      <div class="stage"><canvas aria-label="単利と複利の比較"></canvas></div>
+      <div class="panel"><div class="readout">
+        <div class="row"><span class="k t-teal">単利</span><span class="tex" data-r="simple"></span></div>
+        <div class="row"><span class="k t-blue">複利</span><span class="tex" data-r="comp"></span></div>
+      </div></div>
+      <div class="table-wrap sim-table"><table class="cmp">
+        <thead><tr><th>年</th><th class="t-teal">単利の利息</th><th class="t-teal">単利の残高</th><th class="t-blue">複利の利息</th><th class="t-blue">複利の残高</th><th>差（利息の利息）</th></tr></thead>
+        <tbody data-r="tbody"></tbody>
+      </table></div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">計算の仕組み</div>
+      <ol>
+        <li><b>1年目</b>：利息は どちらも $P\times r$。1年後の金額は $P+Pr=P(1+r)$ で同じです。</li>
+        <li><b class="t-teal">単利</b>：2年目以降も利息は <b>元金 $P$ に対して</b> $Pr$ のまま。毎年 $Pr$ ずつ増えるので
+          $$P\ \to\ P+Pr\ \to\ P+2Pr\ \to\ \cdots\ \to\ P(1+rn)$$</li>
+        <li><b class="t-blue">複利</b>：利息は <b>その時点の残高</b> に対してつく。残高 $B$ は1年で $B+Br=B(1+r)$、つまり <b>毎年 $(1+r)$ 倍</b>。
+          $$P\ \to\ P(1+r)\ \to\ P(1+r)^2\ \to\ \cdots\ \to\ P(1+r)^n$$</li>
+        <li><b>年 $m$ 回</b> 利息をつけるときは、1回あたり $\frac rm$ の利率で $mn$ 回 → $P\left(1+\frac rm\right)^{mn}$ 円。</li>
+      </ol>
+      <p>表の「差」は、<b>利息についた利息</b> がどれだけ積み重なったかを表しています。最初はわずかでも、年数がたつと急に大きくなります（指数関数の威力）。</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="ttl">借金では複利が「敵」になる</div>
+      <p>同じしくみは借金にも働きます。年利 15% の借金を返さずに放っておくと、$1.15^n=2$ より $n=\dfrac{\log 2}{\log 1.15}\approx5.0$、<b>約 5 年で 2 倍</b>、10 年で約 4 倍になります。
+      リボ払いでは、毎月の返済額が利息より少ないと、返しているのに借金が減らない（むしろ増える）ことが起こります。上の「リボ払い・借金 15%」で確かめてみましょう。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">72の法則</div>
+      <p>複利で元金が2倍になる年数は、およそ $\dfrac{72}{\text{年利（\%）}}$ 年です。たとえば年利 6% なら約 12 年。
+      これは $\log_e 2\approx0.693$ から来ている近似です（2倍になる年数 $n$ は $(1+r)^n=2$ より $n=\dfrac{\log 2}{\log(1+r)}\approx\dfrac{0.693}{r}$）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>利息を細かくつけ続けると e が現れる</h2>
+
+    <p>
+      年利 100%（$r=1$）という夢のような銀行で、利息をつける回数 $n$ を増やしていくと、1年後の金額（元金の何倍か）は
+      $\left(1+\frac1n\right)^n$ です。$n$ をどんどん大きくすると、どこまでも増えるでしょうか？
+    </p>
+    <div class="widget" id="w-elimit">
+      <div class="widget-head">$\left(1+\frac1n\right)^n$ の行き先 <span class="hint">$n$ を大きくする</span></div>
+      <div class="stage"><canvas aria-label="(1+1/n)^n のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">値</span><span class="tex big" data-r="val"></span></div>
+          <div class="row"><span class="k">e との差</span><span class="tex" data-r="diff"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eq-box">$$e=\lim_{n\to\infty}\left(1+\frac1n\right)^n=2.718281828\ldots$$</div>
+    <p>毎秒、いや毎瞬間に利息をつけても（<b>連続複利</b>）、1年後は $e$ 倍、約 2.718 倍にしかなりません。</p>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>リボ払いの怖さ</h2>
+
+    <p>
+      クレジットカードの <b>リボ払い</b> は、毎月決まった額だけ返す方式です。残っている借金には毎月利息がつき（複利）、
+      返済額から利息が引かれた分しか元金が減りません。返済額が小さいと、いつまでも終わらないこともあります。
+    </p>
+    <div class="widget" id="w-revo">
+      <div class="widget-head">リボ払いシミュレーター <span class="hint">買い物の金額・月利・毎月の返済額を変える</span></div>
+      <div class="stage"><canvas aria-label="リボ払いの残高の推移"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">完済まで</span><span data-r="months" class="note-txt big-txt"></span></div>
+          <div class="row"><span class="k">返済総額</span><span data-r="total" class="note-txt"></span></div>
+          <div class="row"><span class="k">払った利息</span><span data-r="interest" class="note-txt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>e の正体：傾きがちょうど 1</h2>
+
+    <p>
+      $y=a^x$ のグラフは、どの $a$ でも点 $(0,1)$ を通ります。そこでの <b>接線の傾き</b> は $a$ によって変わります。
+      <b>傾きがちょうど 1 になる $a$</b> を探すと…それが $e$ です。このため $e^x$ は「どこでも、接線の傾き ＝ 高さ」という特別な性質
+      $\left(e^x\right)'=e^x$ を持ち、微分積分で主役になります。
+    </p>
+    <div class="widget" id="w-game-e">
+      <div class="widget-head">接線の傾きを合わせろ <span class="game-total" data-r="total"></span><span class="hint">底 $a$ を決めて「決定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="接線の傾きを合わせろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">ポイント</div>
+      <p>$y=a^x$ の $x=0$ での接線の傾きは $\log a$（自然対数）です。だから傾きが 1 になるのは $\log a=1$、つまり $a=e$ のとき。
+      この授業で底を書かない $\log$ を自然対数とするのは、このように $e$ が最も自然な底だからです。</p>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>100 万円を年利 1% の複利で 5 年間預けたときの残高を求めよ（円未満切り捨て）。</li>
+        <li>$\displaystyle\lim_{x\to\infty}\left(1+\frac3x\right)^x$ を求めよ。</li>
+        <li>$\displaystyle\lim_{x\to\infty}\left(1+\frac1x\right)^{-x}$ を求めよ。</li>
+        <li>72の法則を使って、年利 3% の複利で元金が2倍になるのは約何年後か見積もれ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $100\times1.01^5\approx105.10$ 万円（1,051,010 円）　(2) $\left(\left(1+\frac{1}{x/3}\right)^{x/3}\right)^3\to e^3$　(3) $\dfrac1e$　(4) $72\div3=24$ 年</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="2-5.html"><span class="dir">← 前の章</span><span class="nm">2.5 対数の応用</span></a>
+    <a class="next" href="index.html#summary"><span class="dir">第2回のまとめ →</span><span class="nm">指数・対数のまとめ</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="explog.js?v=20261018"></script>
+</body>
+</html>

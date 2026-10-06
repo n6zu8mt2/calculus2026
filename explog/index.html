@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第2回 指数関数・対数関数 | 解析学 2026</title>
+<meta name="description" content="指数の拡張・指数関数・倍々ゲーム・対数・対数の応用・ネイピア数eを、動かしながら理解する。">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+</head>
+<body class="chapter">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html" class="active" aria-current="page"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <div class="page-hero">
+    <div class="eyebrow">第2回</div>
+    <h1>指数関数・対数関数</h1>
+    <p class="lead">
+      「2倍、4倍、8倍…」と同じ倍率で増え続ける量を表すのが <b>指数関数</b>、その「何倍を何回？」を逆にたずねるのが <b>対数</b> です。
+      $2^{-1}$ や $2^{\frac12}$ がなぜあの値になるのかから始めて、紙を折って月まで行く話、音や地震の大きさ、
+      お金の利息とネイピア数 $e$ まで、6つの章で体験します。各章には <b>チャレンジ</b> があり、取った★は章の一覧に表示されます。
+    </p>
+  </div>
+
+  <section class="sec first" id="chapters">
+    <h2 class="h-sub"><span class="tag">章</span>第2回の章</h2>
+    <div class="cards">
+      <a class="card chap-card ch1" href="2-1.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="6" y="40" width="8" height="18" fill="currentColor"/><rect x="18" y="31" width="8" height="27" fill="currentColor" opacity=".85"/><rect x="30" y="18" width="8" height="40" fill="currentColor" opacity=".7"/><rect x="42" y="4" width="8" height="54" fill="currentColor" opacity=".55"/><text x="52" y="60" font-size="10" fill="currentColor" font-weight="700">×2</text></svg></div>
+        <div>
+          <span class="badge">2.1章</span>
+          <h3>指数を広げる</h3>
+          <p>$2^0=1,\ 2^{-1}=\frac12,\ 2^{\frac12}=\sqrt2$ が自然な理由</p>
+        </div>
+      </a>
+      <a class="card chap-card ch2" href="2-2.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 56 C 24 55, 36 50, 44 36 S 54 10, 58 4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M4 58 H60" stroke="currentColor" stroke-width="2" opacity=".6"/></svg></div>
+        <div>
+          <span class="badge">2.2章</span>
+          <h3>指数関数のグラフ</h3>
+          <p>$y=a^x$・平行移動・倍々の増え方</p>
+        </div>
+      </a>
+      <a class="card chap-card ch3" href="2-3.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M10 56 h44 M14 48 h36 M18 40 h28 M22 32 h20 M26 24 h12 M29 16 h6" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="12" r="6" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">2.3章</span>
+          <h3>倍々ゲームの威力</h3>
+          <p>折り紙で月まで・バイバイン</p>
+        </div>
+      </a>
+      <a class="card chap-card ch4" href="2-4.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 58 C 10 30, 18 22, 30 18 S 50 12, 58 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M6 6 V58 H60" fill="none" stroke="currentColor" stroke-width="2" opacity=".6"/></svg></div>
+        <div>
+          <span class="badge">2.4章</span>
+          <h3>対数</h3>
+          <p>対数の定義・対数法則・計算尺・桁数</p>
+        </div>
+      </a>
+      <a class="card chap-card ch5" href="2-5.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 32 H58" stroke="currentColor" stroke-width="3"/><path d="M8 24 v16 M20 26 v12 M27 27 v10 M32 27 v10 M36 28 v8 M44 24 v16 M52 26 v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div>
+        <div>
+          <span class="badge">2.5章</span>
+          <h3>対数の応用</h3>
+          <p>対数目盛・dB・地震・pH・音階・数当て</p>
+        </div>
+      </a>
+      <a class="card chap-card ch6" href="2-6.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><text x="32" y="44" text-anchor="middle" font-size="36" font-style="italic" font-family="Georgia, serif" fill="currentColor" font-weight="700">e</text></svg></div>
+        <div>
+          <span class="badge">2.6章</span>
+          <h3>ネイピア数 e</h3>
+          <p>複利・リボ払い・e の正体</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec" id="summary">
+    <h2 class="h-sub"><span class="tag">まとめ</span>第2回のまとめ</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>項目</th><th>式</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>指数の拡張</td><td>$a^0=1,\ a^{-n}=\dfrac1{a^n},\ a^{\frac mn}=\sqrt[n]{a^m}$</td><td>指数法則がそのまま成り立つように決める</td></tr>
+          <tr><td>指数法則</td><td>$a^ma^n=a^{m+n},\ (a^m)^n=a^{mn}$</td><td>かける回数の足し算・かけ算</td></tr>
+          <tr><td>指数関数</td><td>$y=a^x$</td><td>$x$ が 1 増えると $y$ は $a$ 倍。多項式より速く増える</td></tr>
+          <tr><td>対数</td><td>$a^y=x\iff y=\log_a x$</td><td>$a$ を何乗すると $x$ になるか</td></tr>
+          <tr><td>対数法則</td><td>$\log_a MN=\log_a M+\log_a N$</td><td>かけ算を足し算に変える（計算尺・桁数・対数目盛）</td></tr>
+          <tr><td>ネイピア数</td><td>$e=\displaystyle\lim_{n\to\infty}\left(1+\frac1n\right)^n\approx2.718$</td><td>連続複利／$y=e^x$ の $x=0$ での接線の傾きが 1。$\log=\log_e$</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="移動">
+    <a class="prev" href="../polynomial/index.html"><span class="dir">← 第1回</span><span class="nm">多項式</span></a>
+    <a class="next" href="2-1.html"><span class="dir">最初の章 →</span><span class="nm">2.1 指数を広げる</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数</footer>
+<script src="../assets/common.js?v=20261018"></script>
+</body>
+</html>

@@ -177,3 +177,146 @@ table.ratio-table { min-width: 0; width: 100%; font-variant-numeric: tabular-num
   .mini3 { grid-template-columns: minmax(0, 1fr); }
   .mini3 .mini + .mini { border-left: none; border-top: 1px solid var(--border); }
 }
+
+/* ---------- 1.3(2) 惑星の的当て ---------- */
+.mission { padding: 12px 14px; font-weight: 700; font-size: 15px; line-height: 1.6; background: var(--surface); border-top: 1px solid var(--border); }
+.mission .mno { display: inline-block; font-size: 12px; font-weight: 800; color: #fff; background: var(--teal); border-radius: 6px; padding: 1px 8px; margin-right: 8px; vertical-align: 1px; }
+.game-total { font-weight: 800; color: var(--amber); margin-right: 4px; }
+.stage-chip .st { color: var(--amber); letter-spacing: 1px; }
+.chip[aria-pressed="true"] .st { color: #fff; }
+.throws { display: inline-flex; align-items: center; gap: 5px; }
+.throws i { width: 13px; height: 13px; border-radius: 50%; background: var(--amber); display: inline-block; }
+.throws i.used { background: var(--track); }
+.throws span { margin-left: 6px; font-size: 14px; }
+.result { font-weight: 800; font-size: 15px; line-height: 1.6; }
+.result.hit { color: var(--teal); }
+.result.miss { color: var(--accent); }
+.game-hint { font-size: 14px; line-height: 1.7; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* 章の一覧・章カードの★ */
+.stars { margin-left: auto; font-size: 12px; font-weight: 800; color: var(--amber); white-space: nowrap; padding-left: 6px; }
+
+/* ゲームの答えと解説 */
+.game-answer { font-size: 14px; line-height: 1.75; }
+.game-answer .ans-note { margin-left: 8px; font-size: 12.5px; color: var(--muted); }
+.ans-box { padding: 8px 12px; border-radius: 10px; background: var(--surface); border: 1px dashed var(--violet); }
+
+/* ゲームの「式」: 見出しの下に全幅で表示し、読み出し欄を少し広く */
+@media (min-width: 720px) {
+  [id^="w-game"] .panel.two { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+}
+[id^="w-game"] .readout .row:has([data-r="formula"]) { flex-wrap: wrap; row-gap: 2px; }
+[id^="w-game"] [data-r="formula"] { flex: 1 1 100%; font-size: 1.05em; padding: 2px 0 6px; }
+
+/* ---------- 第2回 ---------- */
+.lbl-sm { font-size: 13px; font-weight: 700; color: var(--muted); }
+.note-txt { font-size: 14px; line-height: 1.7; }
+.big-txt { font-size: 17px; font-weight: 800; }
+.actual-num { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; word-break: break-all; }
+.question { font-size: 16px; font-weight: 800; margin-bottom: 10px; min-height: 1.6em; }
+
+/* 2.1 パターンのカード */
+.cards-row { display: flex; align-items: center; gap: 4px; overflow-x: auto; padding: 18px 14px; background: var(--plot-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.pcard {
+  flex: 0 0 auto; min-width: 86px; padding: 10px 8px; border-radius: 14px; border: 2px solid var(--primary);
+  background: var(--surface); color: var(--text); font: inherit; cursor: pointer; display: grid; gap: 4px; text-align: center;
+  box-shadow: var(--shadow); transition: transform .12s;
+}
+.pcard:hover { transform: translateY(-2px); }
+.pcard.zero { border-color: var(--teal); }
+.pcard.neg { border-color: var(--accent); }
+.pcard.hidden { background: var(--surface-2); border-style: dashed; }
+.pcard .pe { font-size: 18px; }
+.pcard .pv { font-size: 17px; font-weight: 800; min-height: 1.6em; }
+.pcard.hidden .pv { color: var(--muted); font-size: 22px; }
+.parrow { flex: 0 0 auto; display: grid; gap: 2px; font-size: 11.5px; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.3; }
+.parrow span:first-child { color: var(--teal); }
+.parrow span:last-child { color: var(--accent); }
+
+/* 2.5 ピアノ */
+.piano { position: relative; height: 140px; margin: 14px; user-select: none; -webkit-user-select: none; }
+.pkey { position: absolute; top: 0; border: 1px solid var(--border); cursor: pointer; padding: 0; font: inherit; }
+.pkey.white { height: 100%; background: #fff; border-radius: 0 0 8px 8px; z-index: 1; display: flex; align-items: flex-end; justify-content: center; }
+.pkey.white span { font-size: 11px; color: #555; margin-bottom: 6px; }
+.pkey.black { height: 60%; background: #222; border-color: #000; border-radius: 0 0 6px 6px; z-index: 2; }
+.pkey.on.white { background: color-mix(in srgb, var(--accent) 35%, #fff); }
+.pkey.on.black { background: var(--accent); }
+@media (max-width: 480px) { .piano { height: 110px; margin: 10px 6px; } .pkey.white span { font-size: 9px; } }
+
+/* 読み出し欄の文章は折り返す */
+.readout .row > span:not(.k) { flex: 1 1 0; min-width: 0; }
+
+/* 2.3 シーン(紙折り・バイバイン) */
+.scene { position: relative; display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 14px; margin: 14px; padding: 16px; border-radius: 14px; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 10%, var(--surface)), var(--surface-2)); border: 1px solid var(--border); }
+.scene-left, .scene-right { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; text-align: center; min-width: 0; }
+.scene-right { justify-content: center; }
+.paper-stack { height: 150px; width: 100%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 8px; }
+.paper { width: 70%; max-width: 150px; max-height: 150px; height: 4px; border-radius: 2px; transition: height .35s ease;
+  background: linear-gradient(0deg, #fbf7ee 0 62%, #a8916a 62% 100%); background-size: 100% 2.2px; border: 1px solid #b9a67e; box-shadow: 0 3px 8px rgba(0,0,0,.12); transform-origin: bottom center; }
+.paper.dense { background: linear-gradient(90deg, #e9dcc0, #d8c49c 50%, #e9dcc0); }
+.scale-badge { font-size: 11.5px; font-weight: 700; color: var(--accent); min-height: 1.4em; }
+.fold-eq { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 6px; }
+.fold-eq .op { font-size: 22px; font-weight: 800; color: var(--muted); }
+.fold-eq .u { font-size: 14px; font-weight: 700; margin-left: 3px; }
+.fold-eq .scene-big.small { color: var(--amber); margin-top: 0; }
+.paper.fold { animation: fold .35s ease; }
+@keyframes fold { 0% { transform: scaleX(1); } 40% { transform: scaleX(.55) translateY(-6px); } 100% { transform: scaleX(1); } }
+.scene-big { font-size: clamp(30px, 6vw, 46px); font-weight: 800; line-height: 1.1; color: var(--amber); font-variant-numeric: tabular-nums; word-break: break-all; }
+.scene-big.small { font-size: clamp(20px, 3.6vw, 28px); color: var(--text); margin-top: 6px; }
+.scene-sub { font-size: 12px; color: var(--muted); font-weight: 700; }
+.scene-now { font-size: 12.5px; color: var(--muted); font-weight: 700; }
+.scene-pic { width: 100%; height: 170px; display: flex; align-items: center; justify-content: center; }
+.scene-pic img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,.18)); }
+.scene-pic .emoji-pic { font-size: 110px; line-height: 1; }
+.scene-pic.pop { animation: pop .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pop { 0% { transform: scale(.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.scene-cap { font-size: clamp(17px, 2.6vw, 21px); font-weight: 800; color: var(--teal); margin-top: 4px; }
+.scene-next { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.banner { grid-column: 1 / -1; position: relative; z-index: 2; padding: 12px 14px; border-radius: 12px; font-weight: 800; text-align: center;
+  background: linear-gradient(90deg, var(--amber), var(--accent)); color: #fff; box-shadow: var(--shadow); }
+.banner.pop { animation: pop .6s cubic-bezier(.3, 1.6, .5, 1); }
+.rain { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.rain .drop { position: absolute; top: -40px; animation: fall linear forwards; opacity: .9; }
+@keyframes fall { to { transform: translateY(420px) rotate(240deg); } }
+@media (max-width: 560px) {
+  .scene { grid-template-columns: 1fr; margin: 10px; padding: 12px; }
+  .paper-stack { height: 110px; } .paper { max-height: 110px; }
+  .scene-pic { height: 130px; } .scene-pic .emoji-pic { font-size: 80px; }
+}
+@media (prefers-reduced-motion: reduce) { .paper.fold, .scene-pic.pop, .banner.pop { animation: none; } .rain { display: none; } }
+
+/* 目立たせる行立て数式 */
+.eq-box.eq-hero { font-size: 118%; border: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  background: linear-gradient(135deg, var(--primary-soft), var(--surface)); box-shadow: var(--shadow); }
+@media (max-width: 560px) { .eq-box.eq-hero { font-size: 100%; } }
+
+/* 2.6 単利・複利シミュレーター */
+.sim-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.sim-form label { display: grid; gap: 4px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.sim-form input { width: 100%; min-width: 0; font: inherit; font-size: 16px; font-weight: 700; color: var(--text); padding: 8px 10px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface); font-variant-numeric: tabular-nums; }
+.sim-form input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.sum-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 14px; }
+.sum-card { border: 1px solid var(--border); border-left: 5px solid var(--c, var(--primary)); border-radius: 12px; padding: 10px 12px; background: var(--surface); min-width: 0; }
+.sum-card.teal { --c: var(--teal); } .sum-card.blue { --c: var(--primary); } .sum-card.accent { --c: var(--accent); } .sum-card.amber { --c: var(--amber); }
+.sum-card .k { font-size: 12px; font-weight: 700; color: var(--muted); }
+.sum-card .v { font-size: clamp(17px, 2.4vw, 22px); font-weight: 800; color: var(--c); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.sum-card .s { font-size: 11.5px; color: var(--muted); }
+.sim-table { margin: 0 14px 14px; max-height: 340px; overflow-y: auto; }
+.sim-table table { min-width: 560px; font-size: 13.5px; }
+.sim-table th { position: sticky; top: 0; background: var(--surface-2); z-index: 1; }
+.sim-table td, .sim-table th { text-align: right; padding: 6px 10px; }
+.sim-table td:first-child, .sim-table th:first-child { text-align: center; }
+@media (max-width: 720px) { .sum-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .sim-form { grid-template-columns: 1fr 1fr; } .sim-form label:first-child { grid-column: 1 / -1; } .sum-grid, .sim-table { margin: 10px; } }
+
+/* 2.5 音律の比較 */
+.h-sub2 { font-size: 1.12rem; margin: 26px 0 8px; padding-left: 10px; border-left: 4px solid var(--teal); }
+table.tune-table { min-width: 560px; font-size: 13.5px; }
+table.tune-table th, table.tune-table td { padding: 8px 10px; vertical-align: top; }
+table.tune-table tbody th { white-space: nowrap; background: var(--surface-2); text-align: left; }
+table.tune-table.num td { text-align: center; font-variant-numeric: tabular-nums; }
+table.tune-table tr.on td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+table.tune-table.num td:last-child { font-weight: 700; }

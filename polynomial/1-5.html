@@ -33,8 +33,8 @@
   };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
 </head>
 <body class="chapter ch5">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -66,7 +66,7 @@
       <li>$t:(1-t)$ の内分を重ねるとベジェ曲線が描けること（ド・カステリョのアルゴリズム）を説明できる。</li>
       <li>CSS の <code>cubic-bezier(x1, y1, x2, y2)</code> の4つの数が何を表すか説明できる。</li>
     </ol>
-    <div class="goal-meta">図 4つ ・ 確認問題 3問</div>
+    <div class="goal-meta">図 4つ ・ チャレンジ 4ステージ ・ 確認問題 3問</div>
   </div>
 
   <section class="sec first" id="bezier">
@@ -235,6 +235,26 @@
       </p>
     </div>
   
+  
+    <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：曲線をなぞれ</h2>
+    <p>
+      薄く表示された太い線を、3次ベジェ曲線でなぞりましょう。端点（四角）は固定で、<b>2つの制御点（丸）をドラッグ</b> して形を合わせます。
+      「判定」は3回まで。<b>お手本とのずれが小さいほど★が増えます</b>。曲線は端点で制御点の方向へ出発する、という性質がヒントです。
+    </p>
+    <div class="widget" id="w-game-trace">
+      <div class="widget-head">曲線をなぞれ <span class="game-total" data-r="total"></span><span class="hint">制御点をドラッグして「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="曲線をなぞれ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="sec" id="check">
@@ -259,8 +279,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261003"></script>
-<script src="../assets/plot.js?v=20261003"></script>
-<script src="polynomial.js?v=20261003"></script>
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="polynomial.js?v=20261018"></script>
 </body>
 </html>

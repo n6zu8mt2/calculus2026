@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.1 指数を広げる | 指数・対数 | 解析学 2026</title>
+<meta name="description" content="第2回 指数関数・対数関数 2.1章：2⁰=1, 2⁻¹=1/2, 2^{1/2}=√2 が自然な理由">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+</head>
+<body class="chapter ch1">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html" class="active" aria-current="page"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="6" y="40" width="8" height="18" fill="currentColor"/><rect x="18" y="31" width="8" height="27" fill="currentColor" opacity=".85"/><rect x="30" y="18" width="8" height="40" fill="currentColor" opacity=".7"/><rect x="42" y="4" width="8" height="54" fill="currentColor" opacity=".55"/><text x="52" y="60" font-size="10" fill="currentColor" font-weight="700">×2</text></svg></div>
+    <div>
+      <div class="eyebrow">第2回 指数関数・対数関数 ／ 2.1章</div>
+      <h1><span class="chap-no">2.1</span>指数を広げる：0・負・分数の指数</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>$2^0=1$、$2^{-n}=\dfrac{1}{2^n}$ になる理由を、パターンと指数法則の2通りで説明できる。</li>
+      <li>$2^{\frac12}=\sqrt2$ のように、分数の指数を累乗根で表せる。</li>
+      <li>指数法則を使って、$2^x$ の形の数の指数 $x$ を求められる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <section class="sec first" id="main">
+
+    <p>
+      $2^3=2\times2\times2$ は「2 を 3 回かける」という意味でした。では $2^0$ や $2^{-1}$、$2^{\frac12}$ はどうでしょう。
+      「0 回かける」「−1 回かける」「半分回かける」では意味がわかりません。
+    </p>
+    <p>
+      数学では、こういうときに <b>すでに成り立っている規則（パターンや指数法則）がそのまま成り立つように、意味を広げます</b>。
+      すると、$2^0=1$、$2^{-1}=\frac12$、$2^{\frac12}=\sqrt2$ と <b>ごく自然に</b> 決まってしまいます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>右へ ×2、左へ ÷2：パターンで広げる</h2>
+
+    <p>
+      $2^1$, $2^2$, $2^3$, … と右へ1つ進むごとに <b>2 倍</b> になります。逆に、左へ1つ進むごとに <b>2 で割る</b> ことになります。
+      このパターンを $2^1$ より左にも続けると、$2^0, 2^{-1}, 2^{-2},\dots$ の値が決まります。
+      <b>カードの値を予想してから</b>、クリックしてめくってみましょう。
+    </p>
+    <div class="widget" id="w-pow-cards">
+      <div class="widget-head">パターンで指数を広げる <span class="hint">「左へ進む」でカードを増やし、クリックしてめくる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">底 a</span><div class="chips" data-r="bases"></div></div></div>
+      <div class="cards-row" data-r="row"></div>
+      <div class="panel" style="padding-top:0">
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-a="left">← 左へ1つ進む（÷a）</button>
+          <button class="btn" type="button" data-a="right">右へ1つ進む（×a）→</button>
+          <button class="btn" type="button" data-a="open">全部めくる</button>
+          <button class="btn" type="button" data-a="reset">はじめから</button>
+        </div>
+        <div class="msg ok" data-r="msg"></div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">わかったこと</div>
+      <p>$a^0=1$、$a^{-1}=\dfrac1a$、$a^{-2}=\dfrac1{a^2}$、…　一般に $a^{-n}=\dfrac{1}{a^n}$。<br>
+      「マイナスの指数」は「逆数」、「0 乗」は「1」です。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>指数法則を守ると決まる</h2>
+
+    <p>
+      もう一つの見方は <b>指数法則</b> です。まず、指数が自然数（1, 2, 3, …）のときを確認しましょう。
+      $2^{\teal{3}}$ は「2 を $\teal{3}$ 回かける」、$2^{\red{2}}$ は「2 を $\red{2}$ 回かける」なので、
+    </p>
+    <div class="eq-box">$$2^{\teal{3}}\times2^{\red{2}}=(\teal{2\times2\times2})\times(\red{2\times2})=2^{\teal{3}+\red{2}}=2^5$$</div>
+    <p>
+      かけ合わせると「かける回数」が足し算になります。一般に、自然数 $m,\ n$ について
+    </p>
+    <div class="eq-box eq-hero">$$a^{\teal{m}}\times a^{\red{n}}=a^{\teal{m}+\red{n}}\qquad\text{（指数法則）}$$</div>
+    <p>
+      これは「回数」として考えれば当たり前の規則です。ところが $2^0$ や $2^{-3}$ は「0 回かける」「−3 回かける」となり、回数の意味では決められません。
+      そこで数学では、次のように考えます。
+    </p>
+    <div class="callout point">
+      <div class="ttl">考え方</div>
+      <p>$2^0$ や $2^{-3}$ の値は、まだ決まっていない「空いている席」。
+      そこに入れる値は、<b>指数法則 $a^m\times a^n=a^{m+n}$ が 0 や負の数でもそのまま成り立つように</b> 選ぶ。
+      （規則が成り立たなくなる決め方をすると、計算のたびに「この場合は例外…」と気をつけなければならず、不便だからです。）</p>
+    </div>
+
+    <p><b>ステップ1：$2^0$ を決める。</b>　指数法則で $m=0,\ n=3$ とすると</p>
+    <div class="eq-box">$$2^{0}\times2^{3}=2^{0+3}=2^3\qquad\text{つまり}\qquad 2^0\times8=8$$</div>
+    <p>
+      「8 にかけても 8 のまま」になる数は $1$ しかありません。だから <b>$2^0=1$ と決めるしかない</b> のです。
+      （$2^0=0$ と決めると $0\times8=0\neq8$ となり、指数法則が壊れてしまいます。）
+    </p>
+
+    <p><b>ステップ2：$2^{-3}$ を決める。</b>　今度は $m=-3,\ n=3$ とすると、指数の和は $-3+3=0$ なので</p>
+    <div class="eq-box">$$2^{-3}\times2^{3}=2^{-3+3}=2^0=1\qquad\text{つまり}\qquad 2^{-3}\times8=1$$</div>
+    <p>
+      「8 にかけると 1 になる数」は $\dfrac18$ だけ。だから <b>$2^{-3}=\dfrac18=\dfrac1{2^3}$ と決めるしかない</b>。
+      同じように考えると、一般に
+    </p>
+    <div class="eq-box">$$a^0=1,\qquad a^{-n}=\frac{1}{a^n}\qquad(a\neq0)$$</div>
+
+    <p><b>ステップ3：ほかの場合も矛盾しないか確かめる。</b>
+      たとえば $2^{-1}\times2^{-2}$ は、決めた値で計算すると $\dfrac12\times\dfrac14=\dfrac18$、指数法則で計算すると $2^{-1+(-2)}=2^{-3}=\dfrac18$。ちゃんと一致します。
+      もう一つの指数法則 $(a^m)^n=a^{mn}$ も、$\left(2^{-1}\right)^2=\left(\dfrac12\right)^2=\dfrac14=2^{-2}$ のように成り立ちます。
+      下のスライダーで、いろいろな $m,\ n$ で確かめてみましょう。
+    </p>
+    <div class="widget" id="w-pow-law">
+      <div class="widget-head">指数法則 $2^{\teal{m}}\times2^{\red{n}}=2^{\teal{m}+\red{n}}$ <span class="hint">$m$ と $n$ を動かす</span></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">かけ算</span><span class="tex big" data-r="mul"></span></div>
+          <div class="row"><span class="k">累乗の累乗</span><span class="tex" data-r="pow"></span></div>
+          <div class="row"><span class="k">気づき</span><span data-r="note" class="note-txt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">指数法則から決まること</div>
+      <ul>
+        <li>$2^0\times2^3=2^{0+3}=2^3$ が成り立つには、$2^0=1$ でなければならない。</li>
+        <li>$2^{-3}\times2^3=2^{-3+3}=2^0=1$ が成り立つには、$2^{-3}=\dfrac{1}{2^3}$ でなければならない。</li>
+      </ul>
+      <p>(1) の「左へ進むと ÷2」というパターンで決めた値と、(2) の「指数法則が成り立つように」決めた値が、<b>まったく同じ</b> になりました。
+      別々の考え方から同じ答えが出るので、$2^0=1,\ 2^{-n}=\dfrac1{2^n}$ は「むりやり決めた約束」ではなく、<b>こう決めるのが自然</b> なのです。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>分数の指数：点と点のあいだを埋める</h2>
+
+    <p>
+      では $2^{\frac12}$ は？ 指数法則 $(a^m)^n=a^{mn}$ を使うと $\bigl(2^{\frac12}\bigr)^2=2^{\frac12\times2}=2^1=2$。
+      つまり $2^{\frac12}$ は <b>2 回かけると 2 になる数</b> ＝ $\sqrt2\approx1.414$ です。
+      同じように $2^{\frac1k}$ は「$k$ 回かけると 2 になる数」$=\sqrt[k]{2}$。
+      分割数 $k$ を増やすと、整数の点のあいだが埋まって、なめらかな曲線 $y=2^x$ が現れます。
+    </p>
+    <div class="widget" id="w-pow-frac">
+      <div class="widget-head">分数の指数で間を埋める <span class="hint">分割数 $k$ を選ぶ／点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">分割数 k</span><div class="chips" data-r="ks"></div>
+        <label class="check"><input type="checkbox" data-r="curve">なめらかな曲線を重ねる</label></div></div>
+      <div class="stage"><canvas aria-label="分数の指数と y=2^x"></canvas></div>
+      <div class="panel">
+        <div class="readout">
+          <div class="row"><span class="k">1歩の倍率</span><span class="tex" data-r="step"></span></div>
+          <div class="row"><span class="k">選んだ点</span><span class="tex big" data-r="pt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">まとめ：指数の広げ方</div>
+      <p>$a>0$ のとき、$a^0=1$、　$a^{-n}=\dfrac1{a^n}$、　$a^{\frac1n}=\sqrt[n]{a}$、　$a^{\frac mn}=\sqrt[n]{a^m}$。
+      どれも「指数法則 $a^m a^n=a^{m+n},\ (a^m)^n=a^{mn}$ がそのまま成り立つ」ように決めたものです。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：指数ハンター</h2>
+
+    <p>$2^x$ が目標の数になるような $x$ を見つけましょう。グラフ $y=2^x$ と、目標の高さ（金色の点線）が手がかりです。
+    3回まで決定でき、<b>1回目で正解すると★3</b>。指数法則で計算してから決定しましょう。</p>
+    <div class="widget" id="w-game-pow">
+      <div class="widget-head">指数ハンター <span class="game-total" data-r="total"></span><span class="hint">$x$ を決めて「決定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="指数ハンター"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>$2^{-3}$ と $3^0$ を求めよ。</li>
+        <li>$\sqrt2=2^x$ を満たす $x$ を求めよ。</li>
+        <li>$\left(\sqrt[4]{2}\cdot2^4\right)^2=2^y$ を満たす $y$ を求めよ。</li>
+        <li>$\dfrac{1}{3\sqrt3}=3^z$ を満たす $z$ を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $2^{-3}=\dfrac18$、$3^0=1$　(2) $x=\dfrac12$　(3) $\left(2^{\frac14}\cdot2^4\right)^2=2^{2\cdot\frac{17}{4}}$ より $y=\dfrac{17}{2}$　(4) $3\sqrt3=3^{\frac32}$ より $z=-\dfrac32$</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="index.html"><span class="dir">← 第2回の目次</span><span class="nm">指数・対数</span></a>
+    <a class="next" href="2-2.html"><span class="dir">次の章 →</span><span class="nm">2.2 指数関数のグラフ</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="explog.js?v=20261018"></script>
+</body>
+</html>

@@ -33,8 +33,8 @@
   };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
 </head>
 <body class="chapter ch2">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -66,7 +66,7 @@
       <li>グラフを <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、式が $y-q=f(x-p)$ になることを説明できる。</li>
       <li>平方完成で、一般形 $y=ax^2+bx+c$ の頂点を求められる。</li>
     </ol>
-    <div class="goal-meta">図 2つ ・ 確認問題 3問</div>
+    <div class="goal-meta">図 2つ ・ チャレンジ 4ステージ ・ 確認問題 3問</div>
   </div>
 
   <section class="sec first" id="quadratic">
@@ -162,6 +162,27 @@
     </div>
   
 
+  
+    <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：放物線でコインを集めろ</h2>
+    <p>
+      放物線 $y=\blue{a}(x-\teal{p})^2+\red{q}$ で、コインをすべて集めましょう。
+      発射する前は、ねらいの <b>点線</b> と頂点・対称軸、コインまでの <b>縦のずれ</b> が表示されます（点線を消して命中すると 👑）。3回まで発射でき、<b>1回目で成功すると★3</b> です。
+      慣れてきたら点線を消し、頂点の位置や左右対称性に注目して、$a,\ p,\ q$ を求めてから発射しましょう。
+    </p>
+    <div class="widget" id="w-game-parab">
+      <div class="widget-head">放物線でコインを集めろ <span class="game-total" data-r="total"></span><span class="hint">$a,\ p,\ q$ を決めて「発射」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="放物線でコインを集めろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="sec" id="check">
@@ -186,8 +207,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261003"></script>
-<script src="../assets/plot.js?v=20261003"></script>
-<script src="polynomial.js?v=20261003"></script>
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="polynomial.js?v=20261018"></script>
 </body>
 </html>

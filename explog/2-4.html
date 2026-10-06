@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.4 対数 | 指数・対数 | 解析学 2026</title>
+<meta name="description" content="第2回 指数関数・対数関数 2.4章：対数の定義・対数法則・計算尺・桁数">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+</head>
+<body class="chapter ch4">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html" class="active" aria-current="page"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 58 C 10 30, 18 22, 30 18 S 50 12, 58 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M6 6 V58 H60" fill="none" stroke="currentColor" stroke-width="2" opacity=".6"/></svg></div>
+    <div>
+      <div class="eyebrow">第2回 指数関数・対数関数 ／ 2.4章</div>
+      <h1><span class="chap-no">2.4</span>対数：何乗すればよい？</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>$\log_a x$ を「$a$ を何乗すると $x$ になるか」として求められる。</li>
+      <li>$y=\log_a x\iff x=a^y$ の言いかえが自由にできる。</li>
+      <li>対数法則 $\log_a(xy)=\log_a x+\log_a y$ を、指数法則から説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 1つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <section class="sec first" id="main">
+
+    <p>
+      $2^x=8$ なら $x=3$。では $2^x=5$ となる $x$ は？ このような「<b>$a$ を何乗すると $x$ になるか</b>」を表す記号が <b>対数</b> です。
+    </p>
+    <div class="eq-box eq-hero">$$\log_a x=\bigl(\,a\ \text{を何乗すると}\ x\ \text{になるか}\,\bigr)$$</div>
+    <p>言いかえると、次の3つはすべて同じことを表しています。</p>
+    <div class="eq-box eq-hero">$$y=\log_a x\quad\iff\quad\bigl(\,a\ \text{を}\ y\ \text{乗すると}\ x\ \text{になる}\,\bigr)\quad\iff\quad x=a^y$$</div>
+    <p class="note-txt" style="text-align:center">（ただし $a>0,\ a\neq1,\ x>0$）</p>
+    <p>
+      $a$ を <b>底</b>（てい）、$x$ を <b>真数</b> といいます。例：$\log_2 8=3$（$2$ を $3$ 乗すると $8$）、$\log_{10}1000=3$、$\log_2\frac12=-1$（$2^{-1}=\frac12$）。
+    </p>
+    <div class="callout warn">
+      <div class="ttl">この授業での記号の約束</div>
+      <p>底を省略して $\log x$ と書いたときは、<b>底がネイピア数 $e\approx2.718$ の対数（自然対数）</b> $\log_e x$ を表します（2.6章）。
+      高校で使った「底 10 の対数」は、必ず $\log_{10}x$ と書きます。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>指数関数をひっくり返すと対数関数</h2>
+
+    <p>
+      $y=\log_a x$ は $y=a^x$ の $x$ と $y$ を入れかえた関数（<b>逆関数</b>）です。
+      そのためグラフは、直線 $y=x$ について <b>線対称</b> になります。点をドラッグして確かめましょう。
+    </p>
+    <div class="widget" id="w-logdef">
+      <div class="widget-head">$y=a^x$ と $y=\log_a x$ <span class="hint">底を選ぶ／青い点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">底 a</span><div class="chips" data-r="bases"></div></div></div>
+      <div class="stage"><canvas aria-label="指数関数と対数関数のグラフ"></canvas></div>
+      <div class="panel">
+        <div class="readout">
+          <div class="row"><span class="k">対数</span><span class="tex big" data-r="log"></span></div>
+          <div class="row"><span class="k">言いかえ</span><span class="tex" data-r="exp"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>対数法則：かけ算が足し算になる</h2>
+
+    <p>
+      対数のいちばん大事な性質は、<b>かけ算が足し算になる</b> ことです。
+    </p>
+    <div class="eq-box eq-hero">$$\log_a(xy)=\log_a x+\log_a y$$</div>
+    <p>
+      <b>なぜ？</b>　$x=a^{\teal{p}},\ y=a^{\red{q}}$ とすると（つまり $\teal{p}=\log_a x,\ \red{q}=\log_a y$）、指数法則から
+    </p>
+    <div class="eq-box">$$xy=a^{\teal{p}}\cdot a^{\red{q}}=a^{\teal{p}+\red{q}}$$</div>
+    <p>
+      なので「$a$ を何乗すると $xy$ になるか」は $\teal{p}+\red{q}$、すなわち $\log_a(xy)=\teal{\log_a x}+\red{\log_a y}$ です。
+      <b>指数法則 $a^pa^q=a^{p+q}$ を、対数の言葉で言いかえたもの</b> なのです。
+      例：$\log_2(4\times8)$ $=\log_2 4+\log_2 8$ $=2+3=5$（実際 $2^5=32=4\times8$）。
+    </p>
+    <p>同じように、指数法則 $\dfrac{a^p}{a^q}=a^{p-q}$、$(a^p)^r=a^{pr}$ から次も成り立ちます。</p>
+    <div class="eq-box">$$\log_a\frac{x}{y}=\log_a x-\log_a y,\qquad \log_a x^r=r\log_a x,\qquad \log_a 1=0,\qquad \log_a a=1$$</div>
+    <p>
+      さらに、底をそろえたいときは <b>底の変換公式</b> が使えます。$x=a^{\log_a x}$ の両辺の $\log_b$ をとると $\log_b x=\log_a x\cdot\log_b a$ なので
+    </p>
+    <div class="eq-box">$$\log_a x=\frac{\log_b x}{\log_b a}\qquad\text{例：}\ \log_2 5=\frac{\log_{10}5}{\log_{10}2}\approx\frac{0.6990}{0.3010}\approx2.32$$</div>
+    <div class="callout point">
+      <div class="ttl">かけ算 → 足し算 のありがたみ</div>
+      <p>電卓がなかった時代、大きな数のかけ算は大変でした。対数表で $\log_{10}$ の値を調べて <b>足し算</b> し、もう一度表で元の数に戻せば、かけ算ができます。
+      ケプラーが惑星の軌道を計算できたのも対数のおかげ、と言われています（2.5章でもう少し応用を見ます）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：対数を求めよ</h2>
+
+    <p>$\log_a x$ の値をスライダーで答えましょう。「$a$ を何乗すると $x$？」と考え、<b>$a^{(\text{答え})}=x$</b> になっているか確かめてから決定しましょう。</p>
+    <div class="widget" id="w-game-log">
+      <div class="widget-head">対数を求めよ <span class="game-total" data-r="total"></span><span class="hint">答えを決めて「決定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="対数を求めよ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>$\log_3 81$ と $\log_2\dfrac18$ を求めよ。</li>
+        <li>$\log_6 2+\log_6 18$ を計算せよ。</li>
+        <li>$a=\log_6 2,\ b=\log_6 7$ とおく。$\log_6 28$ を $a,\ b$ で表せ。</li>
+        <li>$\log_2 3=a$ とする。$\log_2 24$ と $\log_2\dfrac94$ を $a$ で表せ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $4$、$-3$　(2) $\log_6 36=2$　(3) $\log_6(2^2\cdot7)=2a+b$　(4) $\log_2 24=\log_2(2^3\cdot3)=3+a$、$\log_2\dfrac94=2\log_2 3-2\log_2 2=2a-2$</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="2-3.html"><span class="dir">← 前の章</span><span class="nm">2.3 倍々ゲームの威力</span></a>
+    <a class="next" href="2-5.html"><span class="dir">次の章 →</span><span class="nm">2.5 対数の応用</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="explog.js?v=20261018"></script>
+</body>
+</html>

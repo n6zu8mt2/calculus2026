@@ -406,7 +406,7 @@
     const sh = slider(ctl, { tex: 'h_0', min: 0, max: 4, step: 0.1, value: st.h0, color: 'primary', fmt: (v) => v.toFixed(1) + 'm', aria: '投げる高さ h0' });
     const sv = slider(ctl, { tex: 'v_0', min: 2, max: 14, step: 0.1, value: st.v, color: 'primary', fmt: (v) => v.toFixed(1), aria: '初速 v0 (m/s)' });
     const sth = slider(ctl, { tex: '\\theta', min: 0, max: 90, step: 1, value: st.th, color: 'primary', fmt: (v) => v + '°', aria: '投げる角度' });
-    const sg = slider(ctl, { tex: 'g', min: 1, max: 30, step: 0.1, value: st.g, color: 'primary', fmt: (v) => v.toFixed(1), aria: '重力加速度 g (m/s^2)' });
+    const sg = slider(ctl, { tex: 'g', min: 1, max: 30, step: 0.1, value: st.g, color: 'primary', fmt: (v) => v.toFixed(1), aria: '重力加速度 g (m/s²)' });
     const G_EARTH = 9.8;
     const fa = (v) => String(+v.toPrecision(4));
     // 極端に小さい・大きい値でも表が崩れない表示
@@ -1203,7 +1203,9 @@
       for (let k = i + 1; k < n; k++) s -= A[i][k] * cf[k];
       cf[i] = s / A[i][i];
     }
-    return (x) => { const u = x / S; let s = 0; for (let k = n - 1; k >= 0; k--) s = s * u + cf[k]; return s; };
+    const fn = (x) => { const u = x / S; let s = 0; for (let k = n - 1; k >= 0; k--) s = s * u + cf[k]; return s; };
+    fn.coef = cf.map((c, k) => c / Math.pow(S, k)); // x のべきの係数(定数項から)
+    return fn;
   }
 
   function initFit() {
@@ -1450,9 +1452,697 @@
     });
   }
 
+  /* ==========================================================
+     1.3(2) チャレンジ：惑星の的当て
+     ========================================================== */
+  const GAME_STAGES = [
+    { name: '地球', g: 9.8, xmax: 24, target: { x0: 14, x1: 16, y: 0 }, walls: [],
+      text: '地球（g = 9.8）で、15 m 先の的（14〜16 m）に当てよう。',
+      hint: '高さ0から投げるので、飛距離は R = v₀² sin 2θ / g。たとえば θ = 45° なら sin 90° = 1 なので、v₀ = √(gR) です。' },
+    { name: '地球', g: 9.8, xmax: 22, target: { x0: 16, x1: 18, y: 0 }, walls: [{ x0: 7, x1: 8, y0: 0, y1: 5 }],
+      text: '地球：高さ 5 m の壁（7〜8 m）を越えて、17 m 先の的（16〜18 m）に当てよう。',
+      hint: '同じ飛距離になる角度は θ と 90° − θ の2つ。低い角度だと壁に当たるかも。壁の位置 x = 8 での高さ y = x tanθ − g x²/(2 v₀² cos²θ) が 5 より大きいか確かめよう。' },
+    { name: '月', g: 1.62, xmax: 80, target: { x0: 60, x1: 64, y: 0 }, walls: [], ceil: 20,
+      text: '月（g = 1.62）：高さ 20 m の天井の下を通して、62 m 先の的（60〜64 m）に当てよう。',
+      hint: '月では遠くまで飛ぶけれど、高く上がりすぎると天井にぶつかる。最高点 H = (v₀ sinθ)²/(2g) が 20 より小さくなる角度を選ぼう。' },
+    { name: '木星', g: 24.8, xmax: 9, target: { x0: 5, x1: 6, y: 1.5 }, walls: [],
+      text: '木星（g = 24.8）：高さ 1.5 m の台の上（5〜6 m）にボールを乗せよう。',
+      hint: '重力がとても強いので、速さはほぼ最大が必要。軌道の式 y = x tanθ − g x²/(2 v₀² cos²θ) に x = 5.5, y = 1.5 を入れて、v₀ と θ の組を探そう。' },
+    { name: '火星', g: 3.71, xmax: 50, target: { x0: 40, x1: 44, y: 0 }, walls: [{ x0: 20, x1: 21, y0: 0, y1: 3 }], ceil: 8,
+      text: '火星（g = 3.71）：天井 8 m と高さ 3 m の壁のすき間を抜けて、42 m 先の的（40〜44 m）に当てよう。',
+      hint: '最高点 H = (v₀ sinθ)²/(2g) ≤ 8 と、飛距離 R = v₀² sin 2θ / g ≈ 42 の両方を満たす組を探そう。角度は低め、速さは大きめ。' },
+  ];
+  [
+    '<b>例：v₀ = 12.1 m/s、θ = 45°</b><br>高さ0から投げると飛距離は $R=\\dfrac{v_0^{\\,2}\\sin2\\theta}{g}$。θ = 45° なら $\\sin90^\\circ=1$ なので $v_0=\\sqrt{gR}=\\sqrt{9.8\\times15}\\approx12.1$。（$R\\approx14.9$ m）',
+    '<b>例：v₀ = 13.9 m/s、θ = 60°</b><br>飛距離 17 m になる角度は θ と 90° − θ の2通りあるが、低い角度では壁に当たる。θ = 60° なら $v_0=\\sqrt{\\dfrac{gR}{\\sin120^\\circ}}=\\sqrt{\\dfrac{9.8\\times17}{0.866}}\\approx13.9$。壁の位置 x = 8 での高さは $8\\tan60^\\circ-\\dfrac{9.8\\times8^2}{2\\times13.9^2\\cos^260^\\circ}\\approx7.4$ m で、5 m の壁を越える。',
+    '<b>例：v₀ = 12.5 m/s、θ = 20°</b><br>45° だと最高点が約 30 m で天井（20 m）にぶつかる。低い角度 θ = 20° にすると $v_0=\\sqrt{\\dfrac{1.62\\times62}{\\sin40^\\circ}}\\approx12.5$、最高点は $\\dfrac{(12.5\\sin20^\\circ)^2}{2\\times1.62}\\approx5.6$ m で天井より低い。',
+    '<b>例：v₀ = 13.7 m/s、θ = 45°</b><br>軌道の式 $y=x\\tan\\theta-\\dfrac{g}{2v_0^{\\,2}\\cos^2\\theta}x^2$ に θ = 45°、x = 5.5、y = 1.5 を入れると $1.5=5.5-\\dfrac{24.8\\times5.5^2}{v_0^{\\,2}}$ より $v_0^{\\,2}\\approx187.6$、$v_0\\approx13.7$。台の手前 x = 5 では高さ約 1.7 m なので、台の側面にはぶつからない。',
+    '<b>例：v₀ = 13.7 m/s、θ = 28°</b><br>天井 8 m より低く通すには最高点 $\\dfrac{(v_0\\sin\\theta)^2}{2g}\\le8$、つまり鉛直の速さ $v_0\\sin\\theta\\le\\sqrt{2\\times3.71\\times8}\\approx7.7$。θ = 28° なら鉛直 6.4、最高点は約 5.6 m。飛距離は $\\dfrac{13.7^2\\sin56^\\circ}{3.71}\\approx41.9$ m。壁の位置 x = 20.5 での高さは約 5.6 m で、3 m の壁も越える。',
+  ].forEach((t, i) => { GAME_STAGES[i].answer = t; });
+  const PKEY = '1-3:game';
+  function simulateThrow(v, th, S) {
+    const r = (th * Math.PI) / 180, vx = v * Math.cos(r), vy = v * Math.sin(r), g = S.g;
+    const dt = Math.max(0.0005, (2 * Math.max(vy, 1) / g) / 3000);
+    const rects = S.walls.slice();
+    if (S.target.y > 0) rects.push({ x0: S.target.x0, x1: S.target.x1, y0: 0, y1: S.target.y });
+    const pts = [[0, 0]];
+    let t = 0, px = 0, py = 0;
+    for (let i = 0; i < 400000; i++) {
+      t += dt;
+      const x = vx * t, y = vy * t - 0.5 * g * t * t;
+      if (S.ceil && y > S.ceil) { pts.push([x, S.ceil]); return { pts, T: t, type: 'ceil', x }; }
+      const T = S.target;
+      if (T.y > 0 && py >= T.y && y < T.y && x >= T.x0 && x <= T.x1) { pts.push([x, T.y]); return { pts, T: t, type: 'hit', x }; }
+      for (const w of rects) if (x >= w.x0 && x <= w.x1 && y >= w.y0 && y <= w.y1) { pts.push([x, y]); return { pts, T: t, type: 'wall', x }; }
+      if (y < 0) {
+        const lx = px + (x - px) * (py / (py - y));
+        pts.push([lx, 0]);
+        return { pts, T: t, type: T.y === 0 && lx >= T.x0 && lx <= T.x1 ? 'hit' : 'land', x: lx };
+      }
+      if (i % 4 === 0) pts.push([x, y]);
+      px = x; py = y;
+    }
+    return { pts, T: t, type: 'land', x: px };
+  }
+
+  function initGame() {
+    const root = $id('w-game');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -1, xmax: 24, equal: true, yc: 5, ratio: [0.62, 0.5] });
+    const st = { k: 0, used: 0, done: false, shots: [], fly: null, burst: [], hint: false };
+    const best = Object.assign({}, L.progress.get(PKEY) || {});
+    const ctl = root.querySelector('.controls');
+    const sv = slider(ctl, { tex: 'v_0', min: 1, max: 14, step: 0.1, value: 10, color: 'primary', fmt: (v) => v.toFixed(1), aria: '速さ v0 (m/s)' });
+    const sth = slider(ctl, { tex: '\\theta', min: 1, max: 89, step: 1, value: 45, color: 'primary', fmt: (v) => v + '°', aria: '角度' });
+    const row = el('div', 'btn-row');
+    row.style.marginTop = '8px';
+    const bThrow = el('button', 'btn primary', '🏀 投げる'), bRetry = el('button', 'btn', 'やり直す'), bNext = el('button', 'btn', '次のステージへ →');
+    [bThrow, bRetry, bNext].forEach((b) => { b.type = 'button'; row.append(b); });
+    ctl.append(row);
+    const chips = R(root, 'stages');
+    addGameRows(root);
+    const formula = function () {
+      const r = (sth.get() * Math.PI) / 180, v = sv.get(), S = GAME_STAGES[st.k];
+      tex(root, 'formula', '\\text{軌道 } y = ' + num(Math.tan(r), 3) + 'x - ' + num(S.g / (2 * v * v * Math.cos(r) * Math.cos(r)), 4) + 'x^2');
+    };
+    root.addEventListener('click', function (e) { if (e.target.closest('[data-a="gans"]')) showAnswer(root, GAME_STAGES[st.k]); });
+
+    function fitView() {
+      const S = GAME_STAGES[st.k], p = plot;
+      if (!p.w) return;
+      const span = S.xmax + 1, hw = p.h / p.w;
+      p.o.xmin = -1; p.o.xmax = S.xmax; p.o.yc = -0.08 * span + (span * hw) / 2; p._layout();
+    }
+    plot.onResize = fitView;
+
+    function renderChips() {
+      chips.innerHTML = '';
+      GAME_STAGES.forEach(function (S, i) {
+        const b = el('button', 'chip stage-chip', 'ステージ' + (i + 1) + ' ' + S.name + ' <span class="st">' + starStr(best[i + 1] || 0) + '</span>');
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(i === st.k));
+        b.addEventListener('click', () => setStage(i));
+        chips.append(b);
+      });
+      const tot = Object.values(best).reduce((a, b) => a + b, 0);
+      R(root, 'total').textContent = '★ ' + tot + ' / ' + GAME_STAGES.length * 3;
+    }
+    function renderThrows() {
+      let h = '';
+      for (let i = 0; i < 3; i++) h += '<i class="' + (i < 3 - st.used ? '' : 'used') + '"></i>';
+      R(root, 'throws').innerHTML = h + '<span>' + (3 - st.used) + ' 回</span>';
+    }
+    function setResult(text, cls) { const r = R(root, 'result'); r.textContent = text; r.className = 'result ' + (cls || ''); }
+    function setStage(k) {
+      st.k = k; st.used = 0; st.done = false; st.shots = []; st.fly = null; st.burst = []; st.hint = false;
+      const S = GAME_STAGES[k];
+      R(root, 'mission').innerHTML = '<span class="mno">ステージ' + (k + 1) + '</span>' + S.text;
+      R(root, 'hint').innerHTML = '<button class="btn small" data-a="hint" type="button">ヒントを見る</button>';
+      resetAnswer(root); formula();
+      setResult('まだ投げていません');
+      bThrow.disabled = false; bNext.hidden = true;
+      renderChips(); renderThrows(); fitView(); plot.invalidate();
+    }
+    root.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-a="hint"]')) return;
+      R(root, 'hint').textContent = GAME_STAGES[st.k].hint;
+    });
+
+    const anim = L.animate(root, function (dt) {
+      let busy = false;
+      if (st.fly) {
+        st.fly.p += dt / st.fly.dur;
+        if (st.fly.p >= 1) { st.fly.p = 1; finish(); } else busy = true;
+      }
+      if (st.burst.length) {
+        st.burst.forEach((q) => { q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 600 * dt; q.life -= dt; });
+        st.burst = st.burst.filter((q) => q.life > 0);
+        busy = busy || st.burst.length > 0;
+      }
+      plot.invalidate();
+      return busy;
+    });
+
+    function finish() {
+      const sim = st.fly.sim, S = GAME_STAGES[st.k];
+      st.shots.push(sim); st.fly = null; st.used++;
+      renderThrows();
+      if (sim.type === 'hit') {
+        const stars = 4 - st.used;
+        if (!best[st.k + 1] || stars > best[st.k + 1]) { best[st.k + 1] = stars; L.progress.set(PKEY, best); }
+        setResult('🎯 命中！ ' + starStr(stars) + '（' + st.used + ' 回目）', 'hit');
+        st.done = true; bThrow.disabled = true; bNext.hidden = st.k >= GAME_STAGES.length - 1;
+        if (st.k >= GAME_STAGES.length - 1) setResult('🎯 命中！ ' + starStr(stars) + '　全ステージ制覇！', 'hit');
+        // 命中の演出(画面座標で紙吹雪)
+        const cx = plot.X(sim.x), cy = plot.Y(S.target.y);
+        const col = [plot.c.amber, plot.c.teal, plot.c.accent, plot.c.primary, plot.c.violet];
+        for (let i = 0; i < 46; i++) {
+          const a = Math.random() * Math.PI, sp = 150 + Math.random() * 260;
+          st.burst.push({ x: cx, y: cy, vx: Math.cos(a) * sp * (Math.random() < 0.5 ? -1 : 1), vy: -Math.sin(a) * sp, life: 1 + Math.random() * 0.6, c: col[i % col.length] });
+        }
+        renderChips(); anim.kick();
+      } else {
+        const cx = (S.target.x0 + S.target.x1) / 2;
+        let msg = sim.type === 'wall' ? '💥 壁に当たった！' : sim.type === 'ceil' ? '💥 天井にぶつかった！' :
+          (sim.x < cx ? 'あと ' + (cx - sim.x).toFixed(1) + ' m 足りない（' + sim.x.toFixed(1) + ' m に着地）' : (sim.x - cx).toFixed(1) + ' m 行き過ぎ（' + sim.x.toFixed(1) + ' m に着地）');
+        if (st.used >= 3) { msg += '　― 3回とも外れ。「やり直す」で再挑戦！'; bThrow.disabled = true; }
+        setResult(msg, 'miss');
+      }
+    }
+
+    bThrow.addEventListener('click', function () {
+      if (st.fly || st.done || st.used >= 3) return;
+      const sim = simulateThrow(sv.get(), sth.get(), GAME_STAGES[st.k]);
+      st.fly = { sim, p: 0, dur: Math.min(3, Math.max(0.7, sim.T * 0.7)) };
+      setResult('…', '');
+      anim.kick();
+    });
+    bRetry.addEventListener('click', () => setStage(st.k));
+    bNext.addEventListener('click', () => setStage(Math.min(st.k + 1, GAME_STAGES.length - 1)));
+
+    plot.draw = function (g) {
+      const c = g.c, S = GAME_STAGES[st.k], ctx = g.ctx;
+      g.grid({ step: niceStepG(S.xmax), xlabel: 'x (m)', ylabel: 'y (m)' });
+      // 地面
+      ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.22; ctx.fillRect(0, g.Y(0), g.w, g.h - g.Y(0)); ctx.restore();
+      g.line(g.xmin, 0, g.xmax, 0, { color: c.muted, width: 2.5 });
+      // 天井
+      if (S.ceil) {
+        ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.22; ctx.fillRect(0, 0, g.w, g.Y(S.ceil)); ctx.restore();
+        g.line(g.xmin, S.ceil, g.xmax, S.ceil, { color: c.text, width: 3 });
+        g.text('天井 ' + S.ceil + ' m', g.xmax, S.ceil, { dx: -8, dy: 14, align: 'right', color: c.text, bold: true, size: 12 });
+      }
+      // 壁
+      S.walls.forEach(function (w) {
+        ctx.save(); ctx.fillStyle = c.text; ctx.globalAlpha = 0.75;
+        ctx.fillRect(g.X(w.x0), g.Y(w.y1), g.X(w.x1) - g.X(w.x0), g.Y(w.y0) - g.Y(w.y1)); ctx.restore();
+        g.text('壁 ' + w.y1 + ' m', (w.x0 + w.x1) / 2, w.y1, { dy: -12, align: 'center', color: c.text, bold: true, size: 12 });
+      });
+      // 的(旗)
+      const T = S.target;
+      if (T.y > 0) { ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.6; ctx.fillRect(g.X(T.x0), g.Y(T.y), g.X(T.x1) - g.X(T.x0), g.Y(0) - g.Y(T.y)); ctx.restore(); }
+      g.line(T.x0, T.y, T.x1, T.y, { color: c.teal, width: 8 });
+      const fx = (T.x0 + T.x1) / 2;
+      g.line(fx, T.y, fx, T.y + (g.ymax - g.ymin) * 0.12, { color: c.text, width: 2 });
+      ctx.save(); ctx.fillStyle = c.teal;
+      const px = g.X(fx), py = g.Y(T.y + (g.ymax - g.ymin) * 0.12);
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 18, py + 7); ctx.lineTo(px, py + 14); ctx.closePath(); ctx.fill(); ctx.restore();
+      g.text(T.x0 + '〜' + T.x1 + ' m', fx, T.y, { dy: 18, align: 'center', color: c.teal, bold: true, size: 12 });
+      // これまでの投てき(薄く)
+      st.shots.forEach(function (sim, i) {
+        g.poly(sim.pts, { color: sim.type === 'hit' ? c.teal : c.muted, width: 2.5, dash: sim.type === 'hit' ? [] : [6, 5], alpha: 0.7 });
+        const e = sim.pts[sim.pts.length - 1];
+        g.text(String(i + 1), e[0], e[1], { dy: -12, align: 'center', color: c.muted, bold: true, size: 12 });
+      });
+      // 飛んでいるボール
+      if (st.fly) {
+        const pts = st.fly.sim.pts, n = Math.max(1, Math.floor(pts.length * st.fly.p));
+        const part = pts.slice(0, n);
+        g.poly(part, { color: c.primary, width: 3.5 });
+        const b = part[part.length - 1];
+        if (b[1] > g.ymax) {
+          g.textPx('▲ ' + b[1].toFixed(1) + ' m', g.X(b[0]), 12, { align: 'center', bold: true, size: 12, color: c.amber });
+        } else g.dot(b[0], b[1], { r: 9, color: c.amber });
+      } else g.dot(0, 0, { r: 9, color: c.amber });
+      // 投げる向きの目安(矢印の向きだけ。長さは速さに比例)
+      if (!st.fly && !st.done) {
+        const r = (sth.get() * Math.PI) / 180, L0 = (g.xmax - g.xmin) * 0.012 * sv.get();
+        g.arrow(0, 0, L0 * Math.cos(r), L0 * Math.sin(r), { color: c.amber, width: 3, dash: [5, 4] });
+      }
+      // 紙吹雪
+      st.burst.forEach(function (q) { ctx.save(); ctx.globalAlpha = Math.min(1, q.life); ctx.fillStyle = q.c; ctx.fillRect(q.x - 3, q.y - 3, 6, 6); ctx.restore(); });
+      g.textPx(S.name + '　g = ' + S.g + ' m/s²', g.w - 10, 16, { bold: true, size: 13, color: c.text, align: 'right' });
+    };
+    const niceStepG = (xmax) => (xmax <= 10 ? 1 : xmax <= 30 ? 2 : xmax <= 60 ? 5 : 10);
+    sv.on(() => { plot.invalidate(); formula(); });
+    sth.on(() => { plot.invalidate(); formula(); });
+    setStage(0);
+  }
+
+  /* チャレンジの共通部品は assets/game.js */
+  const { starStr, GameShell, addGameRows, resetAnswer, showAnswer, aimToggle, gapMark, gameButtons, Confetti, Sweep } = L.game;
+
+  /* ==========================================================
+     1.1(4) チャレンジ：レーザーで星を撃ち抜け
+     ========================================================== */
+  const LINE_STAGES = [
+    { text: '2つの星 (0, 2) と (4, 4) を、1本のレーザーで撃ち抜こう。', stars: [[0, 2], [4, 4]], bombs: [],
+      hint: '(0, 2) は y 軸上にあるので b = 2。傾き a は「x が 4 増えると y が 2 増える」から a = 2 ÷ 4。' },
+    { text: '3つの星をまとめて撃ち抜こう。', stars: [[-2, -3], [1, 3], [3, 7]], bombs: [],
+      hint: '2つの星を選んで、傾き a =（y の増え方）÷（x の増え方）を計算しよう。そのあと、x = 0 のときの y が b。' },
+    { text: '右下がりのレーザーで3つの星を撃ち抜こう。', stars: [[-4, 4], [2, 1], [4, 0]], bombs: [],
+      hint: '右下がりなので a は負。(2, 1) と (4, 0) から傾きを求め、y = ax + b に代入して b を求めよう。' },
+    { text: 'y 軸から離れた2つの星 (3, −2) と (5, −6) を撃ち抜こう。', stars: [[3, -2], [5, -6]], bombs: [],
+      hint: 'まず傾き a = (−6 − (−2)) ÷ (5 − 3)。次に y = ax + b に (3, −2) を代入して b を求めよう。' },
+  ];
+  // 答えと解説
+  [
+    '<b>a = 0.5, b = 2</b><br>(0, 2) は y 軸上の点なので、切片 b = 2。傾きは $a=\\dfrac{4-2}{4-0}=0.5$。よって $y=0.5x+2$。',
+    '<b>a = 2, b = 1</b><br>(1, 3) と (3, 7) から $a=\\dfrac{7-3}{3-1}=2$。$y=2x+b$ に (1, 3) を代入すると $3=2+b$ より $b=1$。(−2, −3) も $2\\times(-2)+1=-3$ で確かに通る。',
+    '<b>a = −0.5, b = 2</b><br>(2, 1) と (4, 0) から $a=\\dfrac{0-1}{4-2}=-0.5$。$y=-0.5x+b$ に (4, 0) を代入すると $0=-2+b$ より $b=2$。',
+    '<b>a = −2, b = 4</b><br>$a=\\dfrac{-6-(-2)}{5-3}=-2$。$y=-2x+b$ に (3, −2) を代入すると $-2=-6+b$ より $b=4$。y 軸から離れていても、代入すれば切片が求まる。',
+  ].forEach((t, i) => { LINE_STAGES[i].answer = t; });
+  function initGameLine() {
+    const root = $id('w-game-line');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -6, xmax: 6, equal: true, yc: 1, ratio: [0.9, 0.62] });
+    const ctl = root.querySelector('.controls');
+    const sa = slider(ctl, { tex: '\\teal{a}', min: -4, max: 4, step: 0.1, value: 1, color: 'teal', aria: '傾き a' });
+    const sb = slider(ctl, { tex: '\\red{b}', min: -6, max: 8, step: 0.1, value: 0, color: 'accent', aria: '切片 b' });
+    const B = gameButtons(ctl, '⚡ 発射');
+    const conf = Confetti(root, plot);
+    const st = { shots: [], cur: null, aim: true };
+    aimToggle(ctl, (v) => { st.aim = v; plot.invalidate(); });
+    // すべての星が見えるよう表示範囲を合わせる(縦横の縮尺は同じまま、x の範囲を広げる)
+    function fitLine() {
+      const p = plot, S = LINE_STAGES[game ? game.k : 0];
+      if (!p.w) return;
+      const ys = S.stars.map((q) => q[1]).concat([0]);
+      const lo = Math.min.apply(null, ys) - 1.6, hi = Math.max.apply(null, ys) + 1.6;
+      const span = Math.max(12, (hi - lo) * p.w / p.h);
+      p.o.xmin = -span / 2; p.o.xmax = span / 2; p.o.yc = (lo + hi) / 2; p._layout();
+    }
+    plot.onResize = fitLine;
+    let game = null;
+    game = GameShell(root, { key: '1-1:game', stages: LINE_STAGES,
+      formula: function () {
+        const a = sa.get(), b = sb.get();
+        return '\\begin{aligned}&y = ' + C('teal', num(a)) + 'x' + (b < 0 ? ' - ' : ' + ') + C('red', num(Math.abs(b))) + '\\\\' +
+          '&x\\text{ が 1 増えると } y\\text{ は } ' + C('teal', num(Math.abs(a))) + (a === 0 ? '\\text{（変化しない）}' : a > 0 ? '\\text{ 増える}' : '\\text{ 減る}') + '\\end{aligned}';
+      },
+      onStage() { st.shots = []; st.cur = null; B.bMain.disabled = false; B.bNext.hidden = true; fitLine(); plot.invalidate(); } });
+    const near = (a, b, p, tol) => Math.abs(a * p[0] + b - p[1]) <= tol;
+    const sweep = Sweep(root, plot, 0.6, function () {
+      const S = LINE_STAGES[game.k], { a, b } = st.cur;
+      const hit = S.stars.filter((p) => near(a, b, p, 0.2)).length, boom = S.bombs.some((p) => near(a, b, p, 0.3));
+      st.shots.push(st.cur); game.used++; game.renderThrows();
+      if (!boom && hit === S.stars.length) {
+        const n = 4 - game.used; game.award(n); game.done = true;
+        game.result('⚡ 全部撃ち抜いた！ ' + starStr(n) + '（' + game.used + ' 回目）' + (st.cur.aim ? '' : '　👑 照準なしで命中！'), 'hit');
+        B.bMain.disabled = true; B.bNext.hidden = game.k >= LINE_STAGES.length - 1;
+        const s0 = S.stars[S.stars.length - 1]; conf.fire(plot.X(s0[0]), plot.Y(s0[1]));
+      } else {
+        let m = boom ? '💥 爆弾に触れた！' : '星 ' + S.stars.length + ' 個のうち ' + hit + ' 個に命中。';
+        if (game.used >= 3) { m += '　― 3回使い切りました。「やり直す」で再挑戦！'; B.bMain.disabled = true; }
+        game.result(m, 'miss');
+      }
+      st.cur = null;
+    });
+    B.bMain.addEventListener('click', function () {
+      if (st.cur || game.done || game.used >= 3) return;
+      st.cur = { a: sa.get(), b: sb.get(), aim: st.aim }; game.result('…'); sweep.start();
+    });
+    sa.on(() => { game.formula(); plot.invalidate(); }); sb.on(() => { game.formula(); plot.invalidate(); });
+    B.bRetry.addEventListener('click', () => game.setStage(game.k));
+    B.bNext.addEventListener('click', () => game.setStage(Math.min(game.k + 1, LINE_STAGES.length - 1)));
+
+    plot.draw = function (g) {
+      const c = g.c, S = LINE_STAGES[game.k];
+      g.grid({ xlabel: 'x', ylabel: 'y' });
+      st.shots.forEach((s, i) => { g.fn((x) => s.a * x + s.b, { color: c.muted, width: 2, dash: [6, 5], alpha: 0.7 }); });
+      if (st.cur) {
+        const x1 = g.xmin + (g.xmax - g.xmin) * sweep.st.p;
+        g.fn((x) => st.cur.a * x + st.cur.b, { x0: g.xmin, x1, color: c.accent, width: 4 });
+      }
+      // ねらいの点線と、傾きの手がかり(x が +1 → y が +a)、星までの縦のずれ
+      if (st.aim && !st.cur && !game.done) {
+        const a = sa.get(), b = sb.get();
+        g.fn((x) => a * x + b, { color: c.accent, width: 2.5, dash: [8, 7], alpha: 0.75 });
+        g.line(0, b, 1, b, { color: c.text, width: 2, alpha: 0.7 });
+        g.line(1, b, 1, a + b, { color: c.teal, width: 3.5 });
+        g.text('+1', 0.5, b, { dy: a >= 0 ? 14 : -14, align: 'center', size: 12, bold: true, color: c.text });
+        g.text((a >= 0 ? '+' : '−') + num(Math.abs(a)), 1, b + a / 2, { dx: 8, size: 13, bold: true, color: c.teal });
+        g.dot(0, b, { r: 5, color: c.accent });
+        S.stars.forEach((p) => gapMark(g, p[0], a * p[0] + b, p[1], p[0] <= 0));
+      }
+      const last = st.shots[st.shots.length - 1];
+      S.bombs.forEach(function (p) {
+        const boom = last && near(last.a, last.b, p, 0.3);
+        g.dot(p[0], p[1], { r: 10, color: c.text });
+        g.text(boom ? '💥' : '💣', p[0], p[1], { align: 'center', size: 14, halo: false });
+      });
+      S.stars.forEach(function (p) {
+        const got = last && near(last.a, last.b, p, 0.2);
+        g.text('★', p[0], p[1], { align: 'center', size: 26, color: got ? c.teal : c.amber, bold: true });
+        g.text('(' + L.minus(p[0]) + ', ' + L.minus(p[1]) + ')', p[0], p[1], { dx: 14, dy: -14, size: 12, color: c.muted, bold: true });
+      });
+      conf.draw(g);
+    };
+    game.setStage(0);
+  }
+
+  /* ==========================================================
+     1.2(3) チャレンジ：放物線でコインを集めろ
+     ========================================================== */
+  const PARAB_STAGES = [
+    { text: '3枚のコインをすべて通る放物線を発射しよう。', coins: [[-2, 2], [0, -2], [2, 2]],
+      hint: 'コインは左右対称。真ん中の (0, −2) が頂点なので p = 0, q = −2。あとは (2, 2) を通るように a を決めよう。' },
+    { text: '3枚のコインを集めよう。頂点はどのコイン？', coins: [[0, 5], [2, 1], [3, 2]],
+      hint: 'いちばん低い (2, 1) が頂点なら p = 2, q = 1。y − q = a(x − p)² に (0, 5) を代入して a を求めよう。' },
+    { text: '上に凸の放物線で、3枚のコインを集めよう。', coins: [[-3, -1], [-1, 3], [1, -1]],
+      hint: '上に凸なので a < 0。いちばん高い (−1, 3) が頂点。(1, −1) を代入して a を求めよう。' },
+    { text: '頂点にはコインがない！ 3枚のコインから放物線を見つけよう。', coins: [[-1, -1], [3, -1], [5, 5]],
+      hint: '同じ高さの (−1, −1) と (3, −1) の真ん中に対称軸がある → p = 1。残りは a と q。2つのコインを y = a(x − 1)² + q に代入して連立しよう。' },
+  ];
+  [
+    '<b>a = 1, p = 0, q = −2</b><br>コインが左右対称に並び、真ん中の (0, −2) が頂点なので $p=0,\\ q=-2$。$y=a x^2-2$ に (2, 2) を代入すると $2=4a-2$ より $a=1$。',
+    '<b>a = 1, p = 2, q = 1</b><br>最も低い (2, 1) が頂点。$y=a(x-2)^2+1$ に (0, 5) を代入すると $5=4a+1$ より $a=1$。(3, 2) も $1\\cdot1^2+1=2$ で通る。',
+    '<b>a = −1, p = −1, q = 3</b><br>最も高い (−1, 3) が頂点で、上に凸なので $a<0$。$y=a(x+1)^2+3$ に (1, −1) を代入すると $-1=4a+3$ より $a=-1$。',
+    '<b>a = 0.5, p = 1, q = −3</b><br>同じ高さの (−1, −1) と (3, −1) の真ん中 $x=1$ が対称軸なので $p=1$。$y=a(x-1)^2+q$ に代入すると、(−1, −1) から $-1=4a+q$、(5, 5) から $5=16a+q$。引き算して $12a=6$ より $a=0.5$、$q=-3$。',
+  ].forEach((t, i) => { PARAB_STAGES[i].answer = t; });
+  function initGameParab() {
+    const root = $id('w-game-parab');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -6, xmax: 6, equal: true, yc: 1.4, ratio: [0.95, 0.7] });
+    const ctl = root.querySelector('.controls');
+    const sa = slider(ctl, { tex: '\\blue{a}', min: -2, max: 2, step: 0.25, value: 0.25, color: 'primary', fmt: (v) => v.toFixed(2) });
+    const sp = slider(ctl, { tex: '\\teal{p}', min: -5, max: 5, step: 0.5, value: 0, color: 'teal' });
+    const sq = slider(ctl, { tex: '\\red{q}', min: -5, max: 5, step: 0.5, value: 0, color: 'accent' });
+    sa.on((v) => { if (v === 0) sa.set(0.25); });
+    [sa, sp, sq].forEach((sl) => sl.on(() => { if (game) { game.formula(); plot.invalidate(); } }));
+    const B = gameButtons(ctl, '🎯 発射');
+    const conf = Confetti(root, plot);
+    const st = { shots: [], cur: null, aim: true };
+    aimToggle(ctl, (v) => { st.aim = v; plot.invalidate(); });
+    // eslint-disable-next-line no-unused-vars
+    const sgnT = (v, col) => (v < 0 ? ' + ' : ' - ') + C(col, num(Math.abs(v)));
+    const game = GameShell(root, { key: '1-2:game', stages: PARAB_STAGES,
+      formula: function () {
+        const a = sa.get() || 0.25, p = sp.get(), q = sq.get();
+        return '\\begin{aligned}&y = ' + C('blue', num(a)) + '(x' + sgnT(p, 'teal') + ')^2' + (q < 0 ? ' - ' : ' + ') + C('red', num(Math.abs(q))) + '\\\\' +
+          '&\\text{頂点 }(' + C('teal', num(p)) + ',\\ ' + C('red', num(q)) + ')\\text{、頂点から } x \\text{ が 1 離れると } y \\text{ は } ' + C('blue', (a > 0 ? '+' : '') + num(a)) + '\\end{aligned}';
+      },
+      onStage() { st.shots = []; st.cur = null; B.bMain.disabled = false; B.bNext.hidden = true; plot.invalidate(); } });
+    const f = (s, x) => s.a * (x - s.p) * (x - s.p) + s.q;
+    const on = (s, c) => Math.abs(f(s, c[0]) - c[1]) <= 0.2;
+    const sweep = Sweep(root, plot, 0.7, function () {
+      const S = PARAB_STAGES[game.k], s = st.cur, hit = S.coins.filter((c) => on(s, c)).length;
+      st.shots.push(s); game.used++; game.renderThrows();
+      if (hit === S.coins.length) {
+        const n = 4 - game.used; game.award(n); game.done = true;
+        game.result('🪙 コインをすべて集めた！ ' + starStr(n) + '（' + game.used + ' 回目）' + (s.aim ? '' : '　👑 照準なしで命中！'), 'hit');
+        B.bMain.disabled = true; B.bNext.hidden = game.k >= PARAB_STAGES.length - 1;
+        conf.fire(plot.X(S.coins[1][0]), plot.Y(S.coins[1][1]));
+      } else {
+        let m = 'コイン ' + S.coins.length + ' 枚のうち ' + hit + ' 枚を集めた。';
+        if (game.used >= 3) { m += '　― 3回使い切りました。「やり直す」で再挑戦！'; B.bMain.disabled = true; }
+        game.result(m, 'miss');
+      }
+      st.cur = null;
+    });
+    B.bMain.addEventListener('click', function () {
+      if (st.cur || game.done || game.used >= 3) return;
+      st.cur = { a: sa.get() || 0.25, p: sp.get(), q: sq.get(), aim: st.aim }; game.result('…'); sweep.start();
+    });
+    B.bRetry.addEventListener('click', () => game.setStage(game.k));
+    B.bNext.addEventListener('click', () => game.setStage(Math.min(game.k + 1, PARAB_STAGES.length - 1)));
+    plot.draw = function (g) {
+      const c = g.c, S = PARAB_STAGES[game.k];
+      g.grid({ xlabel: 'x', ylabel: 'y' });
+      st.shots.forEach((s) => g.fn((x) => f(s, x), { color: c.muted, width: 2, dash: [6, 5], alpha: 0.7 }));
+      if (st.cur) g.fn((x) => f(st.cur, x), { x0: g.xmin, x1: g.xmin + (g.xmax - g.xmin) * sweep.st.p, color: c.primary, width: 4 });
+      // ねらいの点線と、頂点・対称軸・「頂点から x が 1 離れると y が a 変化」、コインまでの縦のずれ
+      if (st.aim && !st.cur && !game.done) {
+        const s = { a: sa.get() || 0.25, p: sp.get(), q: sq.get() };
+        g.line(s.p, g.ymin, s.p, g.ymax, { color: c.muted, width: 1.5, dash: [3, 5] });
+        g.fn((x) => f(s, x), { color: c.primary, width: 2.5, dash: [8, 7], alpha: 0.75 });
+        g.line(s.p, s.q, s.p + 1, s.q, { color: c.text, width: 2, alpha: 0.7 });
+        g.line(s.p + 1, s.q, s.p + 1, s.q + s.a, { color: c.primary, width: 3.5 });
+        g.text((s.a > 0 ? '+' : '−') + num(Math.abs(s.a)), s.p + 1, s.q + s.a / 2, { dx: 8, size: 13, bold: true, color: c.primary });
+        g.dot(s.p, s.q, { r: 6, color: c.text });
+        g.text('頂点 (' + L.minus(num(s.p)) + ', ' + L.minus(num(s.q)) + ')', s.p, s.q, { dy: s.a > 0 ? 20 : -20, align: 'center', size: 12, bold: true, color: c.text });
+        S.coins.forEach((p) => gapMark(g, p[0], f(s, p[0]), p[1], p[0] <= s.p));
+      }
+      const last = st.shots[st.shots.length - 1];
+      S.coins.forEach(function (p) {
+        const got = last && on(last, p);
+        g.dot(p[0], p[1], { r: 11, color: got ? c.teal : c.amber });
+        g.text(got ? '✓' : '¥', p[0], p[1], { align: 'center', size: 13, bold: true, color: '#fff', halo: false });
+        g.text('(' + L.minus(p[0]) + ', ' + L.minus(p[1]) + ')', p[0], p[1], { dx: 15, dy: -14, size: 12, color: c.muted, bold: true });
+      });
+      conf.draw(g);
+    };
+    game.setStage(0);
+  }
+
+  /* ==========================================================
+     1.4(3) チャレンジ：お手本と同じ動きを作れ
+     ========================================================== */
+  const EASE_STAGES = [
+    { v: [3, 0], text: '勢いよく出発して、ゴールでぴたりと止まる動きを作ろう。', hint: '最初の点の間隔が広い ＝ 出だしが速い。最後の間隔がつまっている ＝ 終わりの速さは 0 に近い。最初の間隔 ÷ 0.1 がおおよその v₀。' },
+    { v: [0, 3], text: 'じわっと動き出して、勢いよくゴールに飛び込む動きを作ろう。', hint: 'ステージ1の逆。出だしの間隔がつまっていて、最後が広い。' },
+    { v: [0, 0], text: 'ゆっくり動き出し、ゆっくり止まる動きを作ろう。', hint: '両端の点がつまっていて、真ん中が広い。この章の smoothstep を思い出そう。' },
+    { v: [4, -1], text: 'ゴールを一度行き過ぎてから戻ってくる動きを作ろう。', hint: 'ゴールを越えてから戻る ＝ 最後は後ろ向きに動いている ＝ 終わりの速さ v₁ は負。出だしはかなり速い。' },
+  ];
+  [
+    '<b>v₀ = 3, v₁ = 0</b><br>お手本の点は、最初の間隔がとても広く、最後はつまっている → 出だしが速く、終わりの速さは 0。式は $f(t)=t^3-3t^2+3t=1-(1-t)^3$（easeOutCubic と同じ）。最初の 0.1 秒で約 0.27 進むので、出だしの速さはおよそ 3。',
+    '<b>v₀ = 0, v₁ = 3</b><br>ステージ1の逆で、最初がつまり最後が広い。式は $f(t)=t^3$（easeInCubic）。$f\'(t)=3t^2$ なので $f\'(0)=0,\\ f\'(1)=3$。',
+    '<b>v₀ = 0, v₁ = 0</b><br>両端がつまって真ん中が広い。式は $f(t)=3t^2-2t^3$（smoothstep）。真ん中 $t=\\tfrac12$ で速さが最大 $f\'(\\tfrac12)=1.5$。',
+    '<b>v₀ = 4, v₁ = −1</b><br>ゴールを行き過ぎて戻るので、最後の速さは負。式は $f(t)=t^3-4t^2+4t$。$f\'(t)=3t^2-8t+4=0$ となる $t=\\tfrac23$ で最大値 $f(\\tfrac23)=\\tfrac{32}{27}\\approx1.19$、つまりゴールを約19%行き過ぎてから戻る。',
+  ].forEach((t, i) => { EASE_STAGES[i].answer = t; });
+  const cubicEase = (v0, v1) => (t) => (v0 + v1 - 2) * t * t * t + (3 - 2 * v0 - v1) * t * t + v0 * t;
+  function initGameEase() {
+    const root = $id('w-game-ease');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -0.14, xmax: 1.26, ymin: -1.3, ymax: 1.3, ratio: [0.5, 0.3] });
+    const ctl = root.querySelector('.controls');
+    const s0 = slider(ctl, { tex: '\\amber{v_0}', min: -2, max: 4, step: 0.1, value: 1, color: 'amber', aria: '出だしの速さ v0' });
+    const s1 = slider(ctl, { tex: '\\teal{v_1}', min: -2, max: 4, step: 0.1, value: 1, color: 'teal', aria: '終わりの速さ v1' });
+    const B = gameButtons(ctl, '✅ 判定');
+    const bPlay = el('button', 'btn', '▶ 動かして比べる');
+    bPlay.type = 'button';
+    B.bMain.parentElement.prepend(bPlay);
+    const conf = Confetti(root, plot);
+    const st = { t: 1, play: false, judged: null, bestErr: Infinity };
+    const game = GameShell(root, { key: '1-4:game', stages: EASE_STAGES,
+      formula: function () {
+        // 1行目: v0, v1 を使った式 / 2行目: t の多項式 / 3行目: 初速と終速
+        const v0 = s0.get(), v1 = s1.get(), A = C('amber', 'v_0'), V = C('teal', 'v_1');
+        return '\\begin{aligned}f(t) &= (' + A + '+' + V + '-2)\\,t^3+(3-2' + A + '-' + V + ')\\,t^2+' + A + '\\,t\\\\' +
+          '&= ' + polyTeX([[v0 + v1 - 2, 't^3'], [3 - 2 * v0 - v1, 't^2'], [v0, 't']]) + '\\\\' +
+          '&\\text{初速 } f\'(0)=' + A + '=' + C('amber', num(v0)) + ',\\quad \\text{終速 } f\'(1)=' + V + '=' + C('teal', num(v1)) + '\\end{aligned}';
+      },
+      onStage() { st.judged = null; st.bestErr = Infinity; B.bMain.disabled = false; B.bNext.hidden = true; st.t = 0; st.play = true; anim.kick(); } });
+    const target = () => cubicEase(EASE_STAGES[game.k].v[0], EASE_STAGES[game.k].v[1]);
+    const mine = () => cubicEase(s0.get(), s1.get());
+    const anim = L.animate(root, function (dt) {
+      if (!st.play) return false;
+      st.t += dt / 2; if (st.t >= 1) { st.t = 1; st.play = false; }
+      plot.invalidate(); return st.play;
+    });
+    bPlay.addEventListener('click', function () { st.t = 0; st.play = true; anim.kick(); });
+    B.bMain.addEventListener('click', function () {
+      if (game.done || game.used >= 3) return;
+      const ft = target(), fm = mine();
+      let e = 0; for (let i = 0; i <= 200; i++) { const t = i / 200; e = Math.max(e, Math.abs(ft(t) - fm(t))); }
+      game.used++; game.renderThrows();
+      st.judged = { v0: s0.get(), v1: s1.get() }; st.bestErr = Math.min(st.bestErr, e);
+      const n = e <= 0.02 ? 3 : e <= 0.06 ? 2 : e <= 0.12 ? 1 : 0;
+      if (n > 0) game.award(n);
+      const msg = 'ずれ（位置の差の最大）＝ ' + e.toFixed(3) + '　' + (n ? starStr(n) : '★なし');
+      if (n === 3) { game.done = true; B.bMain.disabled = true; B.bNext.hidden = game.k >= EASE_STAGES.length - 1; game.result('🎉 ぴったり！ ' + msg, 'hit'); conf.fire(plot.X(1), plot.Y(0)); }
+      else if (game.used >= 3) { B.bMain.disabled = true; B.bNext.hidden = game.k >= EASE_STAGES.length - 1; game.result(msg + '　― 判定を使い切りました（記録：' + starStr(game.best[game.k + 1] || 0) + '）', n ? 'hit' : 'miss'); }
+      else game.result(msg + (n ? '　もっと近づけられるかも！' : '　まだずれています'), n ? 'hit' : 'miss');
+      st.t = 0; st.play = true; anim.kick();
+    });
+    B.bRetry.addEventListener('click', () => game.setStage(game.k));
+    B.bNext.addEventListener('click', () => game.setStage(Math.min(game.k + 1, EASE_STAGES.length - 1)));
+    plot.draw = function (g) {
+      const c = g.c, ft = target(), fm = mine(), t = st.t;
+      // 同じ時刻どうしの点を細い線で結び、どの時刻でどれだけずれているかを見せる
+      for (let k = 1; k < 10; k++) g.line(ft(k / 10), 0.55, fm(k / 10), -0.55, { color: c.muted, width: 1, dash: [3, 4], alpha: 0.6 });
+      [[0.55, 'お手本', ft, c.muted], [-0.55, 'あなた', fm, c.primary]].forEach(function (L0) {
+        const y = L0[0], fn = L0[2];
+        g.line(0, y, 1, y, { color: c.grid, width: 16 });
+        g.line(0, y, 1, y, { color: c.axis, width: 2 });
+        g.dot(0, y, { r: 8, ring: true, color: c.muted, lw: 2 }); g.dot(1, y, { r: 8, ring: true, color: c.muted, lw: 2 });
+        // 0.1秒ごと(時間を10等分)の位置。あなたの点はスライダーに合わせてその場で動く
+        for (let k = 0; k <= 10; k++) g.dot(fn(k / 10), y, { r: 4.5, color: L0[3], stroke: false });
+        g.dot(fn(t), y, { r: 13, color: L0[3] });
+        g.textPx(L0[1], 8, g.Y(y) - 20, { bold: true, size: 12.5, color: L0[3] });
+      });
+      g.textPx('スタート', g.X(0), g.h - 10, { align: 'center', size: 12, color: c.muted, bold: true });
+      g.textPx('ゴール', g.X(1), g.h - 10, { align: 'center', size: 12, color: c.muted, bold: true });
+      g.textPx('小さな点：0.1秒ごとの位置（間隔が広いほど速い）', g.w - 10, 14, { align: 'right', size: 12, color: c.muted, bold: true });
+      conf.draw(g);
+    };
+    s0.on(() => { plot.invalidate(); game.formula(); }); s1.on(() => { plot.invalidate(); game.formula(); });
+    game.setStage(0);
+  }
+
+  /* ==========================================================
+     1.5(4) チャレンジ：曲線をなぞれ
+     ========================================================== */
+  const TRACE_STAGES = [
+    { P: [[1, -2], [3, 3], [7, 3], [9, -2]], name: 'アーチ', text: 'アーチ（山の形）をなぞろう。', hint: '左右対称な山。2つの制御点も左右対称に置くとよい。曲線は制御点より低いところを通る。' },
+    { P: [[1, -2], [4, 4], [6, -4], [9, 2]], name: 'S字', text: 'S字の曲線をなぞろう。', hint: '左の端点からは右上へ、右の端点へは下から入ってくる。制御点は曲線の「外側」に置く。' },
+    { P: [[7.5, 2.2], [0.6, 4], [0.6, -4], [7.5, -2.2]], name: 'Cの字', text: 'アルファベットの「C」をなぞろう。', hint: '上の端点からは左へ出発する。制御点はかなり左の、上下に大きく離れた位置にある。' },
+    { P: [[1, -2], [9.6, 3.6], [0.4, 3.6], [9, -2]], name: 'ループ', text: '1本の3次ベジェ曲線で、輪（ループ）を描こう。', hint: '2つの制御点を「入れ替えて」交差させると輪ができる。左の端点の制御点は右上の遠くに。' },
+  ];
+  [
+    '<b>P₁ = (3, 3), P₂ = (7, 3)</b><br>左右対称な山なので、制御点も左右対称に置く。曲線は制御点より低いところを通り、頂上は高さ $\\tfrac34\\times3+\\tfrac14\\times(-2)=1.75$ になる（$t=\\tfrac12$ の重みは $\\tfrac18,\\tfrac38,\\tfrac38,\\tfrac18$）。',
+    '<b>P₁ = (4, 4), P₂ = (6, −4)</b><br>左の端点 (1, −2) からは右上（P₁ の方向）へ出発し、右の端点 (9, 2) へは P₂ の方向（右下）から入ってくる。制御点は曲線の外側の、かなり遠くに置く。',
+    '<b>P₁ = (0.6, 4), P₂ = (0.6, −4)</b><br>C の字は、上の端点から左へ出発し、左側で大きく回り込んで下の端点へ戻る。制御点を左の上下に大きく離して置くと、丸みのある C になる。',
+    '<b>P₁ = (9.6, 3.6), P₂ = (0.4, 3.6)</b><br>左の端点の制御点を右側に、右の端点の制御点を左側に置いて「交差」させると、曲線が自分自身と交わって輪ができる。3次ベジェ曲線1本でもループが描ける。',
+  ].forEach((t, i) => { TRACE_STAGES[i].answer = t; });
+  const bez3 = (P, t) => { const u = 1 - t; return [u * u * u * P[0][0] + 3 * u * u * t * P[1][0] + 3 * u * t * t * P[2][0] + t * t * t * P[3][0], u * u * u * P[0][1] + 3 * u * u * t * P[1][1] + 3 * u * t * t * P[2][1] + t * t * t * P[3][1]]; };
+  function initGameTrace() {
+    const root = $id('w-game-trace');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: 0, xmax: 10, equal: true, yc: 0, ratio: [1.0, 0.9] });
+    const ctl = root.querySelector('.controls');
+    const B = gameButtons(ctl, '✅ 判定');
+    const conf = Confetti(root, plot);
+    const st = { P: null, err: null };
+    const pt = (p) => '(' + num(p[0], 1) + ',\\ ' + num(p[1], 1) + ')';
+    const game = GameShell(root, { key: '1-5:game', stages: TRACE_STAGES,
+      formula: function () {
+        // 1行目: ベルンシュタイン基底による式 / 2・3行目: 制御点の座標を代入した式
+        if (!st.P) return '';
+        const P = st.P, v = (q) => '(' + num(q[0], 1) + ',\\,' + num(q[1], 1) + ')', P1 = C('amber', '\\boldsymbol{P}_1'), P2 = C('amber', '\\boldsymbol{P}_2');
+        return '\\begin{aligned}\\boldsymbol{P}(t) &= (1-t)^3\\boldsymbol{P}_0+3(1-t)^2t\\,' + P1 + '\\\\&\\quad +3(1-t)t^2\\,' + P2 + '+t^3\\boldsymbol{P}_3\\\\' +
+          '&= (1-t)^3' + v(P[0]) + '+3(1-t)^2t\\,' + C('amber', v(P[1])) + '\\\\' +
+          '&\\quad +3(1-t)t^2\\,' + C('amber', v(P[2])) + '+t^3' + v(P[3]) + '\\end{aligned}';
+      },
+      onStage(k, S) {
+      // 端点はお手本と同じ。制御点は直線上の 1/3, 2/3 の位置から始める
+      const a = S.P[0], d = S.P[3];
+      st.P = [a.slice(), [a[0] + (d[0] - a[0]) / 3, a[1] + (d[1] - a[1]) / 3], [a[0] + (d[0] - a[0]) * 2 / 3, a[1] + (d[1] - a[1]) * 2 / 3], d.slice()];
+      st.err = null; B.bMain.disabled = false; B.bNext.hidden = true; build(); plot.invalidate();
+    } });
+    function build() {
+      plot.handles.length = 0;
+      [1, 2].forEach(function (i) {
+        plot.addHandle({ get x() { return st.P[i][0]; }, get y() { return st.P[i][1]; }, get color() { return plot.c.amber; }, r: 9,
+          label: 'P' + SUB[i], drag(x, y) { st.P[i] = [clamp(x, 0.2, 9.8), clamp(y, plot.ymin + 0.2, plot.ymax - 0.2)]; } });
+      });
+    }
+    function score() {
+      const S = TRACE_STAGES[game.k], mine = [];
+      for (let i = 0; i <= 200; i++) mine.push(bez3(st.P, i / 200));
+      let e = 0;
+      for (let i = 0; i <= 60; i++) {
+        const q = bez3(S.P, i / 60);
+        let m = Infinity; mine.forEach((p) => { m = Math.min(m, Math.hypot(p[0] - q[0], p[1] - q[1])); });
+        e = Math.max(e, m);
+      }
+      return e;
+    }
+    B.bMain.addEventListener('click', function () {
+      if (game.done || game.used >= 3) return;
+      const e = score(); st.err = e; game.used++; game.renderThrows();
+      const n = e <= 0.15 ? 3 : e <= 0.35 ? 2 : e <= 0.7 ? 1 : 0;
+      if (n > 0) game.award(n);
+      const msg = 'お手本からの最大のずれ ＝ ' + e.toFixed(2) + '　' + (n ? starStr(n) : '★なし');
+      if (n === 3) { game.done = true; B.bMain.disabled = true; B.bNext.hidden = game.k >= TRACE_STAGES.length - 1; game.result('✏️ きれいになぞれた！ ' + msg, 'hit'); conf.fire(plot.X(5), plot.Y(0)); }
+      else if (game.used >= 3) { B.bMain.disabled = true; B.bNext.hidden = game.k >= TRACE_STAGES.length - 1; game.result(msg + '　― 判定を使い切りました（記録：' + starStr(game.best[game.k + 1] || 0) + '）', n ? 'hit' : 'miss'); }
+      else game.result(msg + (n ? '　もう少し近づけられるかも！' : '　まだずれています'), n ? 'hit' : 'miss');
+    });
+    B.bRetry.addEventListener('click', () => game.setStage(game.k));
+    B.bNext.addEventListener('click', () => game.setStage(Math.min(game.k + 1, TRACE_STAGES.length - 1)));
+    plot.draw = function (g) {
+      const c = g.c, S = TRACE_STAGES[game.k], ctx = g.ctx;
+      g.grid({ step: 1, axes: false, labels: false });
+      const guide = []; for (let i = 0; i <= 120; i++) guide.push(bez3(S.P, i / 120));
+      ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      g.poly(guide, { color: c.teal, width: 18, alpha: 0.22 });
+      ctx.restore();
+      g.poly([st.P[0], st.P[1]], { color: c.muted, width: 1.5, dash: [5, 4] });
+      g.poly([st.P[3], st.P[2]], { color: c.muted, width: 1.5, dash: [5, 4] });
+      const mine = []; for (let i = 0; i <= 120; i++) mine.push(bez3(st.P, i / 120));
+      g.poly(mine, { color: c.primary, width: 4 });
+      [st.P[0], st.P[3]].forEach((p) => { ctx.save(); ctx.fillStyle = c.text; ctx.fillRect(g.X(p[0]) - 6, g.Y(p[1]) - 6, 12, 12); ctx.restore(); });
+      g.textPx('太い薄緑の線：お手本　青い線：あなたの曲線', 10, 16, { size: 12.5, bold: true, color: c.text });
+      game.formula();
+      conf.draw(g);
+    };
+    game.setStage(0);
+  }
+
+  /* ==========================================================
+     1.6(3) チャレンジ：未来を予測せよ
+     ========================================================== */
+  const FUT_STAGES = [
+    { name: '売上', f: (x) => 0.6 * x + 0.5, noise: 0.9, seed: 1, text: 'ある店の売上の記録。この先の3日間の売上を予測しよう。', hint: '点はだいたい一直線に並んでいる。高い次数の曲線は、未来の範囲で急に上下に暴れていないかに注目。' },
+    { name: '気温', f: (x) => 0.28 * x * x + 0.3 * x - 2.2, noise: 0.5, seed: 23, text: 'ある地点の気温の変化。この先の3回分を予測しよう。', hint: '点の並びは直線ではなく、底のある曲線（放物線）に見える。' },
+    { name: '人気', f: (x) => 2.2 * Math.sin(0.55 * x + 0.3), noise: 0.35, seed: 5, text: 'ある動画の人気の移り変わり。この先の3回分を予測しよう。', hint: '上がって下がって…という波がある。何次の多項式なら「波1つ分」を表せる？ 未来の範囲での曲線の動きが自然かも確かめよう。' },
+    { name: 'ばらつき', f: () => 1, noise: 2.0, seed: 1, text: '誤差がとても大きいデータ。この先の3回分を予測しよう。', hint: '点が大きくばらついているときは、細かい上下に合わせすぎない方がよい。シンプルなモデル（低い次数）が強い。' },
+  ];
+  // 1.6 の答えは、そのステージで実際に最も良かった次数を使って表示する
+  const FUT_EXPLAIN = [
+    'データはほぼ一直線に並んでいるので、<b>1次（直線）</b> が素直な予測になる。次数を上げると過去の点にはよく合うが、未来の範囲で曲線が急に上下し、予測が大きく外れる。',
+    'データは底のある曲線に並んでいるので、<b>2次（放物線）</b> が合う。1次では曲がりを表せず、3次以上では未来の範囲で暴れやすい。',
+    '上がって下がる「波」があるので、<b>3次程度</b> で波の形を表すとよい。ただし未来は過去のデータの外側なので、どの次数でも予測は難しい。',
+    'データのばらつき（誤差）がとても大きい。こういうときは細かい上下を追いかけず、<b>0次（一定）や1次</b> のシンプルなモデルが強い。6次は過去の点を全部通るが、未来では大外れする（過学習）。',
+  ];
+  function initGameFuture() {
+    const root = $id('w-game-future');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -5, xmax: 5, ymin: -5, ymax: 6, ratio: [0.85, 0.52] });
+    const XP = [-4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5], XF = [2.5, 3.5, 4.5];
+    const ctl = root.querySelector('.controls');
+    const sm = slider(ctl, { tex: 'm', min: 0, max: 6, step: 1, value: 1, color: 'primary', fmt: (v) => v + '次', aria: '次数 m' });
+    const B = gameButtons(ctl, '🔮 予測する');
+    const conf = Confetti(root, plot);
+    const st = { yp: [], yf: [], fits: [], err: [], best: 0, shown: false };
+    FUT_STAGES.forEach(function (S, i) {
+      S.answer = () => '<b>最も良い次数：' + st.best + '次</b>（このデータで、未来の3点とのずれが最小）<br>' + FUT_EXPLAIN[i];
+    });
+    const game = GameShell(root, { key: '1-6:game', stages: FUT_STAGES, max: 1, idle: 'まだ予測していません',
+      formula: function () {
+        const f = st.fits[sm.get()];
+        if (!f) return '';
+        // 高い次数の係数はとても小さいので、有効数字3桁で表示する
+        const sig = (v) => { const t = Number(Math.abs(v).toPrecision(3)); return Math.abs(t) >= 1e-4 ? String(t) : t.toExponential(2).replace(/e([+-]\d+)/, '\\times10^{$1}'); };
+        let out = '';
+        for (let k = f.coef.length - 1; k >= 0; k--) {
+          const c = f.coef[k], body = k === 0 ? '' : k === 1 ? 'x' : 'x^{' + k + '}';
+          out += (out ? (c < 0 ? ' - ' : ' + ') : (c < 0 ? '-' : '')) + sig(c) + body;
+        }
+        return 'P(x) = ' + out;
+      },
+      onStage(k, S) {
+        const rnd = mulberry32(S.seed);
+        const ns = () => (rnd() + rnd() + rnd() - 1.5) * S.noise / 1.5;
+        st.yp = XP.map((x) => S.f(x) + ns()); st.yf = XF.map((x) => S.f(x) + ns());
+        st.fits = []; st.err = [];
+        for (let m = 0; m <= 6; m++) {
+          const fit = polyfit(XP, st.yp, m); st.fits.push(fit);
+          st.err.push(XF.reduce((s, x, i) => s + Math.pow(fit(x) - st.yf[i], 2), 0));
+        }
+        st.best = st.err.indexOf(Math.min.apply(null, st.err));
+        st.shown = false; B.bMain.disabled = false; B.bNext.hidden = true; plot.invalidate();
+      } });
+    B.bMain.addEventListener('click', function () {
+      if (st.shown) return;
+      const m = sm.get(), e = st.err[m], eb = st.err[st.best];
+      st.shown = true; game.used = 1; game.renderThrows();
+      const n = e <= eb * 1.5 + 0.5 ? 3 : e <= eb * 4 + 2 ? 2 : e <= eb * 15 + 6 ? 1 : 0;
+      if (n > 0) game.award(n);
+      const msg = '予測のずれ（2乗の合計）＝ ' + e.toFixed(2) + '　最も良かった次数は ' + st.best + '次（ずれ ' + eb.toFixed(2) + '）';
+      game.result((n === 3 ? '🔮 見事な予測！ ' : n ? '予測完了！ ' : '大きく外れた… ') + starStr(n) + '　' + msg, n ? 'hit' : 'miss');
+      B.bMain.disabled = true; B.bNext.hidden = game.k >= FUT_STAGES.length - 1;
+      if (n === 3) conf.fire(plot.X(3.5), plot.Y(st.yf[1]));
+    });
+    B.bRetry.addEventListener('click', () => game.setStage(game.k));
+    B.bNext.addEventListener('click', () => game.setStage(Math.min(game.k + 1, FUT_STAGES.length - 1)));
+    sm.on(() => { plot.invalidate(); game.formula(); });
+    plot.draw = function (g) {
+      const c = g.c, ctx = g.ctx, fit = st.fits[sm.get()];
+      ctx.save(); ctx.fillStyle = c.teal; ctx.globalAlpha = 0.1; ctx.fillRect(g.X(2), 0, g.w - g.X(2), g.h); ctx.restore();
+      g.grid({ xlabel: 'x', ylabel: 'y' });
+      g.line(2, g.ymin, 2, g.ymax, { color: c.teal, dash: [6, 5], width: 1.5 });
+      g.text('過去（見えているデータ）', 0, g.ymax, { dx: -40, dy: 14, align: 'center', size: 12, bold: true, color: c.muted });
+      g.text(st.shown ? '未来（公開！）' : '未来（まだ見えない）', 3.5, g.ymax, { dy: 14, align: 'center', size: 12, bold: true, color: c.teal });
+      if (fit) g.fn(fit, { x0: -5, x1: 5, color: c.primary, width: 4 });
+      XP.forEach((x, i) => g.dot(x, st.yp[i], { r: 6, color: c.text }));
+      if (st.shown) {
+        XF.forEach(function (x, i) { g.line(x, st.yf[i], x, fit(x), { color: c.accent, width: 2.5 }); g.dot(x, st.yf[i], { r: 7, color: c.accent }); });
+        st.fits[st.best] && g.fn(st.fits[st.best], { x0: -5, x1: 5, color: c.muted, width: 2, dash: [6, 5] });
+      } else XF.forEach((x) => g.text('?', x, 0, { align: 'center', size: 18, bold: true, color: c.teal }));
+      g.textPx('青い線：あなたの予測（' + sm.get() + '次）' + (st.shown ? '　灰色の点線：最も良かった次数' : ''), 10, g.h - 12, { size: 12.5, bold: true, color: c.primary });
+      conf.draw(g);
+    };
+    game.setStage(0);
+  }
+
   function boot() {
     // 図が置かれているものだけ初期化する(章ごとのページでも共通で使えるように)
-    [[initLinear, 'w-linear'], [initLerp, 'w-lerp'], [initReg, 'w-reg'], [initUiDemo, 'w-uidemo'], [initHeart, 'w-heart'], [initLagMini, 'w-lagmini'], [initShift, 'w-shift'], [initQuad, 'w-quad'], [initBall, 'w-ball'], [initRace, 'w-race'],
+    [[initLinear, 'w-linear'], [initLerp, 'w-lerp'], [initReg, 'w-reg'], [initUiDemo, 'w-uidemo'], [initHeart, 'w-heart'], [initLagMini, 'w-lagmini'], [initShift, 'w-shift'], [initQuad, 'w-quad'], [initBall, 'w-ball'], [initGame, 'w-game'], [initGameLine, 'w-game-line'], [initGameParab, 'w-game-parab'], [initGameEase, 'w-game-ease'], [initGameTrace, 'w-game-trace'], [initGameFuture, 'w-game-future'], [initRace, 'w-race'],
       [initDesign, 'w-design'], [initDC, 'w-dc'], [initBezier, 'w-bezier'], [initCssBezier, 'w-cssbezier'], [initLagrange, 'w-lag'], [initFit, 'w-fit']].forEach(function (e) {
       if (!$id(e[1])) return;
       try { e[0](); } catch (err) { console.error(e[0].name, err); }

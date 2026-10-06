@@ -33,8 +33,8 @@
   };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
 </head>
 <body class="chapter ch1">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -67,7 +67,7 @@
       <li>2点 $\boldsymbol{A},\boldsymbol{B}$ を $t:(1-t)$ に分ける点 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$ を説明できる。</li>
       <li>データに最もよく合う直線（回帰直線）が、どのような考え方で決まるかを説明できる。</li>
     </ol>
-    <div class="goal-meta">図 3つ ・ 確認問題 3問</div>
+    <div class="goal-meta">図 3つ ・ チャレンジ 4ステージ ・ 確認問題 3問</div>
   </div>
 
   <section class="sec first" id="linear">
@@ -199,6 +199,27 @@
       1.6章(2) では、この考え方を2次以上の多項式に広げた「多項式回帰」と、その落とし穴（過学習）を見ます。
     </p>
   
+  
+    <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：レーザーで星を撃ち抜け</h2>
+    <p>
+      直線 $y=\teal{a}x+\red{b}$ のレーザーで、星をすべて撃ち抜きましょう。
+      発射する前は、ねらいの <b>点線</b> と、星までの <b>縦のずれ（↑ あと 1.5 など）</b> が表示されるので、それを手がかりに $a$ と $b$ を調整しましょう（点線を消して命中すると 👑）。1ステージ3回まで発射でき、<b>1回目で成功すると★3</b>、2回目で★2、3回目で★1です。
+      慣れてきたら、星の座標から傾きと切片を計算して、点線なしで一発命中を狙ってみましょう。
+    </p>
+    <div class="widget" id="w-game-line">
+      <div class="widget-head">レーザーで星を撃ち抜け <span class="game-total" data-r="total"></span><span class="hint">$a$ と $b$ を決めて「発射」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="レーザーで星を撃ち抜け"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="sec" id="check">
@@ -223,8 +244,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261003"></script>
-<script src="../assets/plot.js?v=20261003"></script>
-<script src="polynomial.js?v=20261003"></script>
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="polynomial.js?v=20261018"></script>
 </body>
 </html>

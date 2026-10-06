@@ -33,8 +33,8 @@
   };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261003">
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
 </head>
 <body class="chapter ch3">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -65,8 +65,9 @@
     <ol>
       <li>投げたボールの軌跡が、$x$ の二次関数（上に凸の放物線）になることを説明できる。</li>
       <li>頂点＝最高点を求め、重力 $g$ を変えると軌跡がどう変わるかを説明できる。</li>
+      <li>式を使って、狙った場所にボールを当てる速さと角度を求められる。</li>
     </ol>
-    <div class="goal-meta">図 1つ ・ 確認問題 3問</div>
+    <div class="goal-meta">図 1つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
   </div>
 
   <section class="sec first" id="projectile">
@@ -140,6 +141,35 @@
       <p>着地は $y=0$ のときなので、$x\left(-\dfrac{g}{2v_x^{\,2}}x+\dfrac{v_y}{v_x}\right)=0$ から $x=\dfrac{2v_xv_y}{g}=\dfrac{v_0^{\,2}\sin 2\theta}{g}$。$\sin 2\theta$ が最大になる $\theta=45^\circ$ のとき最も遠くへ届きます。速さが2倍なら飛距離は $2^2=4$ 倍です。</p>
     </details>
     
+  
+    <h2 class="h-sub"><span class="tag">(2)</span>チャレンジ：惑星の的当て</h2>
+    <p>
+      (1) の式を使って、いろいろな惑星でボールを的に当ててみましょう。
+      ただし、<b>投げる前に軌跡は表示されません</b>。投げられるのは1ステージ3回まで。
+      <b>1回目で当てると★3、2回目で★2、3回目で★1</b> です。勘で投げるより、式で計算してから投げた方が有利です。
+    </p>
+    <div class="widget" id="w-game">
+      <div class="widget-head">惑星の的当て <span class="game-total" data-r="total"></span><span class="hint">速さ $v_0$ と角度 $\theta$ を決めて「投げる」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="的当てゲーム"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result">まだ投げていません</span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"><button class="btn small" data-a="hint" type="button">ヒントを見る</button></span></div>
+        </div>
+      </div>
+    </div>
+    <details class="think">
+      <summary>攻略に使う式（ボールは高さ $0$ から投げます）</summary>
+      <ul>
+        <li>飛距離：$R=\dfrac{v_0^{\,2}\sin 2\theta}{g}$　（同じ $R$ になる角度は $\theta$ と $90^\circ-\theta$ の2つ）</li>
+        <li>最高点の高さ：$H=\dfrac{(v_0\sin\theta)^2}{2g}$</li>
+        <li>位置 $x$ での高さ：$y=x\tan\theta-\dfrac{g}{2v_0^{\,2}\cos^2\theta}\,x^2$（壁や台を越えられるかの確認に）</li>
+      </ul>
+    </details>
   </section>
 
   <section class="sec" id="check">
@@ -164,8 +194,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261003"></script>
-<script src="../assets/plot.js?v=20261003"></script>
-<script src="polynomial.js?v=20261003"></script>
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="polynomial.js?v=20261018"></script>
 </body>
 </html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.3 倍々ゲームの威力 | 指数・対数 | 解析学 2026</title>
+<meta name="description" content="第2回 指数関数・対数関数 2.3章：折り紙で月まで・バイバイン">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+</head>
+<body class="chapter ch3">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html" class="active" aria-current="page"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M10 56 h44 M14 48 h36 M18 40 h28 M22 32 h20 M26 24 h12 M29 16 h6" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="12" r="6" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第2回 指数関数・対数関数 ／ 2.3章</div>
+      <h1><span class="chap-no">2.3</span>倍々ゲームの威力</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>「同じ時間ごとに 2 倍」がくり返されると、想像を超える大きさになることを体験する。</li>
+      <li>「2 倍を何回くり返せば○○を超えるか」を、$\log_{10}2\approx0.3010$ を使って見積もれる。</li>
+    </ol>
+    <div class="goal-meta">図 2つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="main">
+
+    <p>
+      指数関数のすごさは、実際の数字で見ると実感できます。厚さ $0.1$ mm の紙を半分に折るたびに厚さは 2 倍。
+      ドラえもんの道具「バイバイン」をかけた栗まんじゅうは、5 分ごとに 2 倍に増えます。
+      それぞれ、<b>どこまで大きくなるか</b> 見てみましょう。図の定規は <b>対数目盛</b>（1目盛ごとに10倍）です。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>紙を折って月まで行こう</h2>
+
+    <div class="widget" id="w-origami">
+      <div class="widget-head">紙を折って月まで行こう（厚さ 0.1 mm） <span class="hint">「1回折る」を押す／自動で折る</span></div>
+      <div class="scene">
+        <div class="scene-left">
+          <div class="scene-sub">横から見た紙の束（線1本＝紙1枚）</div>
+          <div class="paper-stack"><div class="paper" data-r="paper"></div></div>
+          <div class="scale-badge" data-r="scale"></div>
+          <div class="fold-eq">
+            <div><span class="scene-big" data-r="n">0</span><span class="u">回</span><div class="scene-sub">折った回数</div></div>
+            <div class="op">→</div>
+            <div><span class="scene-big small" data-r="layers">1</span><span class="u">枚重ね</span><div class="scene-sub" data-r="layersTx">2⁰ 枚</div></div>
+          </div>
+          <div class="scene-big small" data-r="human">0.1 mm</div>
+          <div class="scene-sub">いまの厚さ ＝ 0.1 mm × 重なった枚数</div>
+        </div>
+        <div class="scene-right">
+          <div class="scene-now">これは、およそ…</div>
+          <div class="scene-pic" data-r="pic"></div>
+          <div class="scene-cap" data-r="cap"></div>
+          <div class="scene-next" data-r="next"></div>
+        </div>
+        <div class="banner" data-r="banner" hidden></div>
+      </div>
+      <div class="stage"><canvas aria-label="紙の厚さと身近なものの比較（対数目盛）"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">厚さの式</span><span class="tex big" data-r="thick"></span></div>
+          <div class="row"><span class="k">到達</span><span data-r="reach" class="note-txt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">計算の仕組み</div>
+      <p>$n$ 回折ったときの厚さは $0.1\times2^n$ mm。月までの距離 約 $3.8\times10^5$ km $=3.8\times10^{11}$ mm を超えるには
+      $2^n\geqq3.8\times10^{12}$。両辺の $\log_{10}$ をとると $n\log_{10}2\geqq\log_{10}(3.8\times10^{12})\approx12.58$ なので
+      $n\geqq\dfrac{12.58}{0.3010}\approx41.8$。<b>たった 42 回</b> で月に届きます。</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="ttl">本当は何回折れる？ ― 12回折ったギネス世界記録</div>
+      <p>「紙は 7〜8 回までしか折れない」とよく言われてきました。1回折るたびに厚さは2倍、しかも折り曲げる部分で紙が大きく曲がるため、
+      必要な紙の長さも急激に（ほぼ指数関数的に）増えるからです。</p>
+      <p>2002年1月、アメリカの高校生 <b>ブリトニー・ガリバン</b>（Britney Gallivan）さんは、必要な紙の長さを表す式を自分で導き、
+      長さ約 1.2 km のトイレットペーパーを使って <b>1枚の紙を半分に 12 回折る</b> ことに初めて成功しました（ギネス世界記録）。
+      12 回折ると $2^{12}=4096$ 枚重ねです。</p>
+      <p>ガリバンさんの式によると、厚さ $t$ の細長い紙を同じ向きに $n$ 回折るのに必要な長さは</p>
+      <div class="eq-box">$$L=\frac{\pi t}{6}\left(2^n+4\right)\left(2^n-1\right)$$</div>
+      <p>$2^n$ が2回かけ合わされているので、$L$ はおよそ $4^n$ に比例し、<b>1回多く折るには約4倍の長さ</b> が必要です。
+      厚さ $0.1$ mm の紙なら、7回で約 $88$ cm、10回で約 $55$ m、12回で約 $880$ m、13回では約 $3.5$ km にもなります。
+      ここでも指数関数が「壁」になっているのです。</p>
+      <ul>
+        <li><a href="https://www.guinnessworldrecords.com/world-records/494571-most-times-to-fold-a-piece-of-paper" target="_blank" rel="noopener">ギネス世界記録 公式ページ：Most times to fold a piece of paper（英語）</a></li>
+        <li><a href="https://www.guinnessworldrecords.com/news/2025/10/how-many-times-can-you-actually-fold-a-piece-of-paper-student-busts-myth" target="_blank" rel="noopener">ギネス世界記録 公式ニュース：How many times can you actually fold a piece of paper? Student busts myth（英語）</a></li>
+        <li><a href="https://dragonflare.blog.jp/archives/fold_paper_in_half.html" target="_blank" rel="noopener">紙を半分に折る回数の限界とガリバンの式の解説（日本語ブログ）</a></li>
+        <li><a href="https://youtube.com/shorts/F6btjJ_YotY" target="_blank" rel="noopener">動画（YouTube ショート）：紙を12回折る</a></li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>バイバインで宇宙を埋め尽くせ？</h2>
+
+    <p>
+      「バイバイン」は、かけて 5 分待つと 2 倍に増える液体です（ドラえもんの道具）。
+      体積 100 cm³ の栗まんじゅう1個にかけると、どれくらいで宇宙（体積 約 $4\times10^{80}$ m³ とする）を埋め尽くすでしょうか。
+    </p>
+    <div class="widget" id="w-baibain">
+      <div class="widget-head">バイバイン（5分ごとに2倍） <span class="hint">▶ で時間を進める／スライダーで時刻を変える</span></div>
+      <div class="scene manju-scene">
+        <div class="rain" data-r="rain"></div>
+        <div class="scene-left">
+          <div class="scene-big" data-r="time">0 分</div>
+          <div class="scene-sub">経過時間</div>
+          <div class="scene-big small" data-r="count">1 個</div>
+          <div class="scene-sub" data-r="digits">栗まんじゅうの数</div>
+        </div>
+        <div class="scene-right">
+          <div class="scene-now">栗まんじゅうで埋め尽くしたもの</div>
+          <div class="scene-pic" data-r="pic"></div>
+          <div class="scene-cap" data-r="cap"></div>
+          <div class="scene-next" data-r="next"></div>
+        </div>
+        <div class="banner" data-r="banner" hidden></div>
+      </div>
+      <div class="stage"><canvas aria-label="栗まんじゅうの体積と身近なものの比較（対数目盛）"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">個数の式</span><span class="tex" data-r="countTex"></span></div>
+          <div class="row"><span class="k">全体の体積</span><span class="tex" data-r="vol"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="ttl">お話の結末</div>
+      <p>原作では、増えすぎた栗まんじゅうをロケットで宇宙へ送ってしまいます。宇宙のどこかで今も増え続けているかも…？
+      計算では <b>約1日（23.5時間）</b> で宇宙の体積に達します。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：予想して確かめよう</h2>
+
+    <p>答えを <b>予想してから</b> 決定しましょう。チャンスは各ステージ1回です。$\log_{10}2\approx0.3010$（$2^{10}\approx1000$）を使うと、暗算でもかなり近づけます。</p>
+    <div class="widget" id="w-game-predict">
+      <div class="widget-head">予想して確かめよう <span class="game-total" data-r="total"></span><span class="hint">予想を決めて「決定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="予想して確かめよう"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>厚さ 0.1 mm の紙を何回折ると、厚さが 1 km を超えるか。</li>
+        <li>バイバインをかけた栗まんじゅう1個が、1万個を超えるのは何分後か。</li>
+        <li>$2^{10}\approx10^3$ を使って、$2^{40}$ がおよそいくつか見積もれ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $0.1\times2^n\geqq10^6$（mm）より $2^n\geqq10^7$。$2^{23}\approx8.4\times10^6,\ 2^{24}\approx1.7\times10^7$ なので 24 回　(2) $2^{14}=16384$ なので 14 回分、70 分後　(3) $2^{40}=(2^{10})^4\approx(10^3)^4=10^{12}$（1兆）</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="2-2.html"><span class="dir">← 前の章</span><span class="nm">2.2 指数関数のグラフ</span></a>
+    <a class="next" href="2-4.html"><span class="dir">次の章 →</span><span class="nm">2.4 対数</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="explog.js?v=20261018"></script>
+</body>
+</html>

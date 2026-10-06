@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.2 指数関数のグラフ | 指数・対数 | 解析学 2026</title>
+<meta name="description" content="第2回 指数関数・対数関数 2.2章：y=a^x・平行移動・倍々の増え方">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
+      packages: { '[+]': ['html'] },
+      macros: {
+        amber: ['\\class{tx-amber}{#1}', 1],
+        red: ['\\class{tx-red}{#1}', 1],
+        blue: ['\\class{tx-blue}{#1}', 1],
+        violet: ['\\class{tx-violet}{#1}', 1],
+        teal: ['\\class{tx-teal}{#1}', 1],
+        slate: ['\\class{tx-slate}{#1}', 1],
+        brown: ['\\class{tx-brown}{#1}', 1]
+      }
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event('mathjax-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=20261018">
+<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+</head>
+<body class="chapter ch2">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html" class="active" aria-current="page"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 56 C 24 55, 36 50, 44 36 S 54 10, 58 4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M4 58 H60" stroke="currentColor" stroke-width="2" opacity=".6"/></svg></div>
+    <div>
+      <div class="eyebrow">第2回 指数関数・対数関数 ／ 2.2章</div>
+      <h1><span class="chap-no">2.2</span>指数関数のグラフ</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この章のゴール</div>
+    <ol>
+      <li>$a>0,\ a\neq1$ のとき、指数関数 $y=a^x$ のグラフの形（増加・減少、点 $(0,1)$、漸近線）を説明できる。</li>
+      <li>$y=a^{x-p}+q$ が $y=a^x$ の平行移動であることを、1.2章と同じ考え方で説明できる。</li>
+      <li>$x$ が 1 増えるごとに $y$ が $a$ 倍になる「倍々」の増え方が、多項式よりずっと速いことを説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 2つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
+  </div>
+
+  <section class="sec first" id="main">
+
+    <p>
+      2.1章で、$2^x$ は整数だけでなく分数（さらには実数）の $x$ に対して決まることがわかりました。
+      $a>0,\ a\neq1$ に対して、$y=a^x$ を <b>指数関数</b> といいます。
+      $x$ が 1 増えるごとに $y$ が $a$ 倍になる、つまり <b>同じ時間ごとに同じ倍率で増える（減る）</b> 量を表す関数です。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>グラフと平行移動</h2>
+
+    <p>
+      底 $\blue{a}$ を変えるとグラフはどう変わるでしょう。さらに 1.2章と同じように、$x$ を $x-\teal{p}$、$y$ を $y-\red{q}$ に置き換えると、
+      グラフは <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 平行移動します。
+    </p>
+    <div class="widget" id="w-expgraph">
+      <div class="widget-head">$y=\blue{a}^{x-\teal{p}}+\red{q}$ <span class="hint">$a,\ p,\ q$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="指数関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">増え方</span><span data-r="kind" class="note-txt"></span></div>
+          <div class="row"><span class="k">必ず通る点</span><span class="tex" data-r="pt"></span></div>
+          <div class="row"><span class="k">漸近線</span><span class="tex" data-r="asym"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout try">
+      <div class="ttl">触ってみよう</div>
+      <ul>
+        <li>$a>1$ なら右上がり、$0\lt a\lt 1$ なら右下がり。$a=1$ にするとどうなる？</li>
+        <li>「$y=(1/a)^x$ も表示」をオンにすると、$y$ 軸について対称なグラフが現れる。$\left(\frac1a\right)^x=a^{-x}$ だから。</li>
+        <li>どの $a$ でも、グラフは点 $(0,1)$ を通る（$a^0=1$）。平行移動すると $(p,\ q+1)$ に移る。</li>
+        <li>グラフは直線 $y=q$ にどこまでも近づくが、触れない。この直線を <b>漸近線</b> という。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>倍々の増え方は、多項式に必ず勝つ</h2>
+
+    <p>
+      $2^x$（倍々）と $x^2$、$x^3$、$x^{10}$（多項式）を比べてみましょう。最初は多項式が大きくても、$x$ が大きくなると
+      <b>指数関数が必ず追い抜きます</b>。縦軸を「対数目盛（1目盛ごとに10倍）」に切り替えると、何が起きているかがよく見えます。
+    </p>
+    <div class="widget" id="w-exprace">
+      <div class="widget-head">指数関数 vs 多項式 <span class="hint">比べる相手と範囲を選ぶ／対数目盛に切り替える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">比べる相手</span><div class="chips" data-r="rivals"></div>
+        <label class="check"><input type="checkbox" data-r="log">縦軸を対数目盛にする</label></div></div>
+      <div class="stage"><canvas aria-label="指数関数と多項式の比較"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">追い抜く点</span><span data-r="cross" class="note-txt"></span></div>
+          <div class="row"><span class="k">右端での値</span><span class="tex" data-r="vals"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">ポイント</div>
+      <p>対数目盛では、指数関数 $y=2^x$ が <b>直線</b> になります（$\log_{10}2^x=x\log_{10}2$ は $x$ の1次式）。
+      一方、多項式はだんだん寝ていく曲線になるので、いつか必ず追い抜かれます。対数は2.4章で詳しく扱います。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：指数関数でコインを集めろ</h2>
+
+    <p>1.2章の放物線のチャレンジの指数関数版です。$y=\blue{a}^{x-\teal{p}}+\red{q}$ で、コインをすべて集めましょう。
+    発射前はねらいの点線と、コインまでの縦のずれが表示されます（点線を消して命中すると 👑）。
+    <b>「$x$ が 1 増えると $y$ が何倍？」</b> と、<b>必ず通る点 $(p,\ q+1)$</b> が手がかりです。</p>
+    <div class="widget" id="w-game-expcoin">
+      <div class="widget-head">指数関数でコインを集めろ <span class="game-total" data-r="total"></span><span class="hint">$a,\ p,\ q$ を決めて「発射」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="指数関数でコインを集めろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+        <li>$y=2^{x-3}$ のグラフは、$y=2^x$ のグラフをどのように平行移動したものか。</li>
+        <li>$y=\dfrac{1}{3^x}$ のグラフと $y=3^x$ のグラフはどのような位置関係にあるか。</li>
+        <li>$y=2^x$ のグラフが点 $(0,1)$ を通る理由を説明せよ。また、$y=2^{x-1}+3$ のグラフが必ず通る点を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <p>(1) $x$ 方向に $3$ 平行移動　(2) $\dfrac1{3^x}=3^{-x}$ なので $y$ 軸について対称　(3) $2^0=1$ だから。$(1,\ 4)$</p>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の章">
+    <a class="prev" href="2-1.html"><span class="dir">← 前の章</span><span class="nm">2.1 指数を広げる</span></a>
+    <a class="next" href="2-3.html"><span class="dir">次の章 →</span><span class="nm">2.3 倍々ゲームの威力</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/plot.js?v=20261018"></script>
+<script src="../assets/game.js?v=20261018"></script>
+<script src="explog.js?v=20261018"></script>
+</body>
+</html>
