@@ -7,36 +7,12 @@
 <meta name="description" content="指数の拡張・指数関数・倍々ゲーム・対数・対数の応用・ネイピア数eを、動かしながら理解する。">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter">
+<body class="chapter calm index-page">
 <header id="site-header" data-root="../" data-current="explog"></header>
 
 <div class="layout">
@@ -59,6 +35,7 @@
       「2倍、4倍、8倍…」と同じ倍率で増え続ける量を表すのが <b>指数関数</b>、その「何倍を何回？」を逆にたずねるのが <b>対数</b> です。
       $2^{-1}$ や $2^{\frac12}$ がなぜあの値になるのかから始めて、紙を折って月まで行く話、音や地震の大きさ、
       お金の利息とネイピア数 $e$ まで、6つの章で体験します。各章には <b>チャレンジ</b> があり、取った★は章の一覧に表示されます。
+      各章で特に大事なことは <span class="key-mark">覚える</span> の枠にまとめてあります。
     </p>
   </div>
 
@@ -118,18 +95,20 @@
 
   <section class="sec" id="summary">
     <h2 class="h-sub"><span class="tag">まとめ</span>第2回のまとめ</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>項目</th><th>式</th><th>意味</th></tr></thead>
-        <tbody>
-          <tr><td>指数の拡張</td><td>$a^0=1,\ a^{-n}=\dfrac1{a^n},\ a^{\frac mn}=\sqrt[n]{a^m}$</td><td>指数法則がそのまま成り立つように決める</td></tr>
-          <tr><td>指数法則</td><td>$a^ma^n=a^{m+n},\ (a^m)^n=a^{mn}$</td><td>かける回数の足し算・かけ算</td></tr>
-          <tr><td>指数関数</td><td>$y=a^x$</td><td>$x$ が 1 増えると $y$ は $a$ 倍。多項式より速く増える</td></tr>
-          <tr><td>対数</td><td>$a^y=x\iff y=\log_a x$</td><td>$a$ を何乗すると $x$ になるか</td></tr>
-          <tr><td>対数法則</td><td>$\log_a MN=\log_a M+\log_a N$</td><td>かけ算を足し算に変える（計算尺・桁数・対数目盛）</td></tr>
-          <tr><td>ネイピア数</td><td>$e=\displaystyle\lim_{n\to\infty}\left(1+\frac1n\right)^n\approx2.718$</td><td>連続複利／$y=e^x$ の $x=0$ での接線の傾きが 1。$\log=\log_e$</td></tr>
-        </tbody>
-      </table>
+    <a class="card keys-card" href="keys.html">
+      <span class="keys-card-ttl">覚えることのまとめ <span aria-hidden="true">→</span></span>
+      <span class="keys-card-sub">6つの章の「覚える｜この章のまとめ」を1ページに集めました（印刷もできます）</span>
+    </a>
+    <div class="key summary"><div class="key-ttl">覚える｜第2回 指数・対数の全体像</div>
+      <p class="key-lead">指数は「何回かけるか」、対数はその逆「何回かけたか」</p>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>指数の拡張</th><td>$a^0=1,\ a^{-n}=\dfrac1{a^n},\ a^{\frac mn}=\sqrt[n]{a^m}$<span class="use">指数法則がそのまま成り立つように決める（<a href="2-1.html">2.1</a>）</span></td></tr>
+        <tr><th>指数法則</th><td>$a^ma^n=a^{m+n},\ (a^m)^n=a^{mn}$<span class="use">かける回数の足し算・かけ算（<a href="2-1.html">2.1</a>）</span></td></tr>
+        <tr><th>指数関数</th><td>$y=a^x$<span class="use">$x$ が $1$ 増えると $y$ は $a$ 倍。多項式より速く増える（<a href="2-2.html">2.2</a>・<a href="2-3.html">2.3</a>）</span></td></tr>
+        <tr><th>対数</th><td>$a^y=x\iff y=\log_a x$<span class="use">$a$ を何乗すると $x$ になるか（<a href="2-4.html">2.4</a>）</span></td></tr>
+        <tr><th>対数法則</th><td>$\log_a MN=\log_a M+\log_a N$<span class="use">かけ算を足し算に変える。計算尺・桁数・対数目盛（<a href="2-4.html">2.4</a>・<a href="2-5.html">2.5</a>）</span></td></tr>
+        <tr><th>ネイピア数</th><td>$e=\displaystyle\lim_{n\to\infty}\left(1+\frac1n\right)^n\approx2.718$<span class="use">連続複利。$y=e^x$ の $x=0$ での接線の傾きが $1$（<a href="2-6.html">2.6</a>）</span></td></tr>
+      </tbody></table></div>
     </div>
   </section>
 
@@ -141,6 +120,6 @@
 </div>
 
 <footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数</footer>
-<script src="../assets/common.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
 </body>
 </html>

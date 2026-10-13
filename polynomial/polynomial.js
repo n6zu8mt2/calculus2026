@@ -13,7 +13,6 @@
   const R = (root, k) => root.querySelector('[data-r="' + k + '"]');
   const tex = (root, k, s) => setTex(R(root, k), s);
   const $id = (id) => document.getElementById(id);
-  const SUB = '₀₁₂₃₄₅₆₇₈₉';
   const SERIES_VARS = ['--primary', '--accent', '--teal', '--amber', '--violet', '--pink'];
   const EXTRA = ['#2f9e44', '#0b7285', '#7048e8'];
 
@@ -36,6 +35,85 @@
   const linTeX = (a, b) => 'y = ' + (a === 0 ? num(b) : coef(a) + 'x' + signed(b));
   const rand5 = () => (Math.floor(Math.random() * 13) - 6) / 2; // -3 .. 3 (0.5刻み)
   const colorOf = (c, i) => (i < 6 ? c.series[i] : EXTRA[i - 6]);
+
+  /* ---- グラフ上の数式は TeX で（g.tex = MathJax のラベルを canvas の上に重ねる） ---- */
+  // 座標 (a, b) の TeX
+  const ptTeX = (a, b, d) => '(' + num(a, d) + ',\\ {' + num(b, d) + '})';
+  // 軸ラベル x, y を TeX で描く grid（g.grid の canvas の斜体ラベルの代わり。位置は同じ）
+  function gridT(g, o) {
+    o = o || {};
+    const xl = o.xlabel, yl = o.ylabel;
+    g.grid(Object.assign({}, o, { xlabel: '', ylabel: '' }));
+    const col = g.c.muted;
+    if (xl) g.texPx(xl, g.w - 8, g.Y(0) - 6 > 14 && g.Y(0) < g.h ? g.Y(0) - 4 : g.h - 4, { color: col, size: 15, align: 'right', valign: 'bottom' });
+    if (yl) g.texPx(yl, g.X(0) + 8 < g.w - 20 && g.X(0) > 0 ? g.X(0) + 8 : 8, 4, { color: col, size: 15, valign: 'top' });
+  }
+  // ハンドルのラベル（tex: 文字列 or 関数）は plot.js が描く
+
+  // ラベルを置く場所を候補 cands（中心のピクセル座標 [px, py]）から選ぶ：
+  // 曲線 fns（x → y）や長方形 boxes（{l,t,r,b} ピクセル）と重ならない最初の候補。なければ重なりが最も少ない候補
+  function freeSpot(g, fns, cands, w, h, boxes) {
+    const pad = 5;
+    let best = null, bestHit = Infinity;
+    for (const [cx, cy] of cands) {
+      const l = cx - w / 2, r = cx + w / 2, t = cy - h / 2, b = cy + h / 2;
+      if (l < 4 || r > g.w - 4 || t < 4 || b > g.h - 4) continue;
+      let hit = 0;
+      fns.forEach((f) => {
+        let prev = null;
+        for (let px = l - pad; px <= r + pad + 0.1; px += 2) {
+          const y = g.Y(f(g.ix(px)));
+          if (prev != null && Math.max(prev, y) >= t - pad && Math.min(prev, y) <= b + pad) hit++;
+          prev = y;
+        }
+      });
+      (boxes || []).forEach((q) => { if (l < q.r + pad && r > q.l - pad && t < q.b + pad && b > q.t - pad) hit += 200; });
+      if (hit === 0) return [cx, cy, 0];
+      if (hit < bestHit) { bestHit = hit; best = [cx, cy, hit]; }
+    }
+    return best || [cands[0][0], cands[0][1], Infinity];
+  }
+
+  // ラベルを順に置いていく道具：置いたラベルは障害物 boxes に加わるので、あとのラベルはそれを避ける。
+  // put(tex, 文字数の目安になる平文, size, color, cands(w, h) → 候補の中心の配列, { noAxis, below })
+  function labeler(g, curves, boxes) {
+    boxes = boxes || [];
+    const estW = (str, size) => [...str].reduce((w, ch) => w + (ch.charCodeAt(0) > 255 ? size : size * 0.6), 8);
+    return {
+      boxes,
+      box(l, t, r, b, axis) { boxes.push({ l, t, r, b, axis }); },
+      // 線分（ピクセル座標）を小さな箱の列として障害物にする
+      seg(ax, ay, bx, by) {
+        const len = Math.hypot(bx - ax, by - ay);
+        for (let d = 0; d <= len; d += 6) { const u = d / (len || 1); boxes.push({ l: ax + (bx - ax) * u - 1, r: ax + (bx - ax) * u + 1, t: ay + (by - ay) * u - 1, b: ay + (by - ay) * u + 1 }); }
+      },
+      size(str, plain, size, color) {
+        // 前回 MathJax で組んだラベルがあれば、その実際の大きさを使う（まだなら少しあとで描き直す）
+        const key = str + '|' + color + '|' + size;
+        const n = g._texCache && g._texCache.get(key);
+        const ok = n && n.querySelector('mjx-container') && n.offsetWidth;
+        if (!ok) {
+          const seen = g._lblSeen || (g._lblSeen = new Map());
+          if (seen.size > 300) seen.clear();
+          const k = seen.get(key) || 0;
+          if (k < 3) { seen.set(key, k + 1); setTimeout(() => g.invalidate(), 350); }
+        }
+        return ok ? [n.offsetWidth + 4, n.offsetHeight + 2] : [estW(plain, size) * 1.25, size + 10];
+      },
+      put(str, plain, size, color, cands, o) {
+        o = o || {};
+        const [w, h0] = this.size(str, plain, size, color), h = h0 + (o.below || 0);
+        const cs = cands(w, h0).map(([x, y]) => [x, y + (o.below || 0) / 2]);
+        const sp = freeSpot(g, curves, cs, w, h, o.noAxis ? boxes.filter((b) => !b.axis) : boxes);
+        // optional のラベルは、ほかのラベルや点とどうしても重なるなら描かない（値は図の下の欄にも出ている）
+        if (o.optional && sp[2] >= 200) return null;
+        boxes.push({ l: sp[0] - w / 2, r: sp[0] + w / 2, t: sp[1] - h / 2, b: sp[1] + h / 2 });
+        const cy = sp[1] - (o.below || 0) / 2;
+        g.texPx(str, sp[0], cy, { color, size, align: 'center', valign: 'middle' });
+        return [sp[0], cy, w, h0];
+      },
+    };
+  }
 
   /* ==========================================================
      Player — 再生/一時停止 + t スライダー(+所要時間)
@@ -128,22 +206,51 @@
       const hl = plot.active === hA ? 'a' : plot.active === hB ? 'b' : st.hl;
       const wA = hl === 'a' ? 7 : 4, wB = hl === 'b' ? 7 : 4;
       syncHl(hl);
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       if (st.quiz) g.fn((x) => st.quiz.a * x + st.quiz.b, { color: c.amber, dash: [7, 6], width: 3.5 });
       g.fn((x) => a * x + b, { color: c.primary, width: 4 });
       // y切片 b：原点から (0,b) までの赤い矢印
       if (Math.abs(b) > 0.15) g.arrow(0, 0, 0, b, { color: c.accent, width: wB });
-      g.text('y切片 b = ' + L.minus(num(b)), 0, b, { dx: -16, dy: b >= 0 ? -14 : 14, color: c.accent, bold: true, align: 'right', size: 13 });
-      // x方向に1進む矢印
+      // x方向に1進む矢印・y方向に a だけ変化する矢印
       g.arrow(0, b, 1, b, { color: c.text, width: 3 });
-      g.text('x方向に 1', 0.5, b, { dy: a >= 0 ? 20 : -18, color: c.text, bold: true, align: 'center', size: 13 });
-      // y方向に a だけ変化する矢印
       if (Math.abs(a) > 0.1) g.arrow(1, b, 1, a + b, { color: c.teal, width: wA });
-      g.text('y方向に a = ' + L.minus(num(a)), 1, b + a / 2, { dx: 14, color: c.teal, bold: true, align: 'left', size: 13 });
-      g.text('（これが傾き）', 1, b + a / 2, { dx: 14, dy: 16, color: c.teal, align: 'left', size: 12 });
-      if (a !== 0) {
-        const xi = -b / a;
-        if (xi > g.xmin && xi < g.xmax) { g.dot(xi, 0, { r: 6, color: c.pink }); g.text('x切片', xi, 0, { dy: 18, color: c.pink, bold: true, align: 'center', size: 12 }); }
+      const xi = a !== 0 ? -b / a : NaN, showXi = xi > g.xmin && xi < g.xmax;
+      if (showXi) g.dot(xi, 0, { r: 6, color: c.pink });
+      // ラベルは、直線・矢印・点・ほかのラベルと重ならない場所を順に探して置く
+      const x0 = g.X(0), y0 = g.Y(0), yb = g.Y(b), x1 = g.X(1), ya = g.Y(a + b);
+      const curves = [(x) => a * x + b];
+      if (st.quiz) curves.push((x) => st.quiz.a * x + st.quiz.b);
+      const lb = labeler(g, curves, [
+        { l: x0 + 4, r: x0 + 22, t: 2, b: 24 }, { l: g.w - 22, r: g.w, t: y0 - 26, b: y0 }, { l: x0 - 20, r: x0 - 2, t: y0 + 2, b: y0 + 20 }, // 軸の名前・原点 O
+        { l: x0 - 12, r: x0 + 12, t: yb - 12, b: yb + 12 }, { l: x1 - 12, r: x1 + 12, t: ya - 12, b: ya + 12 }, // つまみ
+      ]);
+      lb.seg(x0, y0, x0, yb); lb.seg(x0, yb, x1, yb); lb.seg(x1, yb, x1, ya);
+      if (showXi) lb.box(g.X(xi) - 8, y0 - 8, g.X(xi) + 8, y0 + 8);
+      const sideY = (k) => [-14, 14, -30, 30, -46, 46].map((d) => d * k);
+      lb.put('y\\text{ 切片 }b=' + num(b), 'y 切片 b=' + num(b), 15, c.accent, (w) => {
+        const out = [];
+        [0, 30, 60].forEach((e) => sideY(b >= 0 ? 1 : -1).forEach((d) => out.push([x0 - 16 - e - w / 2, yb + d])));
+        sideY(b >= 0 ? 1 : -1).forEach((d) => out.push([x0 + 16 + w / 2, yb + d]));
+        return out;
+      });
+      lb.put('x\\text{ 方向に }1', 'x 方向に 1', 15, c.text, (w) => {
+        const out = [];
+        [20, -18, 38, -36].map((d) => d * (a >= 0 ? 1 : -1)).forEach((d) => [0, 20, -20, 40].forEach((e) => out.push([x0 + 5 + e + w / 2, yb + d])));
+        return out;
+      });
+      const ym = g.Y(b + a / 2);
+      lb.put('y\\text{ 方向に }a=' + num(a), 'y 方向に a=' + num(a), 15, c.teal, (w, h) => {
+        const out = [];
+        [0, 16, -16, 32, -32, 48, -48].forEach((d) => [0, 20, 40].forEach((e) => { out.push([x1 + 14 + e + w / 2, ym + d]); }));
+        [0, 16, -16, 32, -32].forEach((d) => out.push([x1 - 14 - w / 2, ym + d]));
+        return out;
+      }, { below: 19 });
+      // 「（これが傾き）」は上のラベルのすぐ下（その分の場所も確保済み）
+      const la = lb.boxes[lb.boxes.length - 1];
+      g.text('（これが傾き）', g.ix(la.l), g.iy(la.b - 9), { color: c.teal, align: 'left', size: 12 });
+      if (showXi) {
+        const xp = g.X(xi);
+        lb.put('x\\text{ 切片}', 'x 切片', 14, c.pink, (w) => [[xp, y0 + 19], [xp + 8 + w / 2, y0 + 17], [xp - 8 - w / 2, y0 + 17], [xp + 8 + w / 2, y0 - 17], [xp - 8 - w / 2, y0 - 17], [xp, y0 - 19]]);
       }
     };
     root.querySelector('[data-a="quiz"]').addEventListener('click', function () {
@@ -182,7 +289,7 @@
     function P() { const t = st.t; return [(1 - t) * st.A[0] + t * st.B[0], (1 - t) * st.A[1] + t * st.B[1]]; }
     function update() {
       const t = st.t, p = P(), dx = st.B[0] - st.A[0], dy = st.B[1] - st.A[1], len = Math.hypot(dx, dy);
-      tex(root, 'p', '\\boldsymbol{P}(' + num(t) + ') = (' + num(p[0]) + ',\\ ' + num(p[1]) + ')');
+      tex(root, 'p', '\\boldsymbol{P}(' + num(t) + ') = (' + num(p[0]) + ',\\ {' + num(p[1]) + '})');
       tex(root, 'ratio', '\\mathrm{AP}:\\mathrm{PB}=' + C('red', 't') + ':' + C('teal', '(1-t)') + '=' + C('red', num(t)) + ':' + C('teal', num(1 - t)));
       const put = (k, v) => { const e = R(root, k); if (e) e.textContent = v; };
       put('ra-p', 't = ' + t.toFixed(2)); put('ra-l', (t * len).toFixed(2));
@@ -198,8 +305,8 @@
       plot.invalidate();
     }
     const dragTo = (pt) => (x, y) => { pt[0] = clamp(snap(x, 0.25), -5.5, 5.5); pt[1] = clamp(snap(y, 0.25), plot.ymin + 0.5, plot.ymax - 0.5); update(); };
-    plot.addHandle({ get x() { return st.A[0]; }, get y() { return st.A[1]; }, get color() { return plot.c.primary; }, label: 'A = P(0)', ldx: 0, ldy: -20, lalign: 'center', drag: dragTo(st.A) });
-    plot.addHandle({ get x() { return st.B[0]; }, get y() { return st.B[1]; }, get color() { return plot.c.text; }, label: 'B = P(1)', ldx: 0, ldy: -20, lalign: 'center', drag: dragTo(st.B) });
+    plot.addHandle({ get x() { return st.A[0]; }, get y() { return st.A[1]; }, get color() { return plot.c.primary; }, tex: '\\boldsymbol{A}=\\boldsymbol{P}(0)', ldx: 0, ldy: -22, lalign: 'center', drag: dragTo(st.A) });
+    plot.addHandle({ get x() { return st.B[0]; }, get y() { return st.B[1]; }, get color() { return plot.c.text; }, tex: '\\boldsymbol{B}=\\boldsymbol{P}(1)', ldx: 0, ldy: -22, lalign: 'center', drag: dragTo(st.B) });
 
     plot.draw = function (g) {
       const c = g.c, dx = st.B[0] - st.A[0], dy = st.B[1] - st.A[1], t = st.t, q = P();
@@ -212,12 +319,15 @@
       // 線分に沿った法線方向にラベルをずらす
       const ax = g.X(st.A[0]), ay = g.Y(st.A[1]), bx = g.X(st.B[0]), by = g.Y(st.B[1]);
       const d = Math.hypot(bx - ax, by - ay) || 1, nx = (by - ay) / d, ny = -(bx - ax) / d;
-      if (t * d > 60) g.text('AP = t×AB', (st.A[0] + q[0]) / 2, (st.A[1] + q[1]) / 2, { dx: nx * 22, dy: ny * 22, color: c.accent, bold: true, align: 'center', size: 12 });
-      if ((1 - t) * d > 80) g.text('PB = (1−t)×AB', (q[0] + st.B[0]) / 2, (q[1] + st.B[1]) / 2, { dx: nx * 22, dy: ny * 22, color: c.teal, bold: true, align: 'center', size: 12 });
-      g.text('t = 0', st.A[0], st.A[1], { dy: 22, color: c.muted, bold: true, align: 'center', size: 12 });
-      g.text('t = 1', st.B[0], st.B[1], { dy: 22, color: c.muted, bold: true, align: 'center', size: 12 });
-      g.text('P(t)', q[0], q[1], { dx: -nx * 22, dy: -ny * 22, color: c.text, bold: true, align: 'center' });
-      g.textPx('AP : PB = t : (1−t) = ' + t.toFixed(2) + ' : ' + (1 - t).toFixed(2), 10, g.h - 14, { bold: true, size: 13, color: c.text });
+      // ラベルの箱が線分にかからない距離だけ、法線方向に離す（箱の半分の幅・高さを法線方向に投影した長さ＋すき間）
+      const off = (w, h) => 10 + Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2;
+      if (t * d > 60) g.tex('\\mathrm{AP}=t\\times\\mathrm{AB}', (st.A[0] + q[0]) / 2, (st.A[1] + q[1]) / 2, { dx: nx * off(118, 22), dy: ny * off(118, 22), color: c.accent, align: 'center', size: 14 });
+      if ((1 - t) * d > 80) g.tex('\\mathrm{PB}=(1-t)\\times\\mathrm{AB}', (q[0] + st.B[0]) / 2, (q[1] + st.B[1]) / 2, { dx: nx * off(158, 22), dy: ny * off(158, 22), color: c.teal, align: 'center', size: 14 });
+      g.tex('t=0', st.A[0], st.A[1], { dy: 23, color: c.muted, align: 'center', size: 14 });
+      g.tex('t=1', st.B[0], st.B[1], { dy: 23, color: c.muted, align: 'center', size: 14 });
+      g.tex('\\boldsymbol{P}(t)', q[0], q[1], { dx: -nx * off(40, 22), dy: -ny * off(40, 22), color: c.text, align: 'center', size: 15 });
+      // 再生中も文字列が繰り返すよう、小数2桁に丸めてから TeX に
+      g.texPx('\\mathrm{AP}:\\mathrm{PB}=t:(1-t)=' + t.toFixed(2) + ':' + (1 - t).toFixed(2), 10, g.h - 14, { size: 15, color: c.text });
     };
     update();
   }
@@ -225,9 +335,18 @@
   /* ==========================================================
      2.1 平行移動  y - q = (x - p)^2
      ========================================================== */
+  // y=(x-p)^2+q を符号を整理した形で（p, q は色付き）
+  function shiftTeX(p, q) {
+    const xp = p === 0 ? 'x^2' : '(x' + sg(-p) + C('teal', num(Math.abs(p))) + ')^2';
+    return xp + (q === 0 ? '' : sg(q) + C('red', num(Math.abs(q))));
+  }
+  function shiftTeX2(p, q) {
+    const xp = p === 0 ? 'x' : '(x' + sg(-p) + C('teal', num(Math.abs(p))) + ')';
+    return 'y' + (q === 0 ? '' : sg(-q) + C('red', num(Math.abs(q)))) + '=' + xp + '^2';
+  }
   function initShift() {
     const root = $id('w-shift');
-    const plot = new Plot(root.querySelector('canvas'), { xmin: -5, xmax: 5, equal: true, yc: 1.2, ratio: [0.95, 0.72] });
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -5, xmax: 5, equal: true, yc: 0.9, ratio: [0.95, 0.72] });
     const st = { p: 2, q: 1, s: 1, quiz: null };
     const ctl = root.querySelector('.controls');
     const sp = slider(ctl, { tex: '\\teal{p}', min: -3, max: 3, step: 0.5, value: st.p, color: 'teal', aria: 'x方向の移動 p' });
@@ -236,11 +355,15 @@
 
     function update() {
       const { p, q, s } = st;
-      const xp = p === 0 ? 'x' : '(x' + sg(-p) + C('teal', num(Math.abs(p))) + ')';
-      tex(root, 'eq', 'y' + (q === 0 ? '' : sg(-q) + C('red', num(Math.abs(q)))) + ' = ' + xp + '^2');
-      tex(root, 'vec', '(' + C('teal', 'p') + ',\\ ' + C('red', 'q') + ') = (' + C('teal', num(p)) + ',\\ ' + C('red', num(q)) + ')');
-      tex(root, 'vertex', '(0,\\ 0)\\ \\to\\ (' + C('teal', 'p') + ',\\ ' + C('red', 'q') + ') = (' + num(p) + ',\\ ' + num(q) + ')');
-      tex(root, 'pt', '\\mathrm{Q}(' + num(s) + ',\\ ' + num(s * s) + ')\\ \\to\\ \\mathrm{Q}\'(s' + sg(p) + C('teal', 'p') + ',\\ s^2' + sg(q) + C('red', 'q') + ') = (' + num(s + p) + ',\\ ' + num(s * s + q) + ')');
+      const P = C('teal', num(p)), Q = C('red', num(q));
+      tex(root, 'sp', C('teal', 'p') + '=' + P);
+      tex(root, 'sq', C('red', 'q') + '=' + Q);
+      // 負の数のときだけカッコをつける
+      const Pp = p < 0 ? '(' + P + ')' : P, Qp = q < 0 ? '(' + Q + ')' : Q;
+      setTex(R(root, 'eq'), '\\begin{aligned} y-' + Qp + ' &= f(x-' + Pp + ')\\\\ &= (x-' + Pp + ')^2\\\\ y &= ' + shiftTeX(p, q) + '\\end{aligned}', true);
+      tex(root, 'vertex', '(0,\\ 0)\\ \\to\\ (' + C('teal', 'p') + ',\\ ' + C('red', 'q') + ') = (' + P + ',\\ ' + Q + ')');
+      tex(root, 'pt0', '(s,\\ t)=(' + num(s) + ',\\ {' + num(s * s) + '})');
+      tex(root, 'pt1', '(s+' + C('teal', 'p') + ',\\ t+' + C('red', 'q') + ')=(' + num(s + p) + ',\\ {' + num(s * s + q) + '})');
       const m = R(root, 'msg');
       if (st.quiz) {
         const ok = st.quiz.p === p && st.quiz.q === q;
@@ -254,30 +377,75 @@
     ss.on((v) => { st.s = v; update(); });
 
     plot.addHandle({ get x() { return st.p; }, get y() { return st.q; }, get color() { return plot.c.text; }, r: 10,
-      label: () => '頂点 (' + L.minus(num(st.p)) + ', ' + L.minus(num(st.q)) + ')', ldx: 16, ldy: 22,
       drag(x, y) { st.p = clamp(snap(x, 0.5), -3, 3); st.q = clamp(snap(y, 0.5), -2, 2); sp.set(st.p); sq.set(st.q); update(); } });
-    plot.addHandle({ get x() { return st.s; }, get y() { return st.s * st.s; }, get color() { return plot.c.primary; }, r: 8, label: 'Q', ldx: -16, ldy: -8,
+    plot.addHandle({ get x() { return st.s; }, get y() { return st.s * st.s; }, get color() { return plot.c.primary; }, r: 8, tex: 'Q', ldx: -16, ldy: -8,
       drag(x) { st.s = clamp(snap(x, 0.1), -2.4, 2.4); ss.set(st.s); update(); } });
 
     plot.draw = function (g) {
       const c = g.c, { p, q, s } = st;
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       if (st.quiz) g.fn((x) => (x - st.quiz.p) * (x - st.quiz.p) + st.quiz.q, { color: c.amber, dash: [7, 6], width: 3.5 });
       g.fn((x) => x * x, { color: c.muted, dash: [5, 5], width: 2.5 });
-      g.text('もとの y = x²', -2.15, 4.3, { color: c.muted, bold: true, align: 'right', dx: -6, size: 12 });
       if (p !== 0 && q !== 0) g.fn((x) => (x - p) * (x - p), { color: c.teal, dash: [2, 5], width: 2.5, alpha: 0.8 });
       g.fn((x) => (x - p) * (x - p) + q, { color: c.primary, width: 4 });
       // 移動の矢印: x方向に p → y方向に q
       if (p !== 0) g.arrow(0, 0, p, 0, { color: c.teal, width: 4.5 });
       if (q !== 0) g.arrow(p, 0, p, q, { color: c.accent, width: 4.5 });
-      if (p !== 0) g.text('x方向に p = ' + L.minus(num(p)), p / 2, 0, { dy: 20, color: c.teal, bold: true, align: 'center', size: 13 });
-      if (q !== 0) {
-        const right = p < 1.6;
-        g.text('y方向に q = ' + L.minus(num(q)), p, q / 2, { dx: right ? 14 : -14, color: c.accent, bold: true, align: right ? 'left' : 'right', size: 13 });
-      }
+      // ラベルは、点線の曲線・矢印・点・ほかのラベルと重ならない場所を順に探して置く
+      const curves = [(x) => x * x, (x) => (x - p) * (x - p) + q];
+      if (p !== 0 && q !== 0) curves.push((x) => (x - p) * (x - p));
+      if (st.quiz) curves.push((x) => (x - st.quiz.p) * (x - st.quiz.p) + st.quiz.q);
+      const vx = g.X(p), vy = g.Y(q), x0 = g.X(0), y0 = g.Y(0);
+      const boxes = [
+        { l: x0 + 4, r: x0 + 22, t: 2, b: 24 }, { l: g.w - 22, r: g.w, t: y0 - 26, b: y0 }, { l: x0 - 20, r: x0 - 2, t: y0 + 2, b: y0 + 20 }, // 軸の名前 y, x・原点 O
+        { l: x0 - 1, r: x0 + 1, t: 0, b: g.h, axis: true }, // y 軸
+      ];
+      [[s, s * s], [s + p, s * s + q]].forEach(([a, b]) => boxes.push({ l: g.X(a) - 28, r: g.X(a) + 30, t: g.Y(b) - 20, b: g.Y(b) + 24 }));
+      if (q !== 0) boxes.push({ l: vx - 6, r: vx + 6, t: Math.min(y0, vy), b: Math.max(y0, vy) }); // 赤い矢印
+      if (p !== 0) boxes.push({ l: Math.min(x0, vx), r: Math.max(x0, vx), t: y0 - 6, b: y0 + 6 }); // 緑の矢印
+      const lb = labeler(g, curves, boxes), put = (...args) => lb.put(...args);
+      lb.seg(g.X(s), g.Y(s * s), g.X(s + p), g.Y(s * s + q)); // Q → Q' の点線の矢印
+      const narrow = g.w < 520;
+      // もとの y=x^2：灰色の放物線の、移動後の放物線と反対側の枝の外側に
+      put('\\text{もとの }y=x^2', 'もとの y=x2', narrow ? 15 : 18, c.muted, (w, h) => {
+        const out = [];
+        [0, 25, 50, 75].forEach((e) => [1.8, 1.4, 2.3, 1.1, 2.8, 0.8, 3.4].forEach((yy) => (p >= 0 ? [-1, 1] : [1, -1]).forEach((sd) => out.push([g.X(sd * Math.sqrt(yy)) + sd * (10 + e + w / 2), g.Y(yy)]))));
+        return out;
+      });
+      // 頂点の座標（頂点の下、だめなら上・左右）
+      put('\\text{頂点 }' + ptTeX(p, q), '頂点 (' + num(p) + ', ' + num(q) + ')', 15, c.text, (w, h) => [
+        [vx + 16 + w / 2, vy + 24], [vx - 16 - w / 2, vy + 24], [vx, vy + 28],
+        [vx + 22 + w / 2, vy], [vx - 22 - w / 2, vy], [vx + 16 + w / 2, vy - 24], [vx - 16 - w / 2, vy - 24],
+        [vx + 16 + w / 2, vy + 44], [vx - 16 - w / 2, vy + 44], [vx, vy + 48], [vx + 16 + w / 2, y0 + 22], [vx - 16 - w / 2, y0 + 22]]);
+      boxes.push({ l: vx - 14, r: vx + 14, t: vy - 14, b: vy + 14 }); // 頂点の点
+      // スマホの幅では図が小さいので、矢印のラベルは短く（色で x 方向・y 方向がわかる）
+      if (p !== 0) put((narrow ? '' : 'x\\text{ 方向に }') + 'p=' + num(p), (narrow ? '' : 'x 方向に ') + 'p=' + num(p), 15, c.teal, (w, h) => {
+        const cx = (x0 + vx) / 2, out = [];
+        [21, 42].forEach((dy) => [0, 25, -25, 50, -50, 75, -75, 100, -100, 125, -125].forEach((d) => { out.push([cx + d, y0 + dy]); out.push([cx + d, y0 - dy]); }));
+        return out;
+      }, { noAxis: true, optional: true });
+      if (q !== 0) put((narrow ? '' : 'y\\text{ 方向に }') + 'q=' + num(q), (narrow ? '' : 'y 方向に ') + 'q=' + num(q), 15, c.accent, (w, h) => {
+        const cy = (y0 + vy) / 2, out = [];
+        const sides = p < 1.6 ? [1, -1] : [-1, 1];
+        [0, 20].forEach((e) => [0, 16, -16, 32, -32, 48, -48, 64, -64].forEach((d) => sides.forEach((sd) => out.push([vx + sd * (14 + e + w / 2), cy + d]))));
+        return out;
+      }, { optional: true });
+      // 移動後の式（まず青い放物線の内側の上の方、だめなら放物線の外側の右/左）
+      const plain = 'y' + (q === 0 ? '' : '-' + num(Math.abs(q))) + '=' + (p === 0 ? 'x' : '(x-' + num(Math.abs(p)) + ')') + '2';
+      put(shiftTeX2(p, q), plain, narrow ? 15 : 17, c.primary, (lw, lh) => {
+        const cands = [];
+        for (let py = lh / 2 + 6; py < vy - 30; py += 6) cands.push([vx, py]);
+        for (let py = lh / 2 + 6; py < g.h * 0.75; py += 6) {
+          const yy = g.iy(py) - q;
+          if (yy <= 0) continue;
+          const hw = Math.sqrt(yy) * g.pxPerX;
+          (p >= 0 ? [-1, 1] : [1, -1]).forEach((sd) => cands.push([vx + sd * (hw + lw / 2 + 12), py]));
+        }
+        return cands;
+      });
       g.arrow(s, s * s, s + p, s * s + q, { color: c.text, width: 2, dash: [5, 4] });
       g.dot(s + p, s * s + q, { r: 6, color: c.primary });
-      g.text("Q'", s + p, s * s + q, { dx: 12, dy: 12, bold: true, color: c.primary });
+      if (g.Y(s * s + q) > 12 && g.X(s + p) < g.w - 20) g.tex("Q'", s + p, s * s + q, { dx: 12, dy: 12, color: c.primary, size: 16 });
     };
     root.querySelector('[data-a="quiz"]').addEventListener('click', function () {
       st.quiz = { p: rand5(), q: (Math.floor(Math.random() * 9) - 4) / 2 };
@@ -323,7 +491,7 @@
       tex(root, 'disc', 'D = ' + C('amber', 'b') + '^2-4' + C('blue', 'a') + C('slate', 'c') + ' = ' + num(D) + (D > 1e-9 ? '\\ (>0)' : D < -1e-9 ? '\\ (<0)' : '\\ (=0)'));
       if (D > 1e-6) {
         const r = Math.sqrt(D) / (2 * Math.abs(a));
-        tex(root, 'roots', 'x = ' + num(p - r) + ',\\ ' + num(p + r));
+        tex(root, 'roots', 'x = ' + num(p - r) + ',\\ {' + num(p + r) + '}');
       } else if (D > -1e-6) tex(root, 'roots', 'x = ' + num(p) + '\\ (\\text{接する})');
       else tex(root, 'roots', '\\text{なし}');
       plot.invalidate();
@@ -335,26 +503,61 @@
     sc.on((v) => { st.c = v; fromGeneral(); update(); });
 
     plot.addHandle({ get x() { return st.p; }, get y() { return st.q; }, get color() { return plot.c.text; }, r: 10,
-      label: () => '頂点 (' + L.minus(num(st.p)) + ', ' + L.minus(num(st.q)) + ')', ldx: 16, ldy: 22,
       drag(x, y) { st.p = clamp(snap(x, 0.1), -5, 5); st.q = clamp(snap(y, 0.1), -4, 4); sp.set(st.p); sq.set(st.q); fromVertex(); update(); } });
 
     plot.draw = function (g) {
       const c = g.c, { a, p, q, b, c: cc } = st;
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       g.fn((x) => a * x * x, { color: c.muted, dash: [5, 5], width: 2.2 });
-      g.text('もとの y = ax²', -2.2, a * 4.84, { dx: -8, color: c.muted, bold: true, align: 'right', size: 12 });
       g.line(p, g.ymin, p, g.ymax, { color: c.muted, dash: [6, 6], width: 1.6 });
-      g.text('軸 x = p', p, g.ymax, { dx: 6, dy: 14, color: c.muted, bold: true, size: 12 });
       g.fn((x) => a * (x - p) * (x - p) + q, { color: c.primary, width: 4 });
-      if (Math.abs(p) > 0.15) { g.arrow(0, 0, p, 0, { color: c.teal, width: 4 }); g.text('x方向に p', p / 2, 0, { dy: 20, color: c.teal, bold: true, align: 'center', size: 12 }); }
-      if (Math.abs(q) > 0.15) { g.arrow(p, 0, p, q, { color: c.accent, width: 4 }); g.text('y方向に q', p, q / 2, { dx: 14, color: c.accent, bold: true, align: 'left', size: 12 }); }
-      const D = b * b - 4 * a * cc;
-      if (D > 1e-6) {
-        const r = Math.sqrt(D) / (2 * Math.abs(a));
-        [p - r, p + r].forEach((x) => g.dot(x, 0, { r: 6, color: c.text }));
-      } else if (D > -1e-6) g.dot(p, 0, { r: 6, color: c.text });
-      if (Math.abs(cc) < g.ymax) { g.dot(0, cc, { r: 5, color: c.pink }); g.text('(0, c)', 0, cc, { dx: -10, dy: 0, color: c.pink, bold: true, align: 'right', size: 12 }); }
+      const showP = Math.abs(p) > 0.15, showQ = Math.abs(q) > 0.15;
+      if (showP) g.arrow(0, 0, p, 0, { color: c.teal, width: 4 });
+      if (showQ) g.arrow(p, 0, p, q, { color: c.accent, width: 4 });
+      const D = b * b - 4 * a * cc, roots = [];
+      if (D > 1e-6) { const r = Math.sqrt(D) / (2 * Math.abs(a)); roots.push(p - r, p + r); } else if (D > -1e-6) roots.push(p);
+      roots.forEach((x) => g.dot(x, 0, { r: 6, color: c.text }));
+      const showC = Math.abs(cc) < g.ymax;
+      if (showC) g.dot(0, cc, { r: 5, color: c.pink });
+      // ラベルは、曲線・矢印・点・ほかのラベルと重ならない場所を順に探して置く
+      const x0 = g.X(0), y0 = g.Y(0), vx = g.X(p), vy = g.Y(q);
+      const lb = labeler(g, [(x) => a * x * x, (x) => a * (x - p) * (x - p) + q], [
+        { l: x0 + 4, r: x0 + 22, t: 2, b: 24 }, { l: g.w - 22, r: g.w, t: y0 - 26, b: y0 }, { l: x0 - 20, r: x0 - 2, t: y0 + 2, b: y0 + 20 }, // 軸の名前・原点 O
+        { l: x0 - 1, r: x0 + 1, t: 0, b: g.h, axis: true }, { l: vx - 1, r: vx + 1, t: 0, b: g.h }, // y 軸・対称軸
+        { l: vx - 14, r: vx + 14, t: vy - 14, b: vy + 14 }, // 頂点
+      ]);
+      if (showP) lb.box(Math.min(x0, vx), y0 - 6, Math.max(x0, vx), y0 + 6);
+      if (showQ) lb.box(vx - 6, Math.min(y0, vy), vx + 6, Math.max(y0, vy));
+      roots.forEach((x) => lb.box(g.X(x) - 8, y0 - 8, g.X(x) + 8, y0 + 8));
+      if (showC) lb.box(x0 - 8, g.Y(cc) - 8, x0 + 8, g.Y(cc) + 8);
+      lb.put('\\text{軸 }x=p', '軸 x=p', 14, c.muted, (w) => [[vx + 6 + w / 2, 16], [vx - 6 - w / 2, 16], [vx + 6 + w / 2, 36], [vx - 6 - w / 2, 36]], { noAxis: true });
+      lb.put('\\text{頂点 }' + ptTeX(p, q), '頂点 (' + num(p) + ', ' + num(q) + ')', 15, c.text, (w) => {
+        const dy = a > 0 ? 1 : -1; // 頂点の、放物線が開いていない側
+        return [[vx + 16 + w / 2, vy + 24 * dy], [vx - 16 - w / 2, vy + 24 * dy], [vx + 16 + w / 2, vy + 44 * dy], [vx - 16 - w / 2, vy + 44 * dy],
+          [vx + 22 + w / 2, vy], [vx - 22 - w / 2, vy]];
+      }, { noAxis: true });
+      if (showP) lb.put('x\\text{ 方向に }p', 'x 方向に p', 14, c.teal, () => {
+        const cx = (x0 + vx) / 2, out = [];
+        [21, 40].forEach((dy) => [0, 25, -25, 50, -50, 75, -75, 100, -100].forEach((d) => { out.push([cx + d, y0 + dy]); out.push([cx + d, y0 - dy]); }));
+        return out;
+      }, { noAxis: true, optional: true });
+      if (showQ) lb.put('y\\text{ 方向に }q', 'y 方向に q', 14, c.accent, (w) => {
+        const cy = (y0 + vy) / 2, out = [];
+        [0, 20, 40].forEach((e) => [0, 16, -16, 32, -32, 48, -48].forEach((d) => [1, -1].forEach((sd) => out.push([vx + sd * (14 + e + w / 2), cy + d]))));
+        return out;
+      }, { noAxis: true, optional: true });
+      if (showC) lb.put('(0,\\ c)', '(0, c)', 14, c.pink, (w) => [[x0 - 10 - w / 2, g.Y(cc)], [x0 + 10 + w / 2, g.Y(cc)], [x0 - 10 - w / 2, g.Y(cc) - 18], [x0 + 10 + w / 2, g.Y(cc) - 18], [x0 - 10 - w / 2, g.Y(cc) + 18], [x0 + 10 + w / 2, g.Y(cc) + 18]], { noAxis: true });
+      // もとの y=ax^2：灰色の放物線の外側（左の枝 → 右の枝）
+      lb.put('\\text{もとの }y=ax^2', 'もとの y=ax2', 14, c.muted, (w) => {
+        const out = [];
+        [2.2, 1.8, 2.6, 1.4, 3, 1.1].forEach((xx) => [-1, 1].forEach((sd) => {
+          const X = g.X(sd * xx), Y = g.Y(a * xx * xx);
+          if (Y > 10 && Y < g.h - 10) out.push([X + sd * (8 + w / 2), Y]);
+        }));
+        return out.length ? out : [[g.X(-2.2) - 8 - w / 2, g.Y(a * 4.84)]];
+      });
     };
+
     fromVertex();
     update();
   }
@@ -404,7 +607,7 @@
       onT() { plot.invalidate(); },
     });
     const sh = slider(ctl, { tex: 'h_0', min: 0, max: 4, step: 0.1, value: st.h0, color: 'primary', fmt: (v) => v.toFixed(1) + 'm', aria: '投げる高さ h0' });
-    const sv = slider(ctl, { tex: 'v_0', min: 2, max: 14, step: 0.1, value: st.v, color: 'primary', fmt: (v) => v.toFixed(1), aria: '初速 v0 (m/s)' });
+    const sv = slider(ctl, { tex: 'v_0', min: 2, max: 14, step: 0.1, value: st.v, color: 'primary', fmt: (v) => v.toFixed(1), aria: '投げる速さ v0 (m/s)' });
     const sth = slider(ctl, { tex: '\\theta', min: 0, max: 90, step: 1, value: st.th, color: 'primary', fmt: (v) => v + '°', aria: '投げる角度' });
     const sg = slider(ctl, { tex: 'g', min: 1, max: 30, step: 0.1, value: st.g, color: 'primary', fmt: (v) => v.toFixed(1), aria: '重力加速度 g (m/s²)' });
     const G_EARTH = 9.8;
@@ -488,7 +691,6 @@
       label: '投げる位置', ldx: 14, ldy: 22,
       drag(x, y) { st.h0 = clamp(snap(y, 0.1), 0, 4); sh.set(st.h0); update(); } });
     plot.addHandle({ get x() { const q = phys(); return q.vx * K0; }, get y() { const q = phys(); return st.h0 + q.vy * K0; }, get color() { return plot.c.amber; }, r: 9,
-      label: () => 'v₀ = ' + st.v.toFixed(1) + ' m/s, θ = ' + st.th + '°', ldx: 14, ldy: -14,
       drag(x, y) {
         const dx = Math.max(0, x) / K0, dy = (y - st.h0) / K0;
         st.v = clamp(snap(Math.hypot(dx, dy), 0.1), 2, 14);
@@ -506,7 +708,7 @@
       const c = g.c, q = phys(), ctx = g.ctx;
       const ttAll = player.st.t * Ttot(), tt = Math.min(q.T, ttAll), sc = (g.xmax - g.xmin) / 32;
       const pos = (t) => [q.vx * t, st.h0 + q.vy * t - 0.5 * G * t * t];
-      g.grid({ step: st.step, xlabel: 'x (m)', ylabel: 'y (m)' });
+      gridT(g, { step: st.step, xlabel: 'x\\ (\\mathrm{m})', ylabel: 'y\\ (\\mathrm{m})' });
       // 地面
       ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.22;
       ctx.fillRect(0, g.Y(0), g.w, g.h - g.Y(0)); ctx.restore();
@@ -518,8 +720,9 @@
         g.poly(pe, { color: c.amber, width: 3.5, dash: [7, 6], alpha: 0.55 });
         const be = posE(Math.min(ttAll, e.T));
         g.dot(be[0], be[1], { r: 9, ring: true, color: c.amber, lw: 3 });
-        if (q.vy > 0) { const xe = q.vx * (q.vy / G_EARTH); g.text('地球 (g = 9.8) の軌跡', xe, e.ymax, { dy: -14, align: 'center', color: c.amber, bold: true, size: 12 }); }
-        else g.text('地球 (g = 9.8) の軌跡', e.R, 0, { dy: -14, align: 'right', color: c.amber, bold: true, size: 12 });
+        const lbE = '\\text{地球 }(g=9.8)\\text{ の軌跡}';
+        if (q.vy > 0) { const xe = q.vx * (q.vy / G_EARTH); g.tex(lbE, xe, e.ymax, { dy: -15, align: 'center', color: c.amber, size: 14 }); }
+        else g.tex(lbE, e.R, 0, { dy: -15, align: 'right', color: c.amber, size: 14 });
       }
       // 軌道(全体は薄く、通過済みは濃く)
       const all = [], done = [];
@@ -535,10 +738,10 @@
         const xp = q.vx * q.tp;
         g.line(xp, q.ymax, xp, 0, { color: c.accent, dash: [5, 5], width: 1.6 });
         g.dot(xp, q.ymax, { r: 6, color: c.accent });
-        g.text('最高点 (' + num(xp, 1) + ', ' + num(q.ymax, 1) + ')', xp, q.ymax, { dy: -16, align: 'center', color: c.accent, bold: true, size: 13 });
+        g.tex('\\text{最高点 }' + ptTeX(xp, q.ymax, 1), xp, q.ymax, { dy: -17, align: 'center', color: c.accent, size: 15, avoid: true });
       }
       g.dot(q.R, 0, { r: 5, color: c.text });
-      g.text('着地 x = ' + num(q.R, 1), q.R, 0, { dy: 20, align: q.R > g.xmax - 0.19 * (g.xmax - g.xmin) ? 'right' : 'center', color: c.text, bold: true, size: 13 });
+      g.tex('\\text{着地 }x=' + num(q.R, 1), q.R, 0, { dy: 21, align: q.R > g.xmax - 0.19 * (g.xmax - g.xmin) ? 'right' : 'center', color: c.text, size: 15 });
       // ボール
       const b = pos(tt), vyNow = q.vy - G * tt;
       if (st.arrows && ttAll < q.T - 1e-6) {
@@ -549,8 +752,18 @@
       g.dot(b[0], b[1], { r: 10, color: c.amber });
       // 初速の矢印(ドラッグ用)
       g.arrow(0, st.h0, q.vx * K0, st.h0 + q.vy * K0, { color: c.amber, width: 3, dash: [6, 4] });
-      g.textPx('t = ' + ttAll.toFixed(2) + ' 秒　　x = ' + num(b[0], 1) + ' m　　y = ' + num(b[1], 1) + ' m', 10, 16, { bold: true, size: 13, color: c.text });
-      if (st.arrows) g.textPx('矢印：水平の速さ（緑）　鉛直の速さ（赤）', 10, 34, { size: 12, bold: true, color: c.muted });
+      // 投げる速さのラベル：矢印の先の真上（軌跡は矢印より下を通るので重ならない）。左右は画面からはみ出さないように
+      // （スマホの幅では図が小さく重なりやすいので出さない。値はスライダーに表示されている）
+      if (g.w >= 520) {
+        const lbV = 'v_0=' + st.v.toFixed(1) + '\\ \\mathrm{m/s},\\ \\theta=' + st.th + '^\\circ';
+        const lw = 175, tx = g.X(q.vx * K0), ty = g.Y(st.h0 + q.vy * K0);
+        g.texPx(lbV, Math.min(Math.max(tx, lw / 2 + 4), g.w - lw / 2 - 4), Math.max(ty - 18, 26), { valign: 'bottom', align: 'center', size: 15, color: c.amber, avoid: true });
+      }
+      // 再生中も同じ文字列が繰り返すよう、時刻は 0.1 秒刻みに丸めて表示（TeX はキャッシュされる）
+      const tR = Math.round(ttAll * 10) / 10, bR = pos(Math.min(q.T, tR));
+      const sp = g.w < 520 ? '\\quad ' : '\\qquad ';
+      g.texPx('t=' + tR.toFixed(1) + '\\ \\text{秒}' + sp + 'x=' + num(bR[0], 1) + '\\ \\mathrm{m}' + sp + 'y=' + num(bR[1], 1) + '\\ \\mathrm{m}', g.w - 10, 17, { size: g.w < 520 ? 14 : 15, color: c.text, align: 'right' });
+      if (st.arrows) g.textPx('矢印：横の速さ（緑）　縦の速さ（赤）', g.w - 10, 38, { size: 12, bold: true, color: c.muted, align: 'right' });
     };
     fit();
     update();
@@ -614,7 +827,7 @@
     };
     gp.draw = function (g) {
       const c = g.c, t = player ? player.st.t : 0;
-      g.grid({ stepX: 0.25, stepY: 0.25, xlabel: 't' });
+      gridT(g, { stepX: 0.25, stepY: 0.25, xlabel: 't' });
       g.line(0, 0, 1, 1, { color: c.muted, dash: [5, 5], width: 1.2 });
       list().forEach(function (e) {
         g.fn(e.f, { x0: 0, x1: 1, color: colorOf(c, EASE.indexOf(e)), width: 3.2, samples: 120 });
@@ -670,9 +883,11 @@
     host.innerHTML =
       '<div class="stage"><span class="cap">実際の動き：球が 0 から 1 へ進む</span><canvas aria-label="動きの再現"></canvas></div>' +
       '<div class="duo">' +
-      '<div class="stage"><span class="cap">位置 f(t)</span><canvas aria-label="位置のグラフ"></canvas></div>' +
-      '<div class="stage"><span class="cap">速さ f′(t)（グラフの傾き）</span><canvas aria-label="速さのグラフ"></canvas></div>' +
+      '<div class="stage"><span class="cap">位置 <span data-cap="f"></span></span><canvas aria-label="位置のグラフ"></canvas></div>' +
+      '<div class="stage"><span class="cap">速さ <span data-cap="df"></span>（グラフの傾き）</span><canvas aria-label="速さのグラフ"></canvas></div>' +
       '</div><div class="panel"><div class="controls"></div></div>';
+    setTex(host.querySelector('[data-cap="f"]'), 'f(t)');
+    setTex(host.querySelector('[data-cap="df"]'), "f'(t)");
     const cv = host.querySelectorAll('canvas');
     const XR = { xmin: -0.1, xmax: 1.1 };
     const tr = new Plot(cv[0], { xmin: -0.12, xmax: 1.16, ymin: -1.4, ymax: 1.4, ratio: [0.42, 0.2] });
@@ -698,7 +913,7 @@
     }
     g.draw = function (p) {
       const c = p.c, t = player.st.t, y = demo.f(t);
-      p.grid({ stepX: 0.25, stepY: 0.25, xlabel: 't' });
+      gridT(p, { stepX: 0.25, stepY: 0.25, xlabel: 't' });
       p.line(0, 0, 1, 1, { color: c.muted, dash: [5, 5], width: 1.5 });
       if (demo.hooks.under) demo.hooks.under(p);
       if (demo.hooks.curve) demo.hooks.curve(p); else p.fn(demo.f, { x0: 0, x1: 1, color: c.primary, width: 4, samples: 160 });
@@ -710,7 +925,7 @@
     };
     sp.draw = function (p) {
       const c = p.c, t = player.st.t, v = df(t);
-      p.grid({ stepX: 0.25, stepY: p.ymax - p.ymin > 4 ? 1 : 0.5, xlabel: 't' });
+      gridT(p, { stepX: 0.25, stepY: p.ymax - p.ymin > 4 ? 1 : 0.5, xlabel: 't' });
       p.fn(df, { x0: 0, x1: 1, color: c.amber, width: 3.5, samples: 160 });
       p.line(t, p.ymin, t, v, { color: c.accent, dash: [4, 4], width: 1.8 });
       p.dot(t, v, { r: 6, color: c.accent });
@@ -722,11 +937,14 @@
       for (let k = 0; k <= 10; k++) p.dot(demo.f(k / 10), 0, { r: 4, color: c.muted, stroke: false });
       p.dot(0, 0, { r: 10, ring: true, color: c.muted, lw: 2.5 });
       p.dot(1, 0, { r: 10, ring: true, color: c.muted, lw: 2.5 });
-      p.text('スタート 0', 0, 0, { dy: 30, align: 'center', size: 12, color: c.muted, bold: true });
-      p.text('ゴール 1', 1, 0, { dy: 30, align: 'center', size: 12, color: c.muted, bold: true });
+      p.tex('\\text{スタート }0', 0, 0, { dx: -12, dy: 31, align: 'left', size: 14, color: c.muted });
+      p.tex('\\text{ゴール }1', 1, 0, { dx: 12, dy: 31, align: 'right', size: 14, color: c.muted });
       if (demo.hooks.track) demo.hooks.track(p);
       p.dot(f, 0, { r: 15, color: c.primary });
-      p.textPx('t = ' + t.toFixed(2) + '　位置 f(t) = ' + L.minus(f.toFixed(2)), 10, 16, { bold: true, size: 13, color: c.text });
+      // 再生中も同じ文字列が繰り返すよう、t を小数2桁に丸めてから f(t) を計算して TeX に（上は v0, v1 のラベルがあるので下の中央に）
+      const tR = Math.round(t * 100) / 100, fR = Math.round(demo.f(tR) * 100) / 100 || 0;
+      // 幅が狭いときはスタート・ゴールの文字と重なるので省く（t はスライダーにも出ている）
+      if (p.w >= 520) p.texPx('t=' + tR.toFixed(2) + '\\quad \\text{位置 }f(t)=' + fR.toFixed(2), p.w / 2, p.Y(0) + 31, { size: 14, color: c.text, align: 'center' });
     };
     demo.render = function () { g.invalidate(); sp.invalidate(); tr.invalidate(); };
     demo.refresh = function () { speedView(); demo.render(); };
@@ -751,7 +969,7 @@
       const A = st.v0 + st.v1 - 2, B = 3 - 2 * st.v0 - st.v1;
       tex(root, 'tex', 'f(t) = ' + polyTeX([[A, 't^3'], [B, 't^2'], [st.v0, 't']]));
       tex(root, 'check', "f(0)=0,\\ f(1)=1,\\ f'(0)=" + C('amber', num(st.v0)) + ",\\ f'(1)=" + C('teal', num(st.v1)));
-      tex(root, 'ctrl', '(\\tfrac13,\\ ' + num(st.v0 / 3) + '),\\ (\\tfrac23,\\ ' + num(1 - st.v1 / 3) + ')');
+      tex(root, 'ctrl', '(\\tfrac13,\\ {' + num(st.v0 / 3) + '}),\\ (\\tfrac23,\\ {' + num(1 - st.v1 / 3) + '})');
       demo.refresh();
     }
     s0.on((v) => { st.v0 = v; update(); });
@@ -765,16 +983,17 @@
       g.poly([[0, 0], [1 / 3, st.v0 / 3], [2 / 3, 1 - st.v1 / 3], [1, 1]], { color: c.muted, dash: [4, 5], width: 1.3 });
       g.arrow(0, 0, 1 / 3, st.v0 / 3, { color: c.amber, width: 3.5 });
       g.arrow(2 / 3, 1 - st.v1 / 3, 1, 1, { color: c.teal, width: 3.5 });
-      g.text('v₀：傾き＝出だしの速さ', 1 / 6, st.v0 / 6, { dx: 6, dy: st.v0 >= 0 ? 24 : -24, color: c.amber, bold: true, size: 12 });
-      g.text('v₁：傾き＝終わりの速さ', 5 / 6, 1 - st.v1 / 6, { dx: 0, dy: st.v1 >= 0 ? -24 : 24, color: c.teal, bold: true, size: 12, align: 'center' });
+      g.tex('v_0\\text{：傾き＝出だしの速さ}', 1 / 6, st.v0 / 6, { dx: 6, dy: st.v0 >= 0 ? 25 : -25, color: c.amber, size: 14 });
+      g.tex('v_1\\text{：傾き＝終わりの速さ}', 1, 1 - st.v1 / 6, { dy: st.v1 >= 0 ? -25 : 25, color: c.teal, size: 14, align: 'right' });
     };
     // 動きの図にも v0, v1 を矢印で描く(長さ＝速さ)
     demo.hooks.track = function (g) {
       const c = g.c, k = 0.09;
       if (Math.abs(st.v0) > 0.05) g.arrow(0, 0.5, st.v0 * k, 0.5, { color: c.amber, width: 4 });
-      g.text('v₀ = ' + L.minus(num(st.v0)) + '（出だしの速さ）', 0, 0.5, { dy: -14, color: c.amber, bold: true, size: 12 });
+      const wide = g.w >= 520; // 狭い画面では（…の速さ）を省く
+      g.tex('v_0=' + num(st.v0) + (wide ? '\\text{（出だしの速さ）}' : ''), 0, 0.5, { dy: -15, color: c.amber, size: 14 });
       if (Math.abs(st.v1) > 0.05) g.arrow(1 - st.v1 * k, 0.5, 1, 0.5, { color: c.teal, width: 4 });
-      g.text('v₁ = ' + L.minus(num(st.v1)) + '（終わりの速さ）', 1, 0.5, { dy: -14, color: c.teal, bold: true, size: 12, align: 'right' });
+      g.tex('v_1=' + num(st.v1) + (wide ? '\\text{（終わりの速さ）}' : ''), 1, 0.5, { dy: -15, color: c.teal, size: 14, align: 'right' });
     };
     update();
     demo.start();
@@ -802,11 +1021,24 @@
     2: [[1.2, -2], [5, 2.6], [8.8, -1.8]],
     3: [[1, -2], [3, 2.6], [7, -2.6], [9, 2]],
   };
+  // 制御点 P_i の名前は、となりの点へ向かう線分と反対側に置く（線分と重ならないように）
+  function dcLabelOff(g, pts, i) {
+    let vx = 0, vy = 0;
+    [i - 1, i + 1].forEach((j) => {
+      if (j < 0 || j >= pts.length) return;
+      const dx = g.X(pts[j][0]) - g.X(pts[i][0]), dy = g.Y(pts[j][1]) - g.Y(pts[i][1]), d = Math.hypot(dx, dy) || 1;
+      vx -= dx / d; vy -= dy / d;
+    });
+    const d = Math.hypot(vx, vy);
+    if (d < 1e-3) { vx = 0; vy = 1; } else { vx /= d; vy /= d; }
+    return [vx * 22, vy * 22];
+  }
   function drawDC(g, pts, t, n) {
     const c = g.c, lv = casteljau(pts, t);
     g.grid({ step: 1, axes: false, labels: false });
+    let cur = null;
     if (n >= 2) {
-      const cur = curvePts(pts, 100);
+      cur = curvePts(pts, 100);
       g.poly(cur, { color: c.primary, width: 4, alpha: 0.22 });
       g.poly(cur.slice(0, Math.round(t * 100) + 1), { color: c.primary, width: 5 });
     }
@@ -817,26 +1049,52 @@
         const a = lv[k][i], b = lv[k][i + 1], q = lv[k + 1][i];
         g.line(a[0], a[1], q[0], q[1], { color: c.accent, width: wd, alpha: al });
         g.line(q[0], q[1], b[0], b[1], { color: c.teal, width: wd, alpha: al });
-        if (k === 0 || k === n - 1) {
-          const ax = g.X(a[0]), ay = g.Y(a[1]), bx = g.X(b[0]), by = g.Y(b[1]);
-          const d = Math.hypot(bx - ax, by - ay) || 1, nx = (by - ay) / d, ny = -(bx - ax) / d;
-          if (t * d > 34) g.text('t', (a[0] + q[0]) / 2, (a[1] + q[1]) / 2, { dx: nx * 15, dy: ny * 15, color: c.accent, bold: true, align: 'center', size: 15, italic: true });
-          if ((1 - t) * d > 34) g.text('1−t', (q[0] + b[0]) / 2, (q[1] + b[1]) / 2, { dx: nx * 15, dy: ny * 15, color: c.teal, bold: true, align: 'center', size: 14 });
-        }
       }
     }
-    for (let k = 1; k < n; k++) {
-      lv[k].forEach(function (q, i) {
-        g.dot(q[0], q[1], { r: 4.5, color: c.muted });
-        let nm = 'P';
-        for (let j = 0; j <= k; j++) nm += SUB[i + j];
-        g.text(nm, q[0], q[1], { dx: 10, dy: -12, size: 12, color: c.muted, bold: true });
-      });
-    }
+    for (let k = 1; k < n; k++) lv[k].forEach((q) => g.dot(q[0], q[1], { r: 4.5, color: c.muted }));
     const P = lv[n][0];
     g.dot(P[0], P[1], { r: 9, color: c.primary });
-    g.text('P(t)', P[0], P[1], { dx: 12, dy: -16, color: c.primary, bold: true, size: 14 });
-    g.textPx('t = ' + t.toFixed(2), 10, 16, { bold: true, size: 13, color: c.text });
+
+    // ラベルは、線分・曲線・点・ほかのラベルと重ならない場所を順に探して置く
+    const lb = labeler(g, [], []), X = (p) => g.X(p[0]), Y = (p) => g.Y(p[1]);
+    for (let k = 0; k < n; k++) for (let i = 0; i < lv[k].length - 1; i++) lb.seg(X(lv[k][i]), Y(lv[k][i]), X(lv[k][i + 1]), Y(lv[k][i + 1]));
+    if (cur) for (let i = 0; i + 4 < cur.length; i += 4) lb.seg(X(cur[i]), Y(cur[i]), X(cur[i + 4]), Y(cur[i + 4]));
+    pts.forEach((p, i) => { // つまみとその名前 P_i
+      const [ox, oy] = dcLabelOff(g, pts, i);
+      lb.box(X(p) - 13, Y(p) - 13, X(p) + 13, Y(p) + 13); lb.box(X(p) + ox - 13, Y(p) + oy - 11, X(p) + ox + 13, Y(p) + oy + 11);
+    });
+    for (let k = 1; k < n; k++) lv[k].forEach((q) => lb.box(X(q) - 6, Y(q) - 6, X(q) + 6, Y(q) + 6));
+    const around = (px, py, r1, r2) => (w, h) => [[px + r1 + w / 2, py - r2], [px - r1 - w / 2, py - r2], [px + r1 + w / 2, py + r2], [px - r1 - w / 2, py + r2],
+      [px, py - r2 - h / 2], [px, py + r2 + h / 2], [px + r1 + 6 + w / 2, py], [px - r1 - 6 - w / 2, py]];
+    lb.put('\\boldsymbol{P}(t)', 'P(t)', 16, c.primary, around(X(P), Y(P), 12, 17));
+    for (let k = 1; k < n; k++) {
+      lv[k].forEach(function (q, i) {
+        let nm = '';
+        for (let j = 0; j <= k; j++) nm += (i + j);
+        lb.put('\\boldsymbol{P}_{' + nm + '}', 'P' + nm, 14, c.muted, around(X(q), Y(q), 8, 13));
+      });
+    }
+    // 同じ文字列のラベル（t, 1-t）が1枚の図に何個も出るので、{ } の重ね方で区別して別々のラベルとして描く
+    // （同じ文字列だと TeX ラベルの使い回しが追いつかず、アニメ中に残像が出るため）
+    let uq = 0;
+    const uniq = (str) => { uq++; return '{'.repeat(uq) + str + '}'.repeat(uq); };
+    for (let k = 0; k < n; k++) {
+      if (k !== 0 && k !== n - 1) continue;
+      for (let i = 0; i < lv[k].length - 1; i++) {
+        const a = lv[k][i], b = lv[k][i + 1], q = lv[k + 1][i];
+        const ax = X(a), ay = Y(a), bx = X(b), by = Y(b);
+        const d = Math.hypot(bx - ax, by - ay) || 1, nx = (by - ay) / d, ny = -(bx - ax) / d;
+        const side = (mx, my) => (w, h) => {
+          const off = 8 + Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2;
+          return [[mx + nx * off, my + ny * off], [mx - nx * off, my - ny * off]];
+        };
+        const lt = uniq('t'), l1t = uniq('1-t');
+        if (t * d > 34) lb.put(lt, 't', 17, c.accent, side((ax + X(q)) / 2, (ay + Y(q)) / 2));
+        if ((1 - t) * d > 34) lb.put(l1t, '1-t', 16, c.teal, side((X(q) + bx) / 2, (Y(q) + by) / 2));
+      }
+    }
+    // 再生中も同じ文字列が繰り返すよう小数2桁に丸める
+    g.texPx('t=' + t.toFixed(2), 10, 17, { size: 15, color: c.text });
   }
   function initDC() {
     const root = $id('w-dc');
@@ -847,7 +1105,7 @@
       pts.forEach(function (pt, i) {
         plot.addHandle({
           get x() { return pt[0]; }, get y() { return pt[1]; }, get color() { return plot.c.series[i % 6]; }, r: 9,
-          label: 'P' + SUB[i], ldx: 14, ldy: 16,
+          tex: '\\boldsymbol{P}_' + i, get ldx() { return dcLabelOff(plot, pts, i)[0]; }, get ldy() { return dcLabelOff(plot, pts, i)[1]; }, lalign: 'center',
           drag(x, y) { pt[0] = clamp(x, 0.3, 9.7); pt[1] = clamp(y, plot.ymin + 0.3, plot.ymax - 0.3); plot.invalidate(); },
         });
       });
@@ -919,7 +1177,7 @@
       st.pts.forEach(function (pt, i) {
         plot.addHandle({
           get x() { return pt[0]; }, get y() { return pt[1]; }, get color() { return colorOf(plot.c, i); },
-          label: 'P' + SUB[i], r: 9,
+          tex: '\\boldsymbol{P}_' + i, r: 9,
           drag(x, y) { pt[0] = clamp(x, 0.3, 9.7); pt[1] = clamp(y, plot.ymin + 0.3, plot.ymax - 0.3); update(); },
         });
       });
@@ -927,8 +1185,9 @@
       for (let i = 0; i <= n; i++) {
         const w = el('div', 'w');
         const cv = i < 6 ? 'var(' + SERIES_VARS[i] + ')' : EXTRA[i - 6];
-        w.innerHTML = '<span class="lab" style="color:' + cv + '">B' + SUB[n] + ',' + SUB[i] + '</span><span class="bar"><i style="background:' + cv + '"></i></span><span class="v"></span>';
+        w.innerHTML = '<span class="lab" style="color:' + cv + '"></span><span class="bar"><i style="background:' + cv + '"></i></span><span class="v"></span>';
         wbox.append(w);
+        setTex(w.querySelector('.lab'), 'B_{' + n + ',' + i + '}');
       }
       degChips.forEach((b, k) => b.setAttribute('aria-pressed', String(k + 1 === n)));
       tex(root, 'tex', bernTeX(n));
@@ -945,7 +1204,7 @@
     function update() {
       const t = st.t;
       const lv = casteljau(st.pts, t), P = lv[lv.length - 1][0];
-      tex(root, 'pt', '\\boldsymbol{P}(' + num(t) + ') = (' + num(P[0]) + ',\\ ' + num(P[1]) + ')');
+      tex(root, 'pt', '\\boldsymbol{P}(' + num(t) + ') = (' + num(P[0]) + ',\\ {' + num(P[1]) + '})');
       const ws = wbox.children;
       for (let i = 0; i <= st.n; i++) {
         const b = bern(st.n, i, t);
@@ -972,11 +1231,11 @@
       }
       const P = lv[lv.length - 1][0];
       g.dot(P[0], P[1], { r: 9, color: c.accent });
-      if (n === 1) g.text('P(t)', P[0], P[1], { dx: 12, dy: -16, bold: true, color: c.accent });
+      if (n === 1) g.tex('\\boldsymbol{P}(t)', P[0], P[1], { dx: 12, dy: -17, color: c.accent, size: 16 });
     };
     bas.draw = function (g) {
       const c = g.c, t = st.t, n = st.n;
-      g.grid({ stepX: 0.25, stepY: 0.25, xlabel: 't' });
+      gridT(g, { stepX: 0.25, stepY: 0.25, xlabel: 't' });
       for (let i = 0; i <= n; i++) g.fn((x) => bern(n, i, x), { x0: 0, x1: 1, color: colorOf(c, i), width: 3 });
       g.line(t, 0, t, 1.05, { color: c.accent, dash: [4, 4], width: 1.8 });
       for (let i = 0; i <= n; i++) g.dot(t, bern(n, i, t), { r: 5, color: colorOf(c, i) });
@@ -1044,11 +1303,11 @@
       if (demo.st.playing) demo.restart(); else demo.onTick(demo.st.t, false);
     }
     const mk = (kx, ky, color, label) => ({
-      get x() { return st[kx]; }, get y() { return st[ky]; }, get color() { return demo.g.c[color]; }, label, r: 9,
+      get x() { return st[kx]; }, get y() { return st[ky]; }, get color() { return demo.g.c[color]; }, tex: label, r: 9,
       drag(x, y) { st[kx] = clamp(snap(x, 0.01), 0, 1); st[ky] = clamp(snap(y, 0.01), -0.6, 1.6); update(); },
     });
-    demo.g.addHandle(mk('x1', 'y1', 'amber', 'P₁'));
-    demo.g.addHandle(mk('x2', 'y2', 'teal', 'P₂'));
+    demo.g.addHandle(mk('x1', 'y1', 'amber', '\\boldsymbol{P}_1'));
+    demo.g.addHandle(mk('x2', 'y2', 'teal', '\\boldsymbol{P}_2'));
     demo.hooks.curve = function (g) {
       const c = g.c, pts = [];
       for (let i = 0; i <= 100; i++) { const t = i / 100; pts.push([bz(st.x1, st.x2, t), bz(st.y1, st.y2, t)]); }
@@ -1056,7 +1315,8 @@
       g.poly([[1, 1], [st.x2, st.y2]], { color: c.teal, width: 2, dash: [5, 4] });
       g.poly(pts, { color: c.primary, width: 4 });
       g.dot(0, 0, { r: 5, color: c.text }); g.dot(1, 1, { r: 5, color: c.text });
-      g.text('P₀', 0, 0, { dx: 14, dy: 16, bold: true }); g.text('P₃', 1, 1, { dx: -14, dy: -14, bold: true });
+      g.tex('\\boldsymbol{P}_0', 0, 0, { dx: 14, dy: 17, size: 15 }); g.tex('\\boldsymbol{P}_3', 1, 1, { dx: -14, dy: -15, size: 15, align: 'right' });
+
     };
     root.querySelector('[data-a="copy"]').addEventListener('click', function (e) {
       const b = e.currentTarget;
@@ -1119,7 +1379,13 @@
       // 1) 問題文  2) 補間多項式  3) 具体的な L_i(x)
       const pts = [];
       for (let i = 1; i <= n; i++) pts.push('(x_' + i + ',y_' + i + ')');
-      addRow('問題', '\\text{点 }' + pts.join('\\text{、点 }') + '\\text{ を通る' + DEGNAME[n] + ' }y=P(' + C('red', 'x') + ')\\text{ を求める}');
+      { // 問題文は折り返せるよう、文章の中に数式を入れる
+        const row = el('div', 'row'), sp = el('span', 'lag-q');
+        row.innerHTML = '<span class="k">問題</span>';
+        sp.innerHTML = '点 ' + pts.map((t) => '\\(' + t + '\\)').join('、点 ') + ' を通る' + DEGNAME[n] + ' \\(y=P(' + C('red', 'x') + ')\\) を求める';
+        row.append(sp); formulas.append(row);
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([sp]).catch(function () {});
+      }
       let ptex = 'P(' + C('red', 'x') + ')=';
       for (let i = 1; i <= n; i++) ptex += (i > 1 ? ' + ' : '') + C(LAG_COL[i - 1], 'y_' + i + 'L_' + i + '(') + C('red', 'x') + C(LAG_COL[i - 1], ')');
       addRow('補間多項式', ptex);
@@ -1131,7 +1397,7 @@
       st.pts.forEach(function (pt, i) {
         plot.addHandle({
           get x() { return pt[0]; }, get y() { return pt[1]; }, get color() { return lagCss(plot.c, i); }, r: 9,
-          label: () => 'P' + SUB[i + 1], ldx: 14, ldy: -14,
+          tex: '\\mathrm{P}_' + (i + 1), ldx: 14, ldy: -15,
           drag(x, y) {
             const nx = clamp(snap(x, 0.05), -4.7, 4.7);
             if (st.pts.every((o) => o === pt || Math.abs(o[0] - nx) >= 0.4)) pt[0] = nx;
@@ -1154,21 +1420,21 @@
 
     plot.draw = function (g) {
       const c = g.c;
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       // 各点から x 軸へ点線、x_i を大きく表示
       st.pts.forEach(function (pt, i) {
         const col = lagCss(c, i);
         g.line(pt[0], pt[1], pt[0], 0, { color: col, dash: [5, 5], width: 2 });
         g.dot(pt[0], 0, { r: 4.5, color: col });
-        g.text('x' + SUB[i + 1], pt[0], 0, { dy: pt[1] >= 0 ? 22 : -22, color: col, bold: true, align: 'center', size: 17 });
+        g.tex('x_' + (i + 1), pt[0], 0, { dy: pt[1] >= 0 ? 22 : -22, color: col, align: 'center', size: 19 });
       });
       // 薄い色の曲線 y = y_i L_i(x)（P(x) とは別の色）
       if (st.basis) {
         st.pts.forEach((pt, i) => g.fn((x) => lagTerm(st.pts, i, x), { color: lagCss(c, i), width: 2.2, alpha: 0.5 }));
-        st.pts.forEach((pt, i) => g.textPx('薄い曲線：y = y' + SUB[i + 1] + 'L' + SUB[i + 1] + '(x)', 10, 16 + 17 * i, { size: 12.5, bold: true, color: lagCss(c, i) }));
+        st.pts.forEach((pt, i) => g.texPx('\\text{薄い曲線：}y=y_' + (i + 1) + 'L_' + (i + 1) + '(x)', 10, 17 + 21 * i, { size: 14, color: lagCss(c, i) }));
       }
       g.fn((x) => lagrange(st.pts, x), { color: c.primary, width: 4.5 });
-      g.textPx('太い青線：y = P(x)', 10, g.h - 12, { size: 12.5, bold: true, color: c.primary });
+      g.texPx('\\text{太い青線：}y=P(x)', 10, g.h - 14, { size: 14, color: c.primary });
     };
     setN(3);
   }
@@ -1251,7 +1517,7 @@
 
     plot.draw = function (g) {
       const c = g.c, ctx = g.ctx, f = st.fits[st.m];
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       // 青緑の帯：青い線と本当の傾向(点線)の間
       const K = 120, lim = 8;
       ctx.save();
@@ -1265,7 +1531,7 @@
       // 赤い縦線：訓練誤差
       xs.forEach((x, i) => g.line(x, st.ys[i], x, f(x), { color: c.accent, width: 3.5 }));
       xs.forEach((x, i) => g.dot(x, st.ys[i], { r: 6, color: c.text }));
-      g.textPx('次数 m = ' + st.m + ' の多項式（青い線）', 10, g.h - 12, { size: 12, bold: true, color: c.primary });
+      g.texPx('\\text{次数 }m=' + st.m + '\\text{ の多項式（青い線）}', 10, g.h - 14, { size: 14, color: c.primary });
     };
     regen();
   }
@@ -1327,7 +1593,7 @@
 
     plot.draw = function (g) {
       const c = g.c, { a, b } = st;
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       // 縦のずれ(金)
       st.pts.forEach((p) => g.line(p[0], p[1], p[0], a * p[0] + b, { color: c.amber, width: 3.5 }));
       if (st.show) {
@@ -1458,26 +1724,26 @@
   const GAME_STAGES = [
     { name: '地球', g: 9.8, xmax: 24, target: { x0: 14, x1: 16, y: 0 }, walls: [],
       text: '地球（g = 9.8）で、15 m 先の的（14〜16 m）に当てよう。',
-      hint: '高さ0から投げるので、飛距離は R = v₀² sin 2θ / g。たとえば θ = 45° なら sin 90° = 1 なので、v₀ = √(gR) です。' },
+      hint: '高さ0から投げるので、飛距離は $R=\\dfrac{2v_xv_y}{g}$（$v_x$＝横の速さ、$v_y$＝縦の速さ）。$\\theta=45^\\circ$ なら $v_x=v_y\\approx0.707v_0$ なので $R=\\dfrac{v_0^{\\,2}}{g}$、つまり $v_0=\\sqrt{gR}$ です。' },
     { name: '地球', g: 9.8, xmax: 22, target: { x0: 16, x1: 18, y: 0 }, walls: [{ x0: 7, x1: 8, y0: 0, y1: 5 }],
       text: '地球：高さ 5 m の壁（7〜8 m）を越えて、17 m 先の的（16〜18 m）に当てよう。',
-      hint: '同じ飛距離になる角度は θ と 90° − θ の2つ。低い角度だと壁に当たるかも。壁の位置 x = 8 での高さ y = x tanθ − g x²/(2 v₀² cos²θ) が 5 より大きいか確かめよう。' },
+      hint: '同じ飛距離になる角度は θ と 90° − θ の2つ。低い角度だと壁に当たるかも。壁の位置 x = 8 での高さ $y=\\dfrac{v_y}{v_x}x-\\dfrac{g}{2v_x^{\\,2}}x^2$ が 5 より大きいか確かめよう。' },
     { name: '月', g: 1.62, xmax: 80, target: { x0: 60, x1: 64, y: 0 }, walls: [], ceil: 20,
       text: '月（g = 1.62）：高さ 20 m の天井の下を通して、62 m 先の的（60〜64 m）に当てよう。',
-      hint: '月では遠くまで飛ぶけれど、高く上がりすぎると天井にぶつかる。最高点 H = (v₀ sinθ)²/(2g) が 20 より小さくなる角度を選ぼう。' },
+      hint: '月では遠くまで飛ぶけれど、高く上がりすぎると天井にぶつかる。最高点の高さ $H=\\dfrac{v_y^{\\,2}}{2g}$（$v_y$＝縦の速さ）が 20 より小さくなる角度を選ぼう。' },
     { name: '木星', g: 24.8, xmax: 9, target: { x0: 5, x1: 6, y: 1.5 }, walls: [],
       text: '木星（g = 24.8）：高さ 1.5 m の台の上（5〜6 m）にボールを乗せよう。',
-      hint: '重力がとても強いので、速さはほぼ最大が必要。軌道の式 y = x tanθ − g x²/(2 v₀² cos²θ) に x = 5.5, y = 1.5 を入れて、v₀ と θ の組を探そう。' },
+      hint: '重力がとても強いので、速さはほぼ最大が必要。軌道の式 $y=\\dfrac{v_y}{v_x}x-\\dfrac{g}{2v_x^{\\,2}}x^2$ に x = 5.5, y = 1.5 を入れて、v₀ と θ の組を探そう。' },
     { name: '火星', g: 3.71, xmax: 50, target: { x0: 40, x1: 44, y: 0 }, walls: [{ x0: 20, x1: 21, y0: 0, y1: 3 }], ceil: 8,
       text: '火星（g = 3.71）：天井 8 m と高さ 3 m の壁のすき間を抜けて、42 m 先の的（40〜44 m）に当てよう。',
-      hint: '最高点 H = (v₀ sinθ)²/(2g) ≤ 8 と、飛距離 R = v₀² sin 2θ / g ≈ 42 の両方を満たす組を探そう。角度は低め、速さは大きめ。' },
+      hint: '最高点 $H=\\dfrac{v_y^{\\,2}}{2g}\\le8$ と、飛距離 $R=\\dfrac{2v_xv_y}{g}\\approx42$ の両方を満たす組を探そう。角度は低め、速さは大きめ。' },
   ];
   [
-    '<b>例：v₀ = 12.1 m/s、θ = 45°</b><br>高さ0から投げると飛距離は $R=\\dfrac{v_0^{\\,2}\\sin2\\theta}{g}$。θ = 45° なら $\\sin90^\\circ=1$ なので $v_0=\\sqrt{gR}=\\sqrt{9.8\\times15}\\approx12.1$。（$R\\approx14.9$ m）',
-    '<b>例：v₀ = 13.9 m/s、θ = 60°</b><br>飛距離 17 m になる角度は θ と 90° − θ の2通りあるが、低い角度では壁に当たる。θ = 60° なら $v_0=\\sqrt{\\dfrac{gR}{\\sin120^\\circ}}=\\sqrt{\\dfrac{9.8\\times17}{0.866}}\\approx13.9$。壁の位置 x = 8 での高さは $8\\tan60^\\circ-\\dfrac{9.8\\times8^2}{2\\times13.9^2\\cos^260^\\circ}\\approx7.4$ m で、5 m の壁を越える。',
-    '<b>例：v₀ = 12.5 m/s、θ = 20°</b><br>45° だと最高点が約 30 m で天井（20 m）にぶつかる。低い角度 θ = 20° にすると $v_0=\\sqrt{\\dfrac{1.62\\times62}{\\sin40^\\circ}}\\approx12.5$、最高点は $\\dfrac{(12.5\\sin20^\\circ)^2}{2\\times1.62}\\approx5.6$ m で天井より低い。',
-    '<b>例：v₀ = 13.7 m/s、θ = 45°</b><br>軌道の式 $y=x\\tan\\theta-\\dfrac{g}{2v_0^{\\,2}\\cos^2\\theta}x^2$ に θ = 45°、x = 5.5、y = 1.5 を入れると $1.5=5.5-\\dfrac{24.8\\times5.5^2}{v_0^{\\,2}}$ より $v_0^{\\,2}\\approx187.6$、$v_0\\approx13.7$。台の手前 x = 5 では高さ約 1.7 m なので、台の側面にはぶつからない。',
-    '<b>例：v₀ = 13.7 m/s、θ = 28°</b><br>天井 8 m より低く通すには最高点 $\\dfrac{(v_0\\sin\\theta)^2}{2g}\\le8$、つまり鉛直の速さ $v_0\\sin\\theta\\le\\sqrt{2\\times3.71\\times8}\\approx7.7$。θ = 28° なら鉛直 6.4、最高点は約 5.6 m。飛距離は $\\dfrac{13.7^2\\sin56^\\circ}{3.71}\\approx41.9$ m。壁の位置 x = 20.5 での高さは約 5.6 m で、3 m の壁も越える。',
+    '<b>例：v₀ = 12.1 m/s、θ = 45°</b><br>θ = 45° なら $v_x=v_y\\approx0.707v_0$ なので、飛距離 $R=\\dfrac{2v_xv_y}{g}=\\dfrac{v_0^{\\,2}}{g}$。$v_0=\\sqrt{gR}=\\sqrt{9.8\\times15}\\approx12.1$。（$R\\approx14.9$ m）',
+    '<b>例：v₀ = 13.9 m/s、θ = 60°</b><br>飛距離 17 m になる角度は θ と 90° − θ の2通りあるが、低い角度では壁に当たる。θ = 60° なら $v_x=0.5v_0$、$v_y\\approx0.866v_0$ で、飛距離 $\\dfrac{2v_xv_y}{g}=\\dfrac{0.866v_0^{\\,2}}{9.8}=17$ より $v_0\\approx13.9$。このとき $v_x\\approx6.95$、$v_y\\approx12.0$ で、壁の位置 x = 8 での高さは $\\dfrac{12.0}{6.95}\\times8-\\dfrac{9.8\\times8^2}{2\\times6.95^2}\\approx7.4$ m。5 m の壁を越える。',
+    '<b>例：v₀ = 12.5 m/s、θ = 20°</b><br>角度が大きすぎると（たとえば 70°）最高点が約 43 m になり、天井（20 m）にぶつかる。θ = 20° にすると $v_x\\approx0.940v_0$、$v_y\\approx0.342v_0$ で、飛距離 $\\dfrac{2v_xv_y}{g}=\\dfrac{0.643v_0^{\\,2}}{1.62}=62$ より $v_0\\approx12.5$。$v_y\\approx4.3$ なので最高点は $\\dfrac{4.3^2}{2\\times1.62}\\approx5.6$ m で天井より低い。',
+    '<b>例：v₀ = 13.7 m/s、θ = 45°</b><br>θ = 45° なら $v_x=v_y$、$v_x^{\\,2}=\\dfrac{v_0^{\\,2}}{2}$。軌道の式 $y=\\dfrac{v_y}{v_x}x-\\dfrac{g}{2v_x^{\\,2}}x^2=x-\\dfrac{g}{v_0^{\\,2}}x^2$ に x = 5.5、y = 1.5 を入れると $1.5=5.5-\\dfrac{24.8\\times5.5^2}{v_0^{\\,2}}$ より $v_0^{\\,2}\\approx187.6$、$v_0\\approx13.7$。台の手前 x = 5 では高さ約 1.7 m なので、台の側面にはぶつからない。',
+    '<b>例：v₀ = 13.7 m/s、θ = 28°</b><br>天井 8 m より低く通すには最高点 $\\dfrac{v_y^{\\,2}}{2g}\\le8$、つまり縦の速さ $v_y\\le\\sqrt{2\\times3.71\\times8}\\approx7.7$。θ = 28° なら $v_x\\approx12.1$、$v_y\\approx6.4$ で、最高点は約 5.6 m。飛距離は $\\dfrac{2\\times12.1\\times6.4}{3.71}\\approx41.9$ m。壁の位置 x = 20.5 での高さは約 5.6 m で、3 m の壁も越える。',
   ].forEach((t, i) => { GAME_STAGES[i].answer = t; });
   const PKEY = '1-3:game';
   function simulateThrow(v, th, S) {
@@ -1564,7 +1830,10 @@
     }
     root.addEventListener('click', function (e) {
       if (!e.target.closest('[data-a="hint"]')) return;
-      R(root, 'hint').textContent = GAME_STAGES[st.k].hint;
+      const hn = R(root, 'hint'), ht = GAME_STAGES[st.k].hint;
+      if (ht.indexOf('$') < 0) { hn.textContent = ht; return; }
+      hn.innerHTML = ht;
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([hn]).catch(function () {});
     });
 
     const anim = L.animate(root, function (dt) {
@@ -1621,7 +1890,7 @@
 
     plot.draw = function (g) {
       const c = g.c, S = GAME_STAGES[st.k], ctx = g.ctx;
-      g.grid({ step: niceStepG(S.xmax), xlabel: 'x (m)', ylabel: 'y (m)' });
+      gridT(g, { step: niceStepG(S.xmax), xlabel: 'x\\ (\\mathrm{m})', ylabel: 'y\\ (\\mathrm{m})' });
       // 地面
       ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.22; ctx.fillRect(0, g.Y(0), g.w, g.h - g.Y(0)); ctx.restore();
       g.line(g.xmin, 0, g.xmax, 0, { color: c.muted, width: 2.5 });
@@ -1629,13 +1898,13 @@
       if (S.ceil) {
         ctx.save(); ctx.fillStyle = c.muted; ctx.globalAlpha = 0.22; ctx.fillRect(0, 0, g.w, g.Y(S.ceil)); ctx.restore();
         g.line(g.xmin, S.ceil, g.xmax, S.ceil, { color: c.text, width: 3 });
-        g.text('天井 ' + S.ceil + ' m', g.xmax, S.ceil, { dx: -8, dy: 14, align: 'right', color: c.text, bold: true, size: 12 });
+        g.tex('\\text{天井 }' + S.ceil + '\\ \\mathrm{m}', g.xmax, S.ceil, { dx: -8, dy: 15, align: 'right', color: c.text, size: 14 });
       }
       // 壁
       S.walls.forEach(function (w) {
         ctx.save(); ctx.fillStyle = c.text; ctx.globalAlpha = 0.75;
         ctx.fillRect(g.X(w.x0), g.Y(w.y1), g.X(w.x1) - g.X(w.x0), g.Y(w.y0) - g.Y(w.y1)); ctx.restore();
-        g.text('壁 ' + w.y1 + ' m', (w.x0 + w.x1) / 2, w.y1, { dy: -12, align: 'center', color: c.text, bold: true, size: 12 });
+        g.tex('\\text{壁 }' + w.y1 + '\\ \\mathrm{m}', (w.x0 + w.x1) / 2, w.y1, { dy: -13, align: 'center', color: c.text, size: 14 });
       });
       // 的(旗)
       const T = S.target;
@@ -1646,7 +1915,7 @@
       ctx.save(); ctx.fillStyle = c.teal;
       const px = g.X(fx), py = g.Y(T.y + (g.ymax - g.ymin) * 0.12);
       ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 18, py + 7); ctx.lineTo(px, py + 14); ctx.closePath(); ctx.fill(); ctx.restore();
-      g.text(T.x0 + '〜' + T.x1 + ' m', fx, T.y, { dy: 18, align: 'center', color: c.teal, bold: true, size: 12 });
+      g.tex(T.x0 + '\\text{〜}' + T.x1 + '\\ \\mathrm{m}', fx, T.y, { dy: 19, align: 'center', color: c.teal, size: 14 });
       // これまでの投てき(薄く)
       st.shots.forEach(function (sim, i) {
         g.poly(sim.pts, { color: sim.type === 'hit' ? c.teal : c.muted, width: 2.5, dash: sim.type === 'hit' ? [] : [6, 5], alpha: 0.7 });
@@ -1670,7 +1939,7 @@
       }
       // 紙吹雪
       st.burst.forEach(function (q) { ctx.save(); ctx.globalAlpha = Math.min(1, q.life); ctx.fillStyle = q.c; ctx.fillRect(q.x - 3, q.y - 3, 6, 6); ctx.restore(); });
-      g.textPx(S.name + '　g = ' + S.g + ' m/s²', g.w - 10, 16, { bold: true, size: 13, color: c.text, align: 'right' });
+      g.texPx('\\text{' + S.name + '}\\quad g=' + S.g + '\\ \\mathrm{m/s^2}', g.w - 10, 17, { size: 15, color: c.text, align: 'right' });
     };
     const niceStepG = (xmax) => (xmax <= 10 ? 1 : xmax <= 30 ? 2 : xmax <= 60 ? 5 : 10);
     sv.on(() => { plot.invalidate(); formula(); });
@@ -1756,7 +2025,7 @@
 
     plot.draw = function (g) {
       const c = g.c, S = LINE_STAGES[game.k];
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       st.shots.forEach((s, i) => { g.fn((x) => s.a * x + s.b, { color: c.muted, width: 2, dash: [6, 5], alpha: 0.7 }); });
       if (st.cur) {
         const x1 = g.xmin + (g.xmax - g.xmin) * sweep.st.p;
@@ -1768,8 +2037,8 @@
         g.fn((x) => a * x + b, { color: c.accent, width: 2.5, dash: [8, 7], alpha: 0.75 });
         g.line(0, b, 1, b, { color: c.text, width: 2, alpha: 0.7 });
         g.line(1, b, 1, a + b, { color: c.teal, width: 3.5 });
-        g.text('+1', 0.5, b, { dy: a >= 0 ? 14 : -14, align: 'center', size: 12, bold: true, color: c.text });
-        g.text((a >= 0 ? '+' : '−') + num(Math.abs(a)), 1, b + a / 2, { dx: 8, size: 13, bold: true, color: c.teal });
+        g.tex('+1', 0.5, b, { dy: a >= 0 ? 15 : -15, align: 'center', size: 14, color: c.text });
+        g.tex((a >= 0 ? '+' : '-') + num(Math.abs(a)), 1, b + a / 2, { dx: 8, size: 15, color: c.teal });
         g.dot(0, b, { r: 5, color: c.accent });
         S.stars.forEach((p) => gapMark(g, p[0], a * p[0] + b, p[1], p[0] <= 0));
       }
@@ -1782,7 +2051,7 @@
       S.stars.forEach(function (p) {
         const got = last && near(last.a, last.b, p, 0.2);
         g.text('★', p[0], p[1], { align: 'center', size: 26, color: got ? c.teal : c.amber, bold: true });
-        g.text('(' + L.minus(p[0]) + ', ' + L.minus(p[1]) + ')', p[0], p[1], { dx: 14, dy: -14, size: 12, color: c.muted, bold: true });
+        g.tex(ptTeX(p[0], p[1]), p[0], p[1], { dx: 14, dy: -15, size: 14, color: c.muted });
       });
       conf.draw(g);
     };
@@ -1855,7 +2124,7 @@
     B.bNext.addEventListener('click', () => game.setStage(Math.min(game.k + 1, PARAB_STAGES.length - 1)));
     plot.draw = function (g) {
       const c = g.c, S = PARAB_STAGES[game.k];
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
       st.shots.forEach((s) => g.fn((x) => f(s, x), { color: c.muted, width: 2, dash: [6, 5], alpha: 0.7 }));
       if (st.cur) g.fn((x) => f(st.cur, x), { x0: g.xmin, x1: g.xmin + (g.xmax - g.xmin) * sweep.st.p, color: c.primary, width: 4 });
       // ねらいの点線と、頂点・対称軸・「頂点から x が 1 離れると y が a 変化」、コインまでの縦のずれ
@@ -1865,9 +2134,9 @@
         g.fn((x) => f(s, x), { color: c.primary, width: 2.5, dash: [8, 7], alpha: 0.75 });
         g.line(s.p, s.q, s.p + 1, s.q, { color: c.text, width: 2, alpha: 0.7 });
         g.line(s.p + 1, s.q, s.p + 1, s.q + s.a, { color: c.primary, width: 3.5 });
-        g.text((s.a > 0 ? '+' : '−') + num(Math.abs(s.a)), s.p + 1, s.q + s.a / 2, { dx: 8, size: 13, bold: true, color: c.primary });
+        g.tex((s.a > 0 ? '+' : '-') + num(Math.abs(s.a)), s.p + 1, s.q + s.a / 2, { dx: 8, size: 15, color: c.primary });
         g.dot(s.p, s.q, { r: 6, color: c.text });
-        g.text('頂点 (' + L.minus(num(s.p)) + ', ' + L.minus(num(s.q)) + ')', s.p, s.q, { dy: s.a > 0 ? 20 : -20, align: 'center', size: 12, bold: true, color: c.text });
+        g.tex('\\text{頂点 }' + ptTeX(s.p, s.q), s.p, s.q, { dy: s.a > 0 ? 21 : -21, align: 'center', size: 14, color: c.text });
         S.coins.forEach((p) => gapMark(g, p[0], f(s, p[0]), p[1], p[0] <= s.p));
       }
       const last = st.shots[st.shots.length - 1];
@@ -1875,7 +2144,7 @@
         const got = last && on(last, p);
         g.dot(p[0], p[1], { r: 11, color: got ? c.teal : c.amber });
         g.text(got ? '✓' : '¥', p[0], p[1], { align: 'center', size: 13, bold: true, color: '#fff', halo: false });
-        g.text('(' + L.minus(p[0]) + ', ' + L.minus(p[1]) + ')', p[0], p[1], { dx: 15, dy: -14, size: 12, color: c.muted, bold: true });
+        g.tex(ptTeX(p[0], p[1]), p[0], p[1], { dx: 15, dy: -15, size: 14, color: c.muted });
       });
       conf.draw(g);
     };
@@ -1989,12 +2258,12 @@
     const B = gameButtons(ctl, '✅ 判定');
     const conf = Confetti(root, plot);
     const st = { P: null, err: null };
-    const pt = (p) => '(' + num(p[0], 1) + ',\\ ' + num(p[1], 1) + ')';
+    const pt = (p) => '(' + num(p[0], 1) + ',\\ {' + num(p[1], 1) + '})';
     const game = GameShell(root, { key: '1-5:game', stages: TRACE_STAGES,
       formula: function () {
         // 1行目: ベルンシュタイン基底による式 / 2・3行目: 制御点の座標を代入した式
         if (!st.P) return '';
-        const P = st.P, v = (q) => '(' + num(q[0], 1) + ',\\,' + num(q[1], 1) + ')', P1 = C('amber', '\\boldsymbol{P}_1'), P2 = C('amber', '\\boldsymbol{P}_2');
+        const P = st.P, v = (q) => '(' + num(q[0], 1) + ',\\,{' + num(q[1], 1) + '})', P1 = C('amber', '\\boldsymbol{P}_1'), P2 = C('amber', '\\boldsymbol{P}_2');
         return '\\begin{aligned}\\boldsymbol{P}(t) &= (1-t)^3\\boldsymbol{P}_0+3(1-t)^2t\\,' + P1 + '\\\\&\\quad +3(1-t)t^2\\,' + P2 + '+t^3\\boldsymbol{P}_3\\\\' +
           '&= (1-t)^3' + v(P[0]) + '+3(1-t)^2t\\,' + C('amber', v(P[1])) + '\\\\' +
           '&\\quad +3(1-t)t^2\\,' + C('amber', v(P[2])) + '+t^3' + v(P[3]) + '\\end{aligned}';
@@ -2009,7 +2278,7 @@
       plot.handles.length = 0;
       [1, 2].forEach(function (i) {
         plot.addHandle({ get x() { return st.P[i][0]; }, get y() { return st.P[i][1]; }, get color() { return plot.c.amber; }, r: 9,
-          label: 'P' + SUB[i], drag(x, y) { st.P[i] = [clamp(x, 0.2, 9.8), clamp(y, plot.ymin + 0.2, plot.ymax - 0.2)]; } });
+          tex: '\\boldsymbol{P}_' + i, drag(x, y) { st.P[i] = [clamp(x, 0.2, 9.8), clamp(y, plot.ymin + 0.2, plot.ymax - 0.2)]; } });
       });
     }
     function score() {
@@ -2124,9 +2393,10 @@
     plot.draw = function (g) {
       const c = g.c, ctx = g.ctx, fit = st.fits[sm.get()];
       ctx.save(); ctx.fillStyle = c.teal; ctx.globalAlpha = 0.1; ctx.fillRect(g.X(2), 0, g.w - g.X(2), g.h); ctx.restore();
-      g.grid({ xlabel: 'x', ylabel: 'y' });
+      gridT(g, { xlabel: 'x', ylabel: 'y' });
+
       g.line(2, g.ymin, 2, g.ymax, { color: c.teal, dash: [6, 5], width: 1.5 });
-      g.text('過去（見えているデータ）', 0, g.ymax, { dx: -40, dy: 14, align: 'center', size: 12, bold: true, color: c.muted });
+      g.text('過去（見えているデータ）', 0, g.ymax, { dx: -8, dy: 14, align: 'right', size: 12, bold: true, color: c.muted });
       g.text(st.shown ? '未来（公開！）' : '未来（まだ見えない）', 3.5, g.ymax, { dy: 14, align: 'center', size: 12, bold: true, color: c.teal });
       if (fit) g.fn(fit, { x0: -5, x1: 5, color: c.primary, width: 4 });
       XP.forEach((x, i) => g.dot(x, st.yp[i], { r: 6, color: c.text }));

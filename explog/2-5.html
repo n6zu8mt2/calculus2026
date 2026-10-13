@@ -7,36 +7,12 @@
 <meta name="description" content="第2回 指数関数・対数関数 2.5章：対数目盛・dB・地震・pH・音階・数当て">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch5">
+<body class="chapter ch5 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
 
 <div class="layout">
@@ -71,10 +47,12 @@
     <div class="goal-meta">図 5つ ・ チャレンジ 3ステージ ・ 確認問題 5問</div>
   </div>
 
+  <p class="prereq">この章で使うこと：<a href="2-4.html">2.4章</a>の 対数法則 $\log_{10}x^r=r\log_{10}x$、<a href="2-3.html">2.3章</a>の「2倍を何回くり返すか」の見積もり</p>
+
   <section class="sec first" id="main">
 
     <p>
-      対数は「かけ算を足し算に変える」道具でした。この性質のおかげで、<b>何倍・何桁も違う量</b> を扱いやすくなります。
+      対数は「かけ算を足し算に変える」道具でした。この性質のおかげで、何倍・何桁も違う量を扱いやすくなります。
       実は、身の回りの「大きさの単位」の多くは対数で決められています。
     </p>
 
@@ -84,6 +62,15 @@
       ウイルス（約 $10^{-7}$ m）と天の川銀河（約 $10^{21}$ m）を、普通の目盛で同じ図に描くことはできません。
       <b>対数目盛</b>（1目盛ごとに10倍）にすると、すべてを1本の定規に並べられます。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜対数目盛</div>
+      <p class="key-lead key-big">対数目盛では、1目盛ごとに 10 倍。</p>
+      <p class="key-lead">ウイルスから銀河まで、28 桁の違いが1本の定規に収まる。</p>
+      <ul>
+        <li>普通の目盛：$0,\ 1,\ 2,\ 3,\ \ldots$ のように、1目盛ごとに <b>同じ数だけ足す</b>。</li>
+        <li>対数目盛：$1,\ 10,\ 100,\ 1000,\ \ldots$ のように、1目盛ごとに <b>10 をかける</b>。目盛の位置は $\log_{10}(\text{値})$。</li>
+        <li>ウイルス $10^{-7}$ m から天の川銀河 $10^{21}$ m まで、$21-(-7)=28$ 目盛（28 桁）で並ぶ。</li>
+      </ul>
+    </div>
     <div class="widget" id="w-logscale">
       <div class="widget-head">大きさくらべ <span class="hint">目盛を切り替える</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="mode"></div></div>
@@ -95,8 +82,22 @@
 
     <p>
       音の大きさ（dB）、地震の大きさ（マグニチュード）、酸性・アルカリ性（pH）、星の明るさ（等級）は、どれも
-      <b>「値が1つ（または一定）違うと、実際の量は何倍も違う」</b> ように決められた対数スケールです。2つの値を比べてみましょう。
+      「値が1つ（または一定）違うと、実際の量は何倍も違う」ように決められた対数スケールです。2つの値を比べてみましょう。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜対数スケール</div>
+      <p class="key-lead key-big">値が「足し算」で 1 違うと、量は「かけ算」で一定の倍率だけ違う。</p>
+      <p class="key-note">覚えるのは、それぞれの「値の差」と「量の倍率」の対応だけです。</p>
+      <div class="table-wrap"><table class="key-table scale-key-table">
+        <thead><tr><th>スケール</th><th>はかる量</th><th>値の違い</th><th>量の違い</th></tr></thead>
+        <tbody>
+          <tr><th>音（dB）</th><td>音の強さ $I$</td><td>$+10$ dB</td><td>$10$ 倍</td></tr>
+          <tr><th>地震（M）</th><td>エネルギー $E$</td><td>$+1$／$+2$</td><td>約 $32$ 倍／$1000$ 倍</td></tr>
+          <tr><th>pH</th><td>水素イオン濃度 $[\mathrm{H^+}]$</td><td>$-1$</td><td>$10$ 倍</td></tr>
+          <tr><th>星の等級</th><td>星の明るさ $\ell$</td><td>$-5$ 等</td><td>$100$ 倍</td></tr>
+        </tbody>
+      </table></div>
+      <p class="key-note">pH と等級は「数字が<b>小さい</b>ほど量が多い」（酸性が強い・明るい）ことに注意。</p>
+    </div>
     <div class="widget" id="w-scales">
       <div class="widget-head">対数スケール変換器 <span class="hint">種類を選ぶ／2つの値を動かす</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="kinds"></div></div>
@@ -105,24 +106,36 @@
         <div class="controls"></div>
         <div class="readout">
           <div class="row"><span class="k">しくみ</span><span class="tex" data-r="def"></span></div>
+          <div class="row"><span class="k t-teal">A の量</span><span class="tex" data-r="qa"></span></div>
+          <div class="row"><span class="k t-red">B の量</span><span class="tex" data-r="qb"></span></div>
           <div class="row"><span class="k">比べると</span><span class="tex big" data-r="ratio"></span></div>
           <div class="row"><span class="k">つまり</span><span data-r="say" class="note-txt"></span></div>
         </div>
       </div>
+      <div class="panel scale-desc" data-r="desc"></div>
     </div>
 
     <div class="callout point">
       <div class="ttl">なぜ対数で表すの？</div>
-      <p>人間の感覚（音の大きさ、明るさなど）は、刺激が <b>何倍になったか</b> に反応する性質があります（ウェーバー・フェヒナーの法則）。
+      <p>人間の感覚（音の大きさ、明るさなど）は、刺激が何倍になったかに反応する性質があります（ウェーバー・フェヒナーの法則）。
       10倍、100倍、1000倍の変化が「同じくらいずつ大きくなった」と感じられるので、対数で表すと感覚に合うのです。
       また、地震のエネルギーのように何十桁も変わる量を、扱いやすい小さな数で表せます。</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="ttl">マグニチュードと震度はちがう</div>
+      <p><b>マグニチュード（M）</b>は地震そのものの大きさ（震源で出たエネルギー）を表し、1つの地震に1つの値です。
+      M が 1 増えるとエネルギーは約 $10^{1.5}\approx32$ 倍、2 増えると $10^{3}=1000$ 倍になる対数スケールです。</p>
+      <p><b>震度</b>は、それぞれの場所での揺れの強さを表し、同じ地震でも場所ごとに違います（震源に近いほど大きい）。
+      日本の気象庁の震度は 0〜7 の 10 段階（5 と 6 は弱・強に分かれる）で、各地の震度計の観測から決まります。
+      電球にたとえると、マグニチュードは「電球のワット数」、震度は「ある場所での明るさ」です。</p>
     </div>
 
     <h2 class="h-sub"><span class="tag">(3)</span>大きな数の桁数を対数で求める</h2>
 
     <p>
       $2^{100}$ は何桁でしょう？ 実際に計算するのは大変ですが、$\log_{10}$ を使うと一瞬でわかります。
-      カギは「<b>桁数は、10 の何乗の間にあるかで決まる</b>」ことです。
+      カギは「桁数は、10 の何乗の間にあるかで決まる」ことです。
     </p>
     <div class="table-wrap"><table class="ratio-table digits-table">
       <thead><tr><th>桁数</th><th>例</th><th>$N$ の範囲</th><th>$\log_{10}N$ の範囲</th></tr></thead>
@@ -135,19 +148,23 @@
       </tbody>
     </table></div>
     <p>
-      たとえば $N=1024$ なら $\log_{10}1024\approx3.01$。これは $3$ と $4$ の間なので、$1024$ は $10^3$ と $10^4$ の間、つまり <b>4 桁</b>。
+      たとえば $N=1024$ なら $\log_{10}1024\approx3.01$。これは $3$ と $4$ の間なので、$1024$ は $10^3$ と $10^4$ の間、つまり 4 桁。
       まとめると次のようになります。
     </p>
-    <div class="eq-box eq-hero">$$N\ \text{が}\ k\ \text{桁}\iff 10^{k-1}\leqq N\lt 10^k\iff k-1\leqq\log_{10}N\lt k$$</div>
+    <div class="key"><div class="key-ttl">覚える｜桁数と対数</div>
+      <p class="key-note">自然数 $N$ の桁数 $k$ を求めたいとき：</p>
+      <p class="key-lead key-big">桁数 $k$ ＝（$\log_{10}N$ の整数部分）＋ 1</p>
+      $$\begin{gathered}N\ \text{が}\ k\ \text{桁}\iff 10^{k-1}\leqq N\lt 10^k\\[2pt] \iff k-1\leqq\log_{10}N\lt k\end{gathered}$$
+    </div>
     <p>
-      つまり <b>$\log_{10}N$ の整数部分に 1 を足したものが桁数</b>。$N=a^n$ なら、対数法則で $\log_{10}a^n=n\log_{10}a$ と <b>かけ算1回</b> で計算できます。
-      例：$\log_{10}2^{100}=100\times0.3010=30.10$。$30\leqq30.10\lt31$ なので $10^{30}\leqq2^{100}\lt10^{31}$、つまり <b>31 桁</b>。
+      つまり $\log_{10}N$ の整数部分に 1 を足したものが桁数。$N=a^n$ なら、対数法則で $\log_{10}a^n=n\log_{10}a$ とかけ算1回で計算できます。
+      例：$\log_{10}2^{100}=100\times0.3010=30.10$。$30\leqq30.10\lt31$ なので $10^{30}\leqq2^{100}\lt10^{31}$、つまり 31 桁。
     </p>
-    <p><b>下の図の見方</b></p>
+    <h3 class="h-mini">下の図の見方</h3>
     <ul>
-      <li><b>上の帯（数 $N$）</b>：数を「1桁の数（1〜9）」「2桁の数（10〜99）」「3桁の数（100〜999）」…という <b>部屋</b> に分けたもの。部屋の境目は $1,\ 10,\ 100,\ 1000,\dots$ で、右の部屋へ行くごとに数は 10 倍になります。</li>
-      <li><b>下の数直線（$\log_{10}N$）</b>：同じ位置の $\log_{10}N$ の値。境目 $10^{k}$ の真下には、ちょうど $k$ があります（$\log_{10}10^k=k$）。</li>
-      <li><b>赤い線</b>：$a^n$ の位置。上で <b>どの部屋にいるか（何桁か）</b> と、下で <b>$\log_{10}N$ がどの整数の間にあるか</b> が、いつも対応しています。</li>
+      <li>上の帯（数 $N$）：数を「1桁の数（1〜9）」「2桁の数（10〜99）」「3桁の数（100〜999）」…という「部屋」に分けたもの。部屋の境目は $1,\ 10,\ 100,\ 1000,\dots$ で、右の部屋へ行くごとに数は 10 倍になります。</li>
+      <li>下の数直線（$\log_{10}N$）：同じ位置の $\log_{10}N$ の値。境目 $10^{k}$ の真下には、ちょうど $k$ があります（$\log_{10}10^k=k$）。</li>
+      <li>赤い線：$a^n$ の位置。上でどの部屋にいるか（何桁か）と、下で $\log_{10}N$ がどの整数の間にあるかが、いつも対応しています。</li>
     </ul>
     <div class="widget" id="w-digits">
       <div class="widget-head">$a^n$ の桁数 <span class="hint">$a$ と $n$ を動かす</span></div>
@@ -166,10 +183,11 @@
     <h2 class="h-sub"><span class="tag">(4)</span>音階は対数でできている</h2>
 
     <p>
-      ピアノで1オクターブ上がると、音の周波数（1秒あたりの振動数）は <b>ちょうど2倍</b> になります。
+      ピアノで1オクターブ上がると、音の周波数（1秒あたりの振動数）はちょうど2倍になります。
       1オクターブは12個の半音に等分されていて、半音1つ上がるごとに周波数は $2^{\frac1{12}}\approx1.0595$ 倍。
-      つまり鍵盤は <b>周波数の対数</b> を等間隔に並べたものです。鍵盤を押して音を聞いてみましょう（音が出ます）。
+      つまり鍵盤は周波数の対数を等間隔に並べたものです。鍵盤を押して音を聞いてみましょう（音が出ます）。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜12 平均律</div>$$\begin{gathered}\text{1 オクターブ上がる}\ \to\ 2\ \text{倍}\\[2pt] \text{半音 1 つ上がる}\ \to\ 2^{\frac1{12}}\approx1.0595\ \text{倍}\end{gathered}$$</div>
     <div class="widget" id="w-piano">
       <div class="widget-head">ピアノと周波数 <span class="hint">鍵盤をクリック（タップ）すると音が鳴る</span></div>
       <div class="piano" data-r="keys"></div>
@@ -194,15 +212,15 @@
 
     <h3 class="h-sub2">12 平均律と純正律のちがい</h3>
     <p>
-      ドレミ…の各音の周波数をどう決めるかのルールを <b>音律</b>（おんりつ）といいます。代表的なのが次の2つです。
+      ドレミ…の各音の周波数をどう決めるかのルールを<b>音律</b>（おんりつ）といいます。代表的なのが次の2つです。
     </p>
     <div class="table-wrap"><table class="tune-table">
       <thead><tr><th></th><th>純正律</th><th>12 平均律</th></tr></thead>
       <tbody>
-        <tr><th>決め方</th><td>ドとの周波数の比を <b>簡単な整数の比</b> にする。<br>ミ $=\frac54$ 倍、ソ $=\frac32$ 倍 など</td><td>1オクターブ（2倍）を <b>12 等分</b>。<br>半音ごとに必ず $2^{\frac1{12}}\approx1.0595$ 倍</td></tr>
-        <tr><th>対数で見ると</th><td>$\log_2(\text{比})$ の間隔がばらばら</td><td>$\log_2(\text{比})$ が $\frac1{12}$ ずつ <b>等間隔</b></td></tr>
-        <tr><th>和音の響き</th><td>ドミソ $=4:5:6$。うなりがなく <b>とても澄んだ響き</b></td><td>比が整数比から少しずれるので、<b>わずかにうなり</b> が出る</td></tr>
-        <tr><th>調を変えると</th><td>基準の調（ここではハ長調）から離れると <b>濁る</b>。<br>例：レとラの比は $\frac{5/3}{9/8}=\frac{40}{27}\approx1.481$ で、きれいな $\frac32$ からずれる</td><td><b>どの調でも同じ響き</b>。転調・移調が自由</td></tr>
+        <tr><th>決め方</th><td>ドとの周波数の比を簡単な整数の比にする。<br>ミ $=\frac54$ 倍、ソ $=\frac32$ 倍 など</td><td>1オクターブ（2倍）を 12 等分。<br>半音ごとに必ず $2^{\frac1{12}}\approx1.0595$ 倍</td></tr>
+        <tr><th>対数で見ると</th><td>$\log_2(\text{比})$ の間隔がばらばら</td><td>$\log_2(\text{比})$ が $\frac1{12}$ ずつ等間隔</td></tr>
+        <tr><th>和音の響き</th><td>ドミソ $=4:5:6$。うなりがなくとても澄んだ響き</td><td>比が整数比から少しずれるので、わずかにうなりが出る</td></tr>
+        <tr><th>調を変えると</th><td>基準の調（ここではハ長調）から離れると濁る。<br>例：レとラの比は $\frac{5/3}{9/8}=\frac{40}{27}\approx1.481$ で、きれいな $\frac32$ からずれる</td><td>どの調でも同じ響き。転調・移調が自由</td></tr>
         <tr><th>向いている楽器</th><td>音の高さを自由に調整できる声・弦楽器・管楽器</td><td>音の高さが固定される鍵盤楽器・ギター（フレット）・電子楽器</td></tr>
       </tbody>
     </table></div>
@@ -222,7 +240,7 @@
     </table></div>
     <div class="callout point">
       <div class="ttl">セント：音の高さの差も対数ではかる</div>
-      <p>2つの音の高さの差は <b>セント</b> ではかります。周波数 $f_1,\ f_2$ の差は $1200\log_2\dfrac{f_2}{f_1}$ セント。
+      <p>2つの音の高さの差は<b>セント</b>ではかります。周波数 $f_1,\ f_2$ の差は $1200\log_2\dfrac{f_2}{f_1}$ セント。
       1オクターブ（2倍）が $1200$ セント、半音が $100$ セントです。ソの差 $2$ セントはほとんどわかりませんが、
       ミ・ラ・シの $12$〜$16$ セントの差は、和音にすると「うなり」として聞こえます。上の「和音の聞き比べ」で確かめてみましょう。</p>
       <p><b>なぜ 12 等分？</b>　きれいに響く $\frac32$（ド→ソ）を12回重ねると $\left(\frac32\right)^{12}\approx129.7$ で、7オクターブ $2^7=128$ にとても近い
@@ -230,21 +248,32 @@
     </div>
     <div class="callout warn">
       <div class="ttl">現代の音楽で使われているのは？</div>
-      <p>答えは <b>12 平均律</b> です。ピアノ・ギター・電子楽器・DTM（パソコンの音楽ソフト）はすべて12平均律が標準で、
+      <p>答えは 12 平均律です。ピアノ・ギター・電子楽器・DTM（パソコンの音楽ソフト）はすべて12平均律が標準で、
       ポップスもクラシックもほぼこれで演奏されています（基準の高さはラ $=440$ Hz。日本のオーケストラでは $442$ Hz もよく使われます）。</p>
       <p>ただし、合唱・弦楽合奏・吹奏楽のように音の高さを自分で微調整できる場合は、和音を長くのばすときにミ（3度）を少し低めにするなど、
-      <b>純正律に近づけて「ハモらせる」</b> ことがよく行われます。</p>
+      純正律に近づけて「ハモらせる」ことがよく行われます。</p>
       <p>なお、ここで鳴らしている音は12平均律で正しく計算していますが、電子音は本物のピアノと倍音が違うことや、
       本物のピアノは弦の性質で高音ほどわずかに高めに調律される（ストレッチ・チューニング）ことから、聞き慣れた音と少し違って感じられることがあります。</p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>対数目盛</th><td>1 目盛ごとに 10 倍（$1,\ 10,\ 100,\ \ldots$ が等間隔）</td></tr>
+        <tr><th>対数スケール</th><td>値が 1 違うと量は一定の倍率だけ違う（10 dB で 10 倍、pH 1 で 10 倍、M 2 で 1000 倍、5 等で 100 倍）</td></tr>
+        <tr><th>桁数</th><td>自然数 $N$ の桁数 ＝（$\log_{10}N$ の整数部分）＋ 1</td></tr>
+        <tr><th>12 平均律</th><td>1 オクターブで 2 倍、半音で $2^{\frac1{12}}$ 倍</td></tr>
+        <tr><th>二分探索</th><td>$N$ 個の候補は約 $\log_2 N$ 回の質問で当てられる</td></tr>
+      </tbody></table></div>
     </div>
 
     <h2 class="h-sub"><span class="tag">(5)</span>数当てゲーム：何回で当てられる？</h2>
 
     <p>
       「1〜100 の中で思い浮かべた数を、はい・いいえで答えられる質問で当てる」には、何回質問すればよいでしょう。
-      毎回「真ん中より大きい？」と聞けば、候補は半分ずつに減ります。$2^7=128\geqq100$ なので <b>7回あれば必ず当たります</b>。
-      一般に $N$ 個の候補なら、約 $\log_2 N$ 回。この方法を <b>二分探索</b> といい、コンピュータの検索の基本です。
+      毎回「真ん中より大きい？」と聞けば、候補は半分ずつに減ります。$2^7=128\geqq100$ なので7回あれば必ず当たります。
+      一般に $N$ 個の候補なら、約 $\log_2 N$ 回。この方法を<b>二分探索</b>といい、コンピュータの検索の基本です。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜二分探索</div>$$N\ \text{個の候補}\ \to\ \text{約}\ \log_2 N\ \text{回で当たる}$$</div>
     <div class="widget" id="w-guess-cpu">
       <div class="widget-head">コンピュータがあなたの数を当てる <span class="hint">数を思い浮かべて、質問に答える</span></div>
       <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">範囲</span><div class="chips" data-r="ns"></div></div></div>
@@ -260,7 +289,7 @@
       </div>
     </div>
 
-    <p>今度は逆に、あなたがコンピュータの数を当てる番です。二分探索を使えば、<b>$\log_2 N$ 回くらい</b> で当てられるはずです。</p>
+    <p>今度は逆に、あなたがコンピュータの数を当てる番です。二分探索を使えば、$\log_2 N$ 回くらいで当てられるはずです。</p>
     <div class="widget" id="w-game-guess">
       <div class="widget-head">あなたがコンピュータの数を当てる <span class="game-total" data-r="total"></span><span class="hint">数を入力して「これだ！」</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
@@ -289,7 +318,11 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) $10^{\frac{80-60}{10}}=100$ 倍　(2) $10^{1.5\times2}=1000$ 倍　(3) $10^{5-3}=100$ 倍　(4) $\log_{10}2^{30}=9.03$ より 10 桁、$\log_{10}3^{50}=23.855$ より 24 桁　(5) $2^{10}=1024\geqq1000$ なので 10 回</p>
+      <p>(1) 10 dB 増えると強さは 10 倍。$80-60=20$ は「10 が 2 回」なので $10^{\frac{80-60}{10}}=10^2=100$ 倍</p>
+      <p>(2) $M$ が 2 増えるので $\left(10^{1.5}\right)^2=10^{1.5\times2}=10^3=1000$ 倍</p>
+      <p>(3) pH が 1 小さいと濃度は 10 倍。pH 3 は pH 5 より 2 小さいので $10^{5-3}=10^2=100$ 倍</p>
+      <p>(4) $\log_{10}2^{30}=30\times0.3010=9.03$ より $10^9\leqq2^{30}\lt10^{10}$、よって 10 桁。<br>$\log_{10}3^{50}=50\times0.4771=23.855$ より $10^{23}\leqq3^{50}\lt10^{24}$、よって 24 桁</p>
+      <p>(5) 1 回の質問で候補は半分になるので、$n$ 回で $\dfrac{1000}{2^n}$ 個以下。<br>$2^9=512\lt1000\leqq2^{10}=1024$ より、1 個にしぼるには 10 回</p>
     </details>
   </section>
 
@@ -302,9 +335,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="explog.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="explog.js?v=202610140157"></script>
 </body>
 </html>

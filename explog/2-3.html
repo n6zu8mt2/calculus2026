@@ -7,36 +7,12 @@
 <meta name="description" content="第2回 指数関数・対数関数 2.3章：折り紙で月まで・バイバイン">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch3">
+<body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
 
 <div class="layout">
@@ -69,12 +45,14 @@
     <div class="goal-meta">図 2つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
   </div>
 
+  <p class="prereq">この章で使うこと：<a href="2-1.html">2.1章</a>の 指数法則 $(a^m)^n=a^{mn}$、<a href="2-2.html">2.2章</a>の 倍々の増え方</p>
+
   <section class="sec first" id="main">
 
     <p>
       指数関数のすごさは、実際の数字で見ると実感できます。厚さ $0.1$ mm の紙を半分に折るたびに厚さは 2 倍。
       ドラえもんの道具「バイバイン」をかけた栗まんじゅうは、5 分ごとに 2 倍に増えます。
-      それぞれ、<b>どこまで大きくなるか</b> 見てみましょう。図の定規は <b>対数目盛</b>（1目盛ごとに10倍）です。
+      それぞれ、どこまで大きくなるか見てみましょう。図の定規は対数目盛（1目盛ごとに10倍）です。
     </p>
 
     <h2 class="h-sub"><span class="tag">(1)</span>紙を折って月まで行こう</h2>
@@ -112,30 +90,36 @@
       </div>
     </div>
 
-    <div class="callout point">
-      <div class="ttl">計算の仕組み</div>
-      <p>$n$ 回折ったときの厚さは $0.1\times2^n$ mm。月までの距離 約 $3.8\times10^5$ km $=3.8\times10^{11}$ mm を超えるには
-      $2^n\geqq3.8\times10^{12}$。両辺の $\log_{10}$ をとると $n\log_{10}2\geqq\log_{10}(3.8\times10^{12})\approx12.58$ なので
-      $n\geqq\dfrac{12.58}{0.3010}\approx41.8$。<b>たった 42 回</b> で月に届きます。</p>
-    </div>
+    <p>1回折るごとに厚さは 2 倍。2 回折ると $2\times2=2^2$ 倍、3 回折ると $2^3$ 倍、…となります。</p>
+    <div class="key"><div class="key-ttl">覚える｜倍々を n 回</div>$$\text{2 倍を}\ n\ \text{回くり返すと}\ 2^n\ \text{倍}$$<p>例：厚さ $0.1$ mm の紙を $n$ 回折ると、厚さは $0.1\times2^n$ mm。</p></div>
+    <p>$2^n$ がどれくらいの大きさかは、次の目安でつかめます。$2^{10}=1024$ はほぼ $1000$ なので、2 倍を 10 回くり返すごとに、ほぼ 1000 倍（ケタが3つ増える）です。</p>
+    <div class="key"><div class="key-ttl">覚える｜倍々の目安</div>$$2^{10}=1024\approx10^3$$<p>同じことを $2\approx10^{0.3010}$、つまり $\log_{10}2\approx0.3010$ とも書きます（$\log$ は2.4章で学びます）。</p></div>
+    <p>
+      では、何回折ると月に届くでしょう。月までの距離は約 $3.8\times10^5$ km $=3.8\times10^{11}$ mm なので、
+      $0.1\times2^n\geqq3.8\times10^{11}$、つまり $2^n\geqq3.8\times10^{12}$ となる $n$ を探します。
+      このように「$2^n$ が $A$ 以上になる $n$」は、次の手順で求められます。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜何回で A を超えるか</div>$$\begin{gathered}2^n\geqq A\\[4pt] \text{両辺の}\ \log_{10}\ \text{をとる}\\[4pt] n\log_{10}2\geqq\log_{10}A\\[4pt] n\geqq\dfrac{\log_{10}A}{0.3010}\end{gathered}$$<p class="key-note">$\log_{10}A$ は「$10$ を何乗すると $A$ になるか」。$\log_{10}2^n=n\log_{10}2$ を使っています（2.4章）。</p></div>
+    <p>
+      月の場合は $A=3.8\times10^{12}$ で、$\log_{10}A\approx12.58$。だから $n\geqq\dfrac{12.58}{0.3010}\approx41.8$。たった 42 回で月に届きます。
+    </p>
 
     <div class="callout warn">
       <div class="ttl">本当は何回折れる？ ― 12回折ったギネス世界記録</div>
       <p>「紙は 7〜8 回までしか折れない」とよく言われてきました。1回折るたびに厚さは2倍、しかも折り曲げる部分で紙が大きく曲がるため、
       必要な紙の長さも急激に（ほぼ指数関数的に）増えるからです。</p>
-      <p>2002年1月、アメリカの高校生 <b>ブリトニー・ガリバン</b>（Britney Gallivan）さんは、必要な紙の長さを表す式を自分で導き、
-      長さ約 1.2 km のトイレットペーパーを使って <b>1枚の紙を半分に 12 回折る</b> ことに初めて成功しました（ギネス世界記録）。
+      <p>2002年1月、アメリカの高校生ブリトニー・ガリバン（Britney Gallivan）さんは、必要な紙の長さを表す式を自分で導き、
+      長さ約 1.2 km のトイレットペーパーを使って1枚の紙を半分に 12 回折ることに初めて成功しました（ギネス世界記録）。
       12 回折ると $2^{12}=4096$ 枚重ねです。</p>
       <p>ガリバンさんの式によると、厚さ $t$ の細長い紙を同じ向きに $n$ 回折るのに必要な長さは</p>
       <div class="eq-box">$$L=\frac{\pi t}{6}\left(2^n+4\right)\left(2^n-1\right)$$</div>
-      <p>$2^n$ が2回かけ合わされているので、$L$ はおよそ $4^n$ に比例し、<b>1回多く折るには約4倍の長さ</b> が必要です。
+      <p>$2^n$ が2回かけ合わされているので、$L$ はおよそ $4^n$ に比例し、1回多く折るには約4倍の長さが必要です。
       厚さ $0.1$ mm の紙なら、7回で約 $88$ cm、10回で約 $55$ m、12回で約 $880$ m、13回では約 $3.5$ km にもなります。
       ここでも指数関数が「壁」になっているのです。</p>
       <ul>
         <li><a href="https://www.guinnessworldrecords.com/world-records/494571-most-times-to-fold-a-piece-of-paper" target="_blank" rel="noopener">ギネス世界記録 公式ページ：Most times to fold a piece of paper（英語）</a></li>
         <li><a href="https://www.guinnessworldrecords.com/news/2025/10/how-many-times-can-you-actually-fold-a-piece-of-paper-student-busts-myth" target="_blank" rel="noopener">ギネス世界記録 公式ニュース：How many times can you actually fold a piece of paper? Student busts myth（英語）</a></li>
         <li><a href="https://dragonflare.blog.jp/archives/fold_paper_in_half.html" target="_blank" rel="noopener">紙を半分に折る回数の限界とガリバンの式の解説（日本語ブログ）</a></li>
-        <li><a href="https://youtube.com/shorts/F6btjJ_YotY" target="_blank" rel="noopener">動画（YouTube ショート）：紙を12回折る</a></li>
       </ul>
     </div>
 
@@ -176,12 +160,22 @@
     <div class="callout warn">
       <div class="ttl">お話の結末</div>
       <p>原作では、増えすぎた栗まんじゅうをロケットで宇宙へ送ってしまいます。宇宙のどこかで今も増え続けているかも…？
-      計算では <b>約1日（23.5時間）</b> で宇宙の体積に達します。</p>
+      計算では約1日（23.5時間）で宇宙の体積に達します。</p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>倍々を n 回</th><td>2 倍を $n$ 回くり返すと $2^n$ 倍</td></tr>
+        <tr><th>目安</th><td>$2^{10}=1024\approx10^3$（10 回で約 1000 倍）</td></tr>
+        <tr><th>$\log_{10}2$</th><td>$\log_{10}2\approx0.3010$（$2\approx10^{0.3010}$）</td></tr>
+        <tr><th>$n$ の求め方</th><td>$2^n\geqq A$ ⇔ $n\geqq\dfrac{\log_{10}A}{0.3010}$</td></tr>
+        <tr><th>倍々の威力</th><td>紙は 42 回折ると月に届く。栗まんじゅうは約1日で宇宙を埋める</td></tr>
+      </tbody></table></div>
     </div>
 
     <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：予想して確かめよう</h2>
 
-    <p>答えを <b>予想してから</b> 決定しましょう。チャンスは各ステージ1回です。$\log_{10}2\approx0.3010$（$2^{10}\approx1000$）を使うと、暗算でもかなり近づけます。</p>
+    <p>答えを予想してから決定しましょう。チャンスは各ステージ1回です。$\log_{10}2\approx0.3010$（$2^{10}\approx1000$）を使うと、暗算でもかなり近づけます。</p>
     <div class="widget" id="w-game-predict">
       <div class="widget-head">予想して確かめよう <span class="game-total" data-r="total"></span><span class="hint">予想を決めて「決定」</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
@@ -207,7 +201,9 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) $0.1\times2^n\geqq10^6$（mm）より $2^n\geqq10^7$。$2^{23}\approx8.4\times10^6,\ 2^{24}\approx1.7\times10^7$ なので 24 回　(2) $2^{14}=16384$ なので 14 回分、70 分後　(3) $2^{40}=(2^{10})^4\approx(10^3)^4=10^{12}$（1兆）</p>
+      <p>(1) 1 km $=10^6$ mm。$n$ 回折った厚さは $0.1\times2^n$ mm なので $0.1\times2^n\geqq10^6$、つまり $2^n\geqq10^7$。<br>$2^{23}=8388608\lt10^7$、$2^{24}=16777216\geqq10^7$ より 24 回</p>
+      <p>(2) $n$ 回 2 倍になると $2^n$ 個。$2^{13}=8192\lt10000$、$2^{14}=16384\geqq10000$ より 14 回 2 倍になればよい。<br>1 回に 5 分なので $5\times14=70$ 分後</p>
+      <p>(3) $2^{40}=2^{10\times4}=\left(2^{10}\right)^4$<br>$\approx\left(10^3\right)^4=10^{12}$（約1兆）</p>
     </details>
   </section>
 
@@ -220,9 +216,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="explog.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="explog.js?v=202610140157"></script>
 </body>
 </html>

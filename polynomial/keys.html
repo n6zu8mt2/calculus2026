@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>覚えることのまとめ | 第1回 多項式 | 解析学 2026</title>
+<meta name="description" content="第1回 多項式の各章の「覚える」をまとめたページ（印刷用）">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+</head>
+<body class="chapter calm keys-page">
+<header id="site-header" data-root="../" data-current="polynomial"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第1回の章の一覧">
+    <div class="toc-title">第1回 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+    <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
+    <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
+    <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
+    <a href="1-4.html"><span class="cn">1.4</span><span class="ct">イージング</span></a>
+    <a href="1-5.html"><span class="cn">1.5</span><span class="ct">ベジェ曲線</span></a>
+    <a href="1-6.html"><span class="cn">1.6</span><span class="ct">ラグランジュ補間</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero"><div><div class="eyebrow">第1回 多項式</div><h1>覚えることのまとめ</h1></div></header>
+  <p class="keys-intro">各章の「覚える｜この章のまとめ」を集めたページです。章の名前を押すとその章に移動します。<button class="btn small" type="button" onclick="window.print()">🖨 このページを印刷</button></p>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="1-1.html">1.1一次関数</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>一次関数</th><td>$y=ax+b$（$a$＝傾き、$b$＝$y$ 切片）</td></tr>
+        <tr><th>傾き</th><td>$x$ が $1$ 増えたときの $y$ の変化</td></tr>
+        <tr><th>補間</th><td>$\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$<br>$\mathrm{AP}:\mathrm{PB}=t:(1-t)$</td></tr>
+        <tr><th>回帰直線</th><td>縦のずれの2乗の和が最小になる直線（最小二乗法）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="1-2.html">1.2二次関数</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>平行移動</th><td>$x$ 方向に $p$、$y$ 方向に $q$ → $y-q=f(x-p)$</td></tr>
+        <tr><th>頂点形</th><td>$y=a(x-p)^2+q$、頂点 $(p,\ q)$</td></tr>
+        <tr><th>平方完成</th><td>$y=ax^2+bx+c$ を頂点形に直す操作</td></tr>
+        <tr><th>凸の向き</th><td>$a>0$ なら下に凸、$a\lt 0$ なら上に凸</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="1-3.html">1.3放物線：ボールを投げる</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>速さの分解</th><td>$v_x=v_0\cos\theta$（横）、$v_y=v_0\sin\theta$（縦）</td></tr>
+        <tr><th>位置</th><td>$x=v_xt$、$y=h_0+v_yt-\frac12gt^2$</td></tr>
+        <tr><th>軌跡</th><td>$t$ を消すと $x$ の二次関数（上に凸の放物線）</td></tr>
+        <tr><th>最高点</th><td>軌跡の放物線の頂点。$t=\frac{v_y}{g}$ 秒後、高さ $h_0+\frac{v_y^{\,2}}{2g}$</td></tr>
+        <tr><th>飛距離</th><td>$h_0=0$ なら $\dfrac{2v_xv_y}{g}$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="1-4.html">1.4イージング</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>イージング関数</th><td>時間の割合 $t$ → 進んだ割合 $f(t)$、$f(0)=0$、$f(1)=1$</td></tr>
+        <tr><th>等速</th><td>$f(t)=t$</td></tr>
+        <tr><th>速さ</th><td>グラフの傾き $f'(t)$（微分：後の回で学ぶ）</td></tr>
+        <tr><th>3次で設計</th><td>$f(0)=0$、$f(1)=1$、$f'(0)=v_0$、$f'(1)=v_1$ で1つに決まる</td></tr>
+        <tr><th>smoothstep</th><td>$3t^2-2t^3$（始まりと終わりの速さが $0$）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="1-5.html">1.5ベジェ曲線</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>基本の操作</th><td>隣り合う2点を $t:(1-t)$ に内分<br>$(1-t)\boldsymbol{X}+t\boldsymbol{Y}$</td></tr>
+        <tr><th>ド・カステリョ</th><td>点が1個になるまで内分を繰り返す</td></tr>
+        <tr><th>2次ベジェ</th><td>$(1-t)^2\boldsymbol{P}_0+2(1-t)t\,\boldsymbol{P}_1$<br>$+\,t^2\boldsymbol{P}_2$</td></tr>
+        <tr><th>曲線の性質</th><td>端点は通る、途中の制御点は通らず引っ張られる</td></tr>
+        <tr><th>座標</th><td>点 $n+1$ 個なら $x,y$ とも $t$ の $n$ 次多項式</td></tr>
+        <tr><th>cubic-bezier</th><td>始点 $(0,0)$・終点 $(1,1)$ の3次ベジェ。4つの数は2つの制御点</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="1-6.html">1.6ラグランジュ補間とデータサイエンス</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>通る多項式</th><td>$n$ 個の点（$x$ 座標が異なる）を通る $n-1$ 次以下の多項式はただ1つ</td></tr>
+        <tr><th>補間の式</th><td>$P(x)=y_1L_1(x)+\cdots+y_nL_n(x)$<br>（ラグランジュ補間）</td></tr>
+        <tr><th>$L_i(x)$</th><td>点 $x_i$ で $1$、ほかの点で $0$</td></tr>
+        <tr><th>回帰</th><td>二乗誤差の合計が最小の多項式で、全体の傾向をつかむ</td></tr>
+        <tr><th>過学習</th><td>次数を上げすぎると、訓練誤差は $0$ に近づくが予測は外れる</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 覚えることのまとめ（tools/build.py で自動生成）</footer>
+
+<script src="../assets/common.js?v=202610140157"></script>
+</body>
+</html>

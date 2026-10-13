@@ -245,12 +245,53 @@
     nav.scrollLeft = a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2;
   }
 
+  /* 横にはみ出す表には「横にスクロールできます」の目印をつける */
+  function markScrollables() {
+    document.querySelectorAll('.table-wrap, .pow-table-wrap').forEach(function (w) {
+      const over = w.scrollWidth > w.clientWidth + 2;
+      w.classList.toggle('can-scroll', over);
+      let hint = w.previousElementSibling;
+      if (!hint || !hint.classList.contains('scroll-hint')) {
+        if (!over) return;
+        hint = document.createElement('div');
+        hint.className = 'scroll-hint';
+        hint.textContent = '← 表は横にスクロールできます →';
+        w.parentNode.insertBefore(hint, w);
+        w.addEventListener('scroll', function () { w.classList.toggle('at-end', w.scrollLeft + w.clientWidth >= w.scrollWidth - 4); }, { passive: true });
+      }
+      hint.hidden = !over;
+    });
+  }
+  let scrollTimer = 0;
+  function queueMarkScrollables() { clearTimeout(scrollTimer); scrollTimer = setTimeout(markScrollables, 250); }
+
+  /* 章ページに「この章の『覚える』だけ印刷」ボタン */
+  function addPrintButton() {
+    const goal = document.querySelector('.goal');
+    if (!goal || !document.querySelector('.sec .key')) return;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn small print-keys-btn';
+    b.textContent = '🖨 この章の「覚える」だけ印刷';
+    b.addEventListener('click', function () {
+      document.body.classList.add('print-keys');
+      window.print();
+    });
+    window.addEventListener('afterprint', function () { document.body.classList.remove('print-keys'); });
+    const meta = goal.querySelector('.goal-meta');
+    (meta || goal).appendChild(b);
+  }
+
   function init() {
     buildHeader();
     buildToc();
     revealChapter();
     renderStars();
+    addPrintButton();
     window.addEventListener('load', revealChapter);
+    window.addEventListener('load', markScrollables);
+    window.addEventListener('resize', queueMarkScrollables);
+    document.addEventListener('mathjax-ready', queueMarkScrollables);
+    setTimeout(markScrollables, 1500);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

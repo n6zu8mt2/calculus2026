@@ -7,36 +7,12 @@
 <meta name="description" content="第1回 多項式 1.4章：動きに強弱をつける">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch4">
+<body class="chapter ch4 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
@@ -70,9 +46,10 @@
   </div>
 
   <section class="sec first" id="easing">
+    <p class="prereq">この章で使うこと：<a href="1-1.html">1.1章</a>の 傾き（$x$ が $1$ 増えたときの $y$ の変化）と補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$、<a href="1-2.html">1.2章</a>の 二次関数のグラフ</p>
     <p>
-      スマホでメニューを開くとき、メニューは一定の速さで動くのではなく、<b>勢いよく出てきて、最後はゆっくり止まります</b>。
-      この「動きの緩急」を決めているのが、この章で学ぶ <b>イージング関数</b> です。まずは実物を見比べてみましょう。
+      スマホでメニューを開くとき、メニューは一定の速さで動くのではなく、勢いよく出てきて、最後はゆっくり止まります。
+      この「動きの緩急」を決めているのが、この章で学ぶイージング関数です。まずは実物を見比べてみましょう。
     </p>
     <div class="widget" id="w-uidemo">
       <div class="widget-head">実例：スマホのメニューが開く動き <span class="hint">「メニューを開く」を押して、左右を見比べよう</span></div>
@@ -121,52 +98,61 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
 
     <p>
       このように、画面の中の物の動きは「時間の割合 $t$ ($0\to1$) から、位置（進み具合）$f(t)$ ($0\to1$) への関数」で決まっています。
-      これを <b>イージング関数</b> といいます。$f(t)=t$（一次関数）は <b>等速</b> ですが、機械的で不自然です。
-      2次・3次の多項式を使うと、<b>ゆっくり動き出す（ease-in）</b>、<b>ゆっくり止まる（ease-out）</b> 動きが作れます。
+      これを<b>イージング関数</b>といいます。$f(t)=t$（一次関数）は等速ですが、機械的で不自然です。
+      2次・3次の多項式を使うと、ゆっくり動き出す（ease-in）、ゆっくり止まる（ease-out）動きが作れます。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜イージング関数</div><p class="key-lead">イージング関数 $f(t)$ とは、「時間がどれだけ経ったか」から「どれだけ進んだか」を決める関数</p>
+      <ul>
+        <li>$t$＝経過時間の割合（スタートで $t=0$、ゴールの時刻で $t=1$）</li>
+        <li>$f(t)$＝進んだ距離の割合（スタート地点で $0$、ゴール地点で $1$）</li>
+        <li>スタートとゴールは必ず決まっているので $f(0)=0$、$f(1)=1$</li>
+        <li>$f(t)=t$ なら等速。途中の形を変えると、動きの緩急（速い・遅い）が変わる</li>
+      </ul></div>
     <div class="callout point">
       <div class="ttl">身近なイージングの例</div>
       <ul>
-        <li><b>スマホの画面</b>：メニューや通知がスッと出てきて、ゆっくり止まる。アプリを開くときに画面が広がる動き。</li>
-        <li><b>Webページのスクロール</b>：目次のリンクを押すと、目的の場所まで滑らかに移動して止まる（このページの目次もそうです）。</li>
-        <li><b>プレゼンのアニメーション</b>：PowerPoint などの「滑らかに開始」「滑らかに終了」という設定。</li>
-        <li><b>ゲーム</b>：キャラクターの加速・減速、カメラがキャラクターを追いかける動き、ボタンを押したときに少し弾む動き。</li>
-        <li><b>乗り物</b>：エレベーターや電車は、急に動き出したり止まったりすると乗っている人が揺れるので、ゆっくり加速・減速するよう制御されている。</li>
+        <li>スマホの画面：メニューや通知がスッと出てきて、ゆっくり止まる。アプリを開くときに画面が広がる動き。</li>
+        <li>Webページのスクロール：目次のリンクを押すと、目的の場所まで滑らかに移動して止まる（このページの目次もそうです）。</li>
+        <li>プレゼンのアニメーション：PowerPoint などの「滑らかに開始」「滑らかに終了」という設定。</li>
+        <li>ゲーム：キャラクターの加速・減速、カメラがキャラクターを追いかける動き、ボタンを押したときに少し弾む動き。</li>
+        <li>乗り物：エレベーターや電車は、急に動き出したり止まったりすると乗っている人が揺れるので、ゆっくり加速・減速するよう制御されている。</li>
       </ul>
     </div>
 
     <h2 class="h-sub"><span class="tag">(1)</span>並べて比べる ― 同じ距離を同じ時間で</h2>
     <p>
-      下の図では、いくつかの球が <b>同時にスタートし、同じ時間で</b> スタートからゴールまで進みます。
-      まずは <b>球の動き方（速さの変わり方）の違い</b> を見比べてみましょう。
-      球の後ろの灰色の点は、<b>時間を10等分</b> したときの位置です。点の間隔が広いところほど速く動いています。
+      下の図では、いくつかの球が同時にスタートし、同じ時間でスタートからゴールまで進みます。
+      まずは球の動き方（速さの変わり方）の違いを見比べてみましょう。
+      球の後ろの灰色の点は、時間を10等分したときの位置です。点の間隔が広いところほど速く動いています。
       その下のグラフは、この動きを表す関数 $f(t)$（時刻 $t$ での位置）で、色は球と対応しています。
     </p>
     <div class="widget" id="w-race">
       <div class="widget-head">イージングの比較 <span class="hint">下のボタンで並べる種類を選ぶ（複数選択できます）</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="chips"></div></div>
       <div class="stage"><span class="cap l">実際の動き</span><canvas aria-label="イージングの比較レース"></canvas></div>
-      <div class="stage"><span class="cap">位置 f(t)</span><canvas aria-label="位置のグラフ"></canvas></div>
+      <div class="stage"><span class="cap">位置 $f(t)$</span><canvas aria-label="位置のグラフ"></canvas></div>
       <div class="panel"><div class="controls"></div></div>
       <div class="panel" style="padding-top:0"><div class="race-legend" data-r="legend"></div></div>
     </div>
-    <div class="callout point">
-      <div class="ttl">ポイント：速さ＝グラフの傾き＝微分</div>
-      <p>
-        $f(t)$ のグラフの <b>傾き</b> $f'(t)$ が、その瞬間の <b>速さ</b> です。傾きが急なところで速く、水平に近いところでゆっくり動きます。
-        $\mathrm{smoothstep}\;3t^2-2t^3$ は、<b>始まりと終わりで速さが $0$</b>（$f'(0)=f'(1)=0$）になるよう調整した3次式です。
-      </p>
-    </div>
+    <div class="key"><div class="key-ttl">覚える｜速さ＝グラフの傾き</div><p class="key-lead">時刻 $t$ での速さは、グラフ $y=f(t)$ のその点での傾き</p>
+      <ul>
+        <li>傾きが急なところで速く、水平に近いところでゆっくり動く</li>
+      </ul>
+      <p class="key-note">この「グラフの傾き」を求める計算を<b>微分</b>といい、$f'(t)$ と書きます。微分は後の回で詳しく学びます。この章では「$f'(t)$＝その点でのグラフの傾き（速さ）」とだけ思っておけば十分です。</p></div>
+    <p>
+      $\mathrm{smoothstep}\;3t^2-2t^3$ は、始まりと終わりで速さ（グラフの傾き）が $0$（$f'(0)=f'(1)=0$）になるよう調整した3次式です。
+    </p>
 
     <h2 class="h-sub"><span class="tag">(2)</span>3次関数でイージングを設計する</h2>
     <p>
       「出発するときの速さ $\amber{v_0}$」と「到着するときの速さ $\teal{v_1}$」を決めると、次の4条件を満たす3次多項式がただ1つに決まります。
     </p>
-    <div class="eq-box">$$f(0)=0,\quad f(1)=1,\quad f'(0)=\amber{v_0},\quad f'(1)=\teal{v_1}$$
-      $$f(t) = (\amber{v_0}+\teal{v_1}-2)\,t^3 + (3-2\amber{v_0}-\teal{v_1})\,t^2 + \amber{v_0}\,t$$</div>
+    <div class="key"><div class="key-ttl">覚える｜3次で設計する4つの条件</div>$$\begin{gathered}f(0)=0,\quad f(1)=1\\[2pt] f'(0)=v_0,\quad f'(1)=v_1\end{gathered}$$<p class="key-note">$f'(0)$, $f'(1)$ は $t=0$, $t=1$ でのグラフの傾き（出だし・終わりの速さ）。微分の計算は後の回で学びます。</p></div>
+    <p>この4条件を満たす3次式は、次のようになります。</p>
+    <div class="eq-box">$$\begin{aligned}f(t) = {}&(\amber{v_0}+\teal{v_1}-2)\,t^3\\ &+ (3-2\amber{v_0}-\teal{v_1})\,t^2 + \amber{v_0}\,t\end{aligned}$$</div>
     <p>
-      上段の <b>球の動き</b> を見ながら、<span class="t-amber">$v_0$</span>（出だしの速さ）と <span class="t-teal">$v_1$</span>（終わりの速さ）を変えてみましょう。
-      グラフ上の矢印は、その点での <b>傾き（＝速さ）</b> を表します。
+      上段の球の動きを見ながら、<span class="t-amber">$v_0$</span>（出だしの速さ）と <span class="t-teal">$v_1$</span>（終わりの速さ）を変えてみましょう。
+      グラフ上の矢印は、その点での傾き（＝速さ）を表します。
     </p>
     <div class="widget" id="w-design">
       <div class="widget-head">出だし・終わりの速さを決める <span class="legend"><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 出だしの速さ $v_0$</span><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 終わりの速さ $v_1$</span></span> <span class="hint">グラフ上の<span class="t-amber">黄</span>・<span class="t-teal">緑</span>のつまみをドラッグ</span></div>
@@ -185,11 +171,21 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
       <p>
         つまみの位置は $\left(\tfrac13,\ \tfrac{v_0}{3}\right)$ と $\left(\tfrac23,\ 1-\tfrac{v_1}{3}\right)$ です。
         始点 $(0,0)$ からつまみへ引いた線の傾きが $v_0$、終点 $(1,1)$ へ入ってくる線の傾きが $v_1$ になっています。
-        実はこの4点 $(0,0),\ (\tfrac13,\tfrac{v_0}{3}),\ (\tfrac23,1-\tfrac{v_1}{3}),\ (1,1)$ を制御点とする <b>3次ベジェ曲線</b> の $y$ 成分が、この $f(t)$ そのものです。1.5章でその正体を見ます。
+        実はこの4点 $(0,0),\ (\tfrac13,\tfrac{v_0}{3}),\ (\tfrac23,1-\tfrac{v_1}{3}),\ (1,1)$ を制御点とする3次ベジェ曲線の $y$ 成分が、この $f(t)$ そのものです。1.5章でその正体を見ます。
       </p>
     </details>
   
   
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>イージング関数</th><td>時間の割合 $t$ → 進んだ割合 $f(t)$、$f(0)=0$、$f(1)=1$</td></tr>
+        <tr><th>等速</th><td>$f(t)=t$</td></tr>
+        <tr><th>速さ</th><td>グラフの傾き $f'(t)$（微分：後の回で学ぶ）</td></tr>
+        <tr><th>3次で設計</th><td>$f(0)=0$、$f(1)=1$、$f'(0)=v_0$、$f'(1)=v_1$ で1つに決まる</td></tr>
+        <tr><th>smoothstep</th><td>$3t^2-2t^3$（始まりと終わりの速さが $0$）</td></tr>
+      </tbody></table></div>
+    </div>
+
     <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：お手本と同じ動きを作れ</h2>
     <p>
       UIデザイナーになったつもりで、<b>お手本の動き</b> と同じ動きを、出だしの速さ <span class="t-amber">$v_0$</span> と終わりの速さ <span class="t-teal">$v_1$</span> を決めて作りましょう。
@@ -215,13 +211,17 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
   <section class="sec" id="check">
     <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
     <ol class="quiz">
-        <li>smoothstep $f(t)=3t^2-2t^3$ について、$f(0),\ f(1),\ f'(0),\ f'(1)$ を求めよ。</li>
+        <li>smoothstep $f(t)=3t^2-2t^3$ について、$f(0),\ f(1)$ を求めよ。また、図(1) のグラフから $t=0$, $t=1$ での傾き $f'(0),\ f'(1)$ を読み取れ。</li>
         <li>$f(t)=t^2$（easeInQuad）のとき、時間の半分 $t=\tfrac12$ で、全体のどれだけ進んでいるか。</li>
         <li>1.4章(2) の式 $$f(t)=(v_0+v_1-2)t^3+(3-2v_0-v_1)t^2+v_0t$$ で、$v_0=v_1=0$ とするとどうなるか。</li>
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) $0,\ 1,\ 0,\ 0$　(2) $\tfrac14$（前半はゆっくり）　(3) $f(t)=-2t^3+3t^2$（smoothstep と同じ）</p>
+      <ol class="quiz-ans">
+        <li>$f(0)=3\times0^2-2\times0^3=0$、$f(1)=3\times1^2-2\times1^3=1$。<br>図(1) の smoothstep のグラフは $t=0$ と $t=1$ で水平（傾き $0$）なので $f'(0)=0$、$f'(1)=0$</li>
+        <li>$f\!\left(\tfrac12\right)=\left(\tfrac12\right)^2=\tfrac14$。<br>時間の半分で、全体の $\tfrac14$ しか進んでいない（前半はゆっくり）</li>
+        <li>$v_0=v_1=0$ を代入すると $(0+0-2)t^3+(3-0-0)t^2+0\times t$。<br>よって $f(t)=-2t^3+3t^2$（smoothstep と同じ）</li>
+      </ol>
     </details>
   </section>
 
@@ -234,9 +234,9 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="polynomial.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="polynomial.js?v=202610140157"></script>
 </body>
 </html>

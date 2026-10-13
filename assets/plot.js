@@ -22,6 +22,16 @@
   const FONT = '-apple-system, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif';
 
   class Plot {
+    // 「漸近線 $y=q$」のような $…$ 入りの文字を TeX に（日本語などは \text{} に入れる）
+    static hasMath(str) { return typeof str === 'string' && /\$[^$]+\$/.test(str); }
+    static mixedTeX(str) {
+      return String(str).split('$').map((part, i) => (i % 2 ? part : (part ? '\\text{' + part.replace(/[{}\\]/g, '') + '}' : ''))).join('');
+    }
+    static texOpts(o) {
+      return { color: o.color, size: (o.size || 13) + 2, dx: o.dx, dy: o.dy, align: o.align,
+        valign: o.base === 'top' ? 'top' : o.base === 'bottom' || o.base === 'alphabetic' ? 'bottom' : 'middle', avoid: o.avoid };
+    }
+
     constructor(canvas, opts) {
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d');
@@ -86,8 +96,68 @@
       ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       ctx.fillStyle = this.c.bg;
       ctx.fillRect(0, 0, this.w, this.h);
+      this._texQ = [];
       this.draw(this, ctx);
       this._drawHandles();
+      this._syncTex();
+    }
+
+    /* ----- TeX のラベル(キャンバスの上に重ねた HTML を MathJax で組む) -----
+       g.tex('y=2^x', x, y, { color, size, dx, dy, align: 'left'|'center'|'right', valign: 'middle'|'top'|'bottom' }) */
+    tex(str, x, y, o) { this.texPx(str, this.X(x), this.Y(y), o); }
+    texPx(str, px, py, o) { (this._texQ || (this._texQ = [])).push({ str: String(str), px, py, o: o || {} }); }
+    _syncTex() {
+      const q = this._texQ || [];
+      if (!this._texLayer) {
+        if (!q.length) return;
+        const lay = document.createElement('div');
+        lay.className = 'plot-tex';
+        this.canvas.parentElement.appendChild(lay);
+        this._texLayer = lay; this._texCache = new Map();
+      }
+      const used = new Set(), avoidList = [];
+      q.forEach((L) => {
+        const o = L.o, color = o.color || this.c.text, size = o.size || 15;
+        const key = L.str + '|' + color + '|' + size;
+        // 同じ文字が1枚の図に何回も出るときは key, key#1, key#2, … を順に使う
+        let k = 0, ck = key, n = this._texCache.get(ck);
+        while (n && used.has(n)) { k++; ck = key + '#' + k; n = this._texCache.get(ck); }
+        if (!n) {
+          n = document.createElement('span');
+          n.className = 'plot-tex-l';
+          n.style.color = color; n.style.fontSize = size + 'px';
+          this._texLayer.appendChild(n);
+          Lab.setTex(n, L.str);
+          this._texCache.set(ck, n);
+        }
+        used.add(n);
+        const ax = o.align === 'right' ? '-100%' : o.align === 'center' ? '-50%' : '0';
+        const ay = o.valign === 'top' ? '0' : o.valign === 'bottom' ? '-100%' : '-50%';
+        n.style.left = (L.px + (o.dx || 0)) + 'px';
+        n.style.top = (L.py + (o.dy || 0)) + 'px';
+        n.dataset.top = L.py + (o.dy || 0);
+        n.style.transform = 'translate(' + ax + ',' + ay + ')';
+        n.style.display = '';
+        if (o.avoid) avoidList.push(n);
+      });
+      // avoid: true のラベルは、先に置いたラベルと重なったら上下にずらす
+      if (avoidList.length > 1) {
+        const placed = [];
+        avoidList.forEach((n) => {
+          let r = n.getBoundingClientRect(), shift = 0;
+          for (let k = 0; k < 6 && placed.some((q) => r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top); k++) {
+            const d = r.height + 2; shift = (k % 2 ? -1 : 1) * d * Math.ceil((k + 1) / 2);
+            n.style.top = (parseFloat(n.dataset.top) + shift) + 'px';
+            r = n.getBoundingClientRect();
+          }
+          placed.push(r);
+        });
+      }
+      this._texCache.forEach((n, k) => {
+        if (used.has(n)) return;
+        n.style.display = 'none';
+        if (this._texCache.size > 120) { n.remove(); this._texCache.delete(k); }
+      });
     }
 
     grid(o) {
@@ -133,11 +203,13 @@
         }
         if (this.xmin <= 0 && this.ymin <= 0 && this.xmax >= 0 && this.ymax >= 0) {
           ctx.textAlign = 'right'; ctx.textBaseline = 'top';
-          ctx.fillText('O', this.X(0) - 5, this.Y(0) + 4);
+          this.texPx('\\mathrm{O}', this.X(0) - 5, this.Y(0) + 4, { align: 'right', valign: 'top', size: 13, color: c.muted });
         }
       }
-      if (o.xlabel) { ctx.fillStyle = c.muted; ctx.font = 'italic 13px ' + FONT; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillText(o.xlabel, this.w - 8, this.Y(0) - 6 > 14 && this.Y(0) < this.h ? this.Y(0) - 6 : this.h - 6); }
-      if (o.ylabel) { ctx.fillStyle = c.muted; ctx.font = 'italic 13px ' + FONT; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(o.ylabel, this.X(0) + 8 < this.w - 20 && this.X(0) > 0 ? this.X(0) + 8 : 8, 6); }
+      // 軸の名前も TeX で(日本語は \text{} に入れる)
+      const axTeX = (t) => String(t).replace(/[^\x00-\x7f]+/g, (m) => '\\text{' + m + '}');
+      if (o.xlabel) this.texPx(axTeX(o.xlabel), this.w - 8, this.Y(0) - 6 > 14 && this.Y(0) < this.h ? this.Y(0) - 6 : this.h - 6, { align: 'right', valign: 'bottom', size: 15, color: c.muted });
+      if (o.ylabel) this.texPx(axTeX(o.ylabel), this.X(0) + 8 < this.w - 20 && this.X(0) > 0 ? this.X(0) + 8 : 8, 4, { align: 'left', valign: 'top', size: 15, color: c.muted });
     }
 
     line(x0, y0, x1, y1, o) {
@@ -218,6 +290,7 @@
     }
     text(str, x, y, o) {
       o = o || {};
+      if (Plot.hasMath(str)) { this.tex(Plot.mixedTeX(str), x, y, Plot.texOpts(o)); return; }
       const ctx = this.ctx;
       ctx.save();
       ctx.font = (o.bold ? '700 ' : o.italic ? 'italic ' : '') + (o.size || 13) + 'px ' + FONT;
@@ -232,6 +305,7 @@
     // 画面のピクセル座標に文字を置く
     textPx(str, px, py, o) {
       o = o || {};
+      if (Plot.hasMath(str)) { this.texPx(Plot.mixedTeX(str), px, py, Plot.texOpts(o)); return; }
       const ctx = this.ctx;
       ctx.save();
       ctx.font = (o.bold ? '700 ' : '') + (o.size || 13) + 'px ' + FONT;
@@ -257,8 +331,10 @@
         ctx.fillStyle = h.color || this.c.accent; ctx.fill();
         ctx.lineWidth = (h.r || 9) < 7 ? 2 : 3; ctx.strokeStyle = '#fff'; ctx.stroke();
         ctx.restore();
+        const tx = typeof h.tex === 'function' ? h.tex() : h.tex;
+        if (tx) this.tex(tx, h.x, h.y, { dx: h.ldx != null ? h.ldx : 14, dy: h.ldy != null ? h.ldy : -14, size: 15, color: this.c.text, align: h.lalign });
         const lb = typeof h.label === 'function' ? h.label() : h.label;
-        if (lb) {
+        if (lb && !tx) {
           this.text(lb, h.x, h.y, { dx: h.ldx != null ? h.ldx : 14, dy: h.ldy != null ? h.ldy : -14, bold: true, size: 13, color: this.c.text, align: h.lalign });
         }
       });

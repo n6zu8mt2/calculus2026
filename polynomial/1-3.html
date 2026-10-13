@@ -7,36 +7,12 @@
 <meta name="description" content="第1回 多項式 1.3章：二次関数の応用">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch3">
+<body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
@@ -71,34 +47,49 @@
   </div>
 
   <section class="sec first" id="projectile">
+    <p class="prereq">この章で使うこと：<a href="1-2.html">1.2章</a>の 頂点形 $y=a(x-p)^2+q$（頂点 $(p,\ q)$）と平方完成、中学で学んだ「進む距離＝速さ×時間」</p>
     <p>
-      二次関数が最もよく現れる場面が、<b>投げたボールの軌跡</b> です。
-      1.2章で学んだ頂点・対称軸・平方完成が、そのまま「最高点」や「飛距離」の計算になります。
+      二次関数が最もよく現れる場面が、投げたボールの軌跡（通り道）です。
+      1.2章で学んだ頂点・平方完成が、そのまま「最高点」や「飛距離」の計算になります。
     </p>
 
     <h2 class="h-sub"><span class="tag">(1)</span>投げたボールの軌跡は二次関数</h2>
     <p>
-      ボールを斜め上に投げると、その軌跡は放物線になります。これは二次関数そのものです。
-      ボールを、高さ $h_0$ の位置から、速さ $v_0$、水平から測った角度 $\theta$ で投げ出したとします。
-      重力加速度を $g$（地球では約 $9.8\ \mathrm{m/s^2}$）とすると、$t$ 秒後の位置は次のようになります。
+      ボールを、高さ $h_0$（メートル）の位置から、速さ $\amber{v_0}$（メートル毎秒）で、水平から角度 $\theta$（シータ）だけ上に向けて投げます。
+      このとき斜めの速さ $\amber{v_0}$ を、<span class="t-teal">横向きの速さ $\teal{v_x}$</span> と <span class="t-red">縦向きの速さ $\red{v_y}$</span> の2つに分けて考えるのがコツです。
+      下の図の <span class="t-amber">金の矢印</span> が $\amber{v_0}$、<span class="t-teal">緑の矢印</span> が $\teal{v_x}$、<span class="t-red">赤の矢印</span> が $\red{v_y}$ です。
     </p>
-    <div class="eq-box">
-      $$\begin{aligned}
-      x &= \teal{v_x}\,t \qquad\qquad\ \ (\teal{v_x}=v_0\cos\theta)\ \ \text{水平方向は等速}\\
-      y &= h_0 + \red{v_y}\,t - \tfrac12 g\,t^2 \quad (\red{v_y}=v_0\sin\theta)\ \ \text{鉛直方向は重力で減速・加速}
-      \end{aligned}$$
-    </div>
+    <div class="key"><div class="key-ttl">覚える｜速さを横と縦に分ける</div><p class="key-lead">斜めに投げた速さ $\amber{v_0}$ は、横向きの速さ $\teal{v_x}$ と縦向きの速さ $\red{v_y}$ に分けられる</p>$$\teal{v_x}=\amber{v_0}\cos\theta,\qquad \red{v_y}=\amber{v_0}\sin\theta$$<p class="key-note">$\cos\theta$、$\sin\theta$ は、長さ $1$ の斜めの矢印（角度 $\theta$）を横と縦に分けたときの、横の長さと縦の長さです（高校の数学Ⅰで「三角比」として学びます）。たとえば $\theta=30^\circ$ なら $\cos\theta\approx0.87$、$\sin\theta=0.5$、$\theta=45^\circ$ なら どちらも約 $0.71$。この章では「$\teal{v_x}$ と $\red{v_y}$ は図の緑と赤の矢印の長さ」と思えば十分です。</p></div>
     <p>
-      $x=v_x t$ より $t=\dfrac{x}{v_x}$ を $y$ の式に代入して時間 $t$ を消すと、
+      横と縦では、ボールの動き方がまったく違います。
     </p>
-    <div class="eq-box">$$y=-\dfrac{g}{2v_x^{\,2}}\,x^2+\dfrac{v_y}{v_x}\,x+h_0$$</div>
+    <ul>
+      <li><span class="t-teal">横向き</span>：横に引っぱる力はないので、ずっと同じ速さ $\teal{v_x}$ で進みます。$t$ 秒で進む距離は「速さ×時間」で $\teal{v_x}\,t$。</li>
+      <li><span class="t-red">縦向き</span>：重力のせいで、上向きの速さは <b>1秒ごとに $g$ ずつ減って</b> いきます（$g$ は重力加速度。地球では約 $9.8$）。
+        もし重力がなければ $t$ 秒で $\red{v_y}\,t$ だけ上がりますが、重力によって $\tfrac12 g\,t^2$ だけ下に引き戻されます。</li>
+    </ul>
+    <details class="think">
+      <summary>なぜ $\tfrac12 g\,t^2$ なの？</summary>
+      <p>
+        静かに手をはなしたボールは、下向きの速さが $0$ から始まって、1秒ごとに $g$ ずつ増え、$t$ 秒後には $gt$ になります。
+        速さが一定の割合で増えるので、この $t$ 秒間の <b>平均の速さ</b> は、はじめと終わりの真ん中の $\dfrac{0+gt}{2}=\dfrac12 gt$。
+        よって落ちる距離は「平均の速さ×時間」で $\dfrac12 gt\times t=\dfrac12 g\,t^2$ です。
+      </p>
+    </details>
+    <div class="key"><div class="key-ttl">覚える｜投げたボールの位置（$t$ 秒後）</div><p class="key-lead">横は同じ速さで進み、縦だけが重力で引き戻される</p>$$\begin{aligned}x&=\teal{v_x}\,t\\ y&=h_0+\red{v_y}\,t-\tfrac12 g\,t^2\end{aligned}$$<p class="key-note">$x$：投げた場所からの横の距離、$y$：地面からの高さ、$h_0$：投げた高さ、$g$：重力加速度（地球では約 $9.8$）。</p></div>
     <p>
-      という <b>$x$ の二次関数</b>（$x^2$ の係数は負なので上に凸）になります。
-      1.2章(2)の頂点形に直すと、頂点 $(p,q)$ が <b>最高点</b> です：
-      $p=\dfrac{v_xv_y}{g}$、$q=h_0+\dfrac{v_y^{\,2}}{2g}$。
+      2つの式から時間 $t$ を消すと、$x$ と $y$ だけの式（軌跡の式）になります。$x=\teal{v_x}t$ より $t=\dfrac{x}{\teal{v_x}}$。これを $y$ の式に代入すると
     </p>
+    <div class="eq-box">$$\begin{aligned}y&=h_0+\red{v_y}\cdot\frac{x}{\teal{v_x}}-\frac12 g\left(\frac{x}{\teal{v_x}}\right)^2\\ &=-\frac{g}{2\teal{v_x}^{\,2}}\,x^2+\frac{\red{v_y}}{\teal{v_x}}\,x+h_0\end{aligned}$$</div>
+    <div class="key"><div class="key-ttl">覚える｜ボールの軌跡は放物線</div><p class="key-lead">投げたボールの通り道は、$x$ の二次関数のグラフ（山の形の放物線）になる</p>$$y=-\frac{g}{2\teal{v_x}^{\,2}}\,x^2+\frac{\red{v_y}}{\teal{v_x}}\,x+h_0$$<p class="key-note">$x^2$ の係数 $-\dfrac{g}{2v_x^{\,2}}$ が負なので、上に凸（山の形）。1.2章の $y=ax^2+bx+c$ で $a\lt 0$ の場合です。</p></div>
+    <p>
+      最高点は、この放物線の頂点です。平方完成でも求められますが、「縦の速さ」で考えると簡単です。
+      上向きの速さ $\red{v_y}$ は1秒ごとに $g$ ずつ減るので、$\dfrac{\red{v_y}}{g}$ 秒後に $0$ になり、そこが最高点です。
+      この時刻を位置の式に入れると、最高点の座標がわかります。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜最高点と飛距離</div><p class="key-lead">上向きの速さが $0$ になる時刻 $t=\dfrac{\red{v_y}}{g}$ に、最高点（放物線の頂点）に着く</p>$$\text{最高点}\ \left(\frac{\teal{v_x}\red{v_y}}{g},\ \ h_0+\frac{\red{v_y}^{\,2}}{2g}\right)$$<p class="key-lead">地面から投げたとき（$h_0=0$）は、左右対称なので 飛距離は最高点の $x$ 座標の2倍</p>$$\text{飛距離}=\frac{2\teal{v_x}\red{v_y}}{g}$$<p class="key-note">最高点の高さ：$\red{v_y}\cdot\dfrac{\red{v_y}}{g}-\dfrac12 g\left(\dfrac{\red{v_y}}{g}\right)^2=\dfrac{\red{v_y}^{\,2}}{2g}$ に、投げた高さ $h_0$ を足したもの。</p></div>
     <div class="widget" id="w-ball">
-      <div class="widget-head">ボールを投げる <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 水平の速さ</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ 鉛直の速さ</span><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 初速</span></span> <span class="hint">金色の点＝初速の矢印の先（ドラッグで速さと角度）／黒い点＝投げる高さ</span></div>
+      <div class="widget-head">ボールを投げる <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 横の速さ $v_x$</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ 縦の速さ $v_y$</span><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 投げる速さ $v_0$</span></span> <span class="hint">金色の点＝投げる速さの矢印の先（ドラッグで速さと角度）／黒い点＝投げる高さ</span></div>
       <div class="stage"><canvas aria-label="放物線を描くボールの動き"></canvas></div>
       <div class="panel two">
         <div class="controls"></div>
@@ -130,18 +121,31 @@
     <div class="callout try">
       <div class="ttl">触ってみよう</div>
       <ul>
-        <li><span class="t-teal">緑の矢印</span>（水平方向の速さ $v_x$）は飛んでいる間ずっと同じ長さ。<span class="t-red">赤の矢印</span>（鉛直方向の速さ $v_y$）は、上昇中は短くなり、最高点で $0$、落下中は下向きに長くなる。</li>
+        <li><span class="t-teal">緑の矢印</span>（横の速さ $\teal{v_x}$）は飛んでいる間ずっと同じ長さ。<span class="t-red">赤の矢印</span>（縦の速さ）は、上がっている間は短くなり、最高点で $0$、落ちるときは下向きに長くなる。</li>
         <li>投げる高さ $h_0=0$ で、速さを固定して角度を変えると、いちばん遠くへ飛ぶのは何度のとき？</li>
         <li>角度が同じでも速さを2倍にすると、飛距離と最高点の高さはそれぞれ何倍になる？</li>
         <li>重力 $g$ を「月」（地球の約 $\tfrac16$）や「木星」に変えたり、「地球の $a$ 倍」（小数も可）と入力したりして、比較表と見比べよう。$g$ が変わると、軌道の式の $x^2$ の係数と、飛距離・滞空時間はどう変わる？（画面の広さは自動で調整され、月では長い時間をかけて動くので、アニメは最長 6 秒に早送りしています）「地球の軌跡を薄く重ねて表示」をオンにすると、同じ投げ方をした地球でのボールが薄い色で同時に動き、違いを見比べられる。</li>
+        <li>天体の比較表で、$g$ が $\tfrac14$ 倍になると飛距離は何倍？　「最高点と飛距離」の式 $\dfrac{2v_xv_y}{g}$ と見比べよう。</li>
       </ul>
     </div>
     <details class="think">
-      <summary>考えてみよう：$h_0=0$ のとき、飛距離を $v_0,\theta,g$ で表すと？</summary>
-      <p>着地は $y=0$ のときなので、$x\left(-\dfrac{g}{2v_x^{\,2}}x+\dfrac{v_y}{v_x}\right)=0$ から $x=\dfrac{2v_xv_y}{g}=\dfrac{v_0^{\,2}\sin 2\theta}{g}$。$\sin 2\theta$ が最大になる $\theta=45^\circ$ のとき最も遠くへ届きます。速さが2倍なら飛距離は $2^2=4$ 倍です。</p>
+      <summary>考えてみよう：速さを2倍にすると飛距離は何倍？　いちばん遠くへ飛ぶ角度は？（$h_0=0$）</summary>
+      <p>速さ $v_0$ を2倍にすると、$v_x$ も $v_y$ も2倍になるので、飛距離 $\dfrac{2v_xv_y}{g}$ は $2\times2=4$ 倍、最高点の高さ $\dfrac{v_y^{\,2}}{2g}$ も $4$ 倍です。</p>
+      <p>角度を変えると、$v_x$ が大きいほど $v_y$ は小さくなります。かけ算 $v_xv_y$ が最大になるのは、横と縦がちょうど同じ $\theta=45^\circ$ のときで、このとき最も遠くへ届きます。
+      （高校で学ぶ三角比の公式を使うと、飛距離は $\dfrac{v_0^{\,2}\sin 2\theta}{g}$ とも書けます。）</p>
     </details>
     
   
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>速さの分解</th><td>$v_x=v_0\cos\theta$（横）、$v_y=v_0\sin\theta$（縦）</td></tr>
+        <tr><th>位置</th><td>$x=v_xt$、$y=h_0+v_yt-\frac12gt^2$</td></tr>
+        <tr><th>軌跡</th><td>$t$ を消すと $x$ の二次関数（上に凸の放物線）</td></tr>
+        <tr><th>最高点</th><td>軌跡の放物線の頂点。$t=\frac{v_y}{g}$ 秒後、高さ $h_0+\frac{v_y^{\,2}}{2g}$</td></tr>
+        <tr><th>飛距離</th><td>$h_0=0$ なら $\dfrac{2v_xv_y}{g}$</td></tr>
+      </tbody></table></div>
+    </div>
+
     <h2 class="h-sub"><span class="tag">(2)</span>チャレンジ：惑星の的当て</h2>
     <p>
       (1) の式を使って、いろいろな惑星でボールを的に当ててみましょう。
@@ -165,9 +169,10 @@
     <details class="think">
       <summary>攻略に使う式（ボールは高さ $0$ から投げます）</summary>
       <ul>
-        <li>飛距離：$R=\dfrac{v_0^{\,2}\sin 2\theta}{g}$　（同じ $R$ になる角度は $\theta$ と $90^\circ-\theta$ の2つ）</li>
-        <li>最高点の高さ：$H=\dfrac{(v_0\sin\theta)^2}{2g}$</li>
-        <li>位置 $x$ での高さ：$y=x\tan\theta-\dfrac{g}{2v_0^{\,2}\cos^2\theta}\,x^2$（壁や台を越えられるかの確認に）</li>
+        <li>横と縦の速さ：$v_x=v_0\cos\theta$、$v_y=v_0\sin\theta$</li>
+        <li>飛距離：$R=\dfrac{2v_xv_y}{g}$　（同じ $R$ になる角度は $\theta$ と $90^\circ-\theta$ の2つ。横と縦の速さが入れかわるだけだから）</li>
+        <li>最高点の高さ：$H=\dfrac{v_y^{\,2}}{2g}$</li>
+        <li>横に $x$ 進んだところでの高さ：$y=\dfrac{v_y}{v_x}\,x-\dfrac{g}{2v_x^{\,2}}\,x^2$（壁や台を越えられるかの確認に）</li>
       </ul>
     </details>
   </section>
@@ -181,7 +186,12 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) 飛距離 $\dfrac{v_0^{\,2}\sin 2\theta}{g}\approx 10.2\ \mathrm{m}$、最高点 $\dfrac{(v_0\sin\theta)^2}{2g}\approx 2.6\ \mathrm{m}$　(2) $y=-0.1(x-5)^2+4$ より $(5,4)$　(3) $4$ 倍</p>
+      <ol class="quiz-ans">
+        <li>$v_x=v_y=10\times\cos45^\circ\approx 7.07$ なので $v_xv_y\approx 50$、$v_y^{\,2}\approx 50$。<br>
+          飛距離 $=\dfrac{2v_xv_y}{g}=\dfrac{100}{9.8}\approx 10.2\ \mathrm{m}$、最高点の高さ $=\dfrac{v_y^{\,2}}{2g}=\dfrac{50}{19.6}\approx 2.6\ \mathrm{m}$</li>
+        <li>$y=-0.1(x^2-10x)+1.5=-0.1\{(x-5)^2-25\}+1.5=-0.1(x-5)^2+4$。<br>頂点が最高点なので $(5,\ 4)$</li>
+        <li>飛距離 $\dfrac{2v_xv_y}{g}$ で、$g$ だけが $\tfrac14$ 倍になる。分母が $\tfrac14$ 倍なので、飛距離は $4$ 倍</li>
+      </ol>
     </details>
   </section>
 
@@ -194,9 +204,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="polynomial.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="polynomial.js?v=202610140157"></script>
 </body>
 </html>

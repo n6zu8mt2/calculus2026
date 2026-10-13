@@ -7,36 +7,12 @@
 <meta name="description" content="第1回 多項式 1.2章：頂点・平行移動">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch2">
+<body class="chapter ch2 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
@@ -63,38 +39,39 @@
   <div class="goal">
     <div class="goal-ttl">この章のゴール</div>
     <ol>
-      <li>グラフを <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、式が $y-q=f(x-p)$ になることを説明できる。</li>
+      <li>関数のグラフを <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、式が $y-q=f(x-p)$ になることを説明できる。</li>
       <li>平方完成で、一般形 $y=ax^2+bx+c$ の頂点を求められる。</li>
     </ol>
     <div class="goal-meta">図 2つ ・ チャレンジ 4ステージ ・ 確認問題 3問</div>
   </div>
 
   <section class="sec first" id="quadratic">
+    <p class="prereq">この章で使うこと：中学で学んだ $y=ax^2$ のグラフ、<a href="1-1.html">1.1章</a>の「式とグラフの対応」（点がグラフ上にある ⇔ その座標が式を満たす）</p>
     <p>
-      $y = ax^2 + bx + c$（$a\neq 0$）のグラフは <b>放物線</b> です。直線と違って「曲がる」ので、
-      <b>頂点</b>（いちばん高い／低いところ）と <b>対称軸</b> が現れます。
+      $y = ax^2 + bx + c$（$a\neq 0$）のグラフは<b>放物線</b>です。直線と違って「曲がる」ので、
+      <b>頂点</b>（いちばん高い／低いところ）と<b>対称軸</b>が現れます。
       まず最も単純な $y=x^2$ を出発点にして、それを動かす方法（平行移動）から見ていきます。
     </p>
 
     <h2 class="h-sub"><span class="tag">(1)</span>グラフを平行移動する</h2>
     <p>
-      グラフ $y=f(x)$ を、<b><span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span></b> だけ動かします（右・上が正）。
+      関数 $y=f(x)$ のグラフを、<span class="t-teal">$x$ 方向に $\teal{p}$</span>、<span class="t-red">$y$ 方向に $\red{q}$</span> だけ平行移動します（右・上が正）。
       このとき動かしたグラフの式は、もとの式の $x$ を $x-\teal{p}$ に、$y$ を $y-\red{q}$ に置き換えたものになります。
     </p>
-    <div class="eq-box">$$y=f(x)\quad\xrightarrow{\ x\text{方向に}\ \teal{p},\ y\text{方向に}\ \red{q}\ }\quad y-\red{q}=f(x-\teal{p})$$</div>
+    <div class="key"><div class="key-ttl">覚える｜平行移動</div><p class="key-lead">関数 $y=f(x)$ のグラフを $x$ 方向に $\teal{p}$、$y$ 方向に $\red{q}$ 平行移動したグラフの式は</p>$$y-\red{q}=f(x-\teal{p})$$<p class="key-note">$x$ を $x-\teal{p}$ に、$y$ を $y-\red{q}$ に置き換えている。</p></div>
     <p>
-      $f(x)=x^2$ なら、$y-\red{q}=(x-\teal{p})^2$、つまり $y=(x-\teal{p})^2+\red{q}$ で、頂点は $(0,0)$ から <b>$(\teal{p},\ \red{q})$</b> に動きます。
+      $f(x)=x^2$ なら、$y-\red{q}=(x-\teal{p})^2$、つまり $y=(x-\teal{p})^2+\red{q}$ で、頂点は $(0,0)$ から $(\teal{p},\ \red{q})$ に動きます。
     </p>
     <div class="widget" id="w-shift">
-      <div class="widget-head">$y-\red{q}=(x-\teal{p})^2$ <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ x方向の移動 $p$</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ y方向の移動 $q$</span></span> <span class="hint">頂点（黒い点）をドラッグ／灰色の曲線上の青い点 Q も動かせる</span></div>
+      <div class="widget-head"><span class="wh-eq">$y-\red{q}=f(x-\teal{p})$ のグラフ</span> <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ x方向の移動 $p$</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ y方向の移動 $q$</span></span> <span class="hint">頂点（黒い点）をドラッグ／灰色の曲線上の青い点 Q も動かせる</span></div>
       <div class="stage"><canvas aria-label="放物線の平行移動"></canvas></div>
       <div class="panel two">
         <div class="controls"></div>
-        <div class="readout">
-          <div class="row"><span class="k">移動後の式</span><span class="tex big" data-r="eq"></span></div>
-          <div class="row"><span class="k">移動</span><span class="tex" data-r="vec"></span></div>
-          <div class="row"><span class="k">頂点</span><span class="tex" data-r="vertex"></span></div>
-          <div class="row"><span class="k">点の対応</span><span class="tex" data-r="pt"></span></div>
+        <div class="shift-read">
+          <p class="shift-say">$y=f(x)=x^2$ のグラフを <span class="t-teal">$x$ 方向に <span data-r="sp"></span></span>、<span class="t-red">$y$ 方向に <span data-r="sq"></span></span> 平行移動したグラフの式は</p>
+          <div class="shift-eq" data-r="eq"></div>
+          <div class="shift-sub"><span class="k">頂点</span><span data-r="vertex"></span></div>
+          <div class="shift-sub"><span class="k">点の対応</span><span>移動前の点 $\mathrm{Q}$ の座標 <span data-r="pt0"></span><br>→ 移動後の点 $\mathrm{Q}'$ の座標 <span data-r="pt1"></span></span></div>
         </div>
       </div>
       <div class="panel" style="padding-top:0">
@@ -109,7 +86,7 @@
       <div class="ttl">ポイント</div>
       <p>
         灰色の点線がもとの $y=x^2$。その上の青い点 $\mathrm{Q}(s,\,s^2)$ は、平行移動で
-        $\mathrm{Q}'(s+\teal{p},\ s^2+\red{q})$ に移ります。<b>すべての点が同じだけ動く</b> ので、形は変わりません。
+        $\mathrm{Q}'(s+\teal{p},\ s^2+\red{q})$ に移ります。すべての点が同じだけ動くので、形は変わりません。
         <span class="t-teal">緑の矢印</span>が $x$ 方向の移動 $\teal{p}$、<span class="t-red">赤い矢印</span>が $y$ 方向の移動 $\red{q}$ です。
       </p>
     </div>
@@ -126,17 +103,28 @@
     <p>
       $y=ax^2$ を <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 動かすと、(1) と同じ置き換えで
     </p>
-    <div class="eq-box">$$y-\red{q}=\blue{a}(x-\teal{p})^2\quad\Longleftrightarrow\quad y=\blue{a}(x-\teal{p})^2+\red{q}\qquad(\text{頂点形})$$</div>
+    <div class="eq-box">$$\begin{gathered}y-\red{q}=\blue{a}(x-\teal{p})^2\\ \Updownarrow\\ y=\blue{a}(x-\teal{p})^2+\red{q}\end{gathered}$$</div>
+    <div class="key"><div class="key-ttl">覚える｜頂点形</div><p class="key-lead">二次関数 $y=a(x-\teal{p})^2+\red{q}$ のグラフは、$y=ax^2$ のグラフを $x$ 方向に $\teal{p}$、$y$ 方向に $\red{q}$ 平行移動したもの。</p>$$y=a(x-\teal{p})^2+\red{q}$$
+      <ul class="key-big">
+        <li>よって、頂点の座標は $(\teal{p},\ \red{q})$</li>
+        <li>対称軸は 直線 $x=\teal{p}$</li>
+      </ul></div>
     <p>
-      頂点は $(\teal{p},\ \red{q})$ です。これを展開した $y=\blue{a}x^2+\amber{b}x+\slate{c}$ が <b>一般形</b>。
-      一般形から頂点形を作る操作が <b>平方完成</b> です。
+      頂点は $(\teal{p},\ \red{q})$ です。これを展開した $y=\blue{a}x^2+\amber{b}x+\slate{c}$ が<b>一般形</b>。
+      一般形から頂点形を作る操作が<b>平方完成</b>です。
     </p>
     <div class="eq-box">
       $$\begin{aligned}
-      y &= \blue{a}x^2 + \amber{b}x + \slate{c} = \blue{a}\left(x + \frac{\amber{b}}{2\blue{a}}\right)^2 + \slate{c} - \frac{\amber{b}^2}{4\blue{a}}\\
-      &\Longrightarrow\quad \teal{p} = -\frac{\amber{b}}{2\blue{a}},\qquad \red{q} = \slate{c} - \frac{\amber{b}^2}{4\blue{a}}
+      y &= \blue{a}x^2 + \amber{b}x + \slate{c}\\
+      &= \blue{a}\left(x + \frac{\amber{b}}{2\blue{a}}\right)^2 + \slate{c} - \frac{\amber{b}^2}{4\blue{a}}
       \end{aligned}$$
+      $$\teal{p} = -\frac{\amber{b}}{2\blue{a}},\qquad \red{q} = \slate{c} - \frac{\amber{b}^2}{4\blue{a}}$$
     </div>
+    <div class="key"><div class="key-ttl">覚える｜平方完成と頂点</div><p class="key-lead">$y=ax^2+bx+c$ を平方完成すると</p>$$\begin{aligned}y&=ax^2+bx+c\\&=a\left(x+\frac{b}{2a}\right)^2+c-\frac{b^2}{4a}\end{aligned}$$<p class="key-lead">よって</p>
+      <ul class="key-big">
+        <li>頂点の座標は $\left(-\dfrac{b}{2a},\ c-\dfrac{b^2}{4a}\right)$</li>
+        <li>対称軸は 直線 $x=-\dfrac{b}{2a}$</li>
+      </ul><p class="key-note">公式を丸暗記するより、平方完成の手順で求められることが大切です。</p></div>
     <div class="widget" id="w-quad">
       <div class="widget-head">$y=\blue{a}(x-\teal{p})^2+\red{q} = \blue{a}x^2+\amber{b}x+\slate{c}$ <span class="legend"><span class="lg"><i style="background:var(--primary)"></i>$a$</span><span class="lg"><i style="background:var(--teal)"></i>$p$</span><span class="lg"><i style="background:var(--accent)"></i>$q$</span><span class="lg"><i style="background:var(--amber)"></i>$b$</span><span class="lg"><i style="background:var(--pink)"></i>$c$</span></span> <span class="hint">上の3本と下の2本は連動します</span></div>
       <div class="stage"><canvas aria-label="二次関数のグラフ"></canvas></div>
@@ -156,13 +144,22 @@
       <ul>
         <li><span class="t-teal">$p$</span>, <span class="t-red">$q$</span> を動かすと、図の矢印（灰色の $y=ax^2$ の頂点 → 頂点）が変わり、<span class="t-amber">$b$</span>, <span class="t-slate">$c$</span> がどう変わるか見よう。</li>
         <li>逆に <span class="t-amber">$b$</span> を動かすと頂点は左右どちらへ動く？　式 $p=-\frac{b}{2a}$ と見比べよう。</li>
-        <li>$a>0$ なら下に凸（頂点が最小）、$a<0$ なら上に凸（頂点が最大）。</li>
+        <li>$a>0$ なら下に凸（頂点が最小）、$a\lt 0$ なら上に凸（頂点が最大）。</li>
         <li>グラフが $x$ 軸に触れる瞬間、判別式 $D=b^2-4ac$ はいくつ？</li>
       </ul>
     </div>
   
 
   
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>平行移動</th><td>$x$ 方向に $p$、$y$ 方向に $q$ → $y-q=f(x-p)$</td></tr>
+        <tr><th>頂点形</th><td>$y=a(x-p)^2+q$、頂点 $(p,\ q)$</td></tr>
+        <tr><th>平方完成</th><td>$y=ax^2+bx+c$ を頂点形に直す操作</td></tr>
+        <tr><th>凸の向き</th><td>$a>0$ なら下に凸、$a\lt 0$ なら上に凸</td></tr>
+      </tbody></table></div>
+    </div>
+
     <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：放物線でコインを集めろ</h2>
     <p>
       放物線 $y=\blue{a}(x-\teal{p})^2+\red{q}$ で、コインをすべて集めましょう。
@@ -194,7 +191,11 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) $y+2=(x-3)^2$　(2) $y=2(x-2)^2-3$ より頂点 $(2,-3)$　(3) $y=(x+2)^2+3$、頂点 $(-2,3)$</p>
+      <ol class="quiz-ans">
+        <li>$y-\red{q}=(x-\teal{p})^2$ に $\teal{p}=3$、$\red{q}=-2$ を入れると $y-(-2)=(x-3)^2$。<br>よって $y+2=(x-3)^2$</li>
+        <li>$y=2(x^2-4x)+5=2\{(x-2)^2-4\}+5=2(x-2)^2-3$。<br>よって 頂点 $(2,\ -3)$</li>
+        <li>もとの頂点 $(1,\ 2)$ は $(1-3,\ 2+1)=(-2,\ 3)$ に動き、形（$x^2$ の係数 $1$）は変わらない。<br>よって $y=(x+2)^2+3$、頂点 $(-2,\ 3)$</li>
+      </ol>
     </details>
   </section>
 
@@ -207,9 +208,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="polynomial.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="polynomial.js?v=202610140157"></script>
 </body>
 </html>

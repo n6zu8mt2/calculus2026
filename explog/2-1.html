@@ -7,36 +7,12 @@
 <meta name="description" content="第2回 指数関数・対数関数 2.1章：2⁰=1, 2⁻¹=1/2, 2^{1/2}=√2 が自然な理由">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch1">
+<body class="chapter ch1 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
 
 <div class="layout">
@@ -63,39 +39,58 @@
   <div class="goal">
     <div class="goal-ttl">この章のゴール</div>
     <ol>
+      <li>$a^n$（$a$ を $n$ 個かける）の意味と、指数法則を説明できる。</li>
       <li>$2^0=1$、$2^{-n}=\dfrac{1}{2^n}$ になる理由を、パターンと指数法則の2通りで説明できる。</li>
-      <li>$2^{\frac12}=\sqrt2$ のように、分数の指数を累乗根で表せる。</li>
+      <li>$n$ 乗根の意味を知り、$a^{\frac mn}=\left(\sqrt[n]{a}\right)^m$ のように分数の指数を表せる。</li>
       <li>指数法則を使って、$2^x$ の形の数の指数 $x$ を求められる。</li>
     </ol>
-    <div class="goal-meta">図 3つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+    <div class="goal-meta">図 4つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
   </div>
+
+  <p class="prereq">この章で使うこと：中学で学んだ 累乗 $2^3=2\times2\times2$ と 平方根 $\sqrt2$（2乗すると 2 になる正の数）</p>
 
   <section class="sec first" id="main">
 
-    <p>
-      $2^3=2\times2\times2$ は「2 を 3 回かける」という意味でした。では $2^0$ や $2^{-1}$、$2^{\frac12}$ はどうでしょう。
-      「0 回かける」「−1 回かける」「半分回かける」では意味がわかりません。
-    </p>
-    <p>
-      数学では、こういうときに <b>すでに成り立っている規則（パターンや指数法則）がそのまま成り立つように、意味を広げます</b>。
-      すると、$2^0=1$、$2^{-1}=\frac12$、$2^{\frac12}=\sqrt2$ と <b>ごく自然に</b> 決まってしまいます。
-    </p>
-
-    <h2 class="h-sub"><span class="tag">(1)</span>右へ ×2、左へ ÷2：パターンで広げる</h2>
+    <h2 class="h-sub"><span class="tag">(1)</span>累乗（るいじょう）とは：同じ数を何回かけるか</h2>
 
     <p>
-      $2^1$, $2^2$, $2^3$, … と右へ1つ進むごとに <b>2 倍</b> になります。逆に、左へ1つ進むごとに <b>2 で割る</b> ことになります。
-      このパターンを $2^1$ より左にも続けると、$2^0, 2^{-1}, 2^{-2},\dots$ の値が決まります。
-      <b>カードの値を予想してから</b>、クリックしてめくってみましょう。
+      同じ数を何回もかけるとき、かけ算を全部書くと長くなります。そこで、かける回数を右上に小さく書くことにします。
+    </p>
+    <div class="eq-box">$$2^{\red{3}}=\underbrace{2\times2\times2}_{\red{3}\ \text{個かける}}=8$$</div>
+    <p>
+      $2^3$ は「2 の 3 乗」と読みます。右上の小さい数 $\red{3}$ を指数（しすう）、もとの数 $2$ を底（てい）といいます。
+      一般に、$a$ を $\red{n}$ 個かけたものを $a^{\red{n}}$ と書きます。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜累乗の意味</div>$$a^{n}=\underbrace{a\times a\times\cdots\times a}_{a\ \text{を}\ n\ \text{個かける}}$$</div>
+    <div class="table-wrap"><table class="ratio-table pow-ex">
+      <thead><tr><th>書き方</th><th>読み方</th><th>意味</th><th>値</th></tr></thead>
+      <tbody>
+        <tr><td>$2^1$</td><td>2 の 1 乗</td><td>$2$（2 が 1 個だけ）</td><td>$2$</td></tr>
+        <tr><td>$2^2$</td><td>2 の 2 乗</td><td>$2\times2$</td><td>$4$</td></tr>
+        <tr><td>$2^3$</td><td>2 の 3 乗</td><td>$2\times2\times2$</td><td>$8$</td></tr>
+        <tr><td>$2^4$</td><td>2 の 4 乗</td><td>$2\times2\times2\times2$</td><td>$16$</td></tr>
+        <tr><td>$3^2$</td><td>3 の 2 乗</td><td>$3\times3$</td><td>$9$</td></tr>
+        <tr><td>$10^3$</td><td>10 の 3 乗</td><td>$10\times10\times10$</td><td>$1000$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      では $2^0$（0 個かける？）や $2^{-1}$（−1 個かける？）、$2^{\frac12}$（半分個かける？）はどうでしょう。
+      「かける個数」として考えると意味がわかりません。この章では、すでに成り立っている規則がそのまま成り立つように意味を広げると、
+      $2^0=1$、$2^{-1}=\frac12$、$2^{\frac12}=\sqrt2$ とごく自然に決まってしまうことを見ていきます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>右へ ×2、左へ ÷2：パターンで広げる</h2>
+
+    <p>
+      表の右へ1つ進むと、かける 2 が1個増えるので 2 倍。逆に左へ1つ進むと ÷2 です。
+      このきまりを、$2^1$ より左（指数が 0 や負の数）にもそのまま続けてみましょう。「？」の値を予想してから、クリックしてめくってください。
     </p>
     <div class="widget" id="w-pow-cards">
-      <div class="widget-head">パターンで指数を広げる <span class="hint">「左へ進む」でカードを増やし、クリックしてめくる</span></div>
+      <div class="widget-head">パターンで指数を広げる <span class="hint">「？」をクリックしてめくる／底を選ぶ</span></div>
       <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">底 a</span><div class="chips" data-r="bases"></div></div></div>
-      <div class="cards-row" data-r="row"></div>
-      <div class="panel" style="padding-top:0">
+      <div class="pow-table-wrap"><div class="pow-table" data-r="table"></div></div>
+      <div class="panel" style="padding-top:8px">
         <div class="btn-row">
-          <button class="btn primary" type="button" data-a="left">← 左へ1つ進む（÷a）</button>
-          <button class="btn" type="button" data-a="right">右へ1つ進む（×a）→</button>
           <button class="btn" type="button" data-a="open">全部めくる</button>
           <button class="btn" type="button" data-a="reset">はじめから</button>
         </div>
@@ -103,104 +98,173 @@
       </div>
     </div>
 
-    <div class="callout point">
-      <div class="ttl">わかったこと</div>
-      <p>$a^0=1$、$a^{-1}=\dfrac1a$、$a^{-2}=\dfrac1{a^2}$、…　一般に $a^{-n}=\dfrac{1}{a^n}$。<br>
-      「マイナスの指数」は「逆数」、「0 乗」は「1」です。</p>
-    </div>
+    <p>表から、$a^0=1$、$a^{-1}=\dfrac1a$、$a^{-2}=\dfrac1{a^2}$、… となることがわかります。「0 乗」は 1、「マイナスの指数」は逆数（分母と分子を入れかえた数）です。(4) でもう一度、別の見方から確かめます。</p>
+    <div class="key"><div class="key-ttl">覚える｜0 乗と負の指数</div>$$a^0=1,\qquad a^{-n}=\frac{1}{a^n}$$</div>
 
-    <h2 class="h-sub"><span class="tag">(2)</span>指数法則を守ると決まる</h2>
+    <h2 class="h-sub"><span class="tag">(3)</span>指数法則とは</h2>
 
     <p>
-      もう一つの見方は <b>指数法則</b> です。まず、指数が自然数（1, 2, 3, …）のときを確認しましょう。
-      $2^{\teal{3}}$ は「2 を $\teal{3}$ 回かける」、$2^{\red{2}}$ は「2 を $\red{2}$ 回かける」なので、
+      もう一つの見方に進む前に、指数法則を確認しておきましょう。指数が 1, 2, 3, … のときに成り立つ、計算のきまりです。
     </p>
-    <div class="eq-box">$$2^{\teal{3}}\times2^{\red{2}}=(\teal{2\times2\times2})\times(\red{2\times2})=2^{\teal{3}+\red{2}}=2^5$$</div>
-    <p>
-      かけ合わせると「かける回数」が足し算になります。一般に、自然数 $m,\ n$ について
-    </p>
-    <div class="eq-box eq-hero">$$a^{\teal{m}}\times a^{\red{n}}=a^{\teal{m}+\red{n}}\qquad\text{（指数法則）}$$</div>
-    <p>
-      これは「回数」として考えれば当たり前の規則です。ところが $2^0$ や $2^{-3}$ は「0 回かける」「−3 回かける」となり、回数の意味では決められません。
-      そこで数学では、次のように考えます。
-    </p>
-    <div class="callout point">
-      <div class="ttl">考え方</div>
-      <p>$2^0$ や $2^{-3}$ の値は、まだ決まっていない「空いている席」。
-      そこに入れる値は、<b>指数法則 $a^m\times a^n=a^{m+n}$ が 0 や負の数でもそのまま成り立つように</b> 選ぶ。
-      （規則が成り立たなくなる決め方をすると、計算のたびに「この場合は例外…」と気をつけなければならず、不便だからです。）</p>
-    </div>
+    <h3 class="h-mini">きまり①　かけ算は、指数のたし算</h3>
+    <div class="eq-box">$$\begin{aligned}a^{\teal{m}}\times a^{\red{n}}&=(\teal{a\ \text{を}\ m\ \text{個かける}})\times(\red{a\ \text{を}\ n\ \text{個かける}})\\&=(a\ \text{を}\ \teal{m}+\red{n}\ \text{個かける})=a^{\teal{m}+\red{n}}\end{aligned}$$</div>
+    <div class="eq-box">$$\text{例：}2^{\teal{3}}\times2^{\red{2}}=(\teal{2\times2\times2})\times(\red{2\times2})=2^{\teal{3}+\red{2}}=2^5=32$$</div>
+    <h3 class="h-mini">きまり②　累乗の累乗は、指数のかけ算</h3>
+    <div class="eq-box">$$\begin{aligned}\left(a^{\teal{m}}\right)^{\red{n}}&=(\teal{a\ \text{を}\ m\ \text{個かけたもの}})\ \text{を}\ \red{n}\ \text{個かける}\\&=(a\ \text{を}\ \teal{m}\times\red{n}\ \text{個かける})=a^{\teal{m}\red{n}}\end{aligned}$$</div>
+    <div class="eq-box">$$\text{例：}\left(2^{\teal{3}}\right)^{\red{2}}=(\teal{2\times2\times2})\times(\teal{2\times2\times2})=2^{\teal{3}\times\red{2}}=2^6=64$$</div>
+    <h3 class="h-mini">きまり③　わり算は、指数のひき算</h3><p class="sub">（$m$ が $n$ より大きいとき）</p>
+    <div class="eq-box">$$\frac{a^{\teal{m}}}{a^{\red{n}}}=a^{\teal{m}-\red{n}}\qquad\text{例：}\ \frac{2^5}{2^2}=\frac{2\times2\times\cancel{2}\times\cancel{2}\times\cancel{2}}{\cancel{2}\times\cancel{2}}=2^3=2^{5-2}$$</div>
+    <div class="key"><div class="key-ttl">覚える｜指数法則</div>$$\begin{gathered}a^{m}\times a^{n}=a^{m+n}\\[4pt] \left(a^{m}\right)^{n}=a^{mn}\\[4pt] \frac{a^{m}}{a^{n}}=a^{m-n}\end{gathered}$$</div>
 
-    <p><b>ステップ1：$2^0$ を決める。</b>　指数法則で $m=0,\ n=3$ とすると</p>
+    <h2 class="h-sub"><span class="tag">(4)</span>指数法則を守ると、0 乗と負の指数が決まる</h2>
+
+    <p>
+      $2^0$ や $2^{-3}$ の値は、まだ決まっていない「空いている席」です。そこに入れる値は、
+      指数法則のきまり① $a^m\times a^n=a^{m+n}$ が 0 や負の数でもそのまま成り立つように選ぶことにします。
+      （「この場合は例外…」と気をつけなくてよいので、計算がずっと楽になります。）
+    </p>
+    <h3 class="h-mini">ステップ1：$2^0$ を決める。</h3><p>きまり① $a^m\times a^n=a^{m+n}$ で $m=0,\ n=3$ とすると</p>
     <div class="eq-box">$$2^{0}\times2^{3}=2^{0+3}=2^3\qquad\text{つまり}\qquad 2^0\times8=8$$</div>
-    <p>
-      「8 にかけても 8 のまま」になる数は $1$ しかありません。だから <b>$2^0=1$ と決めるしかない</b> のです。
-      （$2^0=0$ と決めると $0\times8=0\neq8$ となり、指数法則が壊れてしまいます。）
-    </p>
-
-    <p><b>ステップ2：$2^{-3}$ を決める。</b>　今度は $m=-3,\ n=3$ とすると、指数の和は $-3+3=0$ なので</p>
+    <p>「8 にかけても 8 のまま」になる数は $1$ だけ。だから $2^0=1$ と決めるしかありません。</p>
+    <h3 class="h-mini">ステップ2：$2^{-3}$ を決める。</h3><p>きまり① $a^m\times a^n=a^{m+n}$ で $m=-3,\ n=3$ とすると</p>
     <div class="eq-box">$$2^{-3}\times2^{3}=2^{-3+3}=2^0=1\qquad\text{つまり}\qquad 2^{-3}\times8=1$$</div>
-    <p>
-      「8 にかけると 1 になる数」は $\dfrac18$ だけ。だから <b>$2^{-3}=\dfrac18=\dfrac1{2^3}$ と決めるしかない</b>。
-      同じように考えると、一般に
-    </p>
-    <div class="eq-box">$$a^0=1,\qquad a^{-n}=\frac{1}{a^n}\qquad(a\neq0)$$</div>
+    <p>「8 にかけると 1 になる数」は $\dfrac18$ だけ。だから $2^{-3}=\dfrac18=\dfrac1{2^3}$。(2) のパターンで決めた値とまったく同じです。</p>
+    <p>こうして、(2) で覚えた $a^0=1,\ a^{-n}=\dfrac1{a^n}$ が、指数法則からも同じように決まることがわかりました。</p>
 
-    <p><b>ステップ3：ほかの場合も矛盾しないか確かめる。</b>
-      たとえば $2^{-1}\times2^{-2}$ は、決めた値で計算すると $\dfrac12\times\dfrac14=\dfrac18$、指数法則で計算すると $2^{-1+(-2)}=2^{-3}=\dfrac18$。ちゃんと一致します。
-      もう一つの指数法則 $(a^m)^n=a^{mn}$ も、$\left(2^{-1}\right)^2=\left(\dfrac12\right)^2=\dfrac14=2^{-2}$ のように成り立ちます。
-      下のスライダーで、いろいろな $m,\ n$ で確かめてみましょう。
+    <h3 class="h-mini">ステップ3：負の指数でも、指数法則がちゃんと成り立つか確かめる。</h3><p>
+      $a^{\red{n}}$ は「1 から始めて ×$a$ を $n$ 回」、$a^{-n}=\dfrac1{a^n}$ は「1 から始めて ÷$a$ を $n$ 回」と考えられます。
+      すると、×$a$ と ÷$a$ が出会うと打ち消し合うので、残った個数がそのまま指数になります。例えば</p>
+    <div class="eq-box">$$2^{5}\times2^{-2}=\frac{2\times2\times2\times\cancel{2}\times\cancel{2}}{\cancel{2}\times\cancel{2}}=2^3=2^{5+(-2)}$$</div>
+    <div class="eq-box">$$2^{-1}\times2^{-2}=\frac12\times\frac14=\frac18=2^{-3}=2^{(-1)+(-2)}$$</div>
+    <p>きまり② $\left(a^m\right)^n=a^{mn}$ も $\left(2^{-1}\right)^2=\left(\dfrac12\right)^2=\dfrac14=2^{-2}=2^{(-1)\times2}$ のように成り立ちます。下の図で、いろいろな組み合わせを試してみましょう。</p>
+    <div class="widget" id="w-pow-cancel">
+      <div class="widget-head">×2 と ÷2 の打ち消し合い <span class="hint">＋／− で $m,\ n$ を変える</span></div>
+      <div class="panel">
+        <p class="cancel-lead">
+          $2^{m}$ は「1 に ×2 を $m$ 回」（$m$ が負のときは ÷2 をくり返す。例：$2^{-2}$ は「1 に ÷2 を 2 回」）と考えます。
+          $2^{\teal{m}}\times2^{\red{n}}$ では ×2 と ÷2 が打ち消し合い、<u>残った個数が指数 $\teal{m}+\red{n}$ になる</u> ことを確かめましょう。
+        </p>
+        <div class="stepper-row">
+          <div class="stepper teal"><span class="lbl">$\teal{m}=$</span><button class="btn small" type="button" data-s="m-" aria-label="m を減らす">−</button><b data-r="m">3</b><button class="btn small" type="button" data-s="m+" aria-label="m を増やす">＋</button></div>
+          <div class="stepper red"><span class="lbl">$\red{n}=$</span><button class="btn small" type="button" data-s="n-" aria-label="n を減らす">−</button><b data-r="n">-2</b><button class="btn small" type="button" data-s="n+" aria-label="n を増やす">＋</button></div>
+        </div>
+        <div class="cancel-res" data-r="left"></div>
+        <div class="cancel-eq" data-r="eq"></div>
+      </div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>n 乗根：n 回かけると a になる数</h2>
+
+    <p>
+      分数の指数の前に、ルート（平方根）を思い出しましょう。$\sqrt{a}$ は「2 乗すると $a$ になる正の数」でした。
+      例：$\sqrt9=3$（$3^2=9$）、$\sqrt2\approx1.414$（$1.414^2\approx2$）。
     </p>
-    <div class="widget" id="w-pow-law">
-      <div class="widget-head">指数法則 $2^{\teal{m}}\times2^{\red{n}}=2^{\teal{m}+\red{n}}$ <span class="hint">$m$ と $n$ を動かす</span></div>
+    <p>同じように考えて、次のように決めます。</p>
+    <div class="key"><div class="key-ttl">覚える｜n 乗根</div>$$\sqrt[n]{a}=(n\ \text{乗すると}\ a\ \text{になる正の数})\qquad(a>0)$$</div>
+    <p>
+      「$a$ の $n$ 乗根」と読みます。$n=2$ のときがふつうのルート（$\sqrt[2]{a}=\sqrt a$ と書く）。
+      例：$\sqrt[3]{8}=2$（$2^3=8$）、$\sqrt[4]{16}=2$（$2^4=16$）、$\sqrt[3]{2}\approx1.26$（$1.26^3\approx2$）。
+    </p>
+    <p>
+      グラフで見ると、$\sqrt[n]{a}$ は曲線 $y=x^n$ と横線 $y=a$ が交わる点の $x$ 座標です。$x\geqq0$ で $y=x^n$ は右上がりなので、交わる点はちょうど1つ。だから $\sqrt[n]{a}$ はちゃんと1つに決まります。
+    </p>
+    <div class="widget" id="w-root">
+      <div class="widget-head">$y=x^n$ と $y=a$ の交点が $\sqrt[n]{a}$ <span class="hint">$n$ を選ぶ／$a$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">n</span><div class="chips" data-r="ns"></div></div></div>
+      <div class="stage root-stage"><canvas aria-label="y=x^n と y=a の交点"></canvas></div>
       <div class="panel two">
         <div class="controls"></div>
         <div class="readout">
-          <div class="row"><span class="k">かけ算</span><span class="tex big" data-r="mul"></span></div>
-          <div class="row"><span class="k">累乗の累乗</span><span class="tex" data-r="pow"></span></div>
-          <div class="row"><span class="k">気づき</span><span data-r="note" class="note-txt"></span></div>
+          <div class="row"><span class="k">n 乗根</span><span class="tex big" data-r="root"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex" data-r="check"></span></div>
         </div>
       </div>
     </div>
 
-    <div class="callout point">
-      <div class="ttl">指数法則から決まること</div>
-      <ul>
-        <li>$2^0\times2^3=2^{0+3}=2^3$ が成り立つには、$2^0=1$ でなければならない。</li>
-        <li>$2^{-3}\times2^3=2^{-3+3}=2^0=1$ が成り立つには、$2^{-3}=\dfrac{1}{2^3}$ でなければならない。</li>
-      </ul>
-      <p>(1) の「左へ進むと ÷2」というパターンで決めた値と、(2) の「指数法則が成り立つように」決めた値が、<b>まったく同じ</b> になりました。
-      別々の考え方から同じ答えが出るので、$2^0=1,\ 2^{-n}=\dfrac1{2^n}$ は「むりやり決めた約束」ではなく、<b>こう決めるのが自然</b> なのです。</p>
-    </div>
-
-    <h2 class="h-sub"><span class="tag">(3)</span>分数の指数：点と点のあいだを埋める</h2>
+    <h2 class="h-sub"><span class="tag">(6)</span>分数の指数</h2>
 
     <p>
-      では $2^{\frac12}$ は？ 指数法則 $(a^m)^n=a^{mn}$ を使うと $\bigl(2^{\frac12}\bigr)^2=2^{\frac12\times2}=2^1=2$。
-      つまり $2^{\frac12}$ は <b>2 回かけると 2 になる数</b> ＝ $\sqrt2\approx1.414$ です。
-      同じように $2^{\frac1k}$ は「$k$ 回かけると 2 になる数」$=\sqrt[k]{2}$。
-      分割数 $k$ を増やすと、整数の点のあいだが埋まって、なめらかな曲線 $y=2^x$ が現れます。
+      では $2^{\frac12}$ は何でしょう。ここでも、指数法則のきまり②（累乗の累乗は、指数のかけ算）
+    </p>
+    <div class="eq-box">$$\left(a^{m}\right)^{n}=a^{m\times n}$$</div>
+    <p>が、指数が分数でもそのまま成り立つように決めます。$a=2,\ m=\frac12,\ n=2$ とすると</p>
+    <div class="eq-box">$$\left(2^{\frac12}\right)^2=2^{\frac12\times2}=2^1=2$$</div>
+    <p>
+      つまり $2^{\frac12}$ は「2 乗すると 2 になる数」＝ $\sqrt2$。同じように $\left(2^{\frac13}\right)^3=2^1=2$ なので $2^{\frac13}=\sqrt[3]{2}$。一般に
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜分数の指数</div>$$a^{\frac1{n}}=\sqrt[n]{a},\qquad a^{\frac{m}{n}}=\left(\sqrt[n]{a}\right)^{m}$$</div>
+    <p>
+      分母 $\red{n}$ は「何乗根か」、分子 $\teal{m}$ は「それを何乗するか」を表します。
+      例：$8^{\frac23}=\left(\sqrt[3]{8}\right)^2=2^2=4$、　$4^{\frac32}=\left(\sqrt4\right)^3=2^3=8$、　$27^{-\frac13}=\dfrac{1}{27^{\frac13}}=\dfrac1{\sqrt[3]{27}}=\dfrac13$。
+    </p>
+    <p>分数の指数でも指数法則は成り立ちます。例えば $2^{\frac13}\times2^{\frac23}$ $=\sqrt[3]{2}\times\sqrt[3]{4}$ $=\sqrt[3]{8}=2=2^1$ で、指数のたし算 $\frac13+\frac23=1$ と合っています。</p>
+    <details class="more"><summary>発展：どうしていつも成り立つの？</summary>
+      <p>2つの分数の指数を通分して $\dfrac{p}{q}$ と $\dfrac{r}{q}$ にし、$b=a^{\frac1q}=\sqrt[q]{a}$ とおくと
+      $a^{\frac pq}=b^p,\ a^{\frac rq}=b^r$ です。すると</p>
+      <div class="eq-box">$$a^{\frac pq}\times a^{\frac rq}=b^{p}\times b^{r}=b^{p+r}=a^{\frac{p+r}{q}}=a^{\frac pq+\frac rq}$$</div>
+      <p>となり、整数の指数の法則に帰着します。「$\frac1q$ 乗」を1歩とみて、その歩数を数えているだけなのです。</p>
+    </details>
+
+    <h2 class="h-sub"><span class="tag">(7)</span>点と点のあいだを埋めて、なめらかな曲線へ</h2>
+
+    <p>
+      ここまでで、整数の指数と分数の指数の $2^x$ が計算できるようになりました。これらを点としてグラフにかいてみます。
+      下の図の <b>分割数 $k$</b> は、「指数を $1$ の何分の1ずつ進めるか」を表します。
+    </p>
+    <div class="k-tables">
+      <div class="k-block"><div class="k-ttl">$k=1$：指数 $x$ を $1$ ずつ増やす</div>
+        <div class="table-wrap"><table class="k-table"><tbody>
+          <tr><th>$x$</th><td class="int">$-3$</td><td class="int">$-2$</td><td class="int">$-1$</td><td class="int">$0$</td><td class="int">$1$</td><td class="int">$2$</td><td class="int">$3$</td></tr>
+          <tr><th>$2^x$</th><td class="int">$\dfrac{1}{8}$</td><td class="int">$\dfrac{1}{4}$</td><td class="int">$\dfrac{1}{2}$</td><td class="int">$1$</td><td class="int">$2$</td><td class="int">$4$</td><td class="int">$8$</td></tr>
+        </tbody></table></div></div>
+      <div class="k-block"><div class="k-ttl">$k=2$：指数 $x$ を $\frac1{2}$ ずつ増やす</div>
+        <div class="table-wrap"><table class="k-table"><tbody>
+          <tr><th>$x$</th><td class="int">$-3$</td><td>$-\dfrac{5}{2}$</td><td class="int">$-2$</td><td>$-\dfrac{3}{2}$</td><td class="int">$-1$</td><td>$-\dfrac{1}{2}$</td><td class="int">$0$</td><td>$\dfrac{1}{2}$</td><td class="int">$1$</td><td>$\dfrac{3}{2}$</td><td class="int">$2$</td><td>$\dfrac{5}{2}$</td><td class="int">$3$</td></tr>
+          <tr><th>$2^x$</th><td class="int">$\dfrac{1}{8}$</td><td>$\dfrac{1}{4\sqrt{2}}$</td><td class="int">$\dfrac{1}{4}$</td><td>$\dfrac{1}{2\sqrt{2}}$</td><td class="int">$\dfrac{1}{2}$</td><td>$\dfrac{1}{\sqrt{2}}$</td><td class="int">$1$</td><td>$\sqrt{2}$</td><td class="int">$2$</td><td>$2\sqrt{2}$</td><td class="int">$4$</td><td>$4\sqrt{2}$</td><td class="int">$8$</td></tr>
+        </tbody></table></div></div>
+      <div class="k-block"><div class="k-ttl">$k=3$：指数 $x$ を $\frac1{3}$ ずつ増やす</div>
+        <div class="table-wrap"><table class="k-table"><tbody>
+          <tr><th>$x$</th><td class="int">$-3$</td><td>$-\dfrac{8}{3}$</td><td>$-\dfrac{7}{3}$</td><td class="int">$-2$</td><td>$-\dfrac{5}{3}$</td><td>$-\dfrac{4}{3}$</td><td class="int">$-1$</td><td>$-\dfrac{2}{3}$</td><td>$-\dfrac{1}{3}$</td><td class="int">$0$</td><td>$\dfrac{1}{3}$</td><td>$\dfrac{2}{3}$</td><td class="int">$1$</td><td>$\dfrac{4}{3}$</td><td>$\dfrac{5}{3}$</td><td class="int">$2$</td><td>$\dfrac{7}{3}$</td><td>$\dfrac{8}{3}$</td><td class="int">$3$</td></tr>
+          <tr><th>$2^x$</th><td class="int">$\dfrac{1}{8}$</td><td>$\dfrac{1}{4\sqrt[3]{2^{2}}}$</td><td>$\dfrac{1}{4\sqrt[3]{2}}$</td><td class="int">$\dfrac{1}{4}$</td><td>$\dfrac{1}{2\sqrt[3]{2^{2}}}$</td><td>$\dfrac{1}{2\sqrt[3]{2}}$</td><td class="int">$\dfrac{1}{2}$</td><td>$\dfrac{1}{\sqrt[3]{2^{2}}}$</td><td>$\dfrac{1}{\sqrt[3]{2}}$</td><td class="int">$1$</td><td>$\sqrt[3]{2}$</td><td>$\sqrt[3]{2^{2}}$</td><td class="int">$2$</td><td>$2\sqrt[3]{2}$</td><td>$2\sqrt[3]{2^{2}}$</td><td class="int">$4$</td><td>$4\sqrt[3]{2}$</td><td>$4\sqrt[3]{2^{2}}$</td><td class="int">$8$</td></tr>
+        </tbody></table></div></div>
+      <p class="note-txt">どれもグラフと同じ $x=-3$ から $3$ まで（表は横にスクロールできます）。太字の列は指数が整数の点。$k$ を大きくするほど、そのあいだに点がたくさん入ります。</p>
+    </div>
+    <p>
+      指数 $x$ が $\frac1k$ ずつ進むごとに、$2^x$ は同じ倍率 $2^{\frac1k}=\sqrt[k]{2}$ 倍ずつ増えます（$k$ 回進むとちょうど 2 倍）。
+      分割数 $k$ を増やすと、整数の点のあいだがどんどん埋まって、なめらかな曲線が現れます。
     </p>
     <div class="widget" id="w-pow-frac">
       <div class="widget-head">分数の指数で間を埋める <span class="hint">分割数 $k$ を選ぶ／点をドラッグ</span></div>
-      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">分割数 k</span><div class="chips" data-r="ks"></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">分割数 k（指数を 1/k ずつ増やす）</span><div class="chips" data-r="ks"></div>
         <label class="check"><input type="checkbox" data-r="curve">なめらかな曲線を重ねる</label></div></div>
       <div class="stage"><canvas aria-label="分数の指数と y=2^x"></canvas></div>
       <div class="panel">
-        <div class="readout">
-          <div class="row"><span class="k">1歩の倍率</span><span class="tex" data-r="step"></span></div>
-          <div class="row"><span class="k">選んだ点</span><span class="tex big" data-r="pt"></span></div>
-        </div>
+        <p class="frac-explain" data-r="explain"></p>
+        <div class="table-wrap k-wrap"><table class="k-table"><tbody data-r="list"></tbody></table></div>
+        <p class="note-txt" data-r="range"></p>
       </div>
     </div>
+    <p>
+      分数で表せない数（例えば $\sqrt2=1.41421\ldots$）の指数は、分数でどんどん近づけたときの行き先として決めます。
+      曲線がなめらかにつながっているので、行き先はちゃんと1つに決まります。
+    </p>
+    <div class="table-wrap"><table class="ratio-table">
+      <thead><tr><th>指数 $x$</th><th>$1.4=\frac{14}{10}$</th><th>$1.41$</th><th>$1.414$</th><th>$1.4142$</th><th>$\cdots\to\sqrt2$</th></tr></thead>
+      <tbody><tr><td>$2^x$</td><td>$2.6390\ldots$</td><td>$2.6573\ldots$</td><td>$2.6647\ldots$</td><td>$2.6651\ldots$</td><td>$2^{\sqrt2}=2.6651\ldots$</td></tr></tbody>
+    </table></div>
 
-    <div class="callout point">
-      <div class="ttl">まとめ：指数の広げ方</div>
-      <p>$a>0$ のとき、$a^0=1$、　$a^{-n}=\dfrac1{a^n}$、　$a^{\frac1n}=\sqrt[n]{a}$、　$a^{\frac mn}=\sqrt[n]{a^m}$。
-      どれも「指数法則 $a^m a^n=a^{m+n},\ (a^m)^n=a^{mn}$ がそのまま成り立つ」ように決めたものです。</p>
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ（$a>0$）</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>累乗</th><td>$a^n=a\times a\times\cdots\times a$（$n$ 個）</td></tr>
+        <tr><th>指数法則</th><td>$a^m\times a^n=a^{m+n}$、$\left(a^m\right)^n=a^{mn}$、$\dfrac{a^m}{a^n}=a^{m-n}$</td></tr>
+        <tr><th>0 乗・負の指数</th><td>$a^0=1$、$a^{-n}=\dfrac1{a^n}$</td></tr>
+        <tr><th>n 乗根</th><td>$\sqrt[n]{a}$ ＝ $n$ 乗すると $a$ になる正の数</td></tr>
+        <tr><th>分数の指数</th><td>$a^{\frac1n}=\sqrt[n]{a}$、$a^{\frac mn}=\left(\sqrt[n]{a}\right)^m$</td></tr>
+      </tbody></table></div>
+      <p class="key-note">どれも「指数法則がそのまま成り立つように」決めたものです。さらに分数で近づけることで、すべての実数 $x$ に対して $a^x$ が決まります。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：指数ハンター</h2>
+    <h2 class="h-sub"><span class="tag">(8)</span>チャレンジ：指数ハンター</h2>
 
     <p>$2^x$ が目標の数になるような $x$ を見つけましょう。グラフ $y=2^x$ と、目標の高さ（金色の点線）が手がかりです。
     3回まで決定でき、<b>1回目で正解すると★3</b>。指数法則で計算してから決定しましょう。</p>
@@ -231,7 +295,10 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) $2^{-3}=\dfrac18$、$3^0=1$　(2) $x=\dfrac12$　(3) $\left(2^{\frac14}\cdot2^4\right)^2=2^{2\cdot\frac{17}{4}}$ より $y=\dfrac{17}{2}$　(4) $3\sqrt3=3^{\frac32}$ より $z=-\dfrac32$</p>
+      <p>(1) $2^{-3}=\dfrac1{2^3}=\dfrac18$、$3^0=1$（0乗はいつも 1）</p>
+      <p>(2) $\left(2^{\frac12}\right)^2=2^{\frac12\times2}=2$ なので、2乗して 2 になる $2^{\frac12}$ が $\sqrt2$。よって $x=\dfrac12$</p>
+      <p>(3) $\sqrt[4]{2}\cdot2^4=2^{\frac14}\cdot2^4=2^{\frac14+4}=2^{\frac{17}4}$。<br>これを2乗して $2^{\frac{17}4\times2}=2^{\frac{17}2}$、よって $y=\dfrac{17}2$</p>
+      <p>(4) $3\sqrt3=3^1\cdot3^{\frac12}=3^{\frac32}$ なので $\dfrac1{3\sqrt3}=\dfrac1{3^{\frac32}}=3^{-\frac32}$。よって $z=-\dfrac32$</p>
     </details>
   </section>
 
@@ -244,9 +311,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="explog.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="explog.js?v=202610140157"></script>
 </body>
 </html>

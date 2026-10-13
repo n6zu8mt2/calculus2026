@@ -179,7 +179,7 @@ table.ratio-table { min-width: 0; width: 100%; font-variant-numeric: tabular-num
 }
 
 /* ---------- 1.3(2) 惑星の的当て ---------- */
-.mission { padding: 12px 14px; font-weight: 700; font-size: 15px; line-height: 1.6; background: var(--surface); border-top: 1px solid var(--border); }
+.mission { padding: 14px 16px; font-weight: 700; font-size: 17px; line-height: 1.6; background: var(--surface); border-top: 1px solid var(--border); }
 .mission .mno { display: inline-block; font-size: 12px; font-weight: 800; color: #fff; background: var(--teal); border-radius: 6px; padding: 1px 8px; margin-right: 8px; vertical-align: 1px; }
 .game-total { font-weight: 800; color: var(--amber); margin-right: 4px; }
 .stage-chip .st { color: var(--amber); letter-spacing: 1px; }
@@ -320,3 +320,201 @@ table.tune-table tbody th { white-space: nowrap; background: var(--surface-2); t
 table.tune-table.num td { text-align: center; font-variant-numeric: tabular-nums; }
 table.tune-table tr.on td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
 table.tune-table.num td:last-child { font-weight: 700; }
+
+.mission mjx-container { font-size: 122% !important; }
+.calm .mission { margin: 12px 14px; padding: 14px 18px; font-size: 18px; line-height: 1.7; text-align: center;
+  border: 2px solid var(--teal); border-radius: 12px; background: color-mix(in srgb, var(--teal) 7%, var(--surface)); }
+.calm .mission mjx-container { font-size: 130% !important; }
+@media (max-width: 480px) { .calm .mission { margin: 10px; padding: 10px 12px; font-size: 16px; } }
+
+/* 2.1 指数の表(列は固定) */
+.pow-table-wrap { overflow-x: auto; padding: 14px; background: var(--plot-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.pow-table { display: grid; grid-template-columns: 52px repeat(8, minmax(64px, 1fr)); gap: 6px; min-width: 600px; align-items: center; text-align: center; }
+.pow-table .pt-h { font-size: 12.5px; font-weight: 800; color: var(--muted); }
+.pow-table .pt-h.new { color: var(--accent); }
+.pow-table .pt-e { font-size: 17px; }
+.pt-v { font: inherit; font-size: 16px; font-weight: 800; min-height: 54px; border-radius: 12px; border: 2px solid var(--primary); background: var(--surface); color: var(--text); cursor: default; padding: 4px; }
+.pt-v.new { border-color: var(--accent); cursor: pointer; }
+.pt-v.hidden { background: var(--surface-2); border-style: dashed; color: var(--muted); font-size: 22px; }
+.pt-v.hidden:hover { transform: translateY(-2px); }
+.pt-ar { display: grid; justify-items: end; font-size: 12px; font-weight: 800; color: var(--accent); line-height: 1.1; transform: translateX(calc(50% + 3px)); }
+.pt-ar .pt-arrow { font-size: 16px; }
+
+/* 2.1 ×2・÷2 の打ち消し */
+.stepper-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+.stepper { display: flex; align-items: center; gap: 8px; }
+.stepper .lbl { font-size: 18px; margin-right: 2px; }
+.stepper b { min-width: 2.2em; text-align: center; font-size: 22px; font-variant-numeric: tabular-nums; }
+.stepper.teal b { color: var(--teal); } .stepper.red b { color: var(--accent); }
+.stepper .btn { min-width: 40px; font-size: 18px; padding: 4px 10px; }
+.tok-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 44px; padding: 10px; margin-bottom: 10px; border-radius: 12px; background: var(--plot-bg); border: 1px solid var(--border); }
+.tok-row > span[data-r] { display: contents; }
+.tok { display: inline-block; padding: 5px 10px; border-radius: 10px; font-weight: 800; font-size: 16px; border: 2px solid currentColor; background: var(--surface); transition: opacity .2s; }
+.tok.start { color: var(--text); }
+.tok.teal { color: var(--teal); } .tok.red { color: var(--accent); }
+.tok.gone { opacity: .35; text-decoration: line-through; text-decoration-thickness: 2px; }
+
+/* ===== 落ち着いた表示（.calm）：「覚える」枠だけを目立たせる ===== */
+.calm .sec .eq-box { background: transparent; border: 0; box-shadow: none; padding: 0; margin: 4px 0 12px; }
+.calm .sec .eq-box.eq-hero { font-size: inherit; }
+.key { margin: 22px 0; padding: 12px 18px 14px; border: 2px solid var(--accent); border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+.key-ttl { display: inline-block; font-size: 13px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--accent); border-radius: 6px; padding: 2px 10px; }
+.key mjx-container[display="true"] { font-size: 118% !important; margin: .6em 0 .2em !important; }
+.key .table-wrap { margin: 10px 0 6px; border: 0; background: transparent; }
+table.key-table { min-width: 0; font-size: 15px; }
+table.key-table th { white-space: nowrap; text-align: left; padding: 8px 12px 8px 0; color: var(--accent); width: 1%; }
+table.key-table td { padding: 8px 0; }
+table.key-table tr + tr th, table.key-table tr + tr td { border-top: 1px solid var(--border); }
+.key-note { font-size: 13.5px; color: var(--muted); margin: 6px 0 0; }
+.h-mini { font-size: 16px; font-weight: 800; margin: 22px 0 4px; }
+.calm .sec p.sub { margin-top: 0; color: var(--muted); font-size: 14px; }
+details.more { margin: 12px 0 18px; padding: 8px 14px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); }
+details.more summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+details.more[open] { color: var(--text); }
+@media (max-width: 480px) { .key { padding: 10px 12px 12px; } .key mjx-container[display="true"] { font-size: 105% !important; } }
+
+/* 2.1 打ち消し・分割数・n乗根 */
+.cancel-lead { font-size: 15.5px; line-height: 1.8; margin: 0 0 12px; }
+.stepper .btn.small { min-width: 30px; font-size: 14px; padding: 2px 8px; }
+.stepper .lbl { font-size: 17px; }
+.stepper b { font-size: 20px; }
+.cancel-res { font-size: 17px; line-height: 1.7; padding: 10px 14px; border-radius: 10px; background: var(--surface-2); }
+.cancel-res b { color: var(--accent); }
+.cancel-eq { font-size: 20px; text-align: center; margin-top: 10px; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+.root-stage { max-width: 560px; margin: 0 auto; }
+.pt-list { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.pt-item { font-size: 14px; }
+.pt-item.int { font-weight: 700; }
+table.k-table { min-width: 640px; font-size: 14px; }
+table.k-table td { text-align: left; }
+
+/* 2.1 分割数の表 */
+.k-tables { margin: 12px 0 18px; display: grid; gap: 12px; }
+.k-ttl { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.k-block .table-wrap, .frac-info-wrap { margin: 0; }
+table.k-table { min-width: 0; width: auto; font-size: 15px; border-collapse: collapse; }
+table.k-table th, table.k-table td { padding: 6px 10px; text-align: center; border: 1px solid var(--border); white-space: nowrap; min-width: 48px; }
+table.k-table th { background: var(--surface-2); }
+table.k-table td.int { font-weight: 700; background: color-mix(in srgb, var(--primary) 8%, transparent); }
+table.k-table tr:last-child td { color: var(--primary); }
+table.frac-info { min-width: 0; font-size: 15px; }
+table.frac-info th { text-align: left; white-space: nowrap; padding: 8px 14px 8px 4px; width: 1%; color: var(--muted); font-size: 13.5px; }
+table.frac-info td { padding: 8px 4px; }
+table.frac-info tr + tr > * { border-top: 1px solid var(--border); }
+.k-block .table-wrap, .panel .table-wrap.k-wrap { border: 0; background: transparent; }
+table.k-table td { min-width: 52px; }
+.k-tables { grid-template-columns: minmax(0, 1fr); } .k-block { min-width: 0; }
+/* 分割数の表：MathJax の読み上げ用要素で縦スクロールバーが出ないように */
+.k-block .table-wrap, .k-wrap { overflow-y: hidden; padding-bottom: 2px; }
+.k-block mjx-assistive-mml, .k-wrap mjx-assistive-mml { display: none !important; }
+.frac-explain { font-size: 15px; line-height: 1.8; margin: 0 0 10px; }
+table.k-table td.approx { font-size: 13px; color: var(--muted) !important; font-variant-numeric: tabular-nums; }
+table.k-table td.sel { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.k-wrap table.k-table th { position: sticky; left: 0; z-index: 1; background: var(--surface-2); white-space: nowrap; }
+.k-block table.k-table th { position: sticky; left: 0; z-index: 1; }
+
+/* ===== .calm：補足の囲み（callout）は控えめに ===== */
+.calm .callout { background: transparent; box-shadow: none; border: 0; border-left: 3px solid var(--border); border-radius: 0; padding: 2px 0 2px 14px; }
+.calm .callout .ttl, .calm .callout.point .ttl, .calm .callout.try .ttl, .calm .callout.warn .ttl { color: var(--muted); font-size: 13.5px; }
+.calm .callout.warn { border-left-color: color-mix(in srgb, var(--amber) 55%, var(--border)); }
+.calm .goal { box-shadow: none; }
+
+/* 「覚える」枠の補足文は本文と同じ大きさ・色に／まとめ表の見出しは塗らない */
+.key-note { font-size: 15px; color: var(--text); line-height: 1.8; }
+.key ul { margin: 6px 0 2px; padding-left: 1.3em; font-size: 15.5px; line-height: 1.8; }
+.key .key-lead { font-size: 17px; font-weight: 700; margin: 10px 0 2px; line-height: 1.7; }
+table.key-table th { background: transparent !important; }
+
+/* == agent P (polynomial) == */
+/* 章の冒頭：前の章の何を使うか */
+.chapter .sec > p.prereq { margin: 0 0 18px; padding: 2px 0 2px 12px; border-left: 3px solid var(--border); color: var(--muted); font-size: 14.5px; line-height: 1.75; }
+.prereq a { color: inherit; font-weight: 700; }
+/* 確認問題の答え（途中式つき） */
+ol.quiz-ans { list-style: none; counter-reset: qa; padding-left: 0; margin: 6px 0 2px; }
+ol.quiz-ans > li { counter-increment: qa; position: relative; padding-left: 2.3em; margin: .7em 0; line-height: 1.9; overflow-x: auto; overflow-y: hidden; }
+ol.quiz-ans > li::before { content: "(" counter(qa) ")"; position: absolute; left: 0; font-weight: 700; color: var(--muted); }
+/* 目次ページ・トップページ（.calm）：カードは平らに、「覚える」枠だけ目立たせる */
+.calm .card { box-shadow: none; }
+.calm a.card:hover { transform: none; border-color: var(--primary); }
+.calm .card .badge { background: transparent; color: var(--muted); padding: 0; margin-bottom: 2px; }
+.calm .card p { font-size: 14px; }
+.calm .chap-card .chap-icon.sm { background: color-mix(in srgb, var(--c1, var(--primary)) 12%, transparent); color: var(--c1, var(--primary)); box-shadow: none; width: 44px; height: 44px; border-radius: 12px; }
+.calm .chap-card .chap-icon.sm svg { width: 28px; height: 28px; }
+:root[data-theme="dark"] .calm .chap-card .chap-icon.sm { color: color-mix(in srgb, var(--c1, var(--primary)) 55%, #fff); }
+.calm .page-hero .lead { font-size: 1rem; }
+.key-mark { display: inline-block; font-size: 12px; font-weight: 800; color: #fff; background: var(--accent); border-radius: 5px; padding: 0 7px; line-height: 1.7; vertical-align: 1px; }
+a.card.keys-card { display: block; margin: 0 0 6px; padding: 14px 18px; border: 2px solid var(--accent); }
+a.card.keys-card:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+.keys-card-ttl { display: block; font-size: 18px; font-weight: 800; color: var(--accent); }
+.keys-card-sub { display: block; font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 2px; }
+table.key-table td .use { display: block; font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 2px; }
+table.key-table td .use a { color: inherit; }
+.index-page .key.summary table.key-table th { padding-right: 14px; }
+/* トップページ */
+.home .lecture-list { display: grid; gap: 14px; margin-top: 16px; }
+.home .lecture { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 16px 18px; }
+.home .lecture h3 { margin: 0 0 4px; font-size: 20px; }
+.home .lecture h3 a { color: var(--text); text-decoration: none; }
+.home .lecture h3 a:hover { color: var(--primary); text-decoration: underline; }
+.home .lecture .no { display: block; font-size: 13px; font-weight: 700; color: var(--muted); }
+.home .lecture p { margin: 4px 0 0; color: var(--muted); font-size: 14.5px; line-height: 1.75; }
+.home .lecture .topics { font-size: 13.5px; }
+.home .lecture .links { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 12px; }
+.home .lecture .links a { display: inline-block; text-decoration: none; font-weight: 700; font-size: 14.5px; padding: 6px 14px; border-radius: 10px; border: 1px solid var(--border); color: var(--text); }
+.home .lecture .links a:hover { border-color: var(--primary); color: var(--primary); }
+.home .lecture .links a.to-keys { border: 2px solid var(--accent); color: var(--accent); }
+.home .lecture.soon { border-style: dashed; background: transparent; }
+/* 読み出し欄が狭い画面ではみ出さないように（長い式は欄の中で横スクロール） */
+#w-lag .readout, #w-game-parab .readout, #w-design .readout, #w-bezier .readout, #w-ball .readout, #w-quad .readout { grid-template-columns: minmax(0, 1fr); }
+.lag-formulas .lag-q { flex: 1 1 0; min-width: 0; line-height: 1.8; }
+/* 1.1 一次関数の a, b の説明は大きめ */
+.key ul.key-big { font-size: 17px; font-weight: 700; line-height: 1.8; }
+.key ul.key-big li { margin: 2px 0; }
+/* 1.2 平行移動の図：式・パラメータを大きく */
+#w-shift .widget-head .wh-eq { font-size: 1.25em; }
+#w-shift .ctrl { grid-template-columns: 40px minmax(0, 1fr) 56px; }
+#w-shift .ctrl-label { font-size: 22px; }
+#w-shift .ctrl-val { font-size: 17px; font-weight: 700; }
+.shift-read { min-width: 0; display: grid; gap: 8px; align-content: start; }
+.shift-say { margin: 0; font-size: 16px; line-height: 1.8; }
+.shift-eq { font-size: 20px; overflow-x: auto; overflow-y: hidden; padding: 6px 4px; border-radius: 10px; background: var(--surface-2); }
+.shift-eq mjx-container[display="true"] { margin: 0.2em 0 !important; }
+.shift-sub { display: flex; gap: 10px; align-items: baseline; font-size: 15px; line-height: 1.8; min-width: 0; }
+.shift-sub > .k { color: var(--muted); font-size: 13px; font-weight: 700; flex: 0 0 4.6em; }
+.shift-sub > span:not(.k) { flex: 1 1 0; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+
+/* == agent E1 (explog 2-1〜2-4) == */
+/* 2.1 パターン表：矢印は値の箱どうしのすき間に（上：×a →、下：÷a ←） */
+.pow-table { --pt-gap: 40px; grid-template-columns: 44px repeat(8, minmax(56px, 1fr)); column-gap: var(--pt-gap); row-gap: 8px; min-width: 820px; }
+.pow-table .pt-vc { position: relative; display: grid; }
+.pow-table .pt-gap { position: absolute; top: 0; bottom: 0; left: 100%; width: var(--pt-gap); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 3px 0; pointer-events: none; }
+.pow-table .pt-gap > span { font-size: 11.5px; font-weight: 800; line-height: 1.15; white-space: nowrap; letter-spacing: -0.02em; }
+.pow-table .pt-gap b { font-size: 14px; margin-left: 1px; }
+.pow-table .pt-mul { color: var(--primary); }
+.pow-table .pt-div { color: var(--accent); }
+/* 2.6 リボ払い：スライダーの値（0.3万円など）を折り返さない */
+#w-revo .ctrl-val { white-space: nowrap; flex-shrink: 0; }
+
+/* == agent E2 (explog 2-5, 2-6) == */
+.key .key-lead.key-big { font-size: 21px; font-weight: 800; color: var(--accent); line-height: 1.6; }
+@media (max-width: 480px) { .key .key-lead.key-big { font-size: 18px; } }
+.key table.scale-key-table thead th { color: var(--muted); font-size: 13px; font-weight: 700; padding: 4px 10px 6px 0; border-bottom: 1px solid var(--border); }
+.key table.scale-key-table td { padding: 8px 10px 8px 0; }
+.scale-desc { border-top: 1px solid var(--border); font-size: 14.5px; line-height: 1.8; }
+.scale-desc p { margin: 0 0 8px; }
+.scale-desc p:last-child { margin-bottom: 0; }
+.rule72 { text-align: center; }
+.key table.rule72-table { width: auto; }
+.key table.rule72-table td { text-align: center; padding: 6px 10px; font-variant-numeric: tabular-nums; }
+.key table.rule72-table thead th, .key table.rule72-table thead td { font-weight: 700; border-bottom: 1px solid var(--border); }
+.sum-card.gray { --c: var(--text); }
+#w-compound .sum-grid, #w-ebank .sum-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+#w-ebank .sim-table table { min-width: 0; }
+#w-ebank .sim-table td, #w-ebank .sim-table th { white-space: nowrap; }
+#w-ebank .sim-table tbody tr { cursor: pointer; }
+.elim-table td.on, .elim-table tr.on td { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+/* 2.1 矢印：×a は → の真上、÷a は ← の真下 */
+.pow-table .pt-gap > span { display: flex; flex-direction: column; align-items: center; }
+.pow-table .pt-gap i { font-style: normal; }
+.pow-table .pt-gap b { margin-left: 0; font-size: 16px; line-height: 1; }

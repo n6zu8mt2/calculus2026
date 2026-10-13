@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>覚えることのまとめ | 第2回 指数関数・対数関数 | 解析学 2026</title>
+<meta name="description" content="第2回 指数関数・対数関数の各章の「覚える」をまとめたページ（印刷用）">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+</head>
+<body class="chapter calm keys-page">
+<header id="site-header" data-root="../" data-current="explog"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第2回の章の一覧">
+    <div class="toc-title">第2回 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+    <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
+    <a href="2-2.html"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
+    <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
+    <a href="2-4.html"><span class="cn">2.4</span><span class="ct">対数</span></a>
+    <a href="2-5.html"><span class="cn">2.5</span><span class="ct">対数の応用</span></a>
+    <a href="2-6.html"><span class="cn">2.6</span><span class="ct">ネイピア数 e</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero"><div><div class="eyebrow">第2回 指数関数・対数関数</div><h1>覚えることのまとめ</h1></div></header>
+  <p class="keys-intro">各章の「覚える｜この章のまとめ」を集めたページです。章の名前を押すとその章に移動します。<button class="btn small" type="button" onclick="window.print()">🖨 このページを印刷</button></p>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="2-1.html">2.1指数を広げる：0・負・分数の指数</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ（$a>0$）</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>累乗</th><td>$a^n=a\times a\times\cdots\times a$（$n$ 個）</td></tr>
+        <tr><th>指数法則</th><td>$a^m\times a^n=a^{m+n}$、$\left(a^m\right)^n=a^{mn}$、$\dfrac{a^m}{a^n}=a^{m-n}$</td></tr>
+        <tr><th>0 乗・負の指数</th><td>$a^0=1$、$a^{-n}=\dfrac1{a^n}$</td></tr>
+        <tr><th>n 乗根</th><td>$\sqrt[n]{a}$ ＝ $n$ 乗すると $a$ になる正の数</td></tr>
+        <tr><th>分数の指数</th><td>$a^{\frac1n}=\sqrt[n]{a}$、$a^{\frac mn}=\left(\sqrt[n]{a}\right)^m$</td></tr>
+      </tbody></table></div>
+      <p class="key-note">どれも「指数法則がそのまま成り立つように」決めたものです。さらに分数で近づけることで、すべての実数 $x$ に対して $a^x$ が決まります。</p>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="2-2.html">2.2指数関数のグラフ</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>指数関数</th><td>$y=a^x$（$a>0,\ a\neq1$）：$x$ が 1 増えると $y$ は $a$ 倍</td></tr>
+        <tr><th>グラフの形</th><td>$a>1$ で右上がり、$0\lt a\lt 1$ で右下がり</td></tr>
+        <tr><th>通る点・漸近線</th><td>点 $(0,1)$ を通る。漸近線は $y=0$</td></tr>
+        <tr><th>平行移動</th><td>$y=a^{x-p}+q$：$x$ 方向に $p$、$y$ 方向に $q$</td></tr>
+        <tr><th>対称</th><td>$y=\left(\frac1a\right)^x=a^{-x}$ は $y=a^x$ と $y$ 軸について対称</td></tr>
+        <tr><th>増え方</th><td>指数関数はどんな多項式もいつか追い抜く</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="2-3.html">2.3倍々ゲームの威力</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>倍々を n 回</th><td>2 倍を $n$ 回くり返すと $2^n$ 倍</td></tr>
+        <tr><th>目安</th><td>$2^{10}=1024\approx10^3$（10 回で約 1000 倍）</td></tr>
+        <tr><th>$\log_{10}2$</th><td>$\log_{10}2\approx0.3010$（$2\approx10^{0.3010}$）</td></tr>
+        <tr><th>$n$ の求め方</th><td>$2^n\geqq A$ ⇔ $n\geqq\dfrac{\log_{10}A}{0.3010}$</td></tr>
+        <tr><th>倍々の威力</th><td>紙は 42 回折ると月に届く。栗まんじゅうは約1日で宇宙を埋める</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="2-4.html">2.4対数：何乗すればよい？</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ（$a>0,\ a\neq1,\ x>0$）</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>対数の意味</th><td>$\log_a x$ ＝ $a$ を何乗すると $x$ になるか</td></tr>
+        <tr><th>言いかえ</th><td>$y=\log_a x\iff x=a^y$</td></tr>
+        <tr><th>記号の約束</th><td>$\log x=\log_e x$（底 10 は $\log_{10}x$ と書く）</td></tr>
+        <tr><th>グラフ</th><td>$y=\log_a x$ と $y=a^x$ は直線 $y=x$ について対称</td></tr>
+        <tr><th>対数法則</th><td>$\log_a(xy)=\log_a x+\log_a y$、$\log_a\dfrac xy=\log_a x-\log_a y$、$\log_a x^r=r\log_a x$、$\log_a1=0$、$\log_a a=1$</td></tr>
+        <tr><th>底の変換</th><td>$\log_a x=\dfrac{\log_b x}{\log_b a}$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="2-5.html">2.5対数の応用</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>対数目盛</th><td>1 目盛ごとに 10 倍（$1,\ 10,\ 100,\ \ldots$ が等間隔）</td></tr>
+        <tr><th>対数スケール</th><td>値が 1 違うと量は一定の倍率だけ違う（10 dB で 10 倍、pH 1 で 10 倍、M 2 で 1000 倍、5 等で 100 倍）</td></tr>
+        <tr><th>桁数</th><td>自然数 $N$ の桁数 ＝（$\log_{10}N$ の整数部分）＋ 1</td></tr>
+        <tr><th>12 平均律</th><td>1 オクターブで 2 倍、半音で $2^{\frac1{12}}$ 倍</td></tr>
+        <tr><th>二分探索</th><td>$N$ 個の候補は約 $\log_2 N$ 回の質問で当てられる</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="2-6.html">2.6ネイピア数 e</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>単利</th><td>$n$ 年後に $P(1+rn)$（1次関数）</td></tr>
+        <tr><th>複利</th><td>$n$ 年後に $P(1+r)^n$（指数関数）、年 $m$ 回なら $P\left(1+\frac rm\right)^{mn}$</td></tr>
+        <tr><th>72の法則</th><td>2倍になる年数 ≒ $\dfrac{72}{\text{年利（}\%\text{）}}$</td></tr>
+        <tr><th>ネイピア数</th><td>$e=2.718\ldots$（$n\to\infty$ のときの $\left(1+\frac1n\right)^n$ の行き先）</td></tr>
+        <tr><th>e の正体</th><td>$y=e^x$ は $x=0$ での接線の傾きが 1、$\left(e^x\right)'=e^x$</td></tr>
+        <tr><th>自然対数</th><td>底を書かない $\log$ は $\log_e$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 覚えることのまとめ（tools/build.py で自動生成）</footer>
+
+<script src="../assets/common.js?v=202610140157"></script>
+</body>
+</html>

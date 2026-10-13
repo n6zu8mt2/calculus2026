@@ -106,7 +106,7 @@
     const c = g.c, d = yTarget - yLine;
     if (Math.abs(d) <= 0.2) { g.text('ぴったり！', x, yTarget, { dy: 24, align: 'center', size: 12, bold: true, color: c.teal }); return; }
     g.line(x, yLine, x, yTarget, { color: c.amber, width: 2, dash: [4, 4] });
-    g.text((d > 0 ? '↑ あと ' : '↓ あと ') + Math.abs(d).toFixed(1), x, (yLine + yTarget) / 2, { dx: left ? -8 : 8, align: left ? 'right' : 'left', size: 12, bold: true, color: c.amber });
+    g.tex((d > 0 ? '\\uparrow' : '\\downarrow') + '\\ \\text{あと }' + Math.abs(d).toFixed(1), x, (yLine + yTarget) / 2, { dx: left ? -8 : 8, align: left ? 'right' : 'left', size: 14, color: c.amber });
   }
   // 操作ボタン(発射・やり直す・次のステージへ)を作る
   function gameButtons(ctl, mainLabel) {

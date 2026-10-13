@@ -7,36 +7,12 @@
 <meta name="description" content="第1回 多項式 1.1章：直線・傾き・補間・回帰直線">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch1">
+<body class="chapter ch1 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
@@ -71,6 +47,7 @@
   </div>
 
   <section class="sec first" id="linear">
+    <p class="prereq">この章で使うこと：中学で学んだ 一次関数 $y=ax+b$（傾きと切片）と、比 $m:n$ の考え方</p>
     <p>
       $y = \teal{a}x + \red{b}$ のグラフは直線です。決めるべき数は2つだけ:
     </p>
@@ -78,6 +55,11 @@
       <li><span class="t-teal">傾き $\teal{a}$</span>：$x$ が $1$ 増えたとき、$y$ がどれだけ変化するか</li>
       <li><span class="t-red">$y$ 切片 $\red{b}$</span>：$x=0$ のときの $y$（直線が $y$ 軸と交わる高さ）</li>
     </ul>
+    <div class="key"><div class="key-ttl">覚える｜一次関数</div>$$y=\teal{a}x+\red{b}$$
+      <ul class="key-big">
+        <li><span class="t-teal">$\teal{a}$＝傾き</span>：$x$ が $1$ 増えたときの $y$ の変化</li>
+        <li><span class="t-red">$\red{b}$＝$y$ 切片</span>：$x=0$ のときの $y$</li>
+      </ul></div>
 
     <h2 class="h-sub"><span class="tag">(1)</span>傾きと切片</h2>
     <div class="widget" id="w-linear">
@@ -103,8 +85,8 @@
     <div class="callout try">
       <div class="ttl">触ってみよう</div>
       <ul>
-        <li>図の中の <b>赤い矢印</b> が $y$ 切片 $\red{b}$ です。$\red{b}$ を動かすと、直線は上下に平行移動する。</li>
-        <li>「$x$ 方向に $1$ 進む」ときの <b>$y$ 方向の変化量</b> が <b>緑の矢印</b> で、その大きさが傾き $\teal{a}$。$\teal{a}$ が負なら矢印は下向き。</li>
+        <li>図の中の赤い矢印が $y$ 切片 $\red{b}$ です。$\red{b}$ を動かすと、直線は上下に平行移動する。</li>
+        <li>「$x$ 方向に $1$ 進む」ときの $y$ 方向の変化量が緑の矢印で、その大きさが傾き $\teal{a}$。$\teal{a}$ が負なら矢印は下向き。</li>
         <li>$\teal{a}=0$ にすると、グラフはどうなる？</li>
         <li>「チャレンジ」で金色の点線が現れる。その直線に重なるよう $\teal{a}$, $\red{b}$ を合わせよう。</li>
       </ul>
@@ -115,14 +97,14 @@
       2点 $\boldsymbol{A}$, $\boldsymbol{B}$ が決まると直線が1本決まります。
       パラメータ $t$ を使って、線分 $\boldsymbol{A}\boldsymbol{B}$ 上の点 $\boldsymbol{P}(t)$ を次のように定めます。
     </p>
-    <div class="eq-box">$$\boldsymbol{P}(t) = (1-t)\,\boldsymbol{A} + t\,\boldsymbol{B}\qquad (0\leqq t\leqq 1)$$</div>
+    <div class="key"><div class="key-ttl">覚える｜補間（lerp）</div><p class="key-lead">点 $\boldsymbol{P}(t)$ は、線分 $\mathrm{AB}$ を $t:(1-t)$ に内分する点<br>（$\mathrm{AP}:\mathrm{PB}=t:(1-t)$）</p>$$\boldsymbol{P}(t) = (1-t)\,\boldsymbol{A} + t\,\boldsymbol{B}\quad (0\leqq t\leqq 1)$$<p class="key-note">$t=0$ で $\boldsymbol{A}$、$t=1$ で $\boldsymbol{B}$。$t$ が増えると $\boldsymbol{A}$ から $\boldsymbol{B}$ へ進む。</p></div>
     <ul>
       <li>$t=0$ のとき $\boldsymbol{P}(0)=\boldsymbol{A}$、$t=1$ のとき $\boldsymbol{P}(1)=\boldsymbol{B}$。</li>
-      <li>$t$ を $0$ から $1$ へ動かすと、$\boldsymbol{P}(t)$ は $\boldsymbol{A}$ から $\boldsymbol{B}$ まで <b>一定の速さ</b> で進む（$t$ の1次式なので）。</li>
+      <li>$t$ を $0$ から $1$ へ動かすと、$\boldsymbol{P}(t)$ は $\boldsymbol{A}$ から $\boldsymbol{B}$ まで一定の速さで進む（$t$ の1次式なので）。</li>
       <li>$\boldsymbol{P}(t)-\boldsymbol{A}=t(\boldsymbol{B}-\boldsymbol{A})$ なので、
         <span class="t-red">$\overline{\mathrm{AP}}=t\,\overline{\mathrm{AB}}$</span>、
         <span class="t-teal">$\overline{\mathrm{PB}}=(1-t)\,\overline{\mathrm{AB}}$</span>。
-        つまり <b>$\mathrm{AP}:\mathrm{PB}=t:(1-t)$</b>（線分 $\mathrm{AB}$ を $t:(1-t)$ に <b>内分</b> する点）。</li>
+        つまり $\mathrm{AP}:\mathrm{PB}=t:(1-t)$（線分 $\mathrm{AB}$ を $t:(1-t)$ に<b>内分</b>する点）。</li>
     </ul>
     <p>この「$t:(1-t)$ に分ける」操作が、あとで登場するベジェ曲線のすべての土台になります。</p>
     <div class="widget" id="w-lerp">
@@ -151,21 +133,22 @@
     </div>
     <details class="think">
       <summary>考えてみよう：$t=\tfrac12$、$t=\tfrac13$ の点は？</summary>
-      <p>$t=\tfrac12$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac12:\tfrac12=1:1$ で <b>中点</b>。$t=\tfrac13$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac13:\tfrac23=1:2$、つまり $\boldsymbol{A}$ から全体の $\tfrac13$ の位置です。
-      $t<0$ や $t>1$ にすると線分の外側の点（外分点）になります。</p>
+      <p>$t=\tfrac12$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac12:\tfrac12=1:1$ で中点。$t=\tfrac13$ なら $\mathrm{AP}:\mathrm{PB}=\tfrac13:\tfrac23=1:2$、つまり $\boldsymbol{A}$ から全体の $\tfrac13$ の位置です。
+      $t\lt 0$ や $t>1$ にすると線分の外側の点（外分点）になります。</p>
     </details>
   
     <h2 class="h-sub"><span class="tag">(3)</span>データに直線をあてはめる ― 回帰直線</h2>
     <p>
-      一次関数は、<b>データの傾向</b> を表すのにも使われます。
+      一次関数は、データの傾向を表すのにも使われます。
       たとえば「気温が高い日ほどアイスがよく売れる」「勉強時間が長いほど点数が高い」のように、データの点がだいたい直線状に並ぶことがあります。
-      その直線を式 $y=\teal{a}x+\red{b}$ で表せば、まだ測っていない $x$ に対する $y$ を <b>予測</b> できます。
+      その直線を式 $y=\teal{a}x+\red{b}$ で表せば、まだ測っていない $x$ に対する $y$ を予測できます。
     </p>
     <p>
-      (2) の補間は2点を <b>ちょうど通る</b> 直線でしたが、データの点はたくさんあり、すべてを通る直線はふつう引けません。
-      そこで、各データ点と直線との <span class="t-amber">縦のずれ</span>（下の図の金色の線）を2乗して足した値が <b>最も小さくなる</b> 直線を選びます。
-      これを <b>回帰直線</b> といい、この選び方を <b>最小二乗法</b> といいます。
+      (2) の補間は2点をちょうど通る直線でしたが、データの点はたくさんあり、すべてを通る直線はふつう引けません。
+      そこで、各データ点と直線との <span class="t-amber">縦のずれ</span>（下の図の金色の線）を2乗して足した値が最も小さくなる直線を選びます。
+      これを<b>回帰直線</b>といい、この選び方を<b>最小二乗法</b>といいます。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜回帰直線（最小二乗法）</div><p>データ点と直線の「縦のずれ」を2乗して足した値が、最も小さくなる直線</p></div>
     <div class="widget" id="w-reg">
       <div class="widget-head">データに直線をあてはめる <span class="legend"><span class="lg"><i style="background:var(--teal)"></i>緑 ＝ 傾き $a$</span><span class="lg"><i style="background:var(--accent)"></i>赤 ＝ 切片 $b$</span><span class="lg"><i style="background:var(--amber)"></i>金 ＝ 縦のずれ</span><span class="lg"><i style="background:var(--text)"></i>黒い点 ＝ データ</span></span> <span class="hint">スライダーで直線を動かす／黒い点（データ）もドラッグできる</span></div>
       <div class="stage"><canvas aria-label="データと回帰直線"></canvas></div>
@@ -200,6 +183,15 @@
     </p>
   
   
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>一次関数</th><td>$y=ax+b$（$a$＝傾き、$b$＝$y$ 切片）</td></tr>
+        <tr><th>傾き</th><td>$x$ が $1$ 増えたときの $y$ の変化</td></tr>
+        <tr><th>補間</th><td>$\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$<br>$\mathrm{AP}:\mathrm{PB}=t:(1-t)$</td></tr>
+        <tr><th>回帰直線</th><td>縦のずれの2乗の和が最小になる直線（最小二乗法）</td></tr>
+      </tbody></table></div>
+    </div>
+
     <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：レーザーで星を撃ち抜け</h2>
     <p>
       直線 $y=\teal{a}x+\red{b}$ のレーザーで、星をすべて撃ち抜きましょう。
@@ -231,7 +223,11 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) 傾き $-2$、$y$ 切片 $3$　(2) $y=2x+1$　(3) $(2,1)$、$\mathrm{AP}:\mathrm{PB}=1:2$</p>
+      <ol class="quiz-ans">
+        <li>$y=\teal{a}x+\red{b}$ と見比べると $\teal{a}=-2$、$\red{b}=3$。<br>よって 傾き $-2$、$y$ 切片 $3$</li>
+        <li>傾き $=\dfrac{y\ \text{の変化}}{x\ \text{の変化}}=\dfrac{5-1}{2-0}=2$。$x=0$ のとき $y=1$ なので $y$ 切片は $1$。<br>よって $y=2x+1$</li>
+        <li>$\boldsymbol{P}\!\left(\tfrac13\right)=\left(1-\tfrac13\right)\boldsymbol{A}+\tfrac13\boldsymbol{B}=\tfrac23(0,0)+\tfrac13(6,3)=(2,\ 1)$。<br>$\boldsymbol{P}(t)$ は AB を $t:(1-t)=\tfrac13:\tfrac23$ に分けるので $\mathrm{AP}:\mathrm{PB}=1:2$</li>
+      </ol>
     </details>
   </section>
 
@@ -244,9 +240,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="polynomial.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="polynomial.js?v=202610140157"></script>
 </body>
 </html>

@@ -6,9 +6,10 @@
 <title>解析学 2026</title>
 <meta name="description" content="2026年度 解析学 講義ページ。数学のオブジェクトを動かしながら理解する。">
 <script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
-<link rel="stylesheet" href="assets/style.css?v=20261018">
+<link rel="stylesheet" href="assets/style.css?v=202610140157">
+<link rel="stylesheet" href="assets/chapter.css?v=202610140157">
 </head>
-<body>
+<body class="calm home">
 <header id="site-header" data-root="./" data-current="home"></header>
 
 <div class="layout" style="display:block;max-width:900px">
@@ -22,23 +23,25 @@
       </p>
     </div>
 
-    <section class="sec" style="margin-top:32px">
+    <section class="sec" style="margin-top:28px">
       <h2 style="font-size:22px">教材</h2>
-      <div class="cards">
-        <a class="card" href="polynomial/index.html">
-          <span class="badge">第1回</span>
-          <h3>多項式</h3>
+      <div class="lecture-list">
+        <div class="lecture">
+          <span class="no">第1回</span>
+          <h3><a href="polynomial/index.html">多項式</a></h3>
           <p>直線から曲線へ。次数を上げながら、動きや形をつくる道具としての多項式を体験します。</p>
-          <div class="mini"><span>一次関数</span><span>二次関数</span><span>イージング</span><span>ベジェ曲線</span></div>
-        </a>
-        <a class="card" href="explog/index.html">
-          <span class="badge">第2回</span>
-          <h3>指数関数・対数関数</h3>
+          <p class="topics">一次関数 ・ 二次関数 ・ 放物線 ・ イージング ・ ベジェ曲線 ・ ラグランジュ補間</p>
+          <div class="links"><a href="polynomial/index.html">目次へ</a><a class="to-keys" href="polynomial/keys.html">覚えることのまとめ</a></div>
+        </div>
+        <div class="lecture">
+          <span class="no">第2回</span>
+          <h3><a href="explog/index.html">指数関数・対数関数</a></h3>
           <p>2⁻¹＝½ や 2 の ½ 乗＝√2 が自然な理由から、紙を折って月まで行く話、音や地震の大きさ、お金の利息とネイピア数 e まで。</p>
-          <div class="mini"><span>指数の拡張</span><span>指数関数</span><span>倍々ゲーム</span><span>対数</span><span>対数の応用</span><span>e</span></div>
-        </a>
-        <div class="card soon">
-          <span class="badge">準備中</span>
+          <p class="topics">指数の拡張 ・ 指数関数 ・ 倍々ゲーム ・ 対数 ・ 対数の応用 ・ e</p>
+          <div class="links"><a href="explog/index.html">目次へ</a><a class="to-keys" href="explog/keys.html">覚えることのまとめ</a></div>
+        </div>
+        <div class="lecture soon">
+          <span class="no">準備中</span>
           <h3>次のトピック</h3>
           <p>順次追加していきます。</p>
         </div>
@@ -48,6 +51,6 @@
 </div>
 
 <footer class="site-footer">解析学 2026</footer>
-<script src="assets/common.js?v=20261018"></script>
+<script src="assets/common.js?v=202610140157"></script>
 </body>
 </html>

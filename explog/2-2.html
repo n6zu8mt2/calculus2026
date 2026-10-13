@@ -7,36 +7,12 @@
 <meta name="description" content="第2回 指数関数・対数関数 2.2章：y=a^x・平行移動・倍々の増え方">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  window.MathJax = {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']],
-      packages: { '[+]': ['html'] },
-      macros: {
-        amber: ['\\class{tx-amber}{#1}', 1],
-        red: ['\\class{tx-red}{#1}', 1],
-        blue: ['\\class{tx-blue}{#1}', 1],
-        violet: ['\\class{tx-violet}{#1}', 1],
-        teal: ['\\class{tx-teal}{#1}', 1],
-        slate: ['\\class{tx-slate}{#1}', 1],
-        brown: ['\\class{tx-brown}{#1}', 1]
-      }
-    },
-    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
-    startup: {
-      pageReady: function () {
-        return MathJax.startup.defaultPageReady().then(function () {
-          document.dispatchEvent(new Event('mathjax-ready'));
-        });
-      }
-    }
-  };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/style.css?v=20261018">
-<link rel="stylesheet" href="../assets/chapter.css?v=20261018">
+<script src="../assets/mathjax.js?v=202610140157"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610140157">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
 </head>
-<body class="chapter ch2">
+<body class="chapter ch2 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
 
 <div class="layout">
@@ -67,23 +43,66 @@
       <li>$y=a^{x-p}+q$ が $y=a^x$ の平行移動であることを、1.2章と同じ考え方で説明できる。</li>
       <li>$x$ が 1 増えるごとに $y$ が $a$ 倍になる「倍々」の増え方が、多項式よりずっと速いことを説明できる。</li>
     </ol>
-    <div class="goal-meta">図 2つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
+    <div class="goal-meta">図 3つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
   </div>
+
+  <p class="prereq">この章で使うこと：<a href="2-1.html">2.1章</a>の 指数の広げ方 $a^0=1$、$a^{-n}=\dfrac1{a^n}$、<a href="../polynomial/1-2.html#quadratic">1.2章</a>の 平行移動</p>
 
   <section class="sec first" id="main">
 
     <p>
       2.1章で、$2^x$ は整数だけでなく分数（さらには実数）の $x$ に対して決まることがわかりました。
-      $a>0,\ a\neq1$ に対して、$y=a^x$ を <b>指数関数</b> といいます。
-      $x$ が 1 増えるごとに $y$ が $a$ 倍になる、つまり <b>同じ時間ごとに同じ倍率で増える（減る）</b> 量を表す関数です。
+      $a>0,\ a\neq1$ に対して、$y=a^x$ を<b>指数関数</b>といいます。
+      $x$ が 1 増えるごとに $y$ が $a$ 倍になる、つまり同じ時間ごとに同じ倍率で増える（減る）量を表す関数です。
     </p>
+    <div class="key"><div class="key-ttl">覚える｜指数関数</div>$$y=a^x\qquad(a>0,\ a\neq1)$$<p class="key-note">$x$ が 1 増えると、$y$ は $a$ 倍になる。</p></div>
 
-    <h2 class="h-sub"><span class="tag">(1)</span>グラフと平行移動</h2>
+    <h2 class="h-sub"><span class="tag">(1)</span>指数関数のグラフをふり返る</h2>
 
     <p>
-      底 $\blue{a}$ を変えるとグラフはどう変わるでしょう。さらに 1.2章と同じように、$x$ を $x-\teal{p}$、$y$ を $y-\red{q}$ に置き換えると、
-      グラフは <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 平行移動します。
+      まず、$y=a^x$ のグラフがどんな形だったかを復習しましょう。下の図の緑の矢印は「$x$ が 1 増えると $y$ が $\blue{a}$ 倍される」ことを表しています。
+      $x=0$ のとき $y=a^0=1$ から出発して、右へ 1 進むごとに $\times\blue{a}$、左へ 1 進むごとに $\div\blue{a}$ です。
     </p>
+    <div class="widget" id="w-expbasic">
+      <div class="widget-head">$y=\blue{a}^x$ のグラフ <span class="hint">$a$ を動かす（$0\lt a\lt 1$ も試す）</span></div>
+      <div class="stage"><canvas aria-label="y=a^x のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">x が 1 増えると</span><span class="tex" data-r="mul"></span></div>
+          <div class="row"><span class="k">形</span><span data-r="kind" class="note-txt"></span></div>
+        </div>
+      </div>
+    </div>
+    <p>
+      $\blue{a}>1$ なら、1 進むごとに $y$ が大きくなるので右上がり。$0\lt\blue{a}\lt1$ なら、1 進むごとに $y$ が小さくなる（例えば $\times\frac12$）ので右下がり。
+      $\blue{a}=1$ では何回かけても $1$ のままで、水平な直線 $y=1$ になってしまいます（だから指数関数では $a\neq1$ とします）。
+      どの $a$ でも、$x$ をどれだけ小さく（大きく）しても $y$ は $0$ に近づくだけで、$0$ や負の数にはなりません。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜$y=a^x$ のグラフ</div>
+      <ul>
+        <li>$a>1$ なら右上がり、$0\lt a\lt 1$ なら右下がり。</li>
+        <li>必ず点 $(0,1)$ を通る（$a^0=1$ だから）。</li>
+        <li>直線 $y=0$（$x$ 軸）が漸近線。グラフはいつも $x$ 軸より上にある。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>指数関数のグラフの平行移動</h2>
+
+    <p>
+      第1回の <a href="../polynomial/1-2.html#quadratic">1.2章 (1) グラフを平行移動する</a> で、
+      グラフ $y=f(x)$ を <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 平行移動すると、
+      式は「$x$ を $x-\teal{p}$ に、$y$ を $y-\red{q}$ に置き換えた」$y-\red{q}=f(x-\teal{p})$ になることを学びました。
+      これは $f(x)$ が何であっても成り立つので、$f(x)=a^x$ にもそのまま使えます。
+    </p>
+    <div class="eq-box">$$\begin{gathered}y=a^x\ \longrightarrow\ y-\red{q}=a^{x-\teal{p}}\\[4pt]\text{つまり}\quad y=a^{x-\teal{p}}+\red{q}\end{gathered}$$</div>
+    <div class="key"><div class="key-ttl">覚える｜平行移動</div>
+      <p class="key-lead">$y=a^x$ のグラフを $x$ 方向に $\teal{p}$、$y$ 方向に $\red{q}$ 平行移動したグラフの式は</p>
+      $$\begin{gathered}y-\red{q}=a^{x-\teal{p}}\\[4pt]\text{つまり}\quad y=a^{x-\teal{p}}+\red{q}\end{gathered}$$
+      <p class="key-note">1.2章の $y-\red{q}=f(x-\teal{p})$ で $f(x)=a^x$ としたもの。点 $(0,1)$ は $(\teal{p},\ \red{q}+1)$ に、漸近線 $y=0$ は $y=\red{q}$ に移る。</p>
+    </div>
+    <p>下の図で、底 $\blue{a}$ と移動量 $\teal{p},\ \red{q}$ を動かして確かめましょう。</p>
     <div class="widget" id="w-expgraph">
       <div class="widget-head">$y=\blue{a}^{x-\teal{p}}+\red{q}$ <span class="hint">$a,\ p,\ q$ を動かす</span></div>
       <div class="stage"><canvas aria-label="指数関数のグラフ"></canvas></div>
@@ -101,18 +120,23 @@
     <div class="callout try">
       <div class="ttl">触ってみよう</div>
       <ul>
-        <li>$a>1$ なら右上がり、$0\lt a\lt 1$ なら右下がり。$a=1$ にするとどうなる？</li>
+        <li>$a=1$ にするとどうなる？（$1^x$ はいつも $1$）</li>
         <li>「$y=(1/a)^x$ も表示」をオンにすると、$y$ 軸について対称なグラフが現れる。$\left(\frac1a\right)^x=a^{-x}$ だから。</li>
-        <li>どの $a$ でも、グラフは点 $(0,1)$ を通る（$a^0=1$）。平行移動すると $(p,\ q+1)$ に移る。</li>
-        <li>グラフは直線 $y=q$ にどこまでも近づくが、触れない。この直線を <b>漸近線</b> という。</li>
+        <li>$p,\ q$ を動かして、点 $(0,1)$ が $(p,\ q+1)$ に移ることを確かめよう。</li>
+        <li>グラフは直線 $y=q$ にどこまでも近づくが、触れない。この直線を<b>漸近線</b>という。</li>
       </ul>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(2)</span>倍々の増え方は、多項式に必ず勝つ</h2>
+    <h2 class="h-sub"><span class="tag">(3)</span>倍々の増え方は、多項式に必ず勝つ</h2>
 
     <p>
       $2^x$（倍々）と $x^2$、$x^3$、$x^{10}$（多項式）を比べてみましょう。最初は多項式が大きくても、$x$ が大きくなると
-      <b>指数関数が必ず追い抜きます</b>。縦軸を「対数目盛（1目盛ごとに10倍）」に切り替えると、何が起きているかがよく見えます。
+      指数関数が必ず追い抜きます。ただ、ふつうの目盛では値が大きくなりすぎて、小さいところの様子がつぶれて見えません。
+    </p>
+    <p>
+      そこで縦軸を<b>対数目盛</b>に切り替えます。対数目盛では、縦軸の $1,\ 10,\ 100,\ 1000,\ \ldots$（$10^0,\ 10^1,\ 10^2,\ 10^3,\ \ldots$）が
+      <b>等間隔</b>に並びます。つまり 1 目盛上がるごとに値は「$+1$」ではなく「$\times10$」になります。
+      こうすると、$1$ と $1000$ と $10^{20}$ のように桁がまったく違う数を、1つの図にまとめてかくことができます。
     </p>
     <div class="widget" id="w-exprace">
       <div class="widget-head">指数関数 vs 多項式 <span class="hint">比べる相手と範囲を選ぶ／対数目盛に切り替える</span></div>
@@ -128,17 +152,34 @@
       </div>
     </div>
 
+    <div class="key"><div class="key-ttl">覚える｜倍々は多項式に勝つ</div><p>$a>1$ のとき、指数関数 $a^x$ はどんな多項式（$x^2$、$x^{10}$、…）も、$x$ が大きくなるといつか必ず追い抜く。</p></div>
+
     <div class="callout point">
-      <div class="ttl">ポイント</div>
-      <p>対数目盛では、指数関数 $y=2^x$ が <b>直線</b> になります（$\log_{10}2^x=x\log_{10}2$ は $x$ の1次式）。
-      一方、多項式はだんだん寝ていく曲線になるので、いつか必ず追い抜かれます。対数は2.4章で詳しく扱います。</p>
+      <div class="ttl">ポイント：対数目盛で指数関数が直線になるわけ</div>
+      <p>$y=2^x$ は、$x$ が 1 増えるごとに $\times2$ されます。$\times2$ を約 3.3 回くり返すと $\times10$（$2^{3.32\ldots}=10$）なので、
+      $x$ が約 3.3 増えるごとに、縦軸の目盛をちょうど 1 つ（$\times10$）上がります。
+      「横に同じだけ進むと、縦に同じだけ上がる」のだから、対数目盛では $y=2^x$ は<b>まっすぐな直線</b>になります。</p>
+      <p>一方、多項式 $x^{10}$ は、$x$ が $1\to2$ では $2^{10}=1024$ 倍になりますが、$10\to11$ では $1.1^{10}\approx2.6$ 倍、$100\to101$ では約 $1.1$ 倍にしかなりません。
+      増える倍率がだんだん 1 に近づくので、対数目盛ではだんだん寝ていく曲線になり、いつも $\times2$ の直線にいつか必ず追い抜かれます。
+      この「目盛の高さ」を表すのが $\log_{10}$ で、2.4・2.5章で詳しく扱います（$\log_{10}2^x=x\log_{10}2$ は $x$ の1次式）。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(3)</span>チャレンジ：指数関数でコインを集めろ</h2>
+    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>指数関数</th><td>$y=a^x$（$a>0,\ a\neq1$）：$x$ が 1 増えると $y$ は $a$ 倍</td></tr>
+        <tr><th>グラフの形</th><td>$a>1$ で右上がり、$0\lt a\lt 1$ で右下がり</td></tr>
+        <tr><th>通る点・漸近線</th><td>点 $(0,1)$ を通る。漸近線は $y=0$</td></tr>
+        <tr><th>平行移動</th><td>$y=a^{x-p}+q$：$x$ 方向に $p$、$y$ 方向に $q$</td></tr>
+        <tr><th>対称</th><td>$y=\left(\frac1a\right)^x=a^{-x}$ は $y=a^x$ と $y$ 軸について対称</td></tr>
+        <tr><th>増え方</th><td>指数関数はどんな多項式もいつか追い抜く</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：指数関数でコインを集めろ</h2>
 
     <p>1.2章の放物線のチャレンジの指数関数版です。$y=\blue{a}^{x-\teal{p}}+\red{q}$ で、コインをすべて集めましょう。
     発射前はねらいの点線と、コインまでの縦のずれが表示されます（点線を消して命中すると 👑）。
-    <b>「$x$ が 1 増えると $y$ が何倍？」</b> と、<b>必ず通る点 $(p,\ q+1)$</b> が手がかりです。</p>
+    「$x$ が 1 増えると $y$ が何倍？」と、必ず通る点 $(p,\ q+1)$ が手がかりです。</p>
     <div class="widget" id="w-game-expcoin">
       <div class="widget-head">指数関数でコインを集めろ <span class="game-total" data-r="total"></span><span class="hint">$a,\ p,\ q$ を決めて「発射」</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
@@ -165,7 +206,9 @@
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
-      <p>(1) $x$ 方向に $3$ 平行移動　(2) $\dfrac1{3^x}=3^{-x}$ なので $y$ 軸について対称　(3) $2^0=1$ だから。$(1,\ 4)$</p>
+      <p>(1) $y=2^{x-3}$ は $y=2^x$ の $x$ を $x-3$ に置き換えた式。<br>よって $x$ 方向に $3$（右へ 3）平行移動したもの</p>
+      <p>(2) $\dfrac1{3^x}=3^{-x}$ なので、$y=3^x$ の $x$ を $-x$ に置き換えた式。<br>よって $y$ 軸について対称</p>
+      <p>(3) $x=0$ のとき $y=2^0=1$ だから。<br>$y=2^{x-1}+3$ は $y=2^x$ を $x$ 方向に 1、$y$ 方向に 3 平行移動したものなので、点 $(0,\ 1)$ は $(0+1,\ 1+3)=(1,\ 4)$ に移る（確かめ：$x=1$ で $2^0+3=4$）</p>
     </details>
   </section>
 
@@ -178,9 +221,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=20261018"></script>
-<script src="../assets/plot.js?v=20261018"></script>
-<script src="../assets/game.js?v=20261018"></script>
-<script src="explog.js?v=20261018"></script>
+<script src="../assets/common.js?v=202610140157"></script>
+<script src="../assets/plot.js?v=202610140157"></script>
+<script src="../assets/game.js?v=202610140157"></script>
+<script src="explog.js?v=202610140157"></script>
 </body>
 </html>
