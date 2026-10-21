@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>1.3 放物線 | 多項式 | 解析学 2026</title>
-<meta name="description" content="第1回 多項式 1.3章：二次関数の応用">
+<meta name="description" content="第1章 多項式 1.3節：二次関数の応用">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610140157"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610140157">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
 </head>
 <body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
-  <nav class="toc chapnav" aria-label="第1回の章の一覧">
-    <div class="toc-title">第1回 多項式</div>
-    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+  <nav class="toc chapnav" aria-label="第1章の節の一覧">
+    <div class="toc-title">第1章 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1章の目次</span></a>
     <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
     <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
     <a href="1-3.html" class="active" aria-current="page"><span class="cn">1.3</span><span class="ct">放物線</span></a>
@@ -31,13 +31,13 @@
   <header class="chap-hero">
     <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 54 Q30 -6 58 54" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="6 6" stroke-linecap="round"/><circle cx="44" cy="26" r="7" fill="currentColor"/><path d="M4 56 H60" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
     <div>
-      <div class="eyebrow">第1回 多項式 ／ 1.3章</div>
+      <div class="eyebrow">第1章 多項式 ／ 1.3節</div>
       <h1><span class="chap-no">1.3</span>放物線：ボールを投げる</h1>
     </div>
   </header>
 
   <div class="goal">
-    <div class="goal-ttl">この章のゴール</div>
+    <div class="goal-ttl">この節のゴール</div>
     <ol>
       <li>投げたボールの軌跡が、$x$ の二次関数（上に凸の放物線）になることを説明できる。</li>
       <li>頂点＝最高点を求め、重力 $g$ を変えると軌跡がどう変わるかを説明できる。</li>
@@ -47,10 +47,10 @@
   </div>
 
   <section class="sec first" id="projectile">
-    <p class="prereq">この章で使うこと：<a href="1-2.html">1.2章</a>の 頂点形 $y=a(x-p)^2+q$（頂点 $(p,\ q)$）と平方完成、中学で学んだ「進む距離＝速さ×時間」</p>
+    <p class="prereq">この節で使うこと：<a href="1-2.html">1.2節</a>の 頂点形 $y=a(x-p)^2+q$（頂点 $(p,\ q)$）と平方完成、中学で学んだ「進む距離＝速さ×時間」</p>
     <p>
       二次関数が最もよく現れる場面が、投げたボールの軌跡（通り道）です。
-      1.2章で学んだ頂点・平方完成が、そのまま「最高点」や「飛距離」の計算になります。
+      1.2節で学んだ頂点・平方完成が、そのまま「最高点」や「飛距離」の計算になります。
     </p>
 
     <h2 class="h-sub"><span class="tag">(1)</span>投げたボールの軌跡は二次関数</h2>
@@ -59,7 +59,7 @@
       このとき斜めの速さ $\amber{v_0}$ を、<span class="t-teal">横向きの速さ $\teal{v_x}$</span> と <span class="t-red">縦向きの速さ $\red{v_y}$</span> の2つに分けて考えるのがコツです。
       下の図の <span class="t-amber">金の矢印</span> が $\amber{v_0}$、<span class="t-teal">緑の矢印</span> が $\teal{v_x}$、<span class="t-red">赤の矢印</span> が $\red{v_y}$ です。
     </p>
-    <div class="key"><div class="key-ttl">覚える｜速さを横と縦に分ける</div><p class="key-lead">斜めに投げた速さ $\amber{v_0}$ は、横向きの速さ $\teal{v_x}$ と縦向きの速さ $\red{v_y}$ に分けられる</p>$$\teal{v_x}=\amber{v_0}\cos\theta,\qquad \red{v_y}=\amber{v_0}\sin\theta$$<p class="key-note">$\cos\theta$、$\sin\theta$ は、長さ $1$ の斜めの矢印（角度 $\theta$）を横と縦に分けたときの、横の長さと縦の長さです（高校の数学Ⅰで「三角比」として学びます）。たとえば $\theta=30^\circ$ なら $\cos\theta\approx0.87$、$\sin\theta=0.5$、$\theta=45^\circ$ なら どちらも約 $0.71$。この章では「$\teal{v_x}$ と $\red{v_y}$ は図の緑と赤の矢印の長さ」と思えば十分です。</p></div>
+    <div class="key"><div class="key-ttl">覚える｜速さを横と縦に分ける</div><p class="key-lead">斜めに投げた速さ $\amber{v_0}$ は、横向きの速さ $\teal{v_x}$ と縦向きの速さ $\red{v_y}$ に分けられる</p>$$\teal{v_x}=\amber{v_0}\cos\theta,\qquad \red{v_y}=\amber{v_0}\sin\theta$$<p class="key-note">$\cos\theta$、$\sin\theta$ は、長さ $1$ の斜めの矢印（角度 $\theta$）を横と縦に分けたときの、横の長さと縦の長さです（高校の数学Ⅰで「三角比」として学びます）。たとえば $\theta=30^\circ$ なら $\cos\theta\approx0.87$、$\sin\theta=0.5$、$\theta=45^\circ$ なら どちらも約 $0.71$。この節では「$\teal{v_x}$ と $\red{v_y}$ は図の緑と赤の矢印の長さ」と思えば十分です。</p></div>
     <p>
       横と縦では、ボールの動き方がまったく違います。
     </p>
@@ -81,7 +81,7 @@
       2つの式から時間 $t$ を消すと、$x$ と $y$ だけの式（軌跡の式）になります。$x=\teal{v_x}t$ より $t=\dfrac{x}{\teal{v_x}}$。これを $y$ の式に代入すると
     </p>
     <div class="eq-box">$$\begin{aligned}y&=h_0+\red{v_y}\cdot\frac{x}{\teal{v_x}}-\frac12 g\left(\frac{x}{\teal{v_x}}\right)^2\\ &=-\frac{g}{2\teal{v_x}^{\,2}}\,x^2+\frac{\red{v_y}}{\teal{v_x}}\,x+h_0\end{aligned}$$</div>
-    <div class="key"><div class="key-ttl">覚える｜ボールの軌跡は放物線</div><p class="key-lead">投げたボールの通り道は、$x$ の二次関数のグラフ（山の形の放物線）になる</p>$$y=-\frac{g}{2\teal{v_x}^{\,2}}\,x^2+\frac{\red{v_y}}{\teal{v_x}}\,x+h_0$$<p class="key-note">$x^2$ の係数 $-\dfrac{g}{2v_x^{\,2}}$ が負なので、上に凸（山の形）。1.2章の $y=ax^2+bx+c$ で $a\lt 0$ の場合です。</p></div>
+    <div class="key"><div class="key-ttl">覚える｜ボールの軌跡は放物線</div><p class="key-lead">投げたボールの通り道は、$x$ の二次関数のグラフ（山の形の放物線）になる</p>$$y=-\frac{g}{2\teal{v_x}^{\,2}}\,x^2+\frac{\red{v_y}}{\teal{v_x}}\,x+h_0$$<p class="key-note">$x^2$ の係数 $-\dfrac{g}{2v_x^{\,2}}$ が負なので、上に凸（山の形）。1.2節の $y=ax^2+bx+c$ で $a\lt 0$ の場合です。</p></div>
     <p>
       最高点は、この放物線の頂点です。平方完成でも求められますが、「縦の速さ」で考えると簡単です。
       上向きの速さ $\red{v_y}$ は1秒ごとに $g$ ずつ減るので、$\dfrac{\red{v_y}}{g}$ 秒後に $0$ になり、そこが最高点です。
@@ -136,7 +136,7 @@
     </details>
     
   
-    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>速さの分解</th><td>$v_x=v_0\cos\theta$（横）、$v_y=v_0\sin\theta$（縦）</td></tr>
         <tr><th>位置</th><td>$x=v_xt$、$y=h_0+v_yt-\frac12gt^2$</td></tr>
@@ -195,18 +195,18 @@
     </details>
   </section>
 
-  <nav class="pager" aria-label="前後の章">
-    <a class="prev" href="1-2.html"><span class="dir">← 前の章</span><span class="nm">1.2 二次関数</span></a>
-    <a class="next" href="1-4.html"><span class="dir">次の章 →</span><span class="nm">1.4 イージング</span></a>
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="1-2.html"><span class="dir">← 前の節</span><span class="nm">1.2 二次関数</span></a>
+    <a class="next" href="1-4.html"><span class="dir">次の節 →</span><span class="nm">1.4 イージング</span></a>
   </nav>
 </main>
 </div>
 
-<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+<footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610140157"></script>
-<script src="../assets/plot.js?v=202610140157"></script>
-<script src="../assets/game.js?v=202610140157"></script>
-<script src="polynomial.js?v=202610140157"></script>
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="polynomial.js?v=202610211315"></script>
 </body>
 </html>

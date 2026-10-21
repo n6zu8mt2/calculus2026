@@ -581,3 +581,12 @@ table.cmp td:first-child { font-weight: 700; }
 .keys-intro { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; color: var(--muted); font-size: 14px; }
 .keys-page .keys-ch .h-sub a { color: inherit; text-decoration: none; }
 .keys-page .keys-ch .h-sub a:hover { text-decoration: underline; }
+
+/* スマホではヘッダーのメニューを1行で横スクロール（章が増えても折り返さない） */
+@media (max-width: 560px) {
+  .site-header-inner { gap: 6px; }
+  .brand span:not(.brand-mark) { display: none; }
+  .site-nav { min-width: 0; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a { white-space: nowrap; padding-left: 8px; padding-right: 8px; font-size: 13px; }
+}

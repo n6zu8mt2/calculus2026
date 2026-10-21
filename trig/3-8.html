@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.8 波を足す | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.8節：純音・うなり・逆位相・フーリエ・自分の声">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch8 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html" class="active" aria-current="page"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.8節</div>
+      <h1><span class="chap-no">3.8</span>波を足す：音・うなり・フーリエ</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>音を $A\sin(2\pi ft)$ で表し、振幅と周波数の意味を説明できる。</li>
+      <li>2つの波を足すと、うなりや打ち消し合いが起きることを説明できる。</li>
+      <li>どんな周期的な波も $\sin$ の足し算で近づけられること（フーリエ級数）を説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 7つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="3-6.html">3.6節</a>の グラフ（振幅・周期・合成）、<a href="3-5.html">3.5節</a>の 円運動と加法定理、<a href="../explog/2-5.html">2.5節</a>の 音階</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      ピアノとバイオリンで同じ「ラ」をひいても、ちがう音に聞こえます。友だちの声は、顔を見なくてもだれの声かわかります。
+      この「音色（ねいろ）のちがい」はどこから来るのでしょうか。
+      この節では、音が $\sin$ の波であること、そして<b>波を足し算すると</b>、うなり・音の打ち消し・いろいろな音色が生まれることを、実際に音を鳴らしながら確かめます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>音は sin の波</h2>
+
+    <p>
+      音は<b>空気のふるえ</b>です。スピーカーの膜が前後にふるえると、空気が押されたり引かれたりして、そのふるえが耳まで伝わります。
+      膜の位置を、時刻 $t$（秒）を横軸にしてグラフにすると、音叉（おんさ）や時報の「ピッ」のような澄んだ音（<b>純音</b>）は、きれいな $\sin$ の波になります。
+    </p>
+    <div class="eq-box eq-hero">$$y=\violet{A}\sin(2\pi\amber{f}\,t)$$</div>
+    <ul>
+      <li>$\violet{A}$（<b>振幅</b>）：ふるえの大きさ。大きいほど<b>大きな音</b>。</li>
+      <li>$\amber{f}$（<b>周波数</b>）：1秒間にふるえる回数。単位は <b>Hz</b>（ヘルツ）。大きいほど<b>高い音</b>。</li>
+    </ul>
+    <p>
+      なぜ $2\pi\amber{f}$ なのでしょう。<a href="3-5.html">3.5節</a>の円運動で考えると、1秒に $\amber{f}$ 回転する点は、1秒に $2\pi\amber{f}$ ラジアン回ります。その影（縦の位置）が $\sin(2\pi\amber{f}t)$ です。
+      <a href="3-6.html">3.6節</a>の $y=\sin Bx$ と同じ形で、$B=2\pi\amber{f}$ なので、周期は
+    </p>
+    <div class="eq-box">$$T=\frac{2\pi}{2\pi\amber{f}}=\frac{1}{\amber{f}}\ \text{秒}$$</div>
+    <p>
+      です。例えば、<a href="../explog/2-5.html">2.5節</a>で見た基準の「ラ」は $\amber{f}=440$ Hz で、1回ふるえるのにかかる時間は $\frac{1}{440}\approx0.00227$ 秒（約 2.3 ミリ秒）。
+      1オクターブ上のラは周波数が<b>2倍</b>の 880 Hz、下のラは 220 Hz でした。人の耳に聞こえるのは、だいたい 20 Hz から 20000 Hz までです。
+    </p>
+
+    <div class="widget" id="w-tone">
+      <div class="widget-head">純音 $y=\violet{A}\sin(2\pi\amber{f}t)$ <span class="hint">▶ で鳴らす／$f,\ A$ を動かす</span></div>
+      <div class="panel snd" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 鳴らす</button><span class="lbl-sm">ラの音</span><div class="chips" data-r="presets"></div></div>
+        <div class="msg ng" data-r="amsg"></div>
+      </div>
+      <div class="stage"><span class="cap">最初の 10 ミリ秒（0.01 秒）</span><canvas aria-label="純音の波形（10ミリ秒分）"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">周波数</span><span class="tex" data-r="f"></span></div>
+          <div class="row"><span class="k">周期</span><span class="tex" data-r="per"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜音の式 A sin(2πft)</div>
+      <p class="key-lead key-big">振幅 $A$ は音の大きさ、周波数 $f$ は音の高さ</p>
+      $$y=\violet{A}\sin(2\pi\amber{f}\,t),\qquad \text{周期 } T=\frac{1}{\amber{f}}\ \text{秒}$$
+      <ul>
+        <li>$\amber{f}$：1秒間にふるえる回数（Hz）。周期 $T$ と周波数 $\amber{f}$ は逆数の関係（$\amber{f}=\frac{1}{T}$）</li>
+        <li>1オクターブ上がる ＝ 周波数が2倍（ラ：220 → 440 → 880 Hz）</li>
+      </ul>
+      <p class="key-note">例：$y=0.5\sin(880\pi t)$ は $2\pi\amber{f}=880\pi$ より $\amber{f}=440$ Hz、振幅 $0.5$、周期 $\frac{1}{440}$ 秒。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：コンセントの 100 V は、最大 141 V の sin の波</div>
+      <p>家のコンセントの電気も $\sin$ の波です（<b>交流</b>）。東日本では1秒に 50 回、西日本では 60 回、プラスとマイナスが入れかわります。
+      「100 V」は平均的な強さ（実効値）を表していて、波の山の高さは $100\sqrt2\approx141$ V です。東日本なら $\amber{f}=50$ なので</p>
+      $$V=141\sin(2\pi\cdot50\,t)=141\sin(100\pi t)$$
+      <p>と書けます。周波数が東西でちがうのは、明治時代に東京はドイツ製（50 Hz）、大阪はアメリカ製（60 Hz）の発電機を買ったからです。</p>
+    </div>
+    <div class="callout point">
+      <div class="ttl">小話：CD はなぜ 1 秒に 44100 回？</div>
+      <p>CD は、音の波の高さを<b>1秒に 44100 回</b>（44.1 kHz）測って、数の列として記録しています。
+      波を記録するには、1回のふるえの中で少なくとも2回（山と谷）は測らないといけません。人に聞こえるいちばん高い音は約 20000 Hz なので、その2倍の 40000 回より少し多い 44100 回にしたのです（<b>標本化定理</b>）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>波を足す：うなりと逆位相</h2>
+
+    <p>
+      2つの音を同時に鳴らすと、空気のふるえは<b>足し算</b>になります。これを波の<b>重ね合わせ</b>といいます。
+      周波数が少しだけちがう2つの音、例えば 440 Hz と 444 Hz を一緒に鳴らすと、「ワーン、ワーン」と音の大きさが周期的にゆれて聞こえます。これを<b>うなり</b>といいます。
+    </p>
+    <p>
+      山と山が重なるときは強め合い（大きな音）、少しずつずれて山と谷が重なるときは打ち消し合います（小さな音）。下の図で、2つの波 $\red{f_1}$、$\teal{f_2}$ を足した波（紫）の大きさがゆれる様子を見て、聞いてみましょう。
+    </p>
+
+    <div class="widget" id="w-beat">
+      <div class="widget-head">うなり：$\red{\sin(2\pi f_1t)}+\teal{\sin(2\pi f_2t)}$ <span class="hint">▶ で鳴らす／$f_1,\ f_2$ を動かす</span></div>
+      <div class="panel snd" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 鳴らす</button><div class="chips" data-r="presets"></div></div>
+        <div class="btn-row" style="margin-top:6px"><label class="check"><input type="checkbox" data-r="stereo">左右の耳に分ける（ヘッドホン）</label></div>
+        <div class="msg ng" data-r="amsg"></div>
+      </div>
+      <div class="stage"><span class="cap">最初の 20 ミリ秒（拡大）</span><canvas aria-label="2つの波とその和（20ミリ秒分）"></canvas></div>
+      <div class="stage beat-long"><span class="cap">1 秒間の和</span><canvas aria-label="1秒間の和の波とうなり"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">うなり</span><span class="tex big" data-r="beat"></span></div>
+          <div class="row"><span class="k">式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">うなりの回数は $|f_1-f_2|$</h3>
+    <p>
+      <a href="3-5.html">3.5節</a>の加法定理で、$\sin(\alpha+\beta)$ と $\sin(\alpha-\beta)$ を足すと、$\cos\alpha\sin\beta$ の項が打ち消し合って
+    </p>
+    <div class="eq-box">$$\begin{aligned}&\sin(\alpha+\beta)+\sin(\alpha-\beta)\\&=2\sin\alpha\cos\beta\end{aligned}$$</div>
+    <p>
+      となります。$\alpha+\beta=2\pi\red{f_1}t,\ \alpha-\beta=2\pi\teal{f_2}t$ とおくと $\alpha=\pi(\red{f_1}+\teal{f_2})t,\ \beta=\pi(\red{f_1}-\teal{f_2})t$ なので
+    </p>
+    <div class="eq-box">$$\begin{aligned}&\red{\sin(2\pi f_1t)}+\teal{\sin(2\pi f_2t)}\\&=\amber{2\cos\bigl(\pi(f_1-f_2)t\bigr)}\cdot\sin\bigl(\pi(f_1+f_2)t\bigr)\end{aligned}$$</div>
+    <p>
+      右の $\sin$ は、2つの音の真ん中の高さ $\frac{f_1+f_2}{2}$ の音。前の $\amber{2\cos(\cdots)}$ は、ゆっくり変わる「音の大きさ」（図の金色の点線）です。
+      大きさ $\amber{\bigl|2\cos(\pi(f_1-f_2)t)\bigr|}$ は $\frac{1}{|f_1-f_2|}$ 秒ごとにくり返すので、<b>うなりは1秒に $|f_1-f_2|$ 回</b>聞こえます。
+    </p>
+    <p>
+      ギターやオーケストラのチューニングでは、これを使います。基準の音（音叉の 440 Hz など）と弦を一緒に鳴らし、うなりがだんだんゆっくりになるように弦をしめたりゆるめたりして、うなりが消えたら同じ高さです。
+      <a href="../explog/2-5.html">2.5節</a>の「平均律と純正律の差がうなりとして聞こえる」も、この現象です。
+    </p>
+
+    <h3 class="h-mini">逆位相：波を打ち消す</h3>
+    <p>
+      今度は、周波数が同じで<b>タイミング（位相）だけ $\teal{\varphi}$ ずれた</b>2つの波を足してみます。<a href="3-6.html">3.6節</a>の合成と同じように計算すると
+    </p>
+    <div class="eq-box">$$\begin{aligned}&\red{\sin x}+\violet{\sin(x+\varphi)}\\&=2\cos\frac{\teal{\varphi}}{2}\cdot\sin\left(x+\frac{\teal{\varphi}}{2}\right)\end{aligned}$$</div>
+    <p>
+      となり、和の振幅は $\left|2\cos\frac{\teal{\varphi}}{2}\right|$ です。$\teal{\varphi}=0$ なら2倍に強め合い、$\teal{\varphi}=\pi$（半周期ずれ）なら $\cos\frac{\pi}{2}=0$ で、<b>和はぴったり 0</b>。音が消えます。
+      山と谷がちょうど逆になっているこの状態を<b>逆位相</b>といいます。
+    </p>
+
+    <div class="widget" id="w-cancel">
+      <div class="widget-head">逆位相：$\red{\sin x}+\violet{\sin(x+\varphi)}$ <span class="hint">▶ で鳴らす／$\varphi$ を $\pi$ に近づける</span></div>
+      <div class="panel snd" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 鳴らす（300 Hz）</button>
+          <label class="check"><input type="checkbox" data-r="stereo">左右の耳に分ける（ヘッドホン）</label></div>
+        <div class="msg ng" data-r="amsg"></div>
+      </div>
+      <div class="stage"><canvas aria-label="位相のずれた2つの波とその和"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">ずれ</span><span class="tex" data-r="phi"></span></div>
+          <div class="row"><span class="k">和の振幅</span><span class="tex big" data-r="amp"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      「左右の耳に分ける」にすると、$\red{\sin x}$ は左、$\violet{\sin(x+\varphi)}$ は右のスピーカーから出ます。ヘッドホンでは2つの音が空気の中で足されないので、$\teal{\varphi}=\pi$ でも消えません（聞こえ方が少し変わるだけ）。
+      音を打ち消すには、<b>同じ場所で</b>足し合わされることが必要です。
+    </p>
+    <p>
+      これを使うのが<b>ノイズキャンセリング</b>のヘッドホンです。ヘッドホンについた小さなマイクで周りの騒音を拾い、それと<b>逆位相の音</b>をスピーカーから出して、耳の中で騒音を打ち消します。
+      電車のゴーッという低い音のように、ゆっくり変わる音ほど、逆位相の音を作るのが間に合うので、よく消えます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜波の重ね合わせ</div>
+      <p class="key-lead key-big">同時に鳴る音は足し算。ずれ方で強め合ったり打ち消し合ったりする</p>
+      $$\begin{gathered}\text{うなりの回数（1秒あたり）}=|f_1-f_2|\\[4pt] \sin x+\sin(x+\varphi)\\=2\cos\frac{\varphi}{2}\,\sin\left(x+\frac{\varphi}{2}\right)\end{gathered}$$
+      <ul>
+        <li>周波数が近い2つの音 → 大きさが $|f_1-f_2|$ 回/秒 でゆれる（<b>うなり</b>）</li>
+        <li>同じ周波数で $\varphi=\pi$ ずれた波（<b>逆位相</b>）を足すと 0 になる（ノイズキャンセリング）</li>
+      </ul>
+      <p class="key-note">例：440 Hz と 443 Hz → 1秒に3回うなる。うなりが消えたら2つの音は同じ高さ。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>フーリエ級数</h2>
+
+    <p>
+      楽器の音を波形にすると、純音のようなきれいな $\sin$ ではなく、もっと複雑な形をしています。でも、形はちがっても<b>同じ形をくり返す</b>（周期的）ことは同じです。
+      フランスのフーリエ（1768–1830）は、次のことを見つけました。
+    </p>
+    <div class="eq-box eq-hero">$$\begin{aligned}&\text{周期的な波}\\&=b_1\sin x+b_2\sin2x+b_3\sin3x+\cdots\end{aligned}$$</div>
+    <p>
+      つまり、くり返す波はどれも、<b>周期が $\frac{1}{1},\ \frac{1}{2},\ \frac{1}{3},\ \ldots$ の $\sin$（や $\cos$）を、ちょうどよい大きさ $b_1,\ b_2,\ b_3,\ \ldots$ で足し合わせたもの</b>として表せる、ということです（$\cos$ の項が必要な波もあります）。これを<b>フーリエ級数</b>といいます。
+      ここでは周期が $2\pi$ になるように $x$ を使って書きます（音にするときは $x$ を $2\pi ft$ に置きかえます）。
+    </p>
+    <p>
+      音でいうと、$\sin x$ は基本の高さ $f$ の音、$\sin2x$ は2倍の $2f$（1オクターブ上）、$\sin3x$ は $3f$ の音……で、これらを<b>倍音</b>といいます。
+      <b>倍音をどんな大きさで混ぜるか</b>が、音色のちがいの正体です。昔のゲーム機の「ピコピコ音」は、下の矩形波（くけいは）で作られていました。
+    </p>
+
+    <div class="widget" id="w-fourier">
+      <div class="widget-head">フーリエ級数：$\sin$ を $N$ 個足して近づける <span class="hint">波形を選ぶ／$N$ を増やす</span></div>
+      <div class="panel snd" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">波形</span><div class="chips" data-r="kind"></div></div>
+        <div class="btn-row" style="margin-top:6px"><button class="btn primary" type="button" data-r="play">🔊 聞いてみる（220 Hz）</button></div>
+        <div class="msg ng" data-r="amsg"></div>
+      </div>
+      <div class="stage"><canvas aria-label="目標の波とフーリエ級数の部分和"></canvas></div>
+      <div class="fx-eq tex" data-r="eq"></div>
+      <div class="stage spec"><span class="cap">$\sin nx$ の大きさ $b_n$<br>（枠：まだ足していない項）</span><canvas aria-label="係数の棒グラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">いちばん高い音</span><span class="tex" data-r="top"></span></div>
+          <div class="row"><span class="k">目標とのずれ</span><span class="tex" data-r="err"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $N$ を増やすほど、部分和（青）は目標の波（灰色の点線）に近づいていきます。音も、$N=1$ の澄んだ音から、だんだん目標の波の「ビーッ」という音色に変わっていきます。
+      それぞれの係数 $b_n$ は次のとおりです。
+    </p>
+    <div class="table-wrap"><table class="coef-table">
+      <thead><tr><th>波形</th><th>係数 $b_n$</th><th>最初の項</th></tr></thead>
+      <tbody>
+        <tr><th>矩形波</th><td>$n$ が奇数のとき $\dfrac{4}{n\pi}$、偶数のとき $0$</td><td>$\dfrac{4}{\pi}\left(\sin x+\dfrac{\sin3x}{3}+\dfrac{\sin5x}{5}+\cdots\right)$</td></tr>
+        <tr><th>のこぎり波</th><td>$(-1)^{n+1}\dfrac{2}{n\pi}$</td><td>$\dfrac{2}{\pi}\left(\sin x-\dfrac{\sin2x}{2}+\dfrac{\sin3x}{3}-\cdots\right)$</td></tr>
+        <tr><th>三角波</th><td>$n$ が奇数のとき $\pm\dfrac{8}{n^2\pi^2}$（符号は $+,-,+,\ldots$）、偶数のとき $0$</td><td>$\dfrac{8}{\pi^2}\left(\sin x-\dfrac{\sin3x}{3^2}+\dfrac{\sin5x}{5^2}-\cdots\right)$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      この係数をどうやって求めるのかというと、<b>積分</b>という計算が必要です。詳しくは積分の章で学ぶので、ここでは表の値を使います。
+      表を見ると、三角波の係数は $\frac{1}{n^2}$ で小さくなるので、少ない項ですぐ近づき、音もやわらかく聞こえます。角ばった矩形波やのこぎり波は $\frac{1}{n}$ でしか小さくならないので、高い倍音がたくさん残り、音がきつく聞こえます。
+    </p>
+
+    <div class="callout point">
+      <div class="ttl">ギブズ現象：角の近くの「飛び出し」は消えない</div>
+      <p>矩形波やのこぎり波のように、値がとぶ（角がある）ところでは、部分和が目標より<b>約 9% 飛び出し</b>ます（矩形波では高さ 1 のところが約 1.18 になる）。
+      $N$ を増やすと飛び出す部分はどんどん細くなりますが、高さはなくなりません。これを<b>ギブズ現象</b>といいます。
+      画像を強く圧縮したとき、文字のまわりにもやもやしたすじが出るのも、同じ理由です。</p>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜フーリエ級数の考え方</div>
+      <p class="key-lead key-big">くり返す波は、$\sin nx$（倍音）の足し算で表せる</p>
+      $$\text{波}=b_1\sin x+b_2\sin2x+b_3\sin3x+\cdots$$
+      <ul>
+        <li>$\sin nx$ は基本の $n$ 倍の周波数の音（<b>倍音</b>）。倍音の混ぜ方 $b_1,\ b_2,\ \ldots$ が<b>音色</b>を決める</li>
+        <li>矩形波 $=\dfrac{4}{\pi}\left(\sin x+\dfrac{\sin3x}{3}+\dfrac{\sin5x}{5}+\cdots\right)$（奇数倍音だけ）</li>
+      </ul>
+      <p class="key-note">係数 $b_n$ を求めるには積分を使う（積分の章で）。項を増やすほど近づくが、角の近くでは約 9% の飛び出しが残る（ギブズ現象）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>回転円で描く</h2>
+
+    <p>
+      <a href="3-5.html">3.5節</a>で、回る円の上の点の「縦の影」は $\sin$ の波になることを見ました。
+      では、$\frac{4}{\pi}\left(\sin x+\frac{\sin3x}{3}+\cdots\right)$ のような足し算は？
+      半径 $\frac{4}{\pi}$ の円の上を回る点に、半径 $\frac{4}{3\pi}$ で<b>3倍の速さ</b>で回る小さな円をつけ、その上にさらに半径 $\frac{4}{5\pi}$ で5倍の速さの円をつけ……と、円の先に円をつないでいきます。
+      いちばん先の点の高さは、それぞれの円の高さの<b>足し算</b>なので、ちょうど部分和になります。その高さを右へ記録していくと、矩形波が描けます。
+    </p>
+
+    <div class="widget" id="w-epi">
+      <div class="widget-head">回転円（エピサイクル）で波を描く <span class="hint">円の数を変える／波形を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">波形</span><div class="chips" data-r="kind"></div><button class="btn" type="button" data-r="pause">⏸ 止める</button></div></div>
+      <div class="stage"><canvas aria-label="つながった回転円と、先端の高さが描く波"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">円</span><span class="tex" data-r="circ"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      円の上に円をのせて回すこの考え方は、とても古いものです。2000年ほど前の天文学者プトレマイオスは、惑星が夜空で行ったり来たりする複雑な動きを、<b>周転円</b>（円の上を回る円）を組み合わせて説明しました。
+      フーリエ級数は、その「円の組み合わせ」を数学としてきちんと仕上げたもの、と見ることもできます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>自分の声・自分の絵を分解する</h2>
+
+    <h3 class="h-mini">自分の声を倍音に分ける</h3>
+    <p>
+      今度は反対に、音を<b>倍音に分解</b>してみましょう。マイクで拾った音を、コンピュータがその場で「どの周波数の $\sin$ がどれだけ入っているか」に分けます（フーリエ変換）。
+      「あー」と「いー」を同じ高さで言ってみると、いちばん下の山（基本の高さ $f_0$）の位置は同じなのに、$2f_0,\ 3f_0,\ \ldots$ の倍音の山の大きさがちがうはずです。これが「あ」と「い」の音色のちがいです。
+      口笛は倍音が少なく、純音に近い1本の山になります。
+    </p>
+
+    <div class="widget" id="w-mic">
+      <div class="widget-head">自分の声のスペクトル <span class="hint">マイクで「あー」「いー」・口笛／お手本の音でも試せる</span></div>
+      <div class="panel snd" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn primary" type="button" data-r="mic">🎤 マイクを使う</button><button class="btn" type="button" data-r="stop">■ 止める</button></div>
+        <div class="btn-row" style="margin-top:6px"><span class="lbl-sm">お手本の音（音が出ます）</span><div class="chips" data-r="demo"></div></div>
+        <div class="msg ng" data-r="amsg"></div>
+      </div>
+      <div class="stage"><canvas aria-label="周波数ごとの音の強さ（スペクトル）"></canvas></div>
+      <div class="panel two">
+        <div class="controls"><p class="note-txt" data-r="tips">「あー」「いー」「うー」を同じ高さで5秒ずつ言ってみよう。高い声・低い声でも試して、紫の線（倍音の位置）がどう動くか見てみよう。</p></div>
+        <div class="readout">
+          <div class="row"><span class="k">いちばん強い山</span><span class="tex" data-r="peak"></span></div>
+          <div class="row"><span class="k">基本の高さ</span><span class="tex" data-r="f0"></span></div>
+          <div class="row"><span class="k">音名</span><span class="note-txt" data-r="note"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">自分の絵を回転円で描き直す</h3>
+    <p>
+      フーリエの考え方は、音だけでなく<b>形</b>にも使えます。紙の上の線を1周なぞるとき、点の横の位置も縦の位置も、1周でもとにもどる「くり返す動き」です。
+      だから、横・縦の動きをそれぞれ $\sin,\ \cos$ の足し算に分ければ、どんな絵も、<b>速さのちがう円をつないで回す</b>ことで描き直せます。
+      どの大きさの円をどの速さで回すかは、コンピュータが計算します（離散フーリエ変換）。下の枠の中に、指やマウスで1本の線で絵を描いてみましょう。
+    </p>
+
+    <div class="widget" id="w-draw">
+      <div class="widget-head">絵を回転円で描き直す <span class="hint">枠の中に描く／円の数 $K$ を変える</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn primary" type="button" data-r="draw">✏️ 描く</button><span class="lbl-sm">例</span><div class="chips" data-r="presets"></div><button class="btn" type="button" data-r="pause">⏸ 止める</button></div>
+        <div class="msg ng" data-r="dmsg"></div>
+      </div>
+      <div class="stage"><canvas class="draw-cv" aria-label="描いた絵と、それをなぞる回転円"></canvas></div>
+      <div class="panel two">
+        <div class="controls"><label class="check"><input type="checkbox" data-r="orig" checked>元の絵（灰色）も表示</label></div>
+        <div class="readout">
+          <div class="row"><span class="k">円の数</span><span class="tex" data-r="k"></span></div>
+          <div class="row"><span class="k">元の絵とのずれ</span><span class="tex" data-r="err"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      円が少ないとぼんやりした形ですが、大きい円から順に足していくと、すぐに元の絵に近づきます。小さい円は細かい部分を描く役目で、省いても形はあまり変わりません。
+      これを利用して、<b>大事な（大きい）成分だけを残し、小さい成分を捨てて</b>データを小さくするのが、写真の JPEG や音楽の MP3 などの<b>圧縮</b>の考え方です。
+    </p>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>音</th><td>$y=A\sin(2\pi ft)$：振幅 $A$ ＝大きさ、周波数 $f$ ＝高さ（Hz）、周期 $T=\frac{1}{f}$ 秒。1オクターブ上は周波数2倍</td></tr>
+        <tr><th>重ね合わせ</th><td>同時に鳴る音は足し算。$|f_1-f_2|$ 回/秒 の<b>うなり</b>。$\varphi=\pi$ の<b>逆位相</b>を足すと 0（ノイズキャンセリング）</td></tr>
+        <tr><th>フーリエ</th><td>くり返す波は $b_1\sin x+b_2\sin2x$ $+\cdots$ と表せる（フーリエ級数）。倍音の混ぜ方が音色。係数は積分で求める（積分の章で）</td></tr>
+        <tr><th>回転円</th><td>円の先に円をつないで回すと、先端の高さが足し算になる。絵も円の組み合わせで描ける</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：音色を作れ</h2>
+
+    <p>
+      倍音 $\sin x,\ \sin2x,\ \ldots,\ \sin6x$ の大きさ $a_1,\ \ldots,\ a_6$ をスライダーで決めて、点線の波（お手本）と同じ波形＝同じ音色を作りましょう。
+      「🎯 お手本の音」と「🎵 自分の音」で聞き比べもできます。3回まで判定でき、<b>1回目で合格なら★3</b> です。
+    </p>
+    <div class="widget" id="w-game-timbre">
+      <div class="widget-head">音色を作れ <span class="game-total" data-r="total"></span><span class="hint">$a_1$〜$a_6$ を決めて「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="panel snd" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn" type="button" data-r="ptgt">🎯 お手本の音</button><button class="btn" type="button" data-r="pme">🎵 自分の音</button></div>
+        <div class="msg ng" data-r="amsg"></div>
+      </div>
+      <div class="stage"><canvas aria-label="お手本の波形と自分の波形"></canvas></div>
+      <div class="stage spec"><span class="cap">倍音の大きさ $a_n$</span><canvas aria-label="倍音の大きさの棒グラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>(a) 周波数 440 Hz の音の周期は何秒か。小数第5位を四捨五入して答えよ。(b) 周期が $0.0025$ 秒の音の周波数は何 Hz か。</li>
+      <li>$y=0.5\sin(880\pi t)$ で表される音の振幅・周波数・周期を答えよ。また、この音より1オクターブ低い音の式を、振幅は同じとして表せ。</li>
+      <li>(a) 440 Hz と 444 Hz の音を同時に鳴らすと、うなりは1秒に何回聞こえるか。10秒間では何回か。<br>(b) 440 Hz の音叉とギターの弦を同時に鳴らしたら、1秒に3回うなった。弦の周波数として考えられる値を2つ答えよ。</li>
+      <li>矩形波のフーリエ級数の最初の3項 $\dfrac{4}{\pi}\left(\sin x+\dfrac{\sin3x}{3}+\dfrac{\sin5x}{5}\right)$ について、$x=\dfrac{\pi}{2}$ での値を求めよ。矩形波の本当の値 $1$ と比べてどうか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(a) 周期 $T=\dfrac{1}{f}=\dfrac{1}{440}$ $=0.002272\ldots$ $\approx0.0023$ 秒（約 2.3 ミリ秒）。<br>
+          (b) $f=\dfrac{1}{T}=\dfrac{1}{0.0025}$ $=\dfrac{10000}{25}=400$ Hz。</li>
+        <li>$y=\violet{A}\sin(2\pi\amber{f}t)$ と比べる。振幅は $\violet{A}=0.5$。$2\pi\amber{f}=880\pi$ より $\amber{f}=440$ Hz。周期は $T=\dfrac{1}{440}$ 秒（約 0.0023 秒）。<br>
+          1オクターブ低い音は周波数が $\dfrac12$ 倍の 220 Hz なので、$2\pi\cdot220=440\pi$ より $y=0.5\sin(440\pi t)$。</li>
+        <li>(a) うなりの回数は $|440-444|=4$ 回/秒。10秒間では $4\times10=40$ 回。<br>
+          (b) $|440-f|=3$ より $440-f=3$ または $440-f=-3$。よって $f=437$ Hz または $443$ Hz。<br>
+          （どちらかは、弦を少ししめて高くしたときにうなりが速くなるか遅くなるかで見分けられる。）</li>
+        <li>$\sin\dfrac{\pi}{2}=1$、$\sin\dfrac{3\pi}{2}=-1$、$\sin\dfrac{5\pi}{2}$ $=\sin\left(2\pi+\dfrac{\pi}{2}\right)=1$ なので<br>
+          $\dfrac{4}{\pi}\left(1-\dfrac13+\dfrac15\right)$ $=\dfrac{4}{\pi}\cdot\dfrac{15-5+3}{15}$ $=\dfrac{4}{\pi}\cdot\dfrac{13}{15}$ $=\dfrac{52}{15\pi}\approx1.10$<br>
+          本当の値 $1$ より約 $0.10$ 大きい（3項ではまだ山の上が波打っている）。項を増やすと $x=\dfrac{\pi}{2}$ での値は $1$ に近づく（$1-\frac13+\frac15-\frac17+\cdots=\frac{\pi}{4}$ だから）。
+          <div class="stage quiz-fig"><canvas data-q="4" aria-label="矩形波と最初の3項の和"></canvas></div></li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-7.html"><span class="dir">← 前の節</span><span class="nm">3.7 逆三角関数と atan2</span></a>
+    <a class="next" href="3-9.html"><span class="dir">次の節 →</span><span class="nm">3.9 形と動き</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-8.js?v=202610211315"></script>
+</body>
+</html>

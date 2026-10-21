@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.6 三角関数のグラフ | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.6節：sin・cos・tan のグラフ・合成・ゆらゆらアニメ">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch6 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html" class="active" aria-current="page"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.6節</div>
+      <h1><span class="chap-no">3.6</span>三角関数のグラフ：振幅・周期・位相</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>$y=\sin x,\ y=\cos x,\ y=\tan x$ のグラフの形を説明できる。</li>
+      <li>$y=A\sin(B(x-p))+q$ の $A,\ B,\ p,\ q$ の意味を説明できる。</li>
+      <li>$a\sin x+b\cos x$ を1つの $\sin$ にまとめられる（合成）。</li>
+    </ol>
+    <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="3-3.html">3.3節</a>の 単位円、<a href="3-5.html">3.5節</a>の 加法定理、<a href="../polynomial/1-2.html">1.2節</a>・<a href="../explog/2-2.html">2.2節</a>の 平行移動</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      海の波、音、ブランコ、観覧車の高さ、ゲームのキャラクターがふわふわ浮く動き……。<b>同じ形をくり返す動き</b>は、身の回りにたくさんあります。
+      この節では、三角関数をグラフにすると、その「くり返す波」がそのまま現れることを見ます。そして、波の<b>高さ・長さ・位置</b>を、式の4つの数で自由に変えられるようになりましょう。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>単位円をほどくとグラフになる</h2>
+
+    <p>
+      3.3節で、単位円の上を角 $\blue{\theta}$ だけ回った点の座標が $(\teal{\cos\theta},\ \red{\sin\theta})$ だと決めました。
+      点が回るにつれて、縦の影 $\red{\sin\theta}$ は 0 → 1 → 0 → −1 → 0 と上下します。
+      そこで、横軸に回った角（弧の長さ）、縦軸に縦の影の長さをとって記録していくと、グラフ $y=\red{\sin x}$ ができます。
+      円周に巻きついた弧を<b>まっすぐにほどいて</b>横軸に並べるイメージです（関数・グラフでは、角を $\theta$ ではなく $x$ と書きます）。
+    </p>
+
+    <div class="widget" id="w-unwrap">
+      <div class="widget-head">単位円をほどく：$y=\red{\sin x}$ と $y=\teal{\cos x}$ <span class="hint">▶ で回す／青い点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">グラフ</span><div class="chips" data-r="mode"></div>
+          <button class="btn primary" type="button" data-r="play">▶ 回す</button></div>
+      </div>
+      <div class="stage"><canvas aria-label="単位円の影がグラフになる様子"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">角</span><span class="tex" data-r="ang"></span></div>
+          <div class="row"><span class="k">値</span><span class="tex big" data-r="val"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      点が1周（$2\pi$）すると元の位置にもどるので、グラフも $2\pi$ ごとに同じ形をくり返します。
+      このように、同じ形がくり返されるとき、1回分の横の長さを<b>周期</b>といいます。
+    </p>
+    <p>
+      「$\cos$」に切りかえると、今度は横の影 $\teal{\cos\theta}$ を記録します。横の影をそのまま上下の高さにするため、図では横の影を $90^\circ$ 起こしてから写しています。
+      できたグラフは $\sin$ のグラフとまったく同じ形で、<b>左に $\frac{\pi}{2}$ だけずれている</b>だけです。
+      $\theta$ の点を $\frac{\pi}{2}$ 先回りさせると、縦の影が今の横の影と同じ長さになるからです（3.3節の $\sin\left(\frac{\pi}{2}-\theta\right)=\cos\theta$ と同じ理由）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜sin・cos のグラフ</div>
+      <p class="key-lead key-big">高さ $-1$〜$1$ の波を、周期 $2\pi$ でくり返す</p>
+      $$\begin{gathered}\red{\sin(x+2\pi)=\sin x},\qquad \teal{\cos(x+2\pi)=\cos x}\\[4pt] \teal{\cos x}=\red{\sin\!\left(x+\frac{\pi}{2}\right)}\end{gathered}$$
+      <ul>
+        <li>$y=\red{\sin x}$：原点を通り、$x=\frac{\pi}{2}$ で最大 $1$、$x=\frac{3\pi}{2}$ で最小 $-1$</li>
+        <li>$y=\teal{\cos x}$：$(0,\,1)$ から始まる。$\sin$ のグラフを左に $\frac{\pi}{2}$ ずらした形</li>
+      </ul>
+      <p class="key-note">グラフをかくときは、$x=0,\ \frac{\pi}{2},\ \pi,\ \frac{3\pi}{2},\ 2\pi$ の5点（0・最大・0・最小・0）をとってなめらかにつなぐ。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>振幅・周期・位相</h2>
+
+    <p>
+      波の形は、<b>高さ</b>（どれだけ上下にゆれるか）、<b>長さ</b>（何秒・何 cm でくり返すか）、<b>位置</b>（どこから始まるか）で決まります。
+      これを式で表すと、次のような4つの数 $\violet{A},\ \amber{B},\ \teal{p},\ \red{q}$ をもつ形になります。
+    </p>
+    <div class="eq-box eq-hero">$$y=\violet{A}\sin\bigl(\amber{B}(x-\teal{p})\bigr)+\red{q}$$</div>
+    <p>下の図でスライダーを動かして、それぞれの数がグラフのどこを変えるか確かめましょう（灰色の点線はもとの $y=\sin x$）。</p>
+
+    <div class="widget" id="w-abpq">
+      <div class="widget-head">$y=\violet{A}\sin\bigl(\amber{B}(x-\teal{p})\bigr)+\red{q}$ <span class="hint">$A,\ B,\ p,\ q$ を動かす／例を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">例</span><div class="chips" data-r="presets"></div></div></div>
+      <div class="stage"><canvas aria-label="y = A sin(B(x−p)) + q のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">振幅</span><span class="tex" data-r="amp"></span></div>
+          <div class="row"><span class="k">周期</span><span class="tex" data-r="per"></span></div>
+          <div class="row"><span class="k">ずれ</span><span class="tex" data-r="shift"></span></div>
+          <div class="row"><span class="k">中心の線</span><span class="tex" data-r="mid"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">p と q は平行移動</h3>
+    <p>
+      <a href="../polynomial/1-2.html">1.2節</a>（放物線）と <a href="../explog/2-2.html">2.2節</a>（指数関数）で、グラフを $x$ 方向に $\teal{p}$、$y$ 方向に $\red{q}$ だけ平行移動すると、式の $x$ が $x-\teal{p}$ に、$y$ が $y-\red{q}$ に変わることを学びました。
+      $y=\sin x$ でもまったく同じで、平行移動したグラフは $y-\red{q}=\sin(x-\teal{p})$、つまり $y=\sin(x-\teal{p})+\red{q}$ です。
+      $\teal{p}$ は波を<b>右に $\teal{p}$ ずらす</b>量（マイナスなら左）、$\red{q}$ は波の<b>中心の線を $y=\red{q}$ に上げる</b>量です。波のずれ $\teal{p}$ のことを<b>位相のずれ</b>ともいいます。
+    </p>
+
+    <h3 class="h-mini">A は縦の伸び、B は横の縮み</h3>
+    <p>
+      $\violet{A}$ は、$\sin$ の値（$-1$〜$1$）を $\violet{A}$ 倍します。グラフは<b>縦に $\violet{A}$ 倍</b>に伸び、高さは $-\violet{A}$〜$\violet{A}$ になります。この $|\violet{A}|$ を<b>振幅</b>といいます（$\violet{A}$ がマイナスなら上下が逆さまになります）。
+    </p>
+    <p>
+      $\amber{B}$ は少しだけ注意が必要です。例えば $y=\sin\amber{2}x$ では、$x$ が $\pi$ 進むだけで中身の $\amber{2}x$ は $2\pi$ 進み、波が1回分終わってしまいます。
+      つまり $\amber{B}=2$ にすると、<b>横に $\frac{1}{2}$ 倍に縮み</b>、周期は $\frac{2\pi}{2}=\pi$ になります。
+      一般に、中身 $\amber{B}x$ が $2\pi$ 進むのは $x$ が $\dfrac{2\pi}{\amber{B}}$ 進んだときなので、周期は $\dfrac{2\pi}{\amber{B}}$ です。$\amber{B}$ が大きいほど波は細かくなります（$\amber{B}=\frac12$ なら横に2倍に伸びて周期 $4\pi$）。
+    </p>
+    <p>
+      なお、$\teal{p}$ と $\amber{B}$ を両方使うときは、$\sin(\amber{B}x-\teal{p})$ ではなく $\sin\bigl(\amber{B}(x-\teal{p})\bigr)$ と、<b>$x$ だけを $x-\teal{p}$ に入れかえる</b>ことに注意しましょう。例えば $y=\sin\left(2x-\frac{\pi}{3}\right)=\sin\left(2\left(x-\frac{\pi}{6}\right)\right)$ は、右に $\frac{\pi}{3}$ ではなく $\frac{\pi}{6}$ ずれた波です。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜A, B, p, q の意味</div>
+      <p class="key-lead key-big">高さは $A$、長さは $B$、位置は $p,\ q$ で決まる</p>
+      $$y=\violet{A}\sin\bigl(\amber{B}(x-\teal{p})\bigr)+\red{q}$$
+      <ul>
+        <li>$\violet{A}$：縦に $\violet{A}$ 倍。<b>振幅</b> $|\violet{A}|$（中心の線から山までの高さ）</li>
+        <li>$\amber{B}$：横に $\dfrac{1}{\amber{B}}$ 倍。<b>周期</b> $\dfrac{2\pi}{\amber{B}}$（$\amber{B}\gt0$ のとき）</li>
+        <li>$\teal{p}$：右に $\teal{p}$ 平行移動（位相のずれ）</li>
+        <li>$\red{q}$：上に $\red{q}$ 平行移動（中心の線が $y=\red{q}$ になる）</li>
+      </ul>
+      <p class="key-note">$\cos$ でも同じ。例：$y=3\sin\frac{x}{2}$ は振幅 $3$、周期 $\frac{2\pi}{1/2}=4\pi$。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>合成：sin と cos を1つにまとめる</h2>
+
+    <p>
+      $\sin$ の波と $\cos$ の波を足すと、どんな形になるでしょうか。例えば $y=\red{\sin x}+\teal{\cos x}$ を図でかいてみると、少し高くて、少し左にずれた <b>1つの $\sin$ の波</b>になります。
+      実は、$a\sin x+b\cos x$ はいつでも $r\sin(x+\alpha)$ の形にまとめられます。これを三角関数の<b>合成</b>といいます。
+    </p>
+    <p>
+      理由は <a href="3-5.html">3.5節</a>の加法定理です。
+    </p>
+    <div class="eq-box">$$\begin{aligned}r\sin(x+\blue{\alpha})&=r\bigl(\sin x\cos\blue{\alpha}+\cos x\sin\blue{\alpha}\bigr)\\&=(r\cos\blue{\alpha})\sin x+(r\sin\blue{\alpha})\cos x\end{aligned}$$</div>
+    <p>なので、これが $a\sin x+b\cos x$ と同じになるには</p>
+    <div class="eq-box">$$a=r\cos\blue{\alpha},\qquad b=r\sin\blue{\alpha}$$</div>
+    <p>
+      となる $r$ と $\blue{\alpha}$ を見つければよいのです。これは「点 $(a,\ b)$ を、原点からの距離 $r$ と角 $\blue{\alpha}$ で表す」ことと同じです（3.3節の単位円を $r$ 倍した円）。
+      三平方の定理から $r=\sqrt{a^2+b^2}$、角 $\blue{\alpha}$ は点 $(a,\ b)$ の向きです。下の図で、点 $(a,\ b)$ の矢印と、できる波の関係を確かめましょう。
+    </p>
+
+    <div class="widget" id="w-synth">
+      <div class="widget-head">合成：$\red{a\sin x}+\teal{b\cos x}=\violet{r}\sin(x+\blue{\alpha})$ <span class="hint">$a,\ b$ を動かす／矢印の先をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">例</span><div class="chips" data-r="presets"></div></div></div>
+      <div class="syn-stages">
+        <div class="stage"><span class="cap l">点 $(a,\ b)$</span><canvas aria-label="点 (a, b) の矢印と角 α"></canvas></div>
+        <div class="stage"><canvas aria-label="a sin x、b cos x とその和のグラフ"></canvas></div>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">r</span><span class="tex" data-r="r"></span></div>
+          <div class="row"><span class="k">α</span><span class="tex" data-r="al"></span></div>
+          <div class="row"><span class="k">合成</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">線</span><span>点線：$\red{a\sin x}$ と $\teal{b\cos x}$、太線：和 $\violet{r\sin(x+\alpha)}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜三角関数の合成</div>
+      <p class="key-lead key-big">点 $(a,\ b)$ の「距離」と「向き」で1つの $\sin$ にまとめる</p>
+      $$a\sin x+b\cos x=\violet{\sqrt{a^2+b^2}}\,\sin(x+\blue{\alpha})$$
+      <ul>
+        <li>$\blue{\alpha}$ は、点 $(a,\ b)$ を原点から見た角：$\cos\blue{\alpha}=\dfrac{a}{\sqrt{a^2+b^2}},\ \sin\blue{\alpha}=\dfrac{b}{\sqrt{a^2+b^2}}$</li>
+        <li>振幅は $\sqrt{a^2+b^2}$（$a+b$ ではない）</li>
+      </ul>
+      <p class="key-note">例：$\sin x+\cos x=\sqrt2\sin\left(x+\frac{\pi}{4}\right)$、$\sqrt3\sin x+\cos x=2\sin\left(x+\frac{\pi}{6}\right)$。点 $(1,\,1)$、$(\sqrt3,\,1)$ を図にかくと $r$ と $\alpha$ がすぐわかる。</p>
+    </div>
+    <p>
+      合成すると、$a\sin x+b\cos x$ の最大値が $\sqrt{a^2+b^2}$、最小値が $-\sqrt{a^2+b^2}$ だとすぐにわかります。
+      例えば $\sin x+\cos x$ の最大値は $2$ ではなく $\sqrt2\approx1.41$ です。山の位置がずれているので、2つの山が同時に来ることはないからです。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>tan のグラフ</h2>
+
+    <p>
+      3.3節で、$\amber{\tan\theta}$ は半径を延ばした直線が、縦の線 $x=1$（単位円の接線）と交わる点の<b>高さ</b>だと見ました。
+      この高さを記録していくと、$y=\amber{\tan x}$ のグラフができます。▶ で点を回してみましょう。
+    </p>
+
+    <div class="widget" id="w-tan">
+      <div class="widget-head">$y=\amber{\tan x}$：接線 $x=1$ の上の高さ <span class="hint">▶ で回す／青い点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 回す</button></div></div>
+      <div class="stage"><canvas aria-label="tan のグラフと単位円の接線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">角</span><span class="tex" data-r="ang"></span></div>
+          <div class="row"><span class="k">値</span><span class="tex big" data-r="val"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      点が真上 $\left(x=\frac{\pi}{2}\right)$ に近づくと、半径の直線はほとんど縦になり、$x=1$ との交点はどこまでも高くなります。真上ちょうどでは直線が $x=1$ と平行になって交わらないので、$\tan\frac{\pi}{2}$ は考えません。
+      グラフは縦の線 $x=\frac{\pi}{2}$ にどこまでも近づきますが、触れません。このような直線を、2.2節と同じく<b>漸近線</b>といいます。
+      また、点が半周（$\pi$）回ると、半径の直線は元と同じ直線にもどるので（向きが反対なだけ）、$\tan$ は <b>$\pi$ ごと</b>にくり返します。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜tan のグラフ</div>
+      <p class="key-lead key-big">周期は $\pi$。$x=\frac{\pi}{2}+n\pi$ に漸近線</p>
+      $$\amber{\tan(x+\pi)=\tan x}$$
+      <ul>
+        <li>原点を通り、右上がりにどこまでも上がる曲線を、$\pi$ ごとにくり返す</li>
+        <li>漸近線 $x=\dots,\ -\frac{\pi}{2},\ \frac{\pi}{2},\ \frac{3\pi}{2},\ \dots$（$\cos x=0$ になるところ。$n$ は整数）</li>
+      </ul>
+      <p class="key-note">$\sin,\ \cos$ と違って、値に上限・下限がない（どんな実数にもなる）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>sin で作るゆらゆらアニメ</h2>
+
+    <p>
+      ゲームやアニメでは、キャラクターが待っている間にふわふわ上下にゆれたり、旗がはためいたりします。この動きの多くは、時刻 $t$（秒）を使った
+    </p>
+    <div class="eq-box">$$y=\violet{A}\sin(\amber{\omega} t+\teal{\varphi})$$</div>
+    <p>
+      で作られています。$\violet{A}$ はゆれの大きさ（振幅）、$\amber{\omega}$（オメガ）は回る速さ（1秒に何ラジアン進むか。$B$ と同じ役目で、周期は $\frac{2\pi}{\amber{\omega}}$ 秒）、$\teal{\varphi}$（ファイ）は<b>タイミングのずれ</b>（位相）です。
+      プログラムでは、毎フレーム <code>y = A * Math.sin(omega * t + phi)</code> を計算するだけです。
+    </p>
+
+    <div class="widget" id="w-yura">
+      <div class="widget-head">ゆらゆらアニメ：$y=\violet{A}\sin(\amber{\omega} t+\teal{\varphi})$ <span class="hint">$A,\ \omega,\ \varphi$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn" type="button" data-r="pause">⏸ 止める</button><label class="check"><input type="checkbox" data-r="ghost" checked>$\varphi=0$ のお手本（うすい色）も表示</label></div></div>
+      <div class="stage"><canvas aria-label="sin で上下にゆれるキャラクターと旗"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">周期</span><span class="tex" data-r="per"></span></div>
+          <div class="row"><span class="k">旗</span><span class="note-txt" data-r="flag"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <ul>
+      <li><b>キャラクターのふわふわ</b>：高さに $\violet{A}\sin(\amber{\omega} t+\teal{\varphi})$ を足す。$\teal{\varphi}$ を変えると、お手本（$\teal{\varphi}=0$）より早く・遅く動き出す。何匹も並べるときは、$\teal{\varphi}$ を少しずつ変えるとそろわず自然に見える。</li>
+      <li><b>呼吸</b>：体の大きさを $1+0.05\sin(\amber{\omega} t)$ 倍にする（大きくなったり小さくなったり）。</li>
+      <li><b>旗のはためき</b>：旗の根元からの距離を $s$ として、高さを $\violet{A}\sin(\amber{\omega} t-ks)$ にする。場所ごとに<b>位相を少しずつずらす</b>と、波が根元から先へ伝わっていくように見える。</li>
+    </ul>
+
+    <h3 class="h-mini">1.4節のイージングと比べる</h3>
+    <p>
+      <a href="../polynomial/1-4.html">1.4節</a>では、ゆっくり動き出してゆっくり止まるイージングを 3次関数 $f(t)=3t^2-2t^3$（smoothstep）で作りました。
+      同じ動きは $\cos$ でも作れます。$\cos$ のグラフは $t=0$ から $\pi$ までで $1$ から $-1$ へなめらかに下がるので、それを $0$ から $1$ へ上がるように直すと
+    </p>
+    <div class="eq-box">$$f(t)=\frac{1-\cos\pi t}{2}\qquad(0\leqq t\leqq1)$$</div>
+    <p>
+      となります（easeInOutSine とよばれます）。$f(0)=0,\ f\left(\frac12\right)=\frac12,\ f(1)=1$ で、両端では波の山・谷のところなので動きがゆっくりです。下の図で、3次関数とほとんど同じ動きになることを確かめましょう。
+      イージングは「1回だけ動いて止まる」、ゆらゆらは「同じ動きをくり返す」ときに使い分けます。
+    </p>
+
+    <div class="widget" id="w-ease-sin">
+      <div class="widget-head">イージングを sin で作る <span class="hint">▶ で動かして比べる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 動かす</button><label class="check"><input type="checkbox" data-r="loop">往復させる（くり返し）</label></div></div>
+      <div class="stage"><canvas aria-label="等速・3次関数・sin のイージングの比較"></canvas></div>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>sin・cos</th><td>単位円の縦・横の影をグラフにしたもの。高さ $-1$〜$1$、周期 $2\pi$。$\cos x=\sin\left(x+\frac{\pi}{2}\right)$</td></tr>
+        <tr><th>tan</th><td>接線 $x=1$ の上の高さ。周期 $\pi$、漸近線 $x=\frac{\pi}{2}+n\pi$</td></tr>
+        <tr><th>$A,\ B,\ p,\ q$</th><td>$y=A\sin(B(x-p))+q$：振幅 $|A|$、周期 $\frac{2\pi}{B}$、右に $p$・上に $q$ 平行移動</td></tr>
+        <tr><th>合成</th><td>$a\sin x+b\cos x=\sqrt{a^2+b^2}\,\sin(x+\alpha)$。$\alpha$ は点 $(a,\ b)$ の向き</td></tr>
+        <tr><th>アニメ</th><td>$A\sin(\omega t+\varphi)$ でくり返す動き、$\frac{1-\cos\pi t}{2}$ でイージング</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：波を合わせろ</h2>
+
+    <p>
+      点線の波（お手本）とぴったり重なるように、$\violet{A},\ \amber{B},\ \teal{p},\ \red{q}$ を決めて「判定」を押しましょう。3回まで判定でき、<b>1回目でぴったりなら★3</b> です。
+      慣れてきたら「いまの波を表示」を消し、山の高さ・山と山の間隔・中心の線を読んで、数を決めてから判定しましょう（表示なしでぴったりなら 👑）。
+    </p>
+    <div class="widget" id="w-game-wave">
+      <div class="widget-head">波を合わせろ <span class="game-total" data-r="total"></span><span class="hint">$A,\ B,\ p,\ q$ を決めて「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="波を合わせろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>$y=\sin2x$ のグラフの周期と振幅を求め、$0\leqq x\leqq2\pi$ の範囲でグラフをかけ。</li>
+      <li>$y=3\sin\dfrac{x}{2}$ のグラフの周期と振幅を求め、$0\leqq x\leqq4\pi$ の範囲でグラフをかけ。</li>
+      <li>$y=\cos x$ と $y=\tan x$ のグラフを $-\pi\leqq x\leqq2\pi$ の範囲でかけ。$\tan x$ の周期と漸近線も答えよ。</li>
+      <li>$\sqrt3\sin x+\cos x$ を $r\sin(x+\alpha)$ の形に表せ（$r\gt0,\ 0\leqq\alpha\lt2\pi$）。また、最大値を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>$\sin2x=\sin(\amber{2}x)$ なので $\amber{B}=2$。周期は $\dfrac{2\pi}{2}=\pi$、振幅は $1$。<br>
+          $y=\sin x$ を横に $\dfrac12$ 倍に縮めたグラフ。$x=0,\ \dfrac{\pi}{4},\ \dfrac{\pi}{2},\ \dfrac{3\pi}{4},\ \pi$ で $y=0,\ 1,\ 0,\ -1,\ 0$ となり、これを $0\leqq x\leqq2\pi$ で2回くり返す。
+          <div class="stage quiz-fig"><canvas data-q="1" aria-label="y = sin 2x のグラフ"></canvas></div></li>
+        <li>$\violet{A}=3,\ \amber{B}=\dfrac12$ なので、振幅は $3$、周期は $\dfrac{2\pi}{1/2}=4\pi$。<br>
+          $y=\sin x$ を縦に $3$ 倍、横に $2$ 倍に伸ばしたグラフ。$x=0,\ \pi,\ 2\pi,\ 3\pi,\ 4\pi$ で $y=0,\ 3,\ 0,\ -3,\ 0$。
+          <div class="stage quiz-fig"><canvas data-q="2" aria-label="y = 3 sin(x/2) のグラフ"></canvas></div></li>
+        <li>$y=\cos x$ は $y=\sin x$ を左に $\dfrac{\pi}{2}$ ずらした形で、$x=0$ で最大 $1$、$x=\pm\pi$ で最小 $-1$、$x=\pm\dfrac{\pi}{2},\ \dfrac{3\pi}{2}$ で $0$。<br>
+          $y=\tan x$ の周期は $\pi$。漸近線は $x=-\dfrac{\pi}{2},\ \dfrac{\pi}{2},\ \dfrac{3\pi}{2}$（$\cos x=0$ のところ）。$x=0,\ \pi,\ 2\pi$ で $0$、$x=\dfrac{\pi}{4}$ で $1$。
+          <div class="stage quiz-fig"><canvas data-q="3" aria-label="y = cos x と y = tan x のグラフ"></canvas></div></li>
+        <li>点 $(\sqrt3,\ 1)$ を考えると $r=\sqrt{(\sqrt3)^2+1^2}=\sqrt4=2$。<br>
+          $\cos\alpha=\dfrac{\sqrt3}{2},\ \sin\alpha=\dfrac12$ より $\alpha=\dfrac{\pi}{6}$。<br>
+          よって $\sqrt3\sin x+\cos x=2\sin\left(x+\dfrac{\pi}{6}\right)$。$\sin$ の最大値は $1$ なので、最大値は $2$（$x+\dfrac{\pi}{6}=\dfrac{\pi}{2}$、つまり $x=\dfrac{\pi}{3}$ のとき）。<br>
+          確かめ：$\sqrt3\sin\dfrac{\pi}{3}+\cos\dfrac{\pi}{3}=\sqrt3\cdot\dfrac{\sqrt3}{2}+\dfrac12=\dfrac32+\dfrac12=2$</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-5.html"><span class="dir">← 前の節</span><span class="nm">3.5 円運動・回転と加法定理</span></a>
+    <a class="next" href="3-7.html"><span class="dir">次の節 →</span><span class="nm">3.7 逆三角関数と atan2</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-6.js?v=202610211315"></script>
+</body>
+</html>

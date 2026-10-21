@@ -18,8 +18,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 
 LECTURES = [  # (フォルダ, 回の名前, 章ファイル)
-    ('polynomial', '第1回 多項式', ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6']),
-    ('explog', '第2回 指数関数・対数関数', ['2-1', '2-2', '2-3', '2-4', '2-5', '2-6']),
+    ('polynomial', '第1章 多項式', ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6']),
+    ('explog', '第2章 指数関数・対数関数', ['2-1', '2-2', '2-3', '2-4', '2-5', '2-6']),
+    ('trig', '第3章 三角関数', ['3-1', '3-2', '3-3', '3-4', '3-5', '3-6', '3-7', '3-8', '3-9']),
 ]
 
 
@@ -41,7 +42,7 @@ def build_keys(folder, name, chapters):
     head = first[:first.index('<body')]
     head = re.sub(r'<title>.*?</title>', '<title>覚えることのまとめ | ' + name + ' | 解析学 2026</title>', head)
     head = re.sub(r'<meta name="description" content="[^"]*">',
-                  '<meta name="description" content="' + name + 'の各章の「覚える」をまとめたページ（印刷用）">', head)
+                  '<meta name="description" content="' + name + 'の各節の「覚える」をまとめたページ（印刷用）">', head)
     nav = re.search(r'<nav class="toc chapnav".*?</nav>', first, re.S).group(0)
     nav = nav.replace(' class="active" aria-current="page"', '')
     current = re.search(r'data-current="([^"]+)"', first).group(1)
@@ -59,7 +60,7 @@ def build_keys(folder, name, chapters):
             '<div class="layout">\n  ' + nav + '\n\n<main>\n'
             '  <header class="chap-hero"><div><div class="eyebrow">' + name + '</div>'
             '<h1>覚えることのまとめ</h1></div></header>\n'
-            '  <p class="keys-intro">各章の「覚える｜この章のまとめ」を集めたページです。章の名前を押すとその章に移動します。'
+            '  <p class="keys-intro">各節の「覚える｜この節のまとめ」を集めたページです。節の名前を押すとその節に移動します。'
             '<button class="btn small" type="button" onclick="window.print()">🖨 このページを印刷</button></p>\n'
             + '\n'.join(body) + '\n</main>\n</div>\n\n'
             '<footer class="site-footer">解析学 2026 ／ ' + name + ' ／ 覚えることのまとめ（tools/build.py で自動生成）</footer>\n\n'

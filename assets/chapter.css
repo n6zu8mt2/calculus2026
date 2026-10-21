@@ -87,6 +87,9 @@ body.chapter { font-size: 17px; line-height: 1.9; }
 .ch4 { --c1: #8a4fd6; --c2: #3355d6; }
 .ch5 { --c1: #d6449b; --c2: #8a4fd6; }
 .ch6 { --c1: #0b7285; --c2: #3355d6; }
+.ch7 { --c1: #b5523b; --c2: #d98a00; }
+.ch8 { --c1: #2f7d32; --c2: #0b7285; }
+.ch9 { --c1: #5c4bc4; --c2: #d6449b; }
 
 .chap-hero .chap-no {
   display: inline-block; font-size: .5em; font-weight: 800; color: var(--muted);
@@ -518,3 +521,245 @@ table.key-table td .use a { color: inherit; }
 .pow-table .pt-gap > span { display: flex; flex-direction: column; align-items: center; }
 .pow-table .pt-gap i { font-style: normal; }
 .pow-table .pt-gap b { margin-left: 0; font-size: 16px; line-height: 1; }
+
+/* 作成中の目印・音やセンサーの注意書き */
+.todo { color: var(--muted); font-style: italic; }
+.perm-note { font-size: 13px; color: var(--muted); margin: 0 0 8px; padding: 6px 10px; border-left: 3px solid var(--amber); background: color-mix(in srgb, var(--amber) 6%, transparent); }
+
+/* == agent T1 (trig 3-1, 3-2) == */
+/* 3.1 三角比の定義の図（SVG ＋ 文字） */
+.tri-fig { position: relative; max-width: 320px; margin: 8px auto 0; color: var(--text); }
+.tri-fig svg { display: block; width: 100%; height: auto; }
+.tri-fig .tf-l { position: absolute; font-size: 15px; line-height: 1.2; white-space: nowrap; }
+.key table.trig-val-table { width: auto; }
+.key table.trig-val-table td { text-align: center; padding: 6px 14px; }
+.key table.trig-val-table thead th, .key table.trig-val-table thead td { border-bottom: 1px solid var(--border); }
+.tilt-big { font-size: 22px; font-weight: 800; margin-left: auto; }
+#w-sankaku .note-txt, #w-tilt .note-txt { font-size: 14.5px; line-height: 1.8; margin: 0; }
+/* 3.2 単位円の弧の長さ */
+#w-unit .note-txt { font-size: 14.5px; line-height: 1.7; }
+#w-unit .ctrl, #w-pizza .ctrl, #w-tilt .ctrl, #w-shadow .ctrl, #w-game-height .ctrl { grid-template-columns: 34px minmax(0, 1fr) 74px; }
+#w-unit .ctrl-val, #w-pizza .ctrl-val, #w-tilt .ctrl-val, #w-shadow .ctrl-val, #w-game-height .ctrl-val { white-space: nowrap; }
+
+/* == agent T2 (trig 3-3, 3-4) == */
+.ta-ans { gap: 6px; }
+.ta-ans .ta-chip { display: inline-flex; align-items: center; min-width: 4.4em; min-height: 46px; justify-content: center; border-radius: 10px; font-size: 15px; }
+.ta-ans .ta-chip:disabled { opacity: .55; cursor: default; }
+.ta-ans .ta-chip.ok { background: var(--teal); border-color: var(--teal); color: #fff; opacity: 1; }
+.ta-ans .ta-chip.ng { background: transparent; border-color: var(--accent); color: var(--accent); opacity: 1; text-decoration: line-through; }
+.ta-bar { height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; margin-top: 4px; }
+.ta-bar i { display: block; height: 100%; width: 100%; background: var(--teal); transition: width .1s linear; }
+.hue-sw { display: inline-block; width: 28px; height: 20px; border-radius: 6px; border: 1px solid var(--border); flex: 0 0 auto; align-self: center; }
+#w-hue .readout { grid-template-columns: minmax(0, 1fr); }
+#w-hue .readout .row { align-items: center; }
+#w-hue .readout .k { min-width: 3em; }
+#w-hue .readout .row > span.hue-sw { flex: 0 0 auto; width: 40px; height: 26px; }
+#w-hue .readout .row > span.tex { min-width: 0; overflow-x: auto; }
+.hsl-code { flex: 1 1 auto; min-width: 0; font-size: 14px; overflow-wrap: anywhere; }
+.hsl-table th { white-space: nowrap; text-align: center; }
+.hsl-en { font-size: 12px; font-weight: 400; color: var(--muted); }
+.hsl-hue { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; margin: 2px 10px 2px 0; }
+.hsl-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border); flex: 0 0 auto; }
+.hsl-note { font-size: 13.5px; color: var(--muted); }
+.uc-game-lead { margin: 0 0 6px; font-size: 13.5px; color: var(--muted); }
+.tri-note { font-size: 13px; color: var(--muted); margin: 0; }
+/* 3.4 三角測量：わかっていること／知りたいこと */
+.sv-given { display: grid; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14.5px; line-height: 1.6; }
+.sv-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding-left: 10px; border-left: 4px solid var(--primary); }
+.sv-row.sv-unknown { border-left-color: var(--accent); }
+.sv-k { flex: 0 0 auto; font-weight: 800; font-size: 13.5px; color: var(--primary); }
+.sv-unknown .sv-k { color: var(--accent); }
+.sv-v { display: flex; flex-wrap: wrap; gap: 2px 14px; min-width: 0; }
+.sv-sub { font-size: 13px; color: var(--muted); }
+.sv-steps { margin: 6px 0 14px; padding-left: 1.6em; line-height: 1.9; }
+.sv-steps li { margin: 4px 0; }
+.sv-steps li > mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+
+/* == agent T3a (trig 3-5) == */
+/* 3.5 円運動の時刻表示、加法定理の凡例、弾幕の入力欄と手順 */
+.ferris-now { margin-left: auto; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.add-legend { font-size: 13.5px; color: var(--muted); }
+#w-unroll .ctrl, #w-shm .ctrl, #w-rot .ctrl, #w-add .ctrl { grid-template-columns: 30px minmax(0, 1fr) 96px; }
+#w-unroll .ctrl-val, #w-shm .ctrl-val { white-space: nowrap; }
+.dm-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 10px; align-items: center; }
+.dm-grid .dm-lab { grid-column: 1 / -1; font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+.dm-grid .dm-in { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.dm-grid .dm-k { flex: 0 0 auto; font-weight: 700; }
+.dm-grid input { flex: 1 1 auto; width: 100%; min-width: 0; font: inherit; font-size: 16px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
+.dm-grid input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 50%, transparent); border-color: var(--primary); }
+.dm-grid input:disabled { background: transparent; color: var(--muted); border-style: dashed; }
+.dm-grid .dm-k { min-width: 1em; font-size: 14px; white-space: nowrap; color: var(--amber); }
+.dm-tools { margin-top: 6px; }
+.dm-steps { margin: 0 14px 4px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); font-size: 15px; line-height: 1.7; }
+.dm-steps-ttl { font-weight: 800; font-size: 14px; color: var(--muted); margin-bottom: 2px; }
+.dm-steps ol { list-style: none; margin: 0; padding: 0; }
+.dm-steps li { margin: 4px 0; padding-left: 1.8em; text-indent: -1.8em; }
+.dm-steps li > * { text-indent: 0; }
+.dm-steps .dm-no { display: inline-block; width: 1.8em; text-indent: 0; font-weight: 800; color: var(--teal); }
+.dm-steps li > b { margin-right: 8px; }
+.dm-steps .dm-eq { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0; }
+.dm-steps mjx-container { max-width: 100%; }
+.dm-ex { margin-top: 6px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--amber) 10%, transparent); font-size: 14px; }
+.dm-ex .dm-box { display: inline-block; margin: 2px 8px 2px 0; padding: 1px 8px; border: 1px dashed var(--amber); border-radius: 6px; }
+@media (max-width: 480px) { .dm-steps { margin: 0 10px 4px; padding: 8px 10px; font-size: 14.5px; } }
+#w-add .readout .k, #w-rot .readout .k { min-width: 3.4em; }
+
+/* == agent T3b (trig 3-6) == */
+/* 3.6 合成：点 (a, b) の図とグラフを、広い画面では横に並べる */
+.syn-stages { display: grid; grid-template-columns: minmax(0, 1fr); }
+.syn-stages > .stage + .stage { border-top: 1px solid var(--border); }
+@media (min-width: 760px) {
+  .syn-stages { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: stretch; }
+  .syn-stages > .stage + .stage { border-top: 0; border-left: 1px solid var(--border); }
+}
+.quiz-fig { margin: 8px 0 4px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+#w-abpq .ctrl, #w-game-wave .ctrl, #w-yura .ctrl { grid-template-columns: 34px minmax(0, 1fr) 62px; }
+#w-abpq .ctrl-val, #w-game-wave .ctrl-val, #w-yura .ctrl-val, #w-unwrap .ctrl-val, #w-tan .ctrl-val { white-space: nowrap; }
+
+/* == agent T3c (trig 3-7) == */
+.chapter .sec > pre.code-37 { margin: 10px 0 18px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); overflow-x: auto; font-size: 13px; line-height: 1.65; }
+.chapter .sec > pre.code-37 code { background: none; padding: 0; font-size: 13px; }
+#w-bug [data-r="code"] code { font-size: 12.5px; white-space: nowrap; }
+#w-solve .panel.two, #w-inv .panel.two, #w-turn .panel.two, #w-phone .panel.two { grid-template-columns: minmax(0, 1fr); }
+#w-solve .readout, #w-inv .readout, #w-atan2 .readout, #w-bug .readout, #w-turn .readout, #w-phone .readout, #w-game-turret .readout { grid-template-columns: minmax(0, 1fr); }
+#w-bug .readout .row > span:not(.k), #w-phone .readout .row > span:not(.k), #w-atan2 .readout .row > span:not(.k) { min-width: 0; }
+.ang-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.ang-lab { font-size: 14px; font-weight: 700; color: var(--muted); }
+.ang-in { width: 9em; max-width: 100%; font: inherit; font-size: 18px; font-weight: 700; padding: 6px 10px; border-radius: 10px; border: 2px solid var(--primary); background: var(--surface); color: var(--text); }
+.ang-in:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.ang-in:disabled { opacity: .6; }
+table.t37 { min-width: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+table.t37 th, table.t37 td { padding: 8px 10px; vertical-align: middle; }
+.t37-wrap { margin: 0 0 8px; }
+@media (max-width: 520px) { table.t37 { font-size: 13px; } table.t37 th, table.t37 td { padding: 7px 5px; } }
+.x37 { color: var(--accent); font-weight: 700; font-size: 13px; white-space: nowrap; }
+.turn37 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-top: 1px solid var(--border); }
+.turn37 .tc { padding: 10px 12px 12px; text-align: center; min-width: 0; }
+.turn37 .tc + .tc { border-left: 1px solid var(--border); }
+.turn37 .tc-h { font-size: 13px; font-weight: 700; }
+.turn37 .raw .tc-h, .turn37 .raw .tc-big { color: var(--amber); }
+.turn37 .wrap .tc-h, .turn37 .wrap .tc-big { color: var(--teal); }
+.turn37 .tc-f { font-size: 13px; min-height: 1.8em; overflow-x: auto; overflow-y: hidden; }
+.turn37 .tc-big { font-size: clamp(28px, 8vw, 40px); font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.turn37 .tc-s { font-size: 13px; color: var(--muted); }
+.turn37 .tc-t { margin-top: 4px; min-height: 2.9em; font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.turn37 .tc-t.done { color: var(--teal); }
+
+/* == agent T4a (trig 3-8) == */
+#w-beat .stage + .stage, #w-fourier .stage.spec, #w-game-timbre .stage.spec { border-top: 1px solid var(--border); }
+#w-fourier .fx-eq { padding: 8px 14px; overflow-x: auto; overflow-y: hidden; text-align: center; font-size: 15px; border-top: 1px solid var(--border); background: var(--plot-bg); min-height: 2.6em; }
+#w-tone .readout, #w-beat .readout, #w-cancel .readout, #w-fourier .readout, #w-epi .readout, #w-mic .readout, #w-draw .readout { grid-template-columns: minmax(0, 1fr); }
+#w-beat .readout [data-r="eq"] { overflow-x: auto; overflow-y: hidden; }
+#w-epi .readout .row > span:not(.k), #w-mic .readout .row > span:not(.k), #w-draw .readout .row > span:not(.k) { min-width: 0; }
+.draw-cv.drawing { touch-action: none; cursor: crosshair; }
+.coef-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.coef-table th, .coef-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+.coef-table thead th { font-size: 13px; color: var(--muted); }
+.coef-table tbody th { white-space: nowrap; }
+#w-mic [data-r="tips"] { margin: 0; }
+
+/* == agent T4b (trig 3-9) == */
+#w-liss .panel.two, #w-cyc .panel.two, #w-spiro .panel.two, #w-sun .panel.two, #w-arm .panel.two, #w-view .panel.two { grid-template-columns: minmax(0, 1fr); }
+#w-liss .readout, #w-cyc .readout, #w-spiro .readout, #w-polar .readout, #w-lidar .readout, #w-sun .readout, #w-arm .readout, #w-view .readout, #w-game-arm .readout { grid-template-columns: minmax(0, 1fr); }
+#w-liss .readout .row > span:not(.k), #w-cyc .readout .row > span:not(.k), #w-spiro .readout .row > span:not(.k), #w-lidar .readout .row > span:not(.k), #w-sun .readout .row > span:not(.k), #w-view .readout .row > span:not(.k) { min-width: 0; }
+#w-liss .ctrl, #w-cyc .ctrl, #w-spiro .ctrl, #w-sun .ctrl, #w-arm .ctrl, #w-game-arm .ctrl { grid-template-columns: 34px minmax(0, 1fr) 64px; }
+#w-view .ctrl { grid-template-columns: 62px minmax(0, 1fr) 56px; }
+#w-view .ctrl-label { font-size: 14px; }
+#w-liss .ctrl-val, #w-cyc .ctrl-val, #w-spiro .ctrl-val, #w-sun .ctrl-val, #w-arm .ctrl-val, #w-game-arm .ctrl-val, #w-view .ctrl-val { white-space: nowrap; }
+#w-liss .panel.sound { border-top: 1px solid var(--border); }
+.spiro-sw .chip { padding: 6px 9px; display: inline-flex; align-items: center; }
+.spiro-sw .chip i { display: block; width: 18px; height: 18px; border-radius: 50%; }
+.spiro-sw .chip[aria-pressed="true"] { background: var(--surface-2); border-color: var(--text); box-shadow: 0 0 0 2px var(--text) inset; }
+
+/* == trig island == */
+.isl-meter { margin: 0 0 14px; }
+.isl-meter-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 6px; }
+.isl-meter-k { font-size: 14px; font-weight: 700; color: var(--muted); }
+.isl-meter-v { font-size: 20px; font-weight: 800; color: var(--amber); font-variant-numeric: tabular-nums; }
+.isl-bar { height: 12px; border-radius: 99px; background: var(--track); overflow: hidden; }
+.isl-bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--amber), color-mix(in srgb, var(--amber) 60%, var(--accent))); transition: width .4s; }
+.isl-map { position: relative; max-width: 720px; margin: 0 auto; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+.isl-map svg { display: block; width: 100%; height: auto; }
+.isl-sea { fill: color-mix(in srgb, var(--primary) 14%, var(--plot-bg)); }
+.isl-waves path { fill: none; stroke: color-mix(in srgb, var(--primary) 45%, var(--plot-bg)); stroke-width: 3; stroke-linecap: round; }
+.isl-sand { fill: color-mix(in srgb, var(--amber) 32%, var(--plot-bg)); }
+.isl-grass { fill: color-mix(in srgb, var(--teal) 30%, var(--plot-bg)); }
+.isl-bridge { fill: none; stroke: var(--brown); stroke-width: 4; stroke-linecap: round; }
+.isl-route { fill: none; stroke: var(--brown); stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; opacity: .7; }
+.isl-deco rect, .isl-deco path:not([d$="z"]) { fill: none; stroke: var(--brown); stroke-width: 3; stroke-linecap: round; }
+.isl-deco rect { fill: var(--surface); }
+.isl-deco path[d$="z"] { fill: var(--accent); }
+.isl-fort rect { fill: color-mix(in srgb, var(--brown) 55%, var(--plot-bg)); }
+.isl-fort path { stroke: var(--text); stroke-width: 2.5; }
+.isl-fort .isl-flag { fill: var(--accent); stroke: none; }
+.isl-pins { position: absolute; inset: 0; }
+.isl-pin { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 46px; height: 46px; padding: 0 4px; border-radius: 99px; background: var(--surface); border: 2.5px solid var(--muted);
+  color: var(--text); text-decoration: none; line-height: 1.1; box-shadow: 0 2px 6px rgba(0, 0, 0, .18); }
+.isl-pin b { font-size: 13px; font-weight: 800; }
+.isl-pin span { font-size: 11px; font-weight: 800; color: var(--amber); white-space: nowrap; }
+.isl-pin.got { border-color: var(--amber); }
+.isl-pin:hover, .isl-pin:focus-visible { border-color: var(--primary); outline: none; z-index: 2; }
+.isl-pin-fort { min-width: 52px; height: 52px; border-color: var(--accent); }
+.isl-pin-fort.got { border-color: var(--teal); background: color-mix(in srgb, var(--teal) 14%, var(--surface)); }
+@media (max-width: 520px) {
+  .isl-pin { min-width: 38px; height: 38px; border-width: 2px; }
+  .isl-pin b { font-size: 11px; }
+  .isl-pin span { font-size: 9.5px; }
+  .isl-pin-fort { min-width: 42px; height: 42px; }
+}
+.isl-spots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 8px; margin-top: 14px; }
+.isl-spot { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); text-decoration: none; min-width: 0; }
+.isl-spot:hover { border-color: var(--primary); }
+.isl-spot .isl-no { flex: none; min-width: 42px; text-align: center; font-weight: 800; font-size: 13px; padding: 3px 6px; border-radius: 8px; background: var(--surface-2); color: var(--muted); }
+.isl-spot.got .isl-no { background: color-mix(in srgb, var(--amber) 22%, var(--surface)); color: var(--text); }
+.isl-spot .isl-nm { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.isl-spot .isl-nm b { font-size: 14.5px; }
+.isl-spot .isl-nm small { font-size: 12px; color: var(--muted); }
+.isl-spot .isl-st { flex: none; font-weight: 800; color: var(--amber); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.isl-spot .isl-st small { color: var(--muted); font-weight: 700; }
+.isl-spot-fort { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
+.isl-skills { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 0 16px 12px; background: var(--surface); }
+.isl-skill { font-size: 12.5px; font-weight: 700; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface-2); }
+.isl-sliders { display: grid; gap: 6px; }
+.isl-sliders[hidden], #w-game-island .ang-row[hidden] { display: none; }
+#w-game-island .readout { grid-template-columns: minmax(0, 1fr); }
+#w-game-island .ctrl { grid-template-columns: 34px minmax(0, 1fr) 64px; }
+#w-game-island .ctrl-val { white-space: nowrap; }
+.isl-badge { display: flex; gap: 18px; align-items: center; padding: 16px 18px; border: 2px dashed var(--border); border-radius: 16px; background: var(--surface); }
+.isl-medal { flex: none; width: 104px; }
+.isl-medal svg { display: block; width: 100%; height: auto; }
+.isl-ribbon { fill: var(--track); }
+.isl-disc { fill: var(--track); }
+.isl-disc-in { fill: var(--surface-2); }
+.isl-wave { fill: none; stroke: var(--muted); stroke-width: 4; stroke-linecap: round; }
+.isl-dot { fill: var(--muted); }
+.isl-badge.got { border: 2px solid var(--amber); background: color-mix(in srgb, var(--amber) 8%, var(--surface)); }
+.isl-badge.got .isl-ribbon { fill: var(--accent); }
+.isl-badge.got .isl-disc { fill: var(--amber); }
+.isl-badge.got .isl-disc-in { fill: color-mix(in srgb, var(--amber) 35%, #fff); }
+.isl-badge.got .isl-wave { stroke: var(--primary); }
+.isl-badge.got .isl-dot { fill: var(--accent); }
+.isl-badge-body { min-width: 0; }
+.isl-badge-ttl { font-size: 20px; font-weight: 800; }
+.isl-badge:not(.got) .isl-badge-ttl { color: var(--muted); }
+.isl-badge-st { font-size: 14px; font-weight: 700; margin: 2px 0 6px; }
+.isl-badge.got .isl-badge-st { color: var(--teal); }
+.isl-check { list-style: none; margin: 0; padding: 0; font-size: 13.5px; line-height: 1.8; columns: 2 220px; }
+.isl-check li::before { content: '☐ '; color: var(--muted); }
+.isl-check li.ok::before { content: '☑ '; color: var(--teal); }
+@media (max-width: 520px) {
+  .isl-badge { flex-direction: column; align-items: flex-start; }
+  .isl-medal { width: 84px; }
+}
+a.card.island-card { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 12px; border: 2px solid var(--amber); }
+.island-card > div { flex: 1 1 200px; min-width: 0; }
+.island-card .isl-ic { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 26px; background: color-mix(in srgb, var(--amber) 16%, transparent); }
+.island-card h3 { margin: 0; }
+.island-card p { margin: 2px 0 0; }
+.island-card .isl-meter-v { font-size: 15px; margin-left: auto; white-space: nowrap; }
+#w-game-island .ans-box { overflow-x: auto; overflow-y: hidden; }
+@media (max-width: 520px) {
+  #w-game-island .readout .row:has([data-r="answer"]), #w-game-island .readout .row:has([data-r="hint"]) { flex-wrap: wrap; row-gap: 4px; }
+  #w-game-island [data-r="answer"], #w-game-island [data-r="hint"] { flex: 1 1 100%; min-width: 0; }
+}

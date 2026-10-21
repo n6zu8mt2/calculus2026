@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.1 三角比 | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.1節：相似と三角比・三角定規・坂道の「10%」・高さを測る">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch1 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html" class="active" aria-current="page"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.1節</div>
+      <h1><span class="chap-no">3.1</span>三角比：直角三角形の形を数で表す</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>直角三角形の辺の比として $\sin\theta,\ \cos\theta,\ \tan\theta$ を説明できる。</li>
+      <li>$30^\circ,\ 45^\circ,\ 60^\circ$ の三角比を求められる。</li>
+      <li>$\tan\theta$ を傾きとして使い、坂の角度や高さを求められる。</li>
+    </ol>
+    <div class="goal-meta">図 5つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：中学で学んだ 相似・三平方の定理、<a href="../polynomial/1-1.html">1.1節</a>の 傾き</p>
+
+  <section class="sec first" id="main">
+
+    <h2 class="h-sub"><span class="tag">(1)</span>相似な三角形と三角比</h2>
+
+    <p>
+      直角三角形で、直角でない1つの角 $\blue{\theta}$（シータ）を決めると、三角形の <b>形</b> が決まります（もう1つの角は $90^\circ-\theta$ に決まるからです）。
+      大きさはいろいろでも、どれも <b>相似</b>（拡大・縮小した関係）なので、辺の長さの <b>比</b> は同じです。
+      下の図で、角 $\blue{\theta}$ を決めてから大きさを変えてみましょう。
+    </p>
+    <div class="widget" id="w-ratio">
+      <div class="widget-head">直角三角形の辺の比 <span class="hint">$\theta$ と大きさ（斜辺の長さ $c$）を動かす</span></div>
+      <div class="stage"><canvas aria-label="直角三角形と三角比"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">辺の長さ</span><span class="tex" data-r="sides"></span></div>
+          <div class="row"><span class="k t-red">sin</span><span class="tex" data-r="sin"></span></div>
+          <div class="row"><span class="k t-teal">cos</span><span class="tex" data-r="cos"></span></div>
+          <div class="row"><span class="k t-amber">tan</span><span class="tex" data-r="tan"></span></div>
+        </div>
+      </div>
+    </div>
+    <p>
+      大きさ（斜辺の長さ $c$）を変えると辺の長さは変わりますが、3つの比は変わりません。変わるのは $\blue{\theta}$ を動かしたときだけです。
+      つまり、この比は <b>角 $\blue{\theta}$ だけで決まる数</b> です。そこで、それぞれに名前をつけます。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜三角比の定義</div>
+      <p class="key-lead key-big">直角三角形の「辺の比」に名前をつけたものが三角比。</p>
+      <div class="tri-fig" aria-hidden="true">
+        <svg viewBox="0 0 320 170"><path d="M20 150 L280 150 L280 30 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M20 150 L280 150" stroke="var(--teal)" stroke-width="5"/><path d="M280 150 L280 30" stroke="var(--accent)" stroke-width="5"/>
+          <path d="M266 150 L266 136 L280 136" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M70 150 A50 50 0 0 0 65.4 129.1" fill="none" stroke="var(--primary)" stroke-width="2.5"/></svg>
+        <span class="tf-l" style="left:27%;top:76%">$\blue{\theta}$</span>
+        <span class="tf-l" style="left:50%;top:94%;transform:translateX(-50%)"><b class="t-teal">底辺</b></span>
+        <span class="tf-l" style="left:89%;top:46%"><b class="t-red">高さ</b></span>
+        <span class="tf-l" style="left:34%;top:30%"><b>斜辺</b></span>
+      </div>
+      $$\red{\sin\theta}=\frac{\red{\text{高さ}}}{\text{斜辺}},\qquad \teal{\cos\theta}=\frac{\teal{\text{底辺}}}{\text{斜辺}},\qquad \amber{\tan\theta}=\frac{\red{\text{高さ}}}{\teal{\text{底辺}}}$$
+      <ul>
+        <li>$\sin$ はサイン（正弦）、$\cos$ はコサイン（余弦）、$\tan$ はタンジェント（正接）と読む。</li>
+        <li>斜辺は直角の向かい側のいちばん長い辺。高さは $\theta$ の向かい側（対辺）、底辺は $\theta$ のとなり（隣辺）。</li>
+      </ul>
+      <p class="key-note">比なので、三角形の大きさによらず $\theta$ だけで決まります。</p>
+    </div>
+    <p>
+      この節では、この「辺の比」を道具にして、まず三角定規の角の値を求め、次に坂の傾きや建物の高さの計算に使います。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>三角定規の三角比</h2>
+
+    <p>
+      三角比の値は、ふつうは関数電卓で求めます。でも、三角定規の角 $30^\circ$、$45^\circ$、$60^\circ$ だけは、
+      辺の比 $1:1:\sqrt2$ と $1:\sqrt3:2$ から正確な値がわかります（どちらも三平方の定理で求められます）。
+    </p>
+    <div class="widget" id="w-sankaku">
+      <div class="widget-head">三角定規の辺の比 <span class="hint">角を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="chips"></div></div>
+      <div class="stage"><canvas aria-label="三角定規の辺の比"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k t-red">sin</span><span class="tex big" data-r="sin"></span></div>
+          <div class="row"><span class="k t-teal">cos</span><span class="tex big" data-r="cos"></span></div>
+          <div class="row"><span class="k t-amber">tan</span><span class="tex big" data-r="tan"></span></div>
+        </div>
+        <p class="note-txt" data-r="note"></p>
+      </div>
+    </div>
+    <div class="key"><div class="key-ttl">覚える｜30°・45°・60° の三角比</div>
+      <p class="key-lead key-big">三角定規の辺の比は $1:1:\sqrt2$ と $1:\sqrt3:2$</p>
+      <div class="table-wrap"><table class="key-table trig-val-table">
+        <thead><tr><th>$\blue{\theta}$</th><td>$\blue{30^\circ}$</td><td>$\blue{45^\circ}$</td><td>$\blue{60^\circ}$</td></tr></thead>
+        <tbody>
+          <tr><th>$\red{\sin\theta}$</th><td>$\dfrac12$</td><td>$\dfrac{\sqrt2}{2}$</td><td>$\dfrac{\sqrt3}{2}$</td></tr>
+          <tr><th>$\teal{\cos\theta}$</th><td>$\dfrac{\sqrt3}{2}$</td><td>$\dfrac{\sqrt2}{2}$</td><td>$\dfrac12$</td></tr>
+          <tr><th>$\amber{\tan\theta}$</th><td>$\dfrac{1}{\sqrt3}$</td><td>$1$</td><td>$\sqrt3$</td></tr>
+        </tbody>
+      </table></div>
+      <p class="key-note">$\sin$ は $30^\circ\to60^\circ$ で $\frac{\sqrt1}{2},\frac{\sqrt2}{2},\frac{\sqrt3}{2}$ と増え、$\cos$ はその逆の順。$\frac{1}{\sqrt2}=\frac{\sqrt2}{2}$、$\frac1{\sqrt3}=\frac{\sqrt3}{3}$ と書いてもよい。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>tan の応用：坂道の「10%」は何度？</h2>
+
+    <p>
+      $\amber{\tan\theta}=\dfrac{\text{高さ}}{\text{底辺}}$ は、<a href="../polynomial/1-1.html">1.1節</a>の <b>傾き</b>（$x$ が 1 増えると $y$ がいくつ増えるか）と同じものです。
+      身近な例が坂道です。山道を車で走っていると、「10%」と書かれた坂の標識を見かけます。これは「水平に 100 m 進むと、10 m 上がる」という意味です。
+      角度で言うと何度くらいでしょう。$10\%$ だから $36^\circ$（$360^\circ$ の 10%）…ではありません。
+    </p>
+    <div class="widget" id="w-slope">
+      <div class="widget-head">坂道の勾配と角度 <span class="hint">勾配（%）を動かす</span></div>
+      <div class="stage"><canvas aria-label="坂道の勾配と角度"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">勾配</span><span class="tex" data-r="grad"></span></div>
+          <div class="row"><span class="k">坂の角度</span><span class="tex big" data-r="ang"></span></div>
+        </div>
+      </div>
+    </div>
+    <p>
+      坂の「きつさ」は <b>高さと水平距離の比</b>、つまり $\amber{\tan\theta}$ で決まり、坂の長さには関係しません。
+      10 m 進んで 1 m 上がっても、1 km 進んで 100 m 上がっても、同じ 10% の坂です。(1) で見た相似の考え方そのものです。
+    </p>
+    <p>
+      10% の坂は $\amber{\tan\theta}=0.1$ となる角で、関数電卓で求めると $\theta\approx5.7^\circ$。たったの約 $5.7^\circ$ ですが、自転車ではかなりきつく感じます。
+      $100\%$（100 m 進んで 100 m 上がる）は $\amber{\tan\theta}=1$ なので、(2) の表から $\theta=45^\circ$ です。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜tan は傾き</div>
+      <p class="key-lead key-big">$\tan\theta$ は坂の傾き。高さ ＝ 底辺 × $\tan\theta$</p>
+      <ul>
+        <li>坂の勾配（%）は $\tan\theta\times100$。10% なら $\tan\theta=0.1$、$\theta\approx5.7^\circ$。</li>
+        <li>原点を通り、$x$ 軸と角 $\theta$ をなす直線の傾きは $\tan\theta$（式は $y=(\tan\theta)\,x$）。</li>
+        <li>離れた距離 $d$ と見上げる角 $\theta$ がわかれば、高さは $h=d\tan\theta$（次の (4)）。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>高さを測る（影・スマホ分度器）</h2>
+
+    <p>
+      木や建物のてっぺんには、なかなか登れません。でも、<b>離れた距離</b> と <b>見上げる角度</b> がわかれば、(3) の「高さ ＝ 底辺 × $\tan\theta$」を使って高さを計算できます。
+      およそ 2600 年前、ギリシャのタレスはピラミッドの影の長さから高さを求めたと伝えられています。
+    </p>
+    <h3 class="h-mini">影で測る</h3>
+    <p>
+      太陽の光は平行にやってきます。太陽の高さ（地面と光の角）が $\blue{\theta}$ のとき、高さ $\red{h}$ の建物の影の長さを $\teal{\ell}$ とすると、
+      影の先から建物のてっぺんを見上げた角が $\blue{\theta}$ なので $\red{h}=\teal{\ell}\tan\blue{\theta}$ です。
+    </p>
+    <div class="widget" id="w-shadow">
+      <div class="widget-head">影で高さを測る <span class="hint">太陽の高さ $\theta$ と影の長さ $\ell$ を動かす（縮尺は自動）</span></div>
+      <div class="stage"><canvas aria-label="影の長さと建物の高さ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">建物の高さ</span><span class="tex big" data-r="h"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">スマホを分度器にする</h3>
+    <p>
+      スマホには傾きを測るセンサーが入っています。スマホを縦に持って画面を上に向け、<b>上の端の延長線</b> で建物のてっぺんをねらうと、
+      その傾きが見上げる角 $\blue{\theta}$ です（平らに置くと $0^\circ$）。建物までの距離 $\teal{d}$（歩幅で数えてもよい）と目の高さ $e$ を入れれば、
+      $h=\teal{d}\tan\blue{\theta}+e$ で高さがわかります。外に出て、校舎や木の高さを測ってみましょう。
+    </p>
+    <div class="widget" id="w-tilt">
+      <div class="widget-head">スマホ分度器で高さを測る <span class="hint">センサーを使う（スマホ）／スライダーで入れる（PC）</span></div>
+      <div class="panel sensor" style="padding-bottom:0">
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-a="tilt">📱 傾きセンサーを使う</button>
+          <button class="btn" type="button" data-a="hold">角度を固定</button>
+          <span class="tilt-big tex" data-r="big"></span>
+        </div>
+        <div class="msg ng" data-r="tstat"></div>
+      </div>
+      <div class="stage"><canvas aria-label="見上げる角と建物の高さ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">高さ</span><span class="tex big" data-r="h"></span></div>
+          <div class="row"><span class="k">文字</span><span class="note-txt">$\teal{d}$：建物までの距離、$e$：目の高さ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：ゲームの「視野角」</div>
+      <p>3D ゲームの設定にある「視野角（FOV）」は、カメラが左右に見わたす角度 $\blue{\theta}$ です。
+      カメラから距離 $d$ の位置で見える横の幅は、真ん中で半分に分けた直角三角形を考えて</p>
+      <div class="eq-box">$$\text{見える幅}=2\,d\tan\frac{\blue{\theta}}{2}$$</div>
+      <p>例えば $\theta=90^\circ$ なら $2d\tan45^\circ=2d$、$\theta=60^\circ$ なら $2d\tan30^\circ=\frac{2d}{\sqrt3}\approx1.15d$。
+      視野角を広げると、同じ画面にたくさんの景色が入るので、ものが小さく、遠くに見えます。</p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>三角比</th><td>$\red{\sin\theta}=\dfrac{\text{高さ}}{\text{斜辺}}$、$\teal{\cos\theta}=\dfrac{\text{底辺}}{\text{斜辺}}$、$\amber{\tan\theta}=\dfrac{\text{高さ}}{\text{底辺}}$</td></tr>
+        <tr><th>なぜ決まる</th><td>相似な三角形では辺の比が同じなので、角 $\theta$ だけで決まる</td></tr>
+        <tr><th>三角定規</th><td>$1:1:\sqrt2$（45°）、$1:\sqrt3:2$（30°・60°）</td></tr>
+        <tr><th>主な値</th><td>$\sin30^\circ=\frac12$、$\cos30^\circ=\frac{\sqrt3}{2}$、$\tan45^\circ=1$、$\tan60^\circ=\sqrt3$ など</td></tr>
+        <tr><th>tan は傾き</th><td>坂の勾配 10% は $\tan\theta=0.1$（$\theta\approx5.7^\circ$）</td></tr>
+        <tr><th>高さ</th><td>高さ $h=d\tan\theta$（距離 $d$、見上げる角 $\theta$）</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>チャレンジ：高さを当てろ</h2>
+
+    <p>距離と見上げる角度（または影）から、建物の高さ $\red{h}$ を計算して答えましょう。
+    答えは小数第1位まで。3回まで決定でき、<b>1回目で正解すると★3</b>。計算してから決定しましょう。</p>
+    <div class="widget" id="w-game-height">
+      <div class="widget-head">高さを当てろ <span class="game-total" data-r="total"></span><span class="hint">$h$ を決めて「決定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="高さを当てろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>$\sin45^\circ,\ \cos45^\circ,\ \tan45^\circ$ を求めよ。</li>
+      <li>$\sin30^\circ,\ \cos30^\circ,\ \tan30^\circ$ を求めよ。</li>
+      <li>$\sin60^\circ,\ \cos60^\circ,\ \tan60^\circ$ を求めよ。</li>
+      <li>木から $20$ m 離れて立ち、目の高さ $1.6$ m から木のてっぺんを見上げると $30^\circ$ だった。木の高さを求めよ（小数第1位まで、$\sqrt3\approx1.732$）。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>直角二等辺三角形の辺の比 $1:1:\sqrt2$（底辺 1、高さ 1、斜辺 $\sqrt2$）を使う。<br>
+          $\sin45^\circ=\dfrac{1}{\sqrt2}=\dfrac{\sqrt2}{2}$、$\cos45^\circ=\dfrac{1}{\sqrt2}=\dfrac{\sqrt2}{2}$、$\tan45^\circ=\dfrac11=1$</li>
+        <li>辺の比 $1:\sqrt3:2$ で、$30^\circ$ の向かいの高さが 1、底辺が $\sqrt3$、斜辺が 2。<br>
+          $\sin30^\circ=\dfrac12$、$\cos30^\circ=\dfrac{\sqrt3}{2}$、$\tan30^\circ=\dfrac{1}{\sqrt3}=\dfrac{\sqrt3}{3}$</li>
+        <li>同じ三角形を $60^\circ$ の角から見ると、高さ $\sqrt3$、底辺 1、斜辺 2。<br>
+          $\sin60^\circ=\dfrac{\sqrt3}{2}$、$\cos60^\circ=\dfrac12$、$\tan60^\circ=\dfrac{\sqrt3}{1}=\sqrt3$</li>
+        <li>目の高さより上の部分は $20\tan30^\circ=\dfrac{20}{\sqrt3}=\dfrac{20\sqrt3}{3}\approx11.547$ m。<br>
+          木の高さは $11.547+1.6=13.147$ なので、約 $13.1$ m</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="index.html"><span class="dir">← 第3章の目次</span><span class="nm">三角関数</span></a>
+    <a class="next" href="3-2.html"><span class="dir">次の節 →</span><span class="nm">3.2 弧度法</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-1.js?v=202610211315"></script>
+</body>
+</html>

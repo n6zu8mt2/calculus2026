@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.3 単位円と三角関数 | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.3節：単位円・負の角・符号・対称な角">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch3 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html" class="active" aria-current="page"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.3節</div>
+      <h1><span class="chap-no">3.3</span>単位円と三角関数：どんな角度でも</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>単位円上の点 $(\cos\theta,\ \sin\theta)$ として三角関数を定義できる。</li>
+      <li>鈍角・負の角・一周以上の角の三角関数の値を求められる。</li>
+      <li>$\sin^2\theta+\cos^2\theta=1$ を単位円から説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 4つ ・ タイムアタック ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="3-1.html">3.1節</a>の 三角比、<a href="3-2.html">3.2節</a>の 弧度法、<a href="../explog/2-1.html">2.1節</a>の「規則を保って意味を広げる」考え方</p>
+
+  <section class="sec first" id="main">
+
+    <h2 class="h-sub"><span class="tag">(1)</span>三角比を広げる</h2>
+
+    <p>
+      3.1節の三角比は、直角三角形の角で決めました。直角三角形の直角でない角は、いつも $0^\circ$ より大きく $90^\circ$ より小さい角です。
+      ですから $\sin120^\circ$ や $\cos(-30^\circ)$ は、このままでは<b>意味がありません</b>。$120^\circ$ や $-30^\circ$ の角をもつ直角三角形はかけないからです。
+    </p>
+    <p>
+      でも、時計の針や車のハンドル、ゲームのキャラクターの向きなど、回転する角は $90^\circ$ をかんたんに越えますし、逆向き（マイナス）にも回ります。
+      そこで、<a href="../explog/2-1.html">2.1節</a>で指数を $2^0$ や $2^{-1}$ に広げたときと同じ考え方をします。
+      <b>鋭角（$0^\circ$〜$90^\circ$）では今までの三角比とぴったり同じになるようにして、そのうえで、どんな角でも使えるように意味を広げる</b>のです。
+      その道具が、半径 1 の円（<b>単位円</b>）です。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>単位円で定義する</h2>
+
+    <p>
+      原点 $\mathrm{O}$ を中心とする半径 1 の円を考えます。点 $(1,\,0)$ から出発して、円の上を<b>反時計回り</b>に角 $\blue{\theta}$ だけ回った点を $\mathrm{P}$ とします。
+      この点 $\mathrm{P}$ の座標を、次のように決めます。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜単位円による三角関数の定義</div>
+      <p class="key-lead key-big">角 $\theta$ だけ回った単位円上の点の座標が $(\cos\theta,\ \sin\theta)$</p>
+      $$\mathrm{P}(\teal{\cos\theta},\ \red{\sin\theta})$$
+      <ul>
+        <li>$\teal{\cos\theta}$ ＝ 点 $\mathrm{P}$ の $x$ 座標（横の影）</li>
+        <li>$\red{\sin\theta}$ ＝ 点 $\mathrm{P}$ の $y$ 座標（縦の影）</li>
+      </ul>
+      <p class="key-note">$\theta$ が正なら反時計回り、負なら時計回り。$2\pi\,(=360^\circ)$ 回ると元の位置にもどる。</p>
+    </div>
+    <p>
+      角を決めると点 $\mathrm{P}$ が1つに決まり、その座標が1つに決まります。こうして $\sin\theta$、$\cos\theta$ は、どんな角 $\theta$ に対しても値が1つに決まる<b>関数</b>になりました。これを<b>三角関数</b>といいます。
+      青い点をドラッグして、いろいろな角で確かめましょう。
+    </p>
+
+    <div class="widget" id="w-uc-def">
+      <div class="widget-head">単位円上の点 $\mathrm{P}(\teal{\cos\theta},\ \red{\sin\theta})$ <span class="hint">青い点をドラッグ（何周でも回せる）／角を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">角</span><div class="chips" data-r="presets"></div></div>
+        <div class="btn-row"><span class="lbl-sm">刻み</span><div class="chips" data-r="snap"></div><label class="check"><input type="checkbox" data-r="showtan">$\amber{\tan\theta}$ も表示する</label></div>
+      </div>
+      <div class="stage"><canvas aria-label="単位円上の点と cos・sin の影"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">角</span><span class="tex" data-r="ang"></span></div>
+          <div class="row"><span class="k">点 P</span><span class="tex big" data-r="pt"></span></div>
+          <div class="row"><span class="k">tan</span><span class="tex" data-r="tan"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex" data-r="pyth"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">鋭角では、三角比と同じ</h3>
+    <p>
+      $\theta$ が鋭角のとき、図の金色の直角三角形 $\mathrm{O}$・$(\cos\theta,\,0)$・$\mathrm{P}$ を見てください。斜辺は半径なので長さ 1、底辺は $\teal{x}$ 座標、高さは $\red{y}$ 座標です。3.1節の三角比で計算すると
+    </p>
+    <div class="eq-box">$$\cos\theta=\frac{\text{底辺}}{\text{斜辺}}=\frac{\teal{x}}{1}=\teal{x},\qquad \sin\theta=\frac{\text{高さ}}{\text{斜辺}}=\frac{\red{y}}{1}=\red{y}$$</div>
+    <p>となり、新しい定義と今までの三角比はぴったり一致します。斜辺を 1 にしたので、比がそのまま座標になったのです。</p>
+
+    <h3 class="h-mini">鈍角・負の角・1周以上の角</h3>
+    <p>
+      例えば $\theta=120^\circ\,\left(=\frac{2\pi}{3}\right)$ のとき、点 $\mathrm{P}$ は第2象限にあり、図の金色の三角形は $60^\circ$ の三角定規の形です。横に $\frac12$、縦に $\frac{\sqrt3}{2}$ ですが、左向きなので $x$ 座標はマイナス。よって
+    </p>
+    <div class="eq-box">$$\cos\frac{2\pi}{3}=\teal{-\frac12},\qquad \sin\frac{2\pi}{3}=\red{\frac{\sqrt3}{2}}$$</div>
+    <p>
+      $\theta=-30^\circ\,\left(=-\frac{\pi}{6}\right)$ なら時計回りに $30^\circ$ 回るので、点は $\left(\frac{\sqrt3}{2},\ -\frac12\right)$。
+      $\theta=390^\circ$ は「1周（$360^\circ$）してさらに $30^\circ$」なので、$30^\circ$ と同じ点です。一般に、$2\pi$ 足しても引いても同じ点なので
+    </p>
+    <div class="eq-box">$$\sin(\theta+2\pi)=\sin\theta,\qquad \cos(\theta+2\pi)=\cos\theta$$</div>
+    <p>コツは、<b>まず金色の直角三角形（$30^\circ$・$45^\circ$・$60^\circ$ の三角定規）で長さを求め、次に点のある向きで符号（＋・−）をつける</b>ことです。</p>
+
+    <h3 class="h-mini">tan は半径の傾き</h3>
+    <p>
+      $\tan$ も、三角比のときの「高さ ÷ 底辺」をそのまま使って決めます。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜tan の定義</div>
+      <p class="key-lead key-big">$\tan\theta$ ＝ 半径 $\mathrm{OP}$ の傾き</p>
+      $$\amber{\tan\theta}=\frac{\red{\sin\theta}}{\teal{\cos\theta}}$$
+      <p class="key-note">$\cos\theta=0$（$\theta=\frac{\pi}{2},\ \frac{3\pi}{2}$ など、点が真上・真下）のときは割り算できないので、$\tan\theta$ は考えない。</p>
+    </div>
+    <p>
+      傾きは「右へ 1 進むと、上へいくつ進むか」でした（<a href="../polynomial/1-1.html">1.1節</a>）。半径 $\mathrm{OP}$ を延ばした直線は、右へ $\teal{\cos\theta}$ 進むと上へ $\red{\sin\theta}$ 進むので、傾きは $\dfrac{\red{\sin\theta}}{\teal{\cos\theta}}=\amber{\tan\theta}$ です。
+      上の図で「$\tan\theta$ も表示する」をオンにすると、この直線が縦の線 $x=1$ と交わる点の高さとして $\amber{\tan\theta}$ が見えます（右へちょうど 1 進んだところの高さ）。
+      $\tan$（タンジェント）は「接線」という意味で、$x=1$ は単位円の接線なのでこの名前があります。
+    </p>
+
+    <h3 class="h-mini">sin² θ + cos² θ = 1</h3>
+    <p>
+      点 $\mathrm{P}(\teal{\cos\theta},\ \red{\sin\theta})$ は、原点からの距離が 1 の点です。金色の直角三角形に三平方の定理を使うと、どんな角でも次が成り立ちます（$\sin^2\theta$ は $(\sin\theta)^2$ のこと）。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜三角関数の三平方の定理</div>
+      <p class="key-lead key-big">点 P は原点から距離 1 の点</p>
+      $$\teal{\cos^2\theta}+\red{\sin^2\theta}=1$$
+      <p class="key-note">$\sin\theta$ がわかれば $\cos\theta$ も（符号を除いて）わかる。符号は点のある象限で決める。</p>
+    </div>
+    <p>
+      例：$\theta$ が第2象限の角で $\sin\theta=\frac35$ のとき、$\cos^2\theta=1-\frac{9}{25}=\frac{16}{25}$。第2象限では $x$ 座標が負なので $\cos\theta=-\frac45$、$\tan\theta=\frac{3/5}{-4/5}=-\frac34$。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>符号と対称な角</h2>
+
+    <p>
+      座標平面は、$x$ 軸と $y$ 軸で4つの部分（<b>象限</b>）に分かれます。点 $\mathrm{P}$ がどの象限にあるかで、三角関数の符号が決まります。
+    </p>
+    <div class="table-wrap"><table class="ratio-table">
+      <thead><tr><th></th><th>第1象限<br>$0\lt\theta\lt\frac{\pi}{2}$</th><th>第2象限<br>$\frac{\pi}{2}\lt\theta\lt\pi$</th><th>第3象限<br>$\pi\lt\theta\lt\frac{3\pi}{2}$</th><th>第4象限<br>$\frac{3\pi}{2}\lt\theta\lt2\pi$</th></tr></thead>
+      <tbody>
+        <tr><th>$\teal{\cos\theta}$（$x$ 座標）</th><td>$+$</td><td>$-$</td><td>$-$</td><td>$+$</td></tr>
+        <tr><th>$\red{\sin\theta}$（$y$ 座標）</th><td>$+$</td><td>$+$</td><td>$-$</td><td>$-$</td></tr>
+        <tr><th>$\amber{\tan\theta}$（傾き）</th><td>$+$</td><td>$-$</td><td>$+$</td><td>$-$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      また、角 $\theta$ の点 $\mathrm{P}$ と、$-\theta$ や $\pi-\theta$ の点 $\mathrm{Q}$ は、単位円の上で<b>折り返した位置</b>にあります。
+      そのため、影の長さは同じで、向き（符号）や縦横だけが変わります。下の図で相手の角を選び、$\mathrm{P}$ を動かして確かめましょう。
+    </p>
+
+    <div class="widget" id="w-uc-sym">
+      <div class="widget-head">対称な角：$\mathrm{P}(\blue{\theta})$ と $\mathrm{Q}$ <span class="hint">相手の角を選ぶ／青い点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">Q の角</span><div class="chips" data-r="partner"></div></div></div>
+      <div class="stage"><canvas aria-label="対称な2つの角と影"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k">P</span><span class="tex" data-r="p"></span></div>
+          <div class="row"><span class="k">Q</span><span class="tex" data-r="q"></span></div>
+          <div class="row"><span class="k">見方</span><span data-r="how"></span></div>
+        </div>
+        <div class="readout">
+          <div class="row"><span class="k">公式</span><span class="tex big" data-r="eq"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜対称な角の公式</div>
+      <p class="key-lead key-big">覚えるより、単位円をかいて納得する</p>
+      <div class="table-wrap"><table class="ratio-table">
+        <thead><tr><th>角</th><th>$\sin$</th><th>$\cos$</th><th>$\tan$</th></tr></thead>
+        <tbody>
+          <tr><th>$-\theta$</th><td>$-\sin\theta$</td><td>$\cos\theta$</td><td>$-\tan\theta$</td></tr>
+          <tr><th>$\pi-\theta$</th><td>$\sin\theta$</td><td>$-\cos\theta$</td><td>$-\tan\theta$</td></tr>
+          <tr><th>$\pi+\theta$</th><td>$-\sin\theta$</td><td>$-\cos\theta$</td><td>$\tan\theta$</td></tr>
+          <tr><th>$\frac{\pi}{2}-\theta$</th><td>$\cos\theta$</td><td>$\sin\theta$</td><td>$\dfrac{1}{\tan\theta}$</td></tr>
+        </tbody>
+      </table></div>
+      <p class="key-note">表の読み方：例えば1行目は $\sin(-\theta)=-\sin\theta$、$\cos(-\theta)=\cos\theta$、$\tan(-\theta)=-\tan\theta$。</p>
+      <p class="key-note">$-\theta$ は $x$ 軸で折り返し、$\pi-\theta$ は $y$ 軸で折り返し、$\pi+\theta$ は原点の反対側、$\frac{\pi}{2}-\theta$ は直線 $y=x$ で折り返し（$x$ と $y$ が入れかわる）。</p>
+    </div>
+    <p>
+      例：$\sin\frac{5\pi}{6}=\sin\left(\pi-\frac{\pi}{6}\right)=\sin\frac{\pi}{6}=\frac12$、<br>
+      $\cos\frac{4\pi}{3}=\cos\left(\pi+\frac{\pi}{3}\right)=-\cos\frac{\pi}{3}=-\frac12$<br>
+      式を丸暗記しなくても、単位円をかいて「どこで折り返したか」を見れば、いつでも作り直せます。なお、3.5節の加法定理を使って式で確かめることもできます。
+    </p>
+
+    <div class="callout point hsl-talk">
+      <div class="ttl">小話：色も「角度」と「距離」で表せる（HSL）</div>
+      <p>
+        画面の色は、3つの数の組で表すことができます。その1つが <b>HSL</b> です。
+      </p>
+      <div class="table-wrap"><table class="key-table hsl-table"><tbody>
+        <tr><th>H<br><span class="hsl-en">色相 hue</span></th><td>色の<b>種類</b>。<b>角度</b> $0^\circ$〜$360^\circ$ で表す。<br><span class="hsl-hue"><span class="hsl-dot" style="background:hsl(0,90%,50%)"></span>$0^\circ$ 赤</span> <span class="hsl-hue"><span class="hsl-dot" style="background:hsl(60,90%,50%)"></span>$60^\circ$ 黄</span> <span class="hsl-hue"><span class="hsl-dot" style="background:hsl(120,90%,40%)"></span>$120^\circ$ 緑</span> <span class="hsl-hue"><span class="hsl-dot" style="background:hsl(180,90%,45%)"></span>$180^\circ$ 水色</span> <span class="hsl-hue"><span class="hsl-dot" style="background:hsl(240,90%,55%)"></span>$240^\circ$ 青</span> <span class="hsl-hue"><span class="hsl-dot" style="background:hsl(300,90%,50%)"></span>$300^\circ$ 赤むらさき</span> </td></tr>
+        <tr><th>S<br><span class="hsl-en">彩度 saturation</span></th><td>色の<b>あざやかさ</b>。$0\%$ ＝ 灰色、$100\%$ ＝ いちばんあざやか</td></tr>
+        <tr><th>L<br><span class="hsl-en">明度 lightness</span></th><td>色の<b>明るさ</b>。$0\%$ ＝ 黒、$50\%$ ＝ ふつう、$100\%$ ＝ 白</td></tr>
+      </tbody></table></div>
+      <p>
+        ホームページの見た目を決める CSS では、色を <code>hsl(120, 85%, 52%)</code> のように書きます。これは「色相 $120^\circ$（緑）、あざやかさ $85\%$、明るさ $52\%$」という意味です。デザインのツールの色選びにも、H・S・L（または H・S・B）の欄があります。
+      </p>
+      <p>
+        単位円と見くらべると、<b>H は角 $\theta$</b>、<b>S は中心からの距離</b>です。L を決めると、色は円の中の点
+        $(S\cos H,\ S\sin H)$ で決まります。ただし $S$ は $85\%$ なら $0.85$ のように、$0$〜$1$ の数に直します。このように「距離と角」で点を表す方法を<b>極座標</b>といいます。中心は灰色で、外へ行くほどあざやかになります。
+        そして角が<b>ちょうど反対（$H+180^\circ$）</b>の色を<b>補色</b>といい、並べると互いを引き立てます。単位円で言えば、点 $\mathrm{P}$ と原点について反対側の点（$\pi+\theta$）です。
+      </p>
+      <p class="hsl-note">
+        参考：色は <code>rgb(255, 0, 0)</code> のように、赤・緑・青の光の強さ（$0$〜$255$）でも表せます（<b>RGB</b>）。画面は最後には RGB に直して光らせますが、人が「色の種類・あざやかさ・明るさ」で考えるときは HSL のほうが便利です。
+      </p>
+    </div>
+    <div class="widget" id="w-hue">
+      <div class="widget-head">HSL の色：向きが $\blue{H}$、中心からの距離が $\teal{S}$ <span class="hint">点をドラッグ／S・L はスライダー</span></div>
+      <div class="stage"><canvas aria-label="色相と彩度の円。点の向きが色相、中心からの距離が彩度"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">色</span><span class="hue-sw big" data-r="sw1"></span><code class="hsl-code" data-r="c1"></code></div>
+          <div class="row"><span class="k">補色</span><span class="hue-sw big" data-r="sw2"></span><code class="hsl-code" data-r="c2"></code></div>
+          <div class="row"><span class="k">RGB</span><code class="hsl-code" data-r="rgb"></code></div>
+          <div class="row"><span class="k">点</span><span class="tex" data-r="pt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>定義</th><td>単位円上で $(1,0)$ から角 $\theta$ 回った点が $(\cos\theta,\ \sin\theta)$（正は反時計回り、負は時計回り）</td></tr>
+        <tr><th>tan</th><td>$\tan\theta=\dfrac{\sin\theta}{\cos\theta}$ ＝ 半径の傾き（$\cos\theta=0$ では考えない）</td></tr>
+        <tr><th>三平方</th><td>$\sin^2\theta+\cos^2\theta=1$</td></tr>
+        <tr><th>1周</th><td>$\sin(\theta+2\pi)=\sin\theta$、$\cos(\theta+2\pi)=\cos\theta$</td></tr>
+        <tr><th>符号</th><td>$\cos$ は $x$ 座標、$\sin$ は $y$ 座標の符号。$\tan$ は第1・第3象限で正</td></tr>
+        <tr><th>対称な角</th><td>$-\theta$（$x$ 軸で折り返し）、$\pi-\theta$（$y$ 軸で折り返し）、$\pi+\theta$（原点の反対側）、$\frac{\pi}{2}-\theta$（$\sin$ と $\cos$ が入れかわる）</td></tr>
+        <tr><th>求め方</th><td>三角定規の形で長さ → 点のある象限で符号</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>単位円タイムアタック</h2>
+
+    <p>
+      よく出る角の $\sin$・$\cos$ の値は、9種類（$0,\ \pm\frac12,\ \pm\frac{\sqrt2}{2},\ \pm\frac{\sqrt3}{2},\ \pm1$）しかありません。60 秒で何問答えられるか挑戦しましょう。
+      慣れたら「図なし」で、頭の中に単位円をかいて答えてみてください（最高記録はこのブラウザに保存されます）。
+    </p>
+    <div class="widget" id="w-uc-time">
+      <div class="widget-head">単位円タイムアタック <span class="hint">60 秒で何問正解できるか</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">モード</span><div class="chips" data-r="mode"></div><button class="btn primary" type="button" data-r="start">スタート</button></div>
+        <div class="ta-bar"><i data-r="bar"></i></div></div>
+      <div class="mission" data-r="q">スタートを押すと問題が出ます</div>
+      <div class="stage"><canvas aria-label="タイムアタックの単位円"></canvas></div>
+      <div class="panel">
+        <div class="chips ta-ans" data-r="ans"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残り時間</span><span data-r="time"></span></div>
+          <div class="row"><span class="k">正解</span><span data-r="score"></span></div>
+          <div class="row"><span class="k">最高記録</span><span data-r="best"></span></div>
+          <div class="row"><span class="k">判定</span><span class="msg" data-r="msg"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>チャレンジ：単位円で値を当てろ</h2>
+
+    <p>問題の角まで青い点を回し、影の長さと向きを読んで、値のボタンを押しましょう。3回まで挑戦できます。</p>
+    <div class="widget" id="w-game-uc">
+      <div class="widget-head">単位円で値を当てろ <span class="game-total" data-r="total"></span><span class="hint">点を回して角をとり、値を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="単位円で値を当てろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次の値を求めよ。　$\sin\dfrac{\pi}{6}$、　$\cos\dfrac{\pi}{4}$、　$\tan\dfrac{4\pi}{3}$</li>
+      <li>次の値を求めよ。　$\sin\dfrac{\pi}{3}$、　$\tan\dfrac{5\pi}{3}$、　$\tan\left(-\dfrac{5\pi}{6}\right)$、　$\sin\left(-\dfrac{\pi}{4}\right)$</li>
+      <li>次の値を求めよ。　$\cos\dfrac{4\pi}{3}$、　$\tan\pi$、　$\cos\left(-\dfrac{\pi}{4}\right)$、　$\tan\left(-\dfrac{4\pi}{3}\right)$</li>
+      <li>$\theta$ は第2象限の角で、$\sin\theta=\dfrac{3}{5}$ とする。$\cos\theta$ と $\tan\theta$ を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>$\sin\dfrac{\pi}{6}=\dfrac12$、　$\cos\dfrac{\pi}{4}=\dfrac{\sqrt2}{2}\left(=\dfrac{1}{\sqrt2}\right)$<br>
+          $\dfrac{4\pi}{3}=\pi+\dfrac{\pi}{3}$ の点は $\left(-\dfrac12,\ -\dfrac{\sqrt3}{2}\right)$ なので $\tan\dfrac{4\pi}{3}=\dfrac{-\sqrt3/2}{-1/2}=\sqrt3$</li>
+        <li>$\sin\dfrac{\pi}{3}=\dfrac{\sqrt3}{2}$<br>
+          $\dfrac{5\pi}{3}$ の点は $\left(\dfrac12,\ -\dfrac{\sqrt3}{2}\right)$ なので $\tan\dfrac{5\pi}{3}=\dfrac{-\sqrt3/2}{1/2}=-\sqrt3$<br>
+          $-\dfrac{5\pi}{6}$（時計回りに $150^\circ$）の点は $\left(-\dfrac{\sqrt3}{2},\ -\dfrac12\right)$ なので $\tan\left(-\dfrac{5\pi}{6}\right)=\dfrac{-1/2}{-\sqrt3/2}=\dfrac{1}{\sqrt3}=\dfrac{\sqrt3}{3}$<br>
+          $-\dfrac{\pi}{4}$ の点は $\left(\dfrac{\sqrt2}{2},\ -\dfrac{\sqrt2}{2}\right)$ なので $\sin\left(-\dfrac{\pi}{4}\right)=-\dfrac{\sqrt2}{2}$</li>
+        <li>$\dfrac{4\pi}{3}$ の点は $\left(-\dfrac12,\ -\dfrac{\sqrt3}{2}\right)$ なので $\cos\dfrac{4\pi}{3}=-\dfrac12$<br>
+          $\pi$ の点は $(-1,\ 0)$ なので $\tan\pi=\dfrac{0}{-1}=0$<br>
+          $\cos\left(-\dfrac{\pi}{4}\right)=\cos\dfrac{\pi}{4}=\dfrac{\sqrt2}{2}$（$x$ 軸で折り返しても $x$ 座標は同じ）<br>
+          $-\dfrac{4\pi}{3}+2\pi=\dfrac{2\pi}{3}$ なので点は $\left(-\dfrac12,\ \dfrac{\sqrt3}{2}\right)$、$\tan\left(-\dfrac{4\pi}{3}\right)=\dfrac{\sqrt3/2}{-1/2}=-\sqrt3$</li>
+        <li>$\cos^2\theta=1-\sin^2\theta=1-\dfrac{9}{25}=\dfrac{16}{25}$。第2象限では $\cos\theta\lt0$ なので $\cos\theta=-\dfrac45$<br>
+          $\tan\theta=\dfrac{\sin\theta}{\cos\theta}=\dfrac{3/5}{-4/5}=-\dfrac34$</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-2.html"><span class="dir">← 前の節</span><span class="nm">3.2 弧度法</span></a>
+    <a class="next" href="3-4.html"><span class="dir">次の節 →</span><span class="nm">3.4 正弦定理・余弦定理</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-3.js?v=202610211315"></script>
+</body>
+</html>

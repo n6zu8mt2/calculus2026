@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>1.5 ベジェ曲線 | 多項式 | 解析学 2026</title>
-<meta name="description" content="第1回 多項式 1.5章：点で曲線をデザイン">
+<meta name="description" content="第1章 多項式 1.5節：点で曲線をデザイン">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610140157"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610140157">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
 </head>
 <body class="chapter ch5 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
-  <nav class="toc chapnav" aria-label="第1回の章の一覧">
-    <div class="toc-title">第1回 多項式</div>
-    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+  <nav class="toc chapnav" aria-label="第1章の節の一覧">
+    <div class="toc-title">第1章 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1章の目次</span></a>
     <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
     <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
     <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
@@ -31,13 +31,13 @@
   <header class="chap-hero">
     <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 52 L18 10 L46 10 L56 52" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4" opacity=".75"/><path d="M8 52 C 18 10, 46 10, 56 52" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="18" cy="10" r="4" fill="currentColor"/><circle cx="46" cy="10" r="4" fill="currentColor"/></svg></div>
     <div>
-      <div class="eyebrow">第1回 多項式 ／ 1.5章</div>
+      <div class="eyebrow">第1章 多項式 ／ 1.5節</div>
       <h1><span class="chap-no">1.5</span>ベジェ曲線</h1>
     </div>
   </header>
 
   <div class="goal">
-    <div class="goal-ttl">この章のゴール</div>
+    <div class="goal-ttl">この節のゴール</div>
     <ol>
       <li>$t:(1-t)$ の内分を重ねるとベジェ曲線が描けること（ド・カステリョのアルゴリズム）を説明できる。</li>
       <li>CSS の <code>cubic-bezier(x1, y1, x2, y2)</code> の4つの数が何を表すか説明できる。</li>
@@ -46,7 +46,7 @@
   </div>
 
   <section class="sec first" id="bezier">
-    <p class="prereq">この章で使うこと：<a href="1-1.html">1.1章</a>の 補間 $\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$（線分を $t:(1-t)$ に分ける点）、<a href="1-4.html">1.4章</a>の イージング</p>
+    <p class="prereq">この節で使うこと：<a href="1-1.html">1.1節</a>の 補間 $\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$（線分を $t:(1-t)$ に分ける点）、<a href="1-4.html">1.4節</a>の イージング</p>
     <p>
       パソコンやスマホに表示される文字の形（フォント）、イラストソフトで描く線、Webページのアイコン。
       これらのなめらかな曲線の多くは、<b>ベジェ曲線</b>という多項式の曲線をつないで作られています。
@@ -74,13 +74,13 @@
       <ul>
         <li>フォント（文字の形）：文字の輪郭はベジェ曲線をつないで記録されている（TrueType 形式は2次、OpenType の CFF 形式は3次）。点の座標だけを保存しているので、どれだけ拡大してもギザギザにならない。</li>
         <li>イラスト・デザイン：Illustrator や Figma の「ペンツール」、Web の SVG 画像（上の <code>C</code> 命令）。</li>
-        <li>アニメーション：CSS の <code>cubic-bezier()</code> で動きの緩急を指定する（この章の(3)、1.4章のイージング）。</li>
+        <li>アニメーション：CSS の <code>cubic-bezier()</code> で動きの緩急を指定する（この節の(3)、1.4節のイージング）。</li>
         <li>工業デザイン：自動車のボディのなめらかな曲面の設計。もともとルノーの技術者ピエール・ベジェが考案した。</li>
       </ul>
     </div>
 
     <p>
-      1.1章(2)の補間 $\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$ を繰り返すと曲線が生まれます。
+      1.1節(2)の補間 $\boldsymbol{P}(t)=(1-t)\boldsymbol{A}+t\boldsymbol{B}$ を繰り返すと曲線が生まれます。
       制御点 $\boldsymbol{P}_0,\dots,\boldsymbol{P}_n$ があるとき、次の操作を1点になるまで続けます（<b>ド・カステリョのアルゴリズム</b>）。
     </p>
     <div class="key"><div class="key-ttl">覚える｜ド・カステリョの操作（ベジェ曲線の作り方）</div>
@@ -120,7 +120,7 @@
         <div class="dc-fig"><div class="stage"><canvas aria-label="1次ベジェ曲線"></canvas></div><div class="panel"><div class="controls"></div></div></div>
         <div class="dc-text">
           <h4>1次ベジェ曲線（点2個）：線分</h4>
-          <p>$\boldsymbol{P}_0\boldsymbol{P}_1$ を $t:(1-t)$ に内分した点が $\boldsymbol{P}(t)$。1.1章(2)の補間そのものです。</p>
+          <p>$\boldsymbol{P}_0\boldsymbol{P}_1$ を $t:(1-t)$ に内分した点が $\boldsymbol{P}(t)$。1.1節(2)の補間そのものです。</p>
           $$\boldsymbol{P}(t)=(1-t)\boldsymbol{P}_0+t\boldsymbol{P}_1$$
           <p><span class="t-red">$\overline{\boldsymbol{P}_0\boldsymbol{P}}=t\,\overline{\boldsymbol{P}_0\boldsymbol{P}_1}$</span>、<span class="t-teal">$\overline{\boldsymbol{P}\boldsymbol{P}_1}=(1-t)\,\overline{\boldsymbol{P}_0\boldsymbol{P}_1}$</span>。</p>
         </div>
@@ -204,7 +204,7 @@
 
     <h2 class="h-sub"><span class="tag">(3)</span>ベジェ曲線とイージングの関係（CSS の <code>cubic-bezier()</code>）</h2>
     <p>
-      1.4章(2)のイージングは、$x$ 軸を「時間」、$y$ 軸を「位置」とみなした3次ベジェ曲線でした。
+      1.4節(2)のイージングは、$x$ 軸を「時間」、$y$ 軸を「位置」とみなした3次ベジェ曲線でした。
       始点 $(0,0)$ と終点 $(1,1)$ を固定し、2つの制御点 $(x_1,y_1)$, $(x_2,y_2)$ だけを指定する書き方が
       Webページの <code>transition-timing-function: cubic-bezier(x1, y1, x2, y2)</code> です。
       下の図の <span class="t-blue">青い球</span> は上のグラフから計算した位置、<span class="t-teal">青緑の球</span> はブラウザのCSSが動かしたものです。両者は一致します。
@@ -231,7 +231,7 @@
     </div>
   
   
-    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>基本の操作</th><td>隣り合う2点を $t:(1-t)$ に内分<br>$(1-t)\boldsymbol{X}+t\boldsymbol{Y}$</td></tr>
         <tr><th>ド・カステリョ</th><td>点が1個になるまで内分を繰り返す</td></tr>
@@ -280,18 +280,18 @@
     </details>
   </section>
 
-  <nav class="pager" aria-label="前後の章">
-    <a class="prev" href="1-4.html"><span class="dir">← 前の章</span><span class="nm">1.4 イージング</span></a>
-    <a class="next" href="1-6.html"><span class="dir">次の章 →</span><span class="nm">1.6 ラグランジュ補間</span></a>
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="1-4.html"><span class="dir">← 前の節</span><span class="nm">1.4 イージング</span></a>
+    <a class="next" href="1-6.html"><span class="dir">次の節 →</span><span class="nm">1.6 ラグランジュ補間</span></a>
   </nav>
 </main>
 </div>
 
-<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+<footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610140157"></script>
-<script src="../assets/plot.js?v=202610140157"></script>
-<script src="../assets/game.js?v=202610140157"></script>
-<script src="polynomial.js?v=202610140157"></script>
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="polynomial.js?v=202610211315"></script>
 </body>
 </html>

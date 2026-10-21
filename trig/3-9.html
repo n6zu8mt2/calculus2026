@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.9 形と動き | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.9節：リサジュー・サイクロイド・スピログラフ・ロボットアーム">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch9 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html" class="active" aria-current="page"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.9節</div>
+      <h1><span class="chap-no">3.9</span>形と動き：リサジュー・ロボット・ゲーム</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>$x$ と $y$ に別々の三角関数を入れた曲線（リサジュー図形など）を説明できる。</li>
+      <li>極座標 $(r\cos\theta,\ r\sin\theta)$ で点を表せる。</li>
+      <li>ロボットアームの先の位置を三角関数で計算できる。</li>
+    </ol>
+    <div class="goal-meta">図 8つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="3-5.html">3.5節</a>の 円運動と加法定理、<a href="3-4.html">3.4節</a>の 余弦定理、<a href="3-7.html">3.7節</a>の atan2</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      3.5節では、円の上を回る点を $x=\teal{\cos t}$、$y=\red{\sin t}$ と表しました。横の位置も縦の位置も、時刻 $t$ で決まる「波」です。
+      では、<b>横と縦に別々の波を入れたら</b>どんな形になるでしょう。また、回る車輪の1点、ロボットの腕の先、ゲームの敵の視界も、三角関数で表せます。
+      この節では、これまでに学んだ道具を使って、身の回りの「形」と「動き」を作ってみます。
+    </p>
+    <div class="eq-box">$$\underbrace{x=\teal{\cos t},\ \ y=\red{\sin t}}_{\text{円（3.5節）}}\qquad\longrightarrow\qquad \underbrace{x=\teal{\sin(at+\delta)},\ \ y=\red{\sin bt}}_{\text{横と縦に別の波：リサジュー図形}}$$</div>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>リサジュー図形</h2>
+
+    <p>
+      点の横の位置 $x$ と縦の位置 $y$ を、どちらも時刻 $t$ の式で表すことを<b>媒介変数表示</b>といいます（$t$ が「なかだち」をする数）。
+      横を $x=\teal{\sin(at+\delta)}$、縦を $y=\red{\sin bt}$ のように、<b>速さのちがう2つの波</b>にすると、点はふしぎな曲線をえがきます。これを<b>リサジュー図形</b>といいます。
+      $a$ と $b$ は波の速さ（1周の間に何回ゆれるか）、$\delta$（デルタ）は横の波のずれ（位相、3.6節）です。
+    </p>
+
+    <div class="widget" id="w-liss">
+      <div class="widget-head">リサジュー図形 $x=\teal{\sin(at+\delta)},\ y=\red{\sin bt}$ <span class="hint">比 $a:b$ を選ぶ／$\delta$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">a : b</span><div class="chips" data-r="ratio"></div></div>
+        <div class="btn-row"><button class="btn" type="button" data-r="play">⏸ 止める</button><label class="check"><input type="checkbox" data-r="touch" checked>ふれる点を表示</label><label class="check"><input type="checkbox" data-r="spin">$\delta$ を少しずつ変える</label></div>
+      </div>
+      <div class="stage"><canvas aria-label="リサジュー図形と、横・縦の位置"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">ふれる回数</span><span class="tex" data-r="cnt"></span></div>
+          <div class="row"><span class="k">ようす</span><span class="msg" data-r="msg"></span></div>
+        </div>
+      </div>
+      <div class="panel sound">
+        <div class="btn-row"><button class="btn primary" type="button" data-r="snd">🎧 左右の耳で聞く</button><button class="btn" type="button" data-r="stop" disabled>■ 音を止める</button></div>
+        <div class="msg" data-r="sstat"></div>
+      </div>
+    </div>
+
+    <p>
+      比を変えて、曲線が箱の<b>右の辺</b>と<b>上の辺</b>に何回ふれるか数えてみましょう。$t$ が $0$ から $2\pi$ まで進む間に、横の波 $\sin(at+\delta)$ は $a$ 回、縦の波 $\sin bt$ は $b$ 回、いちばん大きな値 $1$ になります。
+      だから曲線は<b>右の辺に $a$ 回、上の辺に $b$ 回</b>ふれます。図形を見れば、2つの波の速さの比 $a:b$ が読み取れるのです。
+      ただし、$\delta$ によっては行きと帰りの線が重なり、ふれる点が減って見えることがあります（$1:2$ で $\delta=135^\circ$ にすると放物線になります）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜媒介変数表示とリサジュー図形</div>
+      <p class="key-lead key-big">$x$ と $y$ を、別の数 $t$（時刻）の式で表す</p>
+      $$x=\teal{\sin(at+\delta)},\qquad y=\red{\sin bt}$$
+      <ul>
+        <li>曲線は箱の右の辺に $a$ 回、上の辺に $b$ 回ふれる → 図形から比 $a:b$ がわかる。</li>
+        <li>$a=b=1$、$\delta=\frac{\pi}{2}$ のとき $x=\sin\left(t+\frac{\pi}{2}\right)=\teal{\cos t}$ となり、円 $(\teal{\cos t},\ \red{\sin t})$ になる。</li>
+      </ul>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：オシロスコープと「回るリサジュー」</div>
+      <p>
+        <b>オシロスコープ</b>という測定器は、2つの電気の信号を横と縦に入れて画面に表示できます。片方の周波数がわかっていれば、出てきたリサジュー図形の形から、もう片方の周波数がわかります。昔の実験室では、こうして周波数を測っていました。
+        上の図の「左右の耳で聞く」では、左の耳に $a\times220$ Hz、右の耳に $b\times220$ Hz の音を流します（ステレオの左＝横 $x$、右＝縦 $y$。オシロスコープにつなぐと、この図形が見えます）。
+        「$\delta$ を少しずつ変える」をオンにすると、左の音を $0.25$ Hz だけ高くします。すると横の波が少しずつ先に進み、$\delta$ が $1$ 秒に $90^\circ$ ずつ増えるので、図形がゆっくり<b>回って</b>見えます。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>サイクロイドとスピログラフ</h2>
+
+    <p>
+      自転車の車輪に反射板がついているのを思い出してください。自転車が進むと、反射板は車輪といっしょに回りながら前へ進みます。地面から見ると、どんな線をえがくでしょう。
+      半径 $r$ の車輪がすべらずに角 $\blue{\theta}$ だけ転がると、車輪は地面の上を弧の長さ $r\blue{\theta}$（3.2節）だけ進みます。中心は $(r\blue{\theta},\ r)$ です。
+      中心から $d$ はなれた点は、中心から見て真下から $\blue{\theta}$ だけ回った位置にあるので、
+    </p>
+    <div class="eq-box">$$x=r\blue{\theta}-d\,\red{\sin\theta},\qquad y=r-d\,\teal{\cos\theta}$$</div>
+    <p>
+      となります。点が車輪の縁（$d=r$）にあるときの曲線を<b>サイクロイド</b>、縁より内側（反射板）や外側（電車の車輪のつば）にあるときの曲線を<b>トロコイド</b>といいます。
+    </p>
+
+    <div class="widget" id="w-cyc">
+      <div class="widget-head">転がる車輪の1点 <span class="hint">点の位置を選ぶ／車輪の中心をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><div class="chips" data-r="pre"></div></div>
+        <div class="btn-row"><button class="btn" type="button" data-r="play">⏸ 止める</button><button class="btn" type="button" data-r="reset">はじめにもどす</button></div>
+      </div>
+      <div class="stage"><canvas aria-label="転がる車輪とサイクロイド"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">点の位置</span><span class="tex" data-r="pos"></span></div>
+          <div class="row"><span class="k">回った角</span><span class="tex" data-r="dist"></span></div>
+          <div class="row"><span class="k">曲線</span><span class="msg" data-r="name"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      サイクロイドには、おもしろい性質があります。サイクロイドを上下さかさまにした坂は、ボールが<b>いちばん早く</b>すべり下りる坂（最速降下曲線）になります。まっすぐな坂より、いったん急に下りて速さをつける方が早く着くのです（くわしくは微分・積分を学んでから）。
+    </p>
+
+    <p>
+      今度は、地面の代わりに<b>大きな輪の内側</b>で小さな歯車を転がしてみましょう。歯車の穴にペンを入れて回すと、花のような模様がかけます。これが<b>スピログラフ</b>というおもちゃです。
+      輪の半径（歯の数）を $R$、歯車の半径を $r$、ペンの穴の中心からの距離を $d$ とすると、ペンの位置は次の式で表せます（歯車の中心は半径 $R-r$ の円を回り、歯車自身は逆向きに回る）。
+    </p>
+    <div class="eq-box">$$x=(R-r)\,\teal{\cos t}+d\,\teal{\cos\frac{(R-r)t}{r}},\qquad y=(R-r)\,\red{\sin t}-d\,\red{\sin\frac{(R-r)t}{r}}$$</div>
+
+    <div class="widget" id="w-spiro">
+      <div class="widget-head">スピログラフ <span class="hint">輪・歯車・ペンの位置・色を選んで「描く」</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">輪の歯 R</span><div class="chips" data-r="ring"></div></div>
+        <div class="btn-row"><span class="lbl-sm">色</span><div class="chips spiro-sw" data-r="col"></div></div>
+        <div class="btn-row"><button class="btn primary" type="button" data-r="draw">▶ 描く</button><button class="btn" type="button" data-r="fast">⚡ 一気に描く</button><button class="btn" type="button" data-r="undo">↶ 1つ消す</button><button class="btn" type="button" data-r="clear">全部消す</button><button class="btn" type="button" data-r="save">💾 画像として保存</button></div>
+      </div>
+      <div class="stage"><canvas aria-label="スピログラフの模様"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">歯の数</span><span class="tex" data-r="gcd"></span></div>
+          <div class="row"><span class="k">模様</span><span class="tex" data-r="petal"></span></div>
+          <div class="row"><span class="k">保存</span><span class="note-txt" data-r="sav">画像はこの端末に保存されるだけで、どこにも送りません。</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      歯車が何周すると模様が閉じるかは、<b>最大公約数</b>で決まります。例えば $R=96$、$r=36$ なら、最大公約数は $12$。
+      $96\div12=8$ なので模様は $8$ 回くり返し（花びら $8$ 枚）、$36\div12=3$ なので歯車の中心が輪を $3$ 周したところで、ペンははじめの位置にもどります。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>極座標</h2>
+
+    <p>
+      点の位置は、「横に何、縦に何」（$x$, $y$）の代わりに、<b>「原点からの距離 $r$ と向き $\blue{\theta}$」</b>でも表せます。これを<b>極座標</b>といいます。
+      「北東に 3 km」のような言い方と同じです。単位円の点 $(\teal{\cos\theta},\ \red{\sin\theta})$ を $r$ 倍すれば、距離 $r$・向き $\blue{\theta}$ の点になります。
+      逆に $(x,\ y)$ から $(r,\ \theta)$ にもどすには、三平方の定理と <a href="3-7.html">3.7節</a>の atan2 を使います。
+    </p>
+
+    <div class="widget" id="w-polar">
+      <div class="widget-head">極座標 $(r,\ \theta)$ と $(x,\ y)$ <span class="hint">点 P をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">点</span><div class="chips" data-r="pre"></div></div></div>
+      <div class="stage"><canvas aria-label="極座標の点と、x 座標・y 座標"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k">極座標</span><span class="tex big" data-r="rt"></span></div>
+          <div class="row"><span class="k">→ x, y</span><span class="tex" data-r="xy"></span></div>
+        </div>
+        <div class="readout">
+          <div class="row"><span class="k">x, y → r</span><span class="tex" data-r="r"></span></div>
+          <div class="row"><span class="k">x, y → θ</span><span class="tex" data-r="th"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜極座標</div>
+      <p class="key-lead key-big">原点からの距離 $r$ と向き $\theta$ で、点を表す</p>
+      $$(x,\ y)=(r\,\teal{\cos\theta},\ \ r\,\red{\sin\theta})$$
+      <ul>
+        <li>逆向き：$r=\sqrt{x^2+y^2}$、$\blue{\theta}=\mathrm{atan2}(y,\ x)$（3.7節）</li>
+        <li>例：$r=2,\ \theta=\frac{\pi}{3}$ の点は $\left(2\cos\frac{\pi}{3},\ 2\sin\frac{\pi}{3}\right)=(1,\ \sqrt3)$</li>
+      </ul>
+    </div>
+
+    <p>
+      極座標は、自動運転の車やお掃除ロボットに積まれている <b>LiDAR</b>（ライダー）で大活躍しています。LiDAR は、くるくる回りながら四方八方にレーザー光を出し、光が壁にあたって返ってくるまでの時間から<b>距離 $r$</b> を測ります。
+      光を出した<b>向き $\blue{\theta}$</b> はわかっているので、$(r\,\teal{\cos\theta},\ r\,\red{\sin\theta})$ で壁の点の位置がわかり、点を集めると部屋の地図ができます。
+    </p>
+
+    <div class="widget" id="w-lidar">
+      <div class="widget-head">LiDAR で部屋を測る <span class="hint">ロボット（青）をドラッグ／光を出す間隔を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">間隔</span><div class="chips" data-r="step"></div></div>
+        <div class="btn-row"><button class="btn" type="button" data-r="play">⏸ 止める</button><label class="check"><input type="checkbox" data-r="hide">部屋をかくす（ロボットにわかるのは点だけ）</label></div>
+      </div>
+      <div class="stage"><canvas aria-label="部屋の中のロボットと、レーザーで測った点"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k">今の光</span><span class="tex" data-r="ray"></span></div>
+          <div class="row"><span class="k">壁の点</span><span class="tex" data-r="pt"></span></div>
+        </div>
+        <div class="readout">
+          <div class="row"><span class="k">点の数</span><span class="big-txt" data-r="n"></span></div>
+          <div class="row"><span class="k">ようす</span><span class="msg" data-r="msg"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout try">
+      <div class="ttl">発展：ひまわりの黄金角</div>
+      <p>
+        ひまわりの種は、中心から1つずつ、前の種から<b>約 $137.5^\circ$</b> ずつ回った向きに生まれ、外へ押し出されていきます。$n$ 番目の種の位置を極座標で表すと
+        $$\blue{\theta_n}=n\times137.5^\circ,\qquad r_n=c\sqrt{n}\quad(c\ \text{は定数})$$
+        です（種の数 $n$ が面積 $\pi r^2$ に比例するように、$r$ は $\sqrt n$ に比例させる）。$137.5^\circ$ は円を<b>黄金比</b> $1:\frac{1+\sqrt5}{2}$ に分けた小さい方の角で、<b>黄金角</b>といいます。
+        角を少し変えると、まっすぐなすじができて、すき間が空いてしまいます。黄金角のときがいちばん<b>すき間なく</b>種がつまります。
+      </p>
+    </div>
+
+    <div class="widget" id="w-sun">
+      <div class="widget-head">ひまわりの種 $\blue{\theta_n}=n\times\alpha,\ r_n=c\sqrt n$ <span class="hint">回る角 $\alpha$ を選ぶ・動かす</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">α</span><div class="chips" data-r="pre"></div></div>
+        <div class="btn-row"><button class="btn" type="button" data-r="grow">▶ 育てる</button></div>
+      </div>
+      <div class="stage"><canvas aria-label="ひまわりの種の並び"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">ようす</span><span class="msg" data-r="msg"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>ロボットアーム</h2>
+
+    <p>
+      工場のロボットアームは、関節の角度を決めて腕の先を動かします。ここでは、長さ $l_1$ と $l_2$ の2本の腕をつないだアームを考えます。
+      肩（原点）の関節の角を $\blue{\theta_1}$（$x$ 軸から測る）、肘の関節の角を $\violet{\theta_2}$（1本目の腕の向きから、さらに曲げる角）とします。
+    </p>
+    <p>
+      1本目の腕の先（肘）は、極座標と同じで $(l_1\teal{\cos\theta_1},\ l_1\red{\sin\theta_1})$ です。
+      2本目の腕は $x$ 軸から見ると $\theta_1+\theta_2$ の向きなので、肘から $(l_2\teal{\cos(\theta_1+\theta_2)},\ l_2\red{\sin(\theta_1+\theta_2)})$ だけ進みます。
+      2つを<b>足す</b>と、腕の先の位置がわかります。角度から先の位置を求めることを<b>順運動学</b>といいます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜ロボットアームの順運動学</div>
+      <p class="key-lead key-big">関節の角度から腕の先の位置を求める：腕を1本ずつ足す</p>
+      $$\begin{aligned}x&=l_1\,\teal{\cos\theta_1}+l_2\,\teal{\cos(\theta_1+\theta_2)}\\ y&=l_1\,\red{\sin\theta_1}+l_2\,\red{\sin(\theta_1+\theta_2)}\end{aligned}$$
+      <p class="key-note">先がとどく範囲は、原点からの距離が $|l_1-l_2|$ 以上 $l_1+l_2$ 以下の輪の形。</p>
+    </div>
+
+    <div class="widget" id="w-arm">
+      <div class="widget-head">2本の腕のロボットアーム（$l_1=2,\ l_2=1.5$） <span class="hint">スライダーで角度を動かす／赤い的をドラッグすると腕が追いかける</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">肘の向き</span><div class="chips" data-r="elbow"></div></div>
+      </div>
+      <div class="stage"><canvas aria-label="2本の腕のロボットアームと、とどく範囲"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">先の位置</span><span class="tex" data-r="tip"></span></div>
+          <div class="row"><span class="k">x</span><span class="tex" data-r="fx"></span></div>
+          <div class="row"><span class="k">y</span><span class="tex" data-r="fy"></span></div>
+          <div class="row"><span class="k">逆運動学</span><span class="tex" data-r="ik"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      実際のロボットでは、反対に「<b>この点に先をとどかせたい。関節を何度にすればよいか？</b>」を求めることの方が多いです。これを<b>逆運動学</b>といいます。
+      上の図で赤い的をドラッグすると、腕が追いかけてきます。この計算には、<a href="3-4.html">3.4節</a>の余弦定理と <a href="3-7.html">3.7節</a>の $\arccos$・atan2 を使います。
+    </p>
+    <p>
+      肩を O、肘を E、目標の点を P $(x,\ y)$ とします。三角形 OEP の3辺は $l_1$、$l_2$、$D=\sqrt{x^2+y^2}$ とわかっています。
+    </p>
+    <ol>
+      <li><b>肘の角</b>：肘 E の内側の角を $\varphi$ とすると、余弦定理で $D^2=l_1^2+l_2^2-2l_1l_2\cos\varphi$。ここから $\cos\varphi$ がわかり、$\varphi=\arccos(\cdots)$。曲げる角は $\violet{\theta_2}=\pm(180^\circ-\varphi)$。</li>
+      <li><b>肩の角</b>：肩 O の内側の角を $\alpha$ とすると、余弦定理で $l_2^2=l_1^2+D^2-2l_1D\cos\alpha$ から $\alpha$ がわかる。目標の向き $\mathrm{atan2}(y,\ x)$ から $\alpha$ だけずらして $\blue{\theta_1}=\mathrm{atan2}(y,\ x)\mp\alpha$。</li>
+    </ol>
+    <div class="eq-box">$$\cos\varphi=\frac{l_1^2+l_2^2-D^2}{2l_1l_2},\qquad \cos\alpha=\frac{l_1^2+D^2-l_2^2}{2l_1D},\qquad \begin{cases}\text{肘下：}&\theta_1=\mathrm{atan2}(y,x)-\alpha,\ \ \theta_2=180^\circ-\varphi\\ \text{肘上：}&\theta_1=\mathrm{atan2}(y,x)+\alpha,\ \ \theta_2=-(180^\circ-\varphi)\end{cases}$$</div>
+    <p>
+      答えは<b>2通り</b>あります。肘を目標の線の右下側に出す「肘下」と、左上側に出す「肘上」です（人の腕でも、同じ所に手をのばす肘の位置は2通りあります）。
+      また、$D$ が $l_1+l_2$ より大きいと $\cos\varphi\lt-1$ になり、$\arccos$ が計算できません。これは「<b>腕が届かない</b>」ことを表しています。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>ゲームの視界判定</h2>
+
+    <p>
+      ステルスゲームでは、敵には「見えている範囲」（視界）があり、その中に入ると見つかってしまいます。視界は、敵の向きを中心にした<b>おうぎ形</b>です。
+      プレイヤーが見つかるのは、次の2つが両方成り立つときです。
+    </p>
+    <ul>
+      <li>敵からプレイヤーまでの距離 $d$ が、視界の距離以下</li>
+      <li>敵の向きと、敵からプレイヤーへの向きとの<b>角度の差</b> $|\Delta|$ が、視野角の半分以下</li>
+    </ul>
+    <p>
+      敵からプレイヤーへの向きは $\varphi=\mathrm{atan2}(y_P-y_E,\ x_P-x_E)$（3.7節）。差 $\Delta=\varphi-(\text{敵の向き})$ は、<b>$-180^\circ$〜$180^\circ$ に折り返して</b>から比べます（3.7節）。折り返さないと、$350^\circ$ と $10^\circ$ を「$340^\circ$ もちがう」とまちがえてしまいます。
+    </p>
+
+    <div class="widget" id="w-view">
+      <div class="widget-head">敵の視界判定 <span class="hint">プレイヤー（青）と敵の向き（赤い矢印の先）をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><button class="btn" type="button" data-r="patrol">▶ 見回りさせる</button></div>
+      </div>
+      <div class="stage"><canvas aria-label="敵の視界のおうぎ形とプレイヤー"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">向き φ</span><span class="tex" data-r="phi"></span></div>
+          <div class="row"><span class="k">差 Δ</span><span class="tex" data-r="d"></span></div>
+          <div class="row"><span class="k">判定</span><span class="big-txt" data-r="res"></span></div>
+          <div class="row"><span class="k">cos で</span><span class="tex" data-r="cos"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：もっと速い判定（内積）とバックアタック</div>
+      <p>
+        ゲームでは、この判定を1秒に何千回もくり返します。atan2 は少し時間のかかる計算なので、実際には $\cos$ を使う方法がよく使われます。
+        敵の向きの長さ 1 の矢印を $\vec f=(\cos\theta,\ \sin\theta)$、敵からプレイヤーへの矢印を $\vec v=(v_x,\ v_y)$ とすると
+        $$\cos\Delta=\frac{v_x\cos\theta+v_y\sin\theta}{|\vec v|}$$
+        となり（加法定理 $\cos(\varphi-\theta)=\cos\varphi\cos\theta+\sin\varphi\sin\theta$ に $v_x=|\vec v|\cos\varphi$、$v_y=|\vec v|\sin\varphi$ を入れる）、
+        「$\cos\Delta\geqq\cos\frac{\text{視野角}}{2}$ なら見える」と、かけ算と足し算だけで判定できます。分子の $v_x\cos\theta+v_y\sin\theta$ は、線形代数で学ぶ<b>内積</b> $\vec v\cdot\vec f$ です。
+        また、プレイヤーが敵の<b>真後ろ</b>（$|\Delta|\geqq135^\circ$）の近くにいれば「バックアタック（ダメージ2倍）」にするゲームもあります。上の図の紫の範囲がそれです。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>発展：もっと先の三角関数</h2>
+
+    <div class="callout try">
+      <div class="ttl">AI の「位置エンコーディング」</div>
+      <p>
+        ChatGPT のような AI（Transformer）は、文の単語をいっぺんに読みます。そのままでは「何番目の単語か」がわからないので、$k$ 番目の単語に、周期のちがう $\sin$ と $\cos$ の値を並べた数の組をつけます。
+        $$\left(\sin k,\ \cos k,\ \ \sin\frac{k}{10},\ \cos\frac{k}{10},\ \ \sin\frac{k}{100},\ \cos\frac{k}{100},\ \ldots\right)$$
+        時計の秒針・分針・時針の向きを見ると時刻がわかるのと同じで、速く回る針と遅く回る針を組み合わせると、位置が1つに決まります。しかも加法定理（3.5節）のおかげで、「$k$ 番目」と「$k+m$ 番目」の関係が回転で表せるので、AI は「何個はなれているか」を学びやすくなります。
+      </p>
+    </div>
+    <div class="callout try">
+      <div class="ttl">三角測量と GPS</div>
+      <p>
+        <a href="3-4.html">3.4節</a>の三角測量では、2つの地点から見た角度と、2地点の距離から、遠くの点の位置を求めました。GPS は、いくつかの人工衛星からの<b>距離</b>を使って自分の位置を求めます（「距離がわかれば円の上にいる」を組み合わせる）。
+        どちらも、三角形や円を三角関数で計算しています。スマホの地図アプリの現在地は、毎秒こうした計算をくり返して表示されています。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>媒介変数表示</th><td>$x$, $y$ を別の数 $t$ の式で表す（円：$x=\cos t,\ y=\sin t$）</td></tr>
+        <tr><th>リサジュー</th><td>$x=\sin(at+\delta),\ y=\sin bt$。右の辺に $a$ 回・上の辺に $b$ 回ふれる</td></tr>
+        <tr><th>サイクロイド</th><td>$x=r\theta-d\sin\theta,\ y=r-d\cos\theta$（$d=r$ でサイクロイド、それ以外はトロコイド）</td></tr>
+        <tr><th>スピログラフ</th><td>模様は $R\div\gcd(R,r)$ 回くり返し、歯車は $r\div\gcd(R,r)$ 周で元にもどる</td></tr>
+        <tr><th>極座標</th><td>$(x,y)=(r\cos\theta,\ r\sin\theta)$、逆は $r=\sqrt{x^2+y^2}$、$\theta=\mathrm{atan2}(y,x)$</td></tr>
+        <tr><th>順運動学</th><td>$x=l_1\cos\theta_1+l_2\cos(\theta_1+\theta_2)$、$y=l_1\sin\theta_1+l_2\sin(\theta_1+\theta_2)$</td></tr>
+        <tr><th>逆運動学</th><td>余弦定理で $\cos\varphi$ → $\theta_2=\pm(180^\circ-\varphi)$、$\theta_1=\mathrm{atan2}(y,x)\mp\alpha$。答えは2通り（肘下・肘上）</td></tr>
+        <tr><th>視界判定</th><td>距離 $\leqq$ 視界の距離 かつ $|\Delta|\leqq\frac{\text{視野角}}{2}$（$\Delta$ は $-180^\circ$〜$180^\circ$ に折り返す）</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(7)</span>チャレンジ：アームを届かせろ</h2>
+
+    <p>
+      腕の長さが $l_1=l_2=2$ のロボットアームで、赤い的に腕の先を届かせましょう。スライダーで $\blue{\theta_1}$、$\violet{\theta_2}$ を決めて「判定」を押します。
+      床や壁がある場面では、腕がぶつからない方の解（肘下・肘上）を選ぶ必要があります。電卓を使ってよいので、(4) の逆運動学で計算してから動かしてみましょう。
+      3回まで判定できて、<b>1回目で成功すると★3</b>です。
+    </p>
+    <div class="widget" id="w-game-arm">
+      <div class="widget-head">アームを届かせろ <span class="game-total" data-r="total"></span><span class="hint">角度を決めて「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="アームを届かせろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>下の図は $x=\sin(at+\delta),\ y=\sin bt$ のリサジュー図形である（点線は $-1\leqq x\leqq1,\ -1\leqq y\leqq1$ の箱）。$a:b$ を求めよ。
+        <div class="stage quiz-fig"><canvas data-q="1" aria-label="リサジュー図形（確認問題）"></canvas></div></li>
+      <li>(1) 極座標で $r=4,\ \theta=\dfrac{2\pi}{3}$ の点を、$(x,\ y)$ で表せ。<br>(2) 点 $(-3,\ 3)$ を極座標 $(r,\ \theta)$ で表せ（$-\pi\lt\theta\leqq\pi$）。</li>
+      <li>腕の長さ $l_1=2,\ l_2=1$ のロボットアームがある。次のときの腕の先の座標を求めよ。<br>(1) $\theta_1=30^\circ,\ \theta_2=60^\circ$　(2) $\theta_1=90^\circ,\ \theta_2=-90^\circ$</li>
+      <li>半径 $1$ の車輪の縁の点が、はじめ原点にある。車輪が $x$ 軸の上をすべらずに右へ転がり、角 $\theta$ だけ回ったときの点の位置は $(\theta-\sin\theta,\ 1-\cos\theta)$ である。$\theta=\dfrac{\pi}{2}$ と $\theta=\pi$ のときの点の位置を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>曲線は箱の右の辺に $3$ 回、上の辺に $4$ 回ふれている。右の辺にふれる回数が $a$、上の辺にふれる回数が $b$ なので $a:b=3:4$<br>
+          （$t$ が $0$ から $2\pi$ まで進む間に、$\sin(at+\delta)$ は $a$ 回、$\sin bt$ は $b$ 回 $1$ になる。図は $x=\sin\left(3t+\frac{\pi}{4}\right),\ y=\sin4t$）</li>
+        <li>(1) $x=4\cos\dfrac{2\pi}{3}=4\cdot\left(-\dfrac12\right)=-2$、$y=4\sin\dfrac{2\pi}{3}=4\cdot\dfrac{\sqrt3}{2}=2\sqrt3$。よって $(-2,\ 2\sqrt3)$<br>
+          (2) $r=\sqrt{(-3)^2+3^2}=\sqrt{18}=3\sqrt2$。点は第2象限で、$x$ 軸の負の向きから $45^\circ$ 上なので $\theta=\mathrm{atan2}(3,\ -3)=\dfrac{3\pi}{4}$。よって $(r,\ \theta)=\left(3\sqrt2,\ \dfrac{3\pi}{4}\right)$<br>
+          （$\arctan\dfrac{3}{-3}=-\dfrac{\pi}{4}$ は反対向きなので使えない）</li>
+        <li>(1) $\theta_1+\theta_2=90^\circ$ なので<br>
+          $x=2\cos30^\circ+1\cdot\cos90^\circ=2\cdot\dfrac{\sqrt3}{2}+0=\sqrt3$<br>
+          $y=2\sin30^\circ+1\cdot\sin90^\circ=2\cdot\dfrac12+1=2$。よって $(\sqrt3,\ 2)$<br>
+          (2) $\theta_1+\theta_2=0^\circ$ なので<br>
+          $x=2\cos90^\circ+1\cdot\cos0^\circ=0+1=1$<br>
+          $y=2\sin90^\circ+1\cdot\sin0^\circ=2+0=2$。よって $(1,\ 2)$（1本目は真上、2本目は右向き）</li>
+        <li>$\theta=\dfrac{\pi}{2}$：$\left(\dfrac{\pi}{2}-\sin\dfrac{\pi}{2},\ 1-\cos\dfrac{\pi}{2}\right)=\left(\dfrac{\pi}{2}-1,\ 1\right)$（約 $(0.57,\ 1)$。中心と同じ高さ）<br>
+          $\theta=\pi$：$(\pi-\sin\pi,\ 1-\cos\pi)=(\pi-0,\ 1-(-1))=(\pi,\ 2)$（車輪のてっぺん。車輪は弧の長さ $\pi$ だけ進んでいる）</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-8.html"><span class="dir">← 前の節</span><span class="nm">3.8 波を足す</span></a>
+    <a class="next" href="index.html"><span class="dir">第3章の目次 →</span><span class="nm">三角関数</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-9.js?v=202610211315"></script>
+</body>
+</html>

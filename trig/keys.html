@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>覚えることのまとめ | 第3章 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数の各節の「覚える」をまとめたページ（印刷用）">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter calm keys-page">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero"><div><div class="eyebrow">第3章 三角関数</div><h1>覚えることのまとめ</h1></div></header>
+  <p class="keys-intro">各節の「覚える｜この節のまとめ」を集めたページです。節の名前を押すとその節に移動します。<button class="btn small" type="button" onclick="window.print()">🖨 このページを印刷</button></p>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-1.html">3.1三角比：直角三角形の形を数で表す</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>三角比</th><td>$\red{\sin\theta}=\dfrac{\text{高さ}}{\text{斜辺}}$、$\teal{\cos\theta}=\dfrac{\text{底辺}}{\text{斜辺}}$、$\amber{\tan\theta}=\dfrac{\text{高さ}}{\text{底辺}}$</td></tr>
+        <tr><th>なぜ決まる</th><td>相似な三角形では辺の比が同じなので、角 $\theta$ だけで決まる</td></tr>
+        <tr><th>三角定規</th><td>$1:1:\sqrt2$（45°）、$1:\sqrt3:2$（30°・60°）</td></tr>
+        <tr><th>主な値</th><td>$\sin30^\circ=\frac12$、$\cos30^\circ=\frac{\sqrt3}{2}$、$\tan45^\circ=1$、$\tan60^\circ=\sqrt3$ など</td></tr>
+        <tr><th>tan は傾き</th><td>坂の勾配 10% は $\tan\theta=0.1$（$\theta\approx5.7^\circ$）</td></tr>
+        <tr><th>高さ</th><td>高さ $h=d\tan\theta$（距離 $d$、見上げる角 $\theta$）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-2.html">3.2弧度法：角度を長さで測る</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>円周</th><td>円周 ＝ 直径 × $\pi$ ＝ $2\pi r$、$\pi=3.14159\ldots$。単位円の円周は $2\pi$</td></tr>
+        <tr><th>弧度法</th><td>半径 1 の円の弧の長さで角を測る。$\pi=180^\circ$、$1\,\text{rad}\approx57.3^\circ$</td></tr>
+        <tr><th>変換</th><td>度 $\times\dfrac{\pi}{180}$ ＝ ラジアン、ラジアン $\times\dfrac{180}{\pi}$ ＝ 度</td></tr>
+        <tr><th>主な角</th><td>$30^\circ=\frac{\pi}{6}$、$45^\circ=\frac{\pi}{4}$、$60^\circ=\frac{\pi}{3}$、$90^\circ=\frac{\pi}{2}$、$360^\circ=2\pi$</td></tr>
+        <tr><th>負の角</th><td>時計回りはマイナス。$-90^\circ=-\frac{\pi}{2}$（$\frac{3\pi}{2}$ と同じ位置）</td></tr>
+        <tr><th>扇形</th><td>弧の長さ $s=r\theta$、面積 $S=\frac12r^2\theta$</td></tr>
+        <tr><th>アルキメデス</th><td>$n\sin\frac{\pi}{n}\lt\pi\lt n\tan\frac{\pi}{n}$（正 $n$ 角形ではさむ）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-3.html">3.3単位円と三角関数：どんな角度でも</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>定義</th><td>単位円上で $(1,0)$ から角 $\theta$ 回った点が $(\cos\theta,\ \sin\theta)$（正は反時計回り、負は時計回り）</td></tr>
+        <tr><th>tan</th><td>$\tan\theta=\dfrac{\sin\theta}{\cos\theta}$ ＝ 半径の傾き（$\cos\theta=0$ では考えない）</td></tr>
+        <tr><th>三平方</th><td>$\sin^2\theta+\cos^2\theta=1$</td></tr>
+        <tr><th>1周</th><td>$\sin(\theta+2\pi)=\sin\theta$、$\cos(\theta+2\pi)=\cos\theta$</td></tr>
+        <tr><th>符号</th><td>$\cos$ は $x$ 座標、$\sin$ は $y$ 座標の符号。$\tan$ は第1・第3象限で正</td></tr>
+        <tr><th>対称な角</th><td>$-\theta$（$x$ 軸で折り返し）、$\pi-\theta$（$y$ 軸で折り返し）、$\pi+\theta$（原点の反対側）、$\frac{\pi}{2}-\theta$（$\sin$ と $\cos$ が入れかわる）</td></tr>
+        <tr><th>求め方</th><td>三角定規の形で長さ → 点のある象限で符号</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-4.html">3.4正弦定理・余弦定理：三角形を解く</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>辺と角の名前</th><td>頂点 $\mathrm{A}, \mathrm{B}, \mathrm{C}$ の向かい側の辺を $a, b, c$、角の大きさを $A, B, C$ と書く</td></tr>
+        <tr><th>正弦定理</th><td>$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}=2R$（$R$ は外接円の半径）。2つの角と1辺から残りの辺</td></tr>
+        <tr><th>余弦定理</th><td>$a^2=b^2+c^2-2bc\cos A$。2辺とあいだの角から残りの辺、3辺から角</td></tr>
+        <tr><th>三平方との関係</th><td>$A=90^\circ$ なら $\cos A=0$ で $a^2=b^2+c^2$</td></tr>
+        <tr><th>三角測量</th><td>基線の長さと両端の角から、届かない場所までの距離を求める</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-5.html">3.5円運動・回転と加法定理：回すと何が起きる？</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>円運動</th><td>$x=r\cos\omega t,\ y=r\sin\omega t$（$\omega$：角速度）、速さ $v=r\omega$</td></tr>
+        <tr><th>周期</th><td>$T=\dfrac{2\pi}{\omega}$（1 周 $2\pi$ にかかる時間）</td></tr>
+        <tr><th>グラフ</th><td>回る点の高さが $y=\sin\theta$、横の位置が $x=\cos\theta$。$2\pi$ ごとにくり返す波。真横から見た影の動きが単振動</td></tr>
+        <tr><th>回転</th><td>$(x,\,y)$ を $\alpha$ 回すと $(x\cos\alpha-y\sin\alpha,\ x\sin\alpha+y\cos\alpha)$</td></tr>
+        <tr><th>加法定理</th><td>$\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$<br>$\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$<br>$\tan(\alpha+\beta)=\dfrac{\tan\alpha+\tan\beta}{1-\tan\alpha\tan\beta}$</td></tr>
+        <tr><th>引き算</th><td>$\beta$ を $-\beta$ にする（$\sin$ の項の符号が変わる）</td></tr>
+        <tr><th>倍角</th><td>$\sin2\alpha=2\sin\alpha\cos\alpha$、$\cos2\alpha=\cos^2\alpha-\sin^2\alpha=2\cos^2\alpha-1=1-2\sin^2\alpha$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-6.html">3.6三角関数のグラフ：振幅・周期・位相</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>sin・cos</th><td>単位円の縦・横の影をグラフにしたもの。高さ $-1$〜$1$、周期 $2\pi$。$\cos x=\sin\left(x+\frac{\pi}{2}\right)$</td></tr>
+        <tr><th>tan</th><td>接線 $x=1$ の上の高さ。周期 $\pi$、漸近線 $x=\frac{\pi}{2}+n\pi$</td></tr>
+        <tr><th>$A,\ B,\ p,\ q$</th><td>$y=A\sin(B(x-p))+q$：振幅 $|A|$、周期 $\frac{2\pi}{B}$、右に $p$・上に $q$ 平行移動</td></tr>
+        <tr><th>合成</th><td>$a\sin x+b\cos x=\sqrt{a^2+b^2}\,\sin(x+\alpha)$。$\alpha$ は点 $(a,\ b)$ の向き</td></tr>
+        <tr><th>アニメ</th><td>$A\sin(\omega t+\varphi)$ でくり返す動き、$\frac{1-\cos\pi t}{2}$ でイージング</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-7.html">3.7逆三角関数と atan2：向きから角度へ</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>ひっくり返す</th><td>$\sin x=k$ となる $x$ は無数にある → 範囲を決めて1つ選ぶ</td></tr>
+        <tr><th>arcsin</th><td>$\sin y=x$、$-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$（例：$\arcsin\frac12=\frac{\pi}{6}$）</td></tr>
+        <tr><th>arccos</th><td>$\cos y=x$、$0\leqq y\leqq\pi$（例：$\arccos\left(-\frac12\right)=\frac{2\pi}{3}$）</td></tr>
+        <tr><th>arctan</th><td>$\tan y=x$、$-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$（例：$\arctan1=\frac{\pi}{4}$、$\arctan\sqrt3=\frac{\pi}{3}$）</td></tr>
+        <tr><th>記号</th><td>$\sin^{-1}x=\arcsin x$（$\frac{1}{\sin x}$ ではない）</td></tr>
+        <tr><th>グラフ</th><td>範囲をしぼった $y=\sin x$ と $y=\arcsin x$ は直線 $y=x$ について対称</td></tr>
+        <tr><th>atan2</th><td>$\mathrm{atan2}(y,x)$：向き $(x,y)$ の角度（$-\pi\lt\theta\leqq\pi$）。<code>Math.atan2(y, x)</code> は $y$ が先。傾きから角度 → $\arctan$、向きから角度 → $\mathrm{atan2}$</td></tr>
+        <tr><th>折り返し</th><td>角度の差 $\Delta$ は $-\pi\lt\Delta\leqq\pi$ に直す（$\pm2\pi$ する）と、近い方へ回る</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-8.html">3.8波を足す：音・うなり・フーリエ</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>音</th><td>$y=A\sin(2\pi ft)$：振幅 $A$ ＝大きさ、周波数 $f$ ＝高さ（Hz）、周期 $T=\frac{1}{f}$ 秒。1オクターブ上は周波数2倍</td></tr>
+        <tr><th>重ね合わせ</th><td>同時に鳴る音は足し算。$|f_1-f_2|$ 回/秒 の<b>うなり</b>。$\varphi=\pi$ の<b>逆位相</b>を足すと 0（ノイズキャンセリング）</td></tr>
+        <tr><th>フーリエ</th><td>くり返す波は $b_1\sin x+b_2\sin2x$ $+\cdots$ と表せる（フーリエ級数）。倍音の混ぜ方が音色。係数は積分で求める（積分の章で）</td></tr>
+        <tr><th>回転円</th><td>円の先に円をつないで回すと、先端の高さが足し算になる。絵も円の組み合わせで描ける</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="3-9.html">3.9形と動き：リサジュー・ロボット・ゲーム</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>媒介変数表示</th><td>$x$, $y$ を別の数 $t$ の式で表す（円：$x=\cos t,\ y=\sin t$）</td></tr>
+        <tr><th>リサジュー</th><td>$x=\sin(at+\delta),\ y=\sin bt$。右の辺に $a$ 回・上の辺に $b$ 回ふれる</td></tr>
+        <tr><th>サイクロイド</th><td>$x=r\theta-d\sin\theta,\ y=r-d\cos\theta$（$d=r$ でサイクロイド、それ以外はトロコイド）</td></tr>
+        <tr><th>スピログラフ</th><td>模様は $R\div\gcd(R,r)$ 回くり返し、歯車は $r\div\gcd(R,r)$ 周で元にもどる</td></tr>
+        <tr><th>極座標</th><td>$(x,y)=(r\cos\theta,\ r\sin\theta)$、逆は $r=\sqrt{x^2+y^2}$、$\theta=\mathrm{atan2}(y,x)$</td></tr>
+        <tr><th>順運動学</th><td>$x=l_1\cos\theta_1+l_2\cos(\theta_1+\theta_2)$、$y=l_1\sin\theta_1+l_2\sin(\theta_1+\theta_2)$</td></tr>
+        <tr><th>逆運動学</th><td>余弦定理で $\cos\varphi$ → $\theta_2=\pm(180^\circ-\varphi)$、$\theta_1=\mathrm{atan2}(y,x)\mp\alpha$。答えは2通り（肘下・肘上）</td></tr>
+        <tr><th>視界判定</th><td>距離 $\leqq$ 視界の距離 かつ $|\Delta|\leqq\frac{\text{視野角}}{2}$（$\Delta$ は $-180^\circ$〜$180^\circ$ に折り返す）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 覚えることのまとめ（tools/build.py で自動生成）</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+</body>
+</html>

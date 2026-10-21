@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.7 逆三角関数と atan2 | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.7節：arcsin・arctan・atan2・砲台">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch7 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html" class="active" aria-current="page"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.7節</div>
+      <h1><span class="chap-no">3.7</span>逆三角関数と atan2：向きから角度へ</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>$\arcsin,\ \arccos,\ \arctan$ を「値の範囲を決めた逆関数」として説明できる。</li>
+      <li>$\arctan\frac yx$ ではなく $\mathrm{atan2}(y,x)$ が必要な理由を説明できる。</li>
+      <li>角度の差を $-\pi$ から $\pi$ に折り返せる。</li>
+    </ol>
+    <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="3-3.html">3.3節</a>の 単位円、<a href="3-6.html">3.6節</a>の グラフ、<a href="../explog/2-4.html">2.4節</a>の「ひっくり返すと逆関数」</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      シューティングゲームで、敵の砲台がいつもプレイヤーの方を向いてくるのを見たことがあるでしょう。
+      プログラムがわかっているのは、砲台の座標とプレイヤーの座標、つまり<b>2つの点の座標だけ</b>です。
+      ここから「砲台を何度に向ければいいか」を求めるには、三角関数とは<b>逆向きの計算</b>が必要です。
+    </p>
+    <div class="eq-box">$$\underbrace{\text{角度 }\blue{\theta}\ \longrightarrow\ \text{向き }(\teal{\cos\theta},\ \red{\sin\theta})}_{\text{三角関数（3.3節）}}\qquad\qquad \underbrace{\text{向き }(\teal{x},\ \red{y})\ \longrightarrow\ \text{角度 }\blue{\theta}}_{\text{この節：逆三角関数・atan2}}$$</div>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>三角関数をひっくり返す</h2>
+
+    <p>
+      <a href="../explog/2-4.html">2.4節</a>では、$y=2^x$ を「$x$ について解く」ことで対数 $x=\log_2 y$ を作りました。$2^x=8$ なら $x=3$、という逆向きの計算です。
+      同じように、$y=\sin x$ を $x$ について解きたいと考えます。例えば
+    </p>
+    <div class="eq-box">$$\red{\sin x}=\frac12\quad\text{となる }\blue{x}\text{ は？}$$</div>
+    <p>
+      $30^\circ$ の三角定規から $\blue{x}=\frac{\pi}{6}$ が見つかります。でも、それだけではありません。
+      単位円で左右対称な $\frac{5\pi}{6}\,(=150^\circ)$ も $y$ 座標が $\frac12$ ですし、1周（$2\pi$）回った $\frac{13\pi}{6}$、$\frac{17\pi}{6}$、逆回りの $-\frac{7\pi}{6}$ なども全部そうです。
+      下の図で、グラフ $y=\red{\sin x}$ と横線 $y=k$ の交点を見てください。交点は<b>無数にあります</b>。
+    </p>
+
+    <div class="widget" id="w-solve">
+      <div class="widget-head">$\red{\sin x}=k$ となる $\blue{x}$ を探す <span class="hint">値 $k$ を選ぶ・スライダーで動かす</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">k</span><div class="chips" data-r="ks"></div></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="band">範囲 $-\frac{\pi}{2}\leqq x\leqq\frac{\pi}{2}$ にしぼる</label></div>
+      </div>
+      <div class="stage"><canvas aria-label="y=sin x のグラフと横線 y=k の交点"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">交点の x</span><span class="tex" data-r="sols"></span></div>
+          <div class="row"><span class="k">しぼると</span><span class="tex big" data-r="one"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      関数は「入れる値を1つ決めると、出てくる値が1つに決まる」ものでした（<a href="../explog/2-4.html">2.4節</a>）。
+      ところが「$\sin x=\frac12$ となる $x$」は1つに決まらないので、このままでは関数として使えません。
+      グラフで言えば、$y=\sin x$ を直線 $y=x$ で折り返した形は、縦の線と何回も交わってしまうのです。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>値の範囲を決める</h2>
+
+    <p>
+      そこで、<b>答えの角度の範囲を決めて、その中の1つだけを選ぶ</b>ことにします。
+      $\sin$ なら、$-\frac{\pi}{2}$ から $\frac{\pi}{2}$（$-90^\circ$〜$90^\circ$、単位円の右半分）にしぼると、$-1$ から $1$ までのどの値も<b>ちょうど1回ずつ</b>とります。上の図の「範囲をしぼる」をオンにして確かめましょう。
+      こうして作った関数を $\arcsin$（アークサイン）といいます。
+    </p>
+    <div class="eq-box">$$\blue{\arcsin\frac12}=\blue{\frac{\pi}{6}}\qquad\Longleftrightarrow\qquad \red{\sin}\frac{\pi}{6}=\frac12\ \text{ かつ }\ -\frac{\pi}{2}\leqq\frac{\pi}{6}\leqq\frac{\pi}{2}$$</div>
+    <p>
+      $\cos$ と $\tan$ も同じように範囲を決めます。$\cos$ は右半分では $\pm$ の区別ができない（$\cos(-\theta)=\cos\theta$）ので、<b>上半分 $0$〜$\pi$</b> にします。
+      $\tan$ は $\sin$ と同じ右半分ですが、真上・真下（$\pm\frac{\pi}{2}$）では $\tan$ がないので、端は入れません。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜逆三角関数の定義と値の範囲</div>
+      <p class="key-lead key-big">「$\sin$ が $x$ になる角度」を、決めた範囲の中から1つ選ぶ</p>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>$\blue{\arcsin x}$</th><td>$\red{\sin y}=x$ となる $y$ のうち $-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$ のもの（$-1\leqq x\leqq1$）</td></tr>
+        <tr><th>$\blue{\arccos x}$</th><td>$\teal{\cos y}=x$ となる $y$ のうち $0\leqq y\leqq\pi$ のもの（$-1\leqq x\leqq1$）</td></tr>
+        <tr><th>$\blue{\arctan x}$</th><td>$\amber{\tan y}=x$ となる $y$ のうち $-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$ のもの（$x$ はどんな数でもよい）</td></tr>
+      </tbody></table></div>
+      <p class="key-note">$\sin^{-1}x,\ \cos^{-1}x,\ \tan^{-1}x$ とも書く。ただし $\sin^{-1}x$ は $\dfrac{1}{\sin x}$ では<b>ない</b>（逆関数の記号 $f^{-1}$ の $-1$）。</p>
+    </div>
+
+    <p>
+      グラフも <a href="../explog/2-4.html">2.4節</a>と同じように、範囲をしぼった $y=\sin x$ を直線 $y=x$ で折り返すと $y=\arcsin x$ になります。
+      関数を切りかえ、青い点をドラッグして確かめましょう。
+    </p>
+
+    <div class="widget" id="w-inv">
+      <div class="widget-head">範囲をしぼった三角関数と、その逆関数 <span class="hint">関数を選ぶ／青い点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div>
+        <div class="btn-row"><span class="lbl-sm">x</span><div class="chips" data-r="pre"></div></div>
+      </div>
+      <div class="stage"><canvas aria-label="三角関数と逆三角関数のグラフ（直線 y=x について対称）"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k">値</span><span class="tex big" data-r="val"></span></div>
+          <div class="row"><span class="k">言いかえ</span><span class="tex" data-r="say"></span></div>
+        </div>
+        <div class="readout">
+          <div class="row"><span class="k">範囲</span><span class="tex" data-r="rng"></span></div>
+          <div class="row"><span class="k">注意</span><span class="note-txt" data-r="note"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>値を求めるときは、「その三角関数の値になる角を、決めた範囲の中で探す」と考えます。単位円をかくと迷いません。</p>
+    <div class="eq-box">$$\begin{aligned}
+      \arcsin\frac12&=\frac{\pi}{6} &&\left(\sin\frac{\pi}{6}=\frac12,\ \ -\frac{\pi}{2}\leqq\frac{\pi}{6}\leqq\frac{\pi}{2}\right)\\
+      \arccos\left(-\frac12\right)&=\frac{2\pi}{3} &&\left(\cos\frac{2\pi}{3}=-\frac12,\ \ 0\leqq\frac{2\pi}{3}\leqq\pi\right)\\
+      \arctan1&=\frac{\pi}{4} &&\left(\tan\frac{\pi}{4}=1\right)\\
+      \arctan\sqrt3&=\frac{\pi}{3} &&\left(\tan\frac{\pi}{3}=\sqrt3\right)
+    \end{aligned}$$</div>
+    <p>
+      $\arccos\left(-\frac12\right)$ を $-\frac{2\pi}{3}$ としてはいけません。$\cos\left(-\frac{2\pi}{3}\right)=-\frac12$ ではありますが、$\arccos$ の範囲 $0$〜$\pi$ に入っていないからです。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>点 P の方向の角度：arctan と atan2</h2>
+
+    <p>
+      さて、砲台の問題にもどります。砲台を原点 $\mathrm{O}$ に置き、プレイヤーが点 $\mathrm{P}(\teal{x},\ \red{y})$ にいるとします。知りたいのは次のことです。
+    </p>
+    <div class="eq-box">$$\text{点 }\mathrm{P}(\teal{x},\ \red{y})\text{ の方向の角度 }\blue{\theta}\text{ は？}\qquad\text{（}x\text{ 軸の正の向きから、反時計回りに測る）}$$</div>
+    <p>
+      $\mathrm{O}$ と $\mathrm{P}$ で直角三角形をつくると、横の長さが $\teal{x}$、縦の長さが $\red{y}$ です。$\amber{\tan\theta}=\dfrac{\red{y}}{\teal{x}}$（傾き）なので、
+      $\theta=\arctan\dfrac{y}{x}$ で求まりそうです。たとえば $\mathrm{P}(3,\ 2)$ なら $\arctan\dfrac23\approx33.7^\circ$。これは正しい答えです。
+    </p>
+    <p>
+      では $\mathrm{Q}(-3,\ -2)$ はどうでしょう。$\dfrac{y}{x}=\dfrac{-2}{-3}=\dfrac23$ で、$\mathrm{P}$ と<b>まったく同じ数</b>になります。
+      $\arctan$ には $\dfrac23$ という<b>1つの数</b>しか渡らないので、答えも同じ $33.7^\circ$ です。
+      ところが図を見ると、$\mathrm{Q}$ は左下、$\mathrm{P}$ とは<b>ちょうど反対の方向</b>にあります。
+    </p>
+
+    <div class="widget" id="w-atan2">
+      <div class="widget-head">$\mathrm{P}$ と $\mathrm{Q}$：$y/x$ は同じでも、方向は反対 <span class="hint">点 P をドラッグ／青の矢印＝本当の方向（atan2）、金の点線＝$\arctan\frac yx$ の答え</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">点 P</span><div class="chips" data-r="pre"></div></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="showq" checked>反対側の点 $\mathrm{Q}(-x,\ -y)$ もかく</label></div>
+      </div>
+      <div class="stage"><canvas aria-label="点 P(x, y) と Q(−x, −y)、arctan(y/x) と atan2(y, x) の向き"></canvas></div>
+      <div class="panel">
+        <div class="table-wrap t37-wrap"><table class="t37"><thead><tr><th>点</th><th>$\dfrac yx$</th><th>$\amber{\arctan\dfrac yx}$</th><th>$\blue{\mathrm{atan2}(y,x)}$</th></tr></thead><tbody data-r="rows"></tbody></table></div>
+        <div class="msg" data-r="msg"></div>
+      </div>
+    </div>
+
+    <p>いくつかの点で表にすると、$\arctan$ のまちがいがはっきりします。</p>
+    <div class="table-wrap"><table class="t37"><thead><tr><th>点 $\mathrm{P}$</th><th>$\dfrac yx$</th><th>$\arctan\dfrac yx$</th><th>正しい角度</th><th>$\mathrm{atan2}(y,x)$</th></tr></thead><tbody>
+      <tr><td>$(3,\ 2)$<br><span class="lbl-sm">右上</span></td><td>$\dfrac23$</td><td>$33.7^\circ$</td><td>$33.7^\circ$</td><td>$33.7^\circ$</td></tr>
+      <tr><td>$(-3,\ -2)$<br><span class="lbl-sm">左下</span></td><td>$\dfrac23$</td><td>$33.7^\circ$<br><span class="x37">✗ 反対向き</span></td><td>$-146.3^\circ$</td><td>$-146.3^\circ$</td></tr>
+      <tr><td>$(-3,\ 2)$<br><span class="lbl-sm">左上</span></td><td>$-\dfrac23$</td><td>$-33.7^\circ$<br><span class="x37">✗ 反対向き</span></td><td>$146.3^\circ$</td><td>$146.3^\circ$</td></tr>
+      <tr><td>$(3,\ -2)$<br><span class="lbl-sm">右下</span></td><td>$-\dfrac23$</td><td>$-33.7^\circ$</td><td>$-33.7^\circ$</td><td>$-33.7^\circ$</td></tr>
+      <tr><td>$(0,\ 2)$<br><span class="lbl-sm">真上</span></td><td>$\dfrac20$<br>計算できない</td><td><span class="x37">✗ 求まらない</span></td><td>$90^\circ$</td><td>$90^\circ$</td></tr>
+    </tbody></table></div>
+
+    <p>
+      なぜこうなるのでしょう。$\arctan$ が見ているのは、<b>割り算したあとの $\dfrac yx$ という1つの数だけ</b>です。
+      割り算すると、$x$ と $y$ の符号（$+$ か $-$ か）の情報が消えてしまいます。$\dfrac{-2}{-3}$ も $\dfrac{2}{3}$ も同じ $\dfrac23$ です。
+      これでは「右上」か「左下」かを区別できないので、$\arctan$ は（2）で決めたとおり、<b>いつも右半分（$-90^\circ$〜$90^\circ$）の角</b>を答えます。左半分の点では、180° ずれた反対向きになってしまうのです。
+    </p>
+    <p>
+      そこで、プログラムには $x$ と $y$ を<b>割らずに、別々に</b>受け取る関数 $\mathrm{atan2}(y,\ x)$ が用意されています。
+      $x$ と $y$ の符号を別々に見れば、点がどの場所（象限）にあるかがわかり、正しい方向の角度を $-180^\circ\lt\theta\leqq180^\circ$ で返してくれます。
+    </p>
+    <div class="table-wrap"><table class="t37"><thead><tr><th>$x$ の符号</th><th>$y$ の符号</th><th>点の場所</th><th>$\mathrm{atan2}(y,x)$ の答え</th></tr></thead><tbody>
+      <tr><td>$\teal{+}$</td><td>$\red{+}$</td><td>右上（第1象限）</td><td>$0^\circ$〜$90^\circ$</td></tr>
+      <tr><td>$\teal{-}$</td><td>$\red{+}$</td><td>左上（第2象限）</td><td>$90^\circ$〜$180^\circ$</td></tr>
+      <tr><td>$\teal{-}$</td><td>$\red{-}$</td><td>左下（第3象限）</td><td>$-180^\circ$〜$-90^\circ$</td></tr>
+      <tr><td>$\teal{+}$</td><td>$\red{-}$</td><td>右下（第4象限）</td><td>$-90^\circ$〜$0^\circ$</td></tr>
+      <tr><td>$0$</td><td>$\red{+}$ ／ $\red{-}$</td><td>真上 ／ 真下</td><td>$90^\circ$ ／ $-90^\circ$</td></tr>
+    </tbody></table></div>
+    <p>
+      割り算をしないので、$x=0$（真上・真下）でも困りません。
+      中では、左半分の点のとき $\arctan\dfrac yx$ の答えに $180^\circ$ を足したり引いたりして、反対向きを直しています。たとえば $\mathrm{Q}(-3,-2)$ なら $33.7^\circ-180^\circ=-146.3^\circ$ です。
+    </p>
+
+    <h3 class="h-mini">どうして大事？：ゲームやロボットは「向き」から角度を出す</h3>
+    <p>ゲームやロボットのプログラムでは、角度を「向き（ベクトル）$(x,\ y)$」から求める場面がたくさんあります。</p>
+    <ul>
+      <li><b>砲台</b>：砲台 $(a,\ b)$ からプレイヤー $(p,\ q)$ への向き $(p-a,\ q-b)$ → 砲台を向ける角度。</li>
+      <li><b>キャラクターの向き</b>：ジョイスティックを倒した向き $(x,\ y)$ → キャラが顔を向ける角度。</li>
+      <li><b>ロボットの進む向き</b>：今いる場所から目的地への向き → ロボットが進む方角。</li>
+    </ul>
+    <p>
+      どれも、向きは上下左右<b>どちらにもなります</b>。右半分しか答えられない $\arctan\dfrac yx$ を使うと、相手が左側に来たとたんに反対を向くバグになります。
+      実際に見てみましょう。
+    </p>
+
+    <div class="widget" id="w-bug">
+      <div class="widget-head">atan2 を使わないバグの体験 <span class="hint">作り方を切りかえる／敵（赤い点）をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">砲台の作り方</span><div class="chips" data-r="mode"></div><button class="btn" type="button" data-r="play">⏸ 止める</button></div>
+      </div>
+      <div class="stage"><canvas aria-label="arctan と atan2 で作った砲台"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k">コード</span><span data-r="code"></span></div>
+          <div class="row"><span class="k">敵の向き</span><span class="tex" data-r="dir"></span></div>
+        </div>
+        <div class="readout">
+          <div class="row"><span class="k">命中</span><span class="big-txt" data-r="score"></span></div>
+          <div class="row"><span class="k">ようす</span><span class="msg" data-r="msg"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜arctan と atan2 の使い分け</div>
+      <p class="key-lead key-big">傾きから角度 → $\amber{\arctan}$<br>向き（ベクトル）から角度 → $\blue{\mathrm{atan2}}$</p>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>$\amber{\arctan m}$</th><td>入れるのは<b>傾き $m$（1つの数）</b>。答えは $-90^\circ\lt\theta\lt90^\circ$（右半分だけ）。<br>例：坂や直線の傾きから、傾きの角を出す。傾き $1$ の直線 → $\arctan1=45^\circ$</td></tr>
+        <tr><th>$\blue{\mathrm{atan2}(\red{y},\teal{x})}$</th><td>入れるのは<b>向き $(\teal{x},\ \red{y})$（2つの数）</b>。答えは $-180^\circ\lt\theta\leqq180^\circ$（どの方向でも）。<br>例：砲台・キャラクター・ロボットの向き。$\mathrm{atan2}(-2,\,-3)\approx-146.3^\circ$</td></tr>
+      </tbody></table></div>
+      <ul>
+        <li>$\arctan\dfrac yx$ は $x$ と $y$ の符号が消えるので、$x\lt0$ のとき<b>反対向き</b>。$x=0$ では計算できない。</li>
+        <li>プログラムでは <code>Math.atan2(y, x)</code>（JavaScript）、<code>math.atan2(y, x)</code>（Python）。<b>引数は $y$ が先</b>。</li>
+      </ul>
+      <p class="key-note">砲台が $(a,b)$、プレイヤーが $(p,q)$ なら、向き $(p-a,\ q-b)$ を使って $\theta=\mathrm{atan2}(q-b,\ p-a)$。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>角度の差を折り返す</h2>
+
+    <p>
+      砲台やキャラクターを「一瞬で」ではなく、なめらかに回して目標の方へ向けたいとします。
+      今の向きが $350^\circ$、目標の向きが $10^\circ$ のとき、回す量（角度の差）を<b>そのまま引き算</b>すると
+    </p>
+    <div class="eq-box">$$\Delta=\text{目標}-\text{今}=10^\circ-350^\circ=\amber{-340^\circ}\quad\text{（時計回りに 340°）}$$</div>
+    <p>
+      となり、ほぼ1周の<b>遠回り</b>をしてしまいます。でも図をかけば、$350^\circ$ と $10^\circ$ は $0^\circ$ をはさんで <b>$20^\circ$ しか離れていません</b>。
+      下の2つの砲台を<b>同じ速さで同時に</b>スタートさせて、くらべてみましょう。
+    </p>
+
+    <div class="widget" id="w-turn">
+      <div class="widget-head">「そのまま引き算」と「折り返し」の競争 <span class="hint">例を選ぶ／図をタップして目標を変える</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">今 → 目標</span><div class="chips" data-r="ex"></div></div>
+        <div class="btn-row"><button class="btn primary" type="button" data-r="go">▶ 同時にスタート</button><span class="lbl-sm">速さはどちらも 毎秒 60°</span></div>
+      </div>
+      <div class="stage"><canvas aria-label="そのまま引き算で回る砲台と、折り返して回る砲台"></canvas></div>
+      <div class="turn37">
+        <div class="tc raw">
+          <div class="tc-h">そのまま引き算</div>
+          <div class="tc-f" data-r="f0"></div>
+          <div class="tc-big" data-r="d0"></div>
+          <div class="tc-s" data-r="s0"></div>
+          <div class="tc-t" data-r="t0"></div>
+        </div>
+        <div class="tc wrap">
+          <div class="tc-h">折り返し</div>
+          <div class="tc-f" data-r="f1"></div>
+          <div class="tc-big" data-r="d1"></div>
+          <div class="tc-s" data-r="s1"></div>
+          <div class="tc-t" data-r="t1"></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $-340^\circ$ 回っても $+20^\circ$ 回っても、着く向きは同じです。角度は $360^\circ$ ずれても同じ向きだからです（$-340^\circ+360^\circ=+20^\circ$）。
+      同じ所に着く回り方のうち、<b>回る量が $-180^\circ$〜$180^\circ$ に入っているもの</b>が近い方の回り方です。
+      そこで、引き算した差 $\Delta$ が大きすぎたら $360^\circ$ を引き、小さすぎたら $360^\circ$ を足して、この範囲に<b>折り返し</b>ます。
+    </p>
+    <div class="table-wrap"><table class="t37"><thead><tr><th>今 → 目標</th><th>そのまま引き算 $\Delta$</th><th>直し方</th><th>折り返した $\Delta$（回る量）</th></tr></thead><tbody>
+      <tr><td>$350^\circ\to10^\circ$</td><td>$10-350=-340^\circ$</td><td>$-180^\circ$ 以下 → $360^\circ$ 足す</td><td>$\teal{+20^\circ}$（反時計回り）</td></tr>
+      <tr><td>$10^\circ\to350^\circ$</td><td>$350-10=340^\circ$</td><td>$180^\circ$ より大きい → $360^\circ$ 引く</td><td>$\teal{-20^\circ}$（時計回り）</td></tr>
+      <tr><td>$30^\circ\to300^\circ$</td><td>$300-30=270^\circ$</td><td>$180^\circ$ より大きい → $360^\circ$ 引く</td><td>$\teal{-90^\circ}$（時計回り）</td></tr>
+      <tr><td>$100^\circ\to160^\circ$</td><td>$160-100=60^\circ$</td><td>範囲内 → そのまま</td><td>$\teal{+60^\circ}$（反時計回り）</td></tr>
+    </tbody></table></div>
+
+    <div class="key"><div class="key-ttl">覚える｜角度の差の折り返し</div>
+      <p class="key-lead key-big">差 $\Delta$ は $-180^\circ\lt\Delta\leqq180^\circ$ に直してから回す（近い方へ回る）</p>
+      $$\Delta=\text{目標}-\text{今}\quad\longrightarrow\quad \begin{cases}\Delta\gt180^\circ\ \text{なら}\ \Delta-360^\circ\\ \Delta\leqq-180^\circ\ \text{なら}\ \Delta+360^\circ\\ \text{それ以外はそのまま}\end{cases}$$
+      <ul>
+        <li>$\Delta\gt0$ なら反時計回り、$\Delta\lt0$ なら時計回りに $|\Delta|$ 回す。</li>
+        <li>まとめて1行で書くと $\Delta\to\mathrm{atan2}(\sin\Delta,\ \cos\Delta)$。「$\Delta$ の向きの角度」を atan2 で $-180^\circ$〜$180^\circ$ に読み直している。</li>
+        <li>ラジアンでは $180^\circ=\pi$、$360^\circ=2\pi$。</li>
+      </ul>
+      <p class="key-note">使われている所：ゲームのキャラクターや砲台の向き、ロボットの旋回、方位磁針（北 $0^\circ$ をまたぐ方位 $350^\circ$ と $10^\circ$ の差は $20^\circ$）。</p>
+    </div>
+
+    <p>
+      プログラムでは、次のように書けます。
+    </p>
+<pre class="code-37"><code>let d = target - angle;                   // 目標 − 今（ラジアン）
+d = Math.atan2(Math.sin(d), Math.cos(d)); // −π〜π に折り返す
+angle += Math.sign(d) * Math.min(Math.abs(d), speed * dt);  // 近い方へ少しずつ回す</code></pre>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>スマホで角度を測る</h2>
+
+    <p>
+      スマホの中には<b>加速度センサー</b>があり、重力がスマホの横方向（$x$）と縦方向（$y$）にどれだけかかっているか $(\teal{g_x},\ \red{g_y})$ がわかります。
+      画面の中で「真下」がどちらの向きかは、この2つから $\mathrm{atan2}$ で求まります。画面の向きはどの向きにもなりうるので、$\arctan$ ではなく $\mathrm{atan2}$ が必要です。
+    </p>
+    <div class="eq-box">$$\text{重力の向き }\blue{\theta}=\mathrm{atan2}(\red{g_y},\ \teal{g_x}),\qquad \text{机からの傾き }\varphi=\arccos(-g_z)$$</div>
+    <p>
+      スマホをまっすぐ立てると重力は画面の真下なので $\theta=-90^\circ$。そこから何度回したかは $\theta+90^\circ$ です（水準器アプリはこれを表示しています）。
+      また、画面に垂直な方向の重力 $g_z$（重力の大きさを 1 とする）からは、$\cos\varphi=-g_z$ として机からの傾き $\varphi$ が $\arccos$ で求まります。$\varphi$ は $0$〜$\pi$ なので、$\arccos$ の範囲にちょうど合っています。
+    </p>
+
+    <div class="widget" id="w-phone">
+      <div class="widget-head">スマホの傾きを atan2 で測る <span class="hint">センサーを使う（スマホ）／矢印の先をドラッグ（PC）</span></div>
+      <div class="panel sensor" style="padding-bottom:0">
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-a="tilt">📱 傾きセンサーを使う</button>
+          <button class="btn" type="button" data-a="hold">角度を固定</button>
+        </div>
+        <div class="msg" data-r="tstat"></div>
+      </div>
+      <div class="stage"><canvas aria-label="スマホの画面と重力の向き"></canvas></div>
+      <div class="panel two">
+        <div class="readout">
+          <div class="row"><span class="k">重力</span><span class="tex" data-r="g"></span></div>
+          <div class="row"><span class="k">向き</span><span class="tex big" data-r="th"></span></div>
+        </div>
+        <div class="readout">
+          <div class="row"><span class="k">回した角</span><span class="tex" data-r="roll"></span></div>
+          <div class="row"><span class="k">机から</span><span class="tex" data-r="phi"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：atan2 と arccos はあちこちで働いている</div>
+      <p>
+        <b>電子コンパス</b>：スマホの地図アプリは、地磁気センサーで地球の磁場の向き $(m_x,\ m_y)$ を測り、$\mathrm{atan2}(m_y,\ m_x)$ で「北はどちらか」を出しています。
+        <b>ゲームのジョイスティック</b>：スティックを倒した量 $(x,\ y)$ から、キャラクターが進む向きを $\mathrm{atan2}(y,\ x)$ で決めます（倒した大きさ $\sqrt{x^2+y^2}$ が速さ）。
+        <b>ロボットアーム</b>：手先を目標の点に届かせるには、関節を何度に曲げればよいか（逆運動学）を求めます。腕の長さと目標までの距離から、<a href="3-4.html">3.4節</a>の余弦定理で $\cos$ の値がわかり、$\arccos$ で角度にもどします（<a href="3-9.html">3.9節</a>で実際に動かします）。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>ひっくり返す</th><td>$\sin x=k$ となる $x$ は無数にある → 範囲を決めて1つ選ぶ</td></tr>
+        <tr><th>arcsin</th><td>$\sin y=x$、$-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$（例：$\arcsin\frac12=\frac{\pi}{6}$）</td></tr>
+        <tr><th>arccos</th><td>$\cos y=x$、$0\leqq y\leqq\pi$（例：$\arccos\left(-\frac12\right)=\frac{2\pi}{3}$）</td></tr>
+        <tr><th>arctan</th><td>$\tan y=x$、$-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$（例：$\arctan1=\frac{\pi}{4}$、$\arctan\sqrt3=\frac{\pi}{3}$）</td></tr>
+        <tr><th>記号</th><td>$\sin^{-1}x=\arcsin x$（$\frac{1}{\sin x}$ ではない）</td></tr>
+        <tr><th>グラフ</th><td>範囲をしぼった $y=\sin x$ と $y=\arcsin x$ は直線 $y=x$ について対称</td></tr>
+        <tr><th>atan2</th><td>$\mathrm{atan2}(y,x)$：向き $(x,y)$ の角度（$-\pi\lt\theta\leqq\pi$）。<code>Math.atan2(y, x)</code> は $y$ が先。傾きから角度 → $\arctan$、向きから角度 → $\mathrm{atan2}$</td></tr>
+        <tr><th>折り返し</th><td>角度の差 $\Delta$ は $-\pi\lt\Delta\leqq\pi$ に直す（$\pm2\pi$ する）と、近い方へ回る</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：砲台で狙い撃て</h2>
+
+    <p>
+      的の座標から砲台を向ける角度を計算し、角度を入れて発射しましょう。単位は度でもラジアンでもかまいません（ラジアンは <code>3pi/4</code> や <code>2.36</code> のように入力）。
+      電卓を使ってよいですが、<b>的がどの象限にあるか</b>に注意。3回まで撃てて、<b>1回目で命中すると★3</b>です。
+    </p>
+    <div class="widget" id="w-game-turret">
+      <div class="widget-head">砲台で狙い撃て <span class="game-total" data-r="total"></span><span class="hint">角度を入れて「発射」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="砲台で狙い撃て"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次の値を求めよ。　$\arcsin\dfrac12$、　$\arccos\left(-\dfrac12\right)$、　$\arctan\sqrt3$</li>
+      <li>次の値を求めよ。　$\arctan1$、　$\arccos\left(-\dfrac{\sqrt3}{2}\right)$、　$\arcsin\left(-\dfrac{\sqrt3}{2}\right)$</li>
+      <li>次の値を求めよ（$-\pi\lt\theta\leqq\pi$）。　$\mathrm{atan2}(-1,\ -1)$、　$\mathrm{atan2}(1,\ -\sqrt3)$、　$\mathrm{atan2}(-2,\ 0)$<br>また、$\mathrm{atan2}(-1,-1)$ のかわりに $\arctan\dfrac{-1}{-1}$ を使うとどうなるか。</li>
+      <li>砲台が $340^\circ$ の向きを向いている。目標の向きが $30^\circ$ のとき、近い方へ回るには、どちら回りに何度回せばよいか。また、今の向きが $\dfrac{3\pi}{4}$、目標が $-\dfrac{3\pi}{4}$ のときはどうか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>$\sin y=\dfrac12$、$-\dfrac{\pi}{2}\leqq y\leqq\dfrac{\pi}{2}$ となる $y$ なので $\arcsin\dfrac12=\dfrac{\pi}{6}$<br>
+          $\cos y=-\dfrac12$、$0\leqq y\leqq\pi$ となる $y$ は、単位円の上半分で $x$ 座標が $-\dfrac12$ の点なので $\arccos\left(-\dfrac12\right)=\dfrac{2\pi}{3}$<br>
+          $\tan y=\sqrt3$、$-\dfrac{\pi}{2}\lt y\lt\dfrac{\pi}{2}$ となる $y$ なので $\arctan\sqrt3=\dfrac{\pi}{3}$</li>
+        <li>$\tan\dfrac{\pi}{4}=1$ なので $\arctan1=\dfrac{\pi}{4}$<br>
+          上半分で $x$ 座標が $-\dfrac{\sqrt3}{2}$ の点は $\dfrac{5\pi}{6}\,(=150^\circ)$ なので $\arccos\left(-\dfrac{\sqrt3}{2}\right)=\dfrac{5\pi}{6}$<br>
+          右半分で $y$ 座標が $-\dfrac{\sqrt3}{2}$ の点は $-\dfrac{\pi}{3}$ なので $\arcsin\left(-\dfrac{\sqrt3}{2}\right)=-\dfrac{\pi}{3}$</li>
+        <li>点 $(-1,\ -1)$ は第3象限で、$45^\circ$ の三角定規の形。$-\pi\lt\theta\leqq\pi$ で表すと $\mathrm{atan2}(-1,-1)=-\dfrac{3\pi}{4}\,(=-135^\circ)$<br>
+          点 $(-\sqrt3,\ 1)$ は第2象限で、$x$ 軸の負の向きから $30^\circ$ 上。$\mathrm{atan2}(1,-\sqrt3)=\pi-\dfrac{\pi}{6}=\dfrac{5\pi}{6}$<br>
+          点 $(0,\ -2)$ は真下なので $\mathrm{atan2}(-2,\ 0)=-\dfrac{\pi}{2}$（$\arctan\dfrac{-2}{0}$ は割り算できない）<br>
+          $\arctan\dfrac{-1}{-1}=\arctan1=\dfrac{\pi}{4}$ となり、本当の向き $-\dfrac{3\pi}{4}$ と<b>ちょうど反対向き</b>（$\pi$ ずれる）になってしまう。</li>
+        <li>$\Delta=30^\circ-340^\circ=-310^\circ$。$-180^\circ$ 以下なので $360^\circ$ 足して $\Delta=50^\circ$。<b>反時計回りに $50^\circ$</b><br>
+          $\Delta=-\dfrac{3\pi}{4}-\dfrac{3\pi}{4}=-\dfrac{3\pi}{2}$。$-\pi$ 以下なので $2\pi$ 足して $\Delta=\dfrac{\pi}{2}$。<b>反時計回りに $\dfrac{\pi}{2}\,(=90^\circ)$</b>（$135^\circ$ から $225^\circ=-135^\circ$ へ）</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-6.html"><span class="dir">← 前の節</span><span class="nm">3.6 三角関数のグラフ</span></a>
+    <a class="next" href="3-8.html"><span class="dir">次の節 →</span><span class="nm">3.8 波を足す</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-7.js?v=202610211315"></script>
+</body>
+</html>

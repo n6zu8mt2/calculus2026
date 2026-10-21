@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.2 弧度法 | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.2節：円周と π・ラジアン・負の角・扇形・アルキメデスの円周率">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch2 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html" class="active" aria-current="page"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.2節</div>
+      <h1><span class="chap-no">3.2</span>弧度法：角度を長さで測る</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>弧度法（ラジアン）の意味を「弧の長さ」で説明できる。</li>
+      <li>度とラジアンを変換でき、時計回りの角を負の角で表せる。</li>
+      <li>弧の長さ $r\theta$ と扇形の面積を求められる。</li>
+    </ol>
+    <div class="goal-meta">図 4つ ・ チャレンジ 5ステージ ・ 確認問題 6問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：中学で学んだ 円周の長さ $2\pi r$、<a href="3-1.html">3.1節</a>の 角度</p>
+
+  <section class="sec first" id="main">
+
+    <h2 class="h-sub"><span class="tag">(1)</span>なぜ 360° ではなく $2\pi$ なのか</h2>
+
+    <p>
+      一周を $360^\circ$ とするのは、古代バビロニアで決められた「約束」です（1年がおよそ 360 日だから、360 は約数が多いから、などの説があります）。
+      便利な約束ですが、角度と <b>長さ</b> を結びつけるには、もっと自然な測り方があります。
+    </p>
+    <p>
+      まず、円周の長さを思い出しましょう。円周の長さは <b>直径 × 円周率 $\pi$</b> で、$\pi=3.14159\ldots$（どこまでも続く小数）です。
+      半径 $r$ の円は直径が $2r$ なので、円周は $2\pi r$。とくに <b>半径 1 の円（単位円）の円周は $2\pi\approx6.28$</b> です。
+    </p>
+    <p class="note-small">$\pi$ が $3.14159\ldots$ であることは、後の <a href="#archi">(5)</a> で正多角形を使って確かめます。</p>
+    <p>
+      そこで、単位円の上で点 $(1,\,0)$ から反時計回りに進んだ <b>弧の長さ</b> で、角度を測ることにします。
+      これを <b>弧度法</b> といい、単位を <b>ラジアン</b>（rad）と呼びます。下の図で円の上の点を動かしてみましょう。
+    </p>
+    <div class="widget" id="w-unit">
+      <div class="widget-head">単位円の弧の長さ ＝ 角 <span class="hint">円の上の点をドラッグ／スライダーで動かす</span></div>
+      <div class="stage"><canvas aria-label="単位円の弧の長さと中心角"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">中心角（度）</span><span class="tex" data-r="deg"></span></div>
+          <div class="row"><span class="k">弧の長さ</span><span class="tex big" data-r="len"></span></div>
+          <div class="row"><span class="k">わかること</span><span class="note-txt" data-r="msg"></span></div>
+        </div>
+      </div>
+    </div>
+    <p>
+      弧の長さがちょうど 1（半径と同じ長さ）になる角が <b>1 ラジアン</b>、約 $57.3^\circ$ です。
+      一周の弧の長さは円周 $2\pi$ なので、一周 $360^\circ$ は $2\pi$ ラジアン、半周 $180^\circ$ は $\pi$ ラジアンです。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜弧度法（ラジアン）</div>
+      <p class="key-lead key-big">角度を、半径1の円の「弧の長さ」で測る。</p>
+      $$\pi\,\text{rad}=180^\circ,\qquad 2\pi\,\text{rad}=360^\circ,\qquad 1\,\text{rad}=\frac{180^\circ}{\pi}\approx57.3^\circ$$
+      <ul>
+        <li>円周の長さは 直径 × $\pi$ ＝ $2\pi r$。単位円なら $2\pi$。</li>
+        <li>ふつう単位の「rad」は省略して、$\theta=\dfrac{\pi}{3}$ のように数だけ書く。</li>
+        <li>度からラジアンへは $\times\dfrac{\pi}{180}$、ラジアンから度へは $\times\dfrac{180}{\pi}$。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>度とラジアンの変換</h2>
+
+    <p>
+      $\pi=180^\circ$ だけ覚えておけば、あとは「半周の何分のいくつか」で変換できます。
+      例えば $60^\circ$ は半周 $180^\circ$ の $\frac13$ なので $\frac{\pi}{3}$、$135^\circ$ は $45^\circ\times3$ なので $\frac{3\pi}{4}$ です。
+      ピザで確かめましょう。何等分するかを選び、切れの数を変えます（ふちの点をドラッグしても動きます）。
+    </p>
+    <div class="widget" id="w-pizza">
+      <div class="widget-head">度 ⇔ ラジアンのピザ <span class="hint">何等分か・回る向きを選ぶ／切れの数を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="ns"></div><div class="chips" data-r="dir" style="margin-top:6px"></div></div>
+      <div class="stage"><canvas aria-label="ピザで度とラジアンを比べる"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">1切れ</span><span class="tex" data-r="one"></span></div>
+          <div class="row"><span class="k">度</span><span class="tex big" data-r="deg"></span></div>
+          <div class="row"><span class="k">ラジアン</span><span class="tex big" data-r="rad"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="table-wrap"><table class="ratio-table">
+      <thead><tr><th>度</th><td>$0^\circ$</td><td>$30^\circ$</td><td>$45^\circ$</td><td>$60^\circ$</td><td>$90^\circ$</td><td>$120^\circ$</td><td>$135^\circ$</td><td>$150^\circ$</td><td>$180^\circ$</td><td>$270^\circ$</td><td>$360^\circ$</td></tr></thead>
+      <tbody><tr><th>ラジアン</th><td>$0$</td><td>$\frac{\pi}{6}$</td><td>$\frac{\pi}{4}$</td><td>$\frac{\pi}{3}$</td><td>$\frac{\pi}{2}$</td><td>$\frac{2\pi}{3}$</td><td>$\frac{3\pi}{4}$</td><td>$\frac{5\pi}{6}$</td><td>$\pi$</td><td>$\frac{3\pi}{2}$</td><td>$2\pi$</td></tr></tbody>
+    </table></div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>負の角度：時計回りに回る</h2>
+
+    <p>
+      ここまで、角は右向き（ピザの右端、点 $(1,\,0)$）から <b>反時計回り</b> に測ってきました。数学では反時計回りを <b>正の向き</b> と決め、
+      <b>時計回り</b> に回る角は、マイナスをつけて表します。例えば時計回りに $90^\circ$ 回ると $-90^\circ$、ラジアンでは $-\dfrac{\pi}{2}$ です。
+      上のピザで「時計回り（−）」を選ぶと、マイナスの角を切り分けられます。
+    </p>
+    <p>
+      回った先の <b>位置</b> だけを見ると、時計回りに $90^\circ$ 回ったところは、反時計回りに $270^\circ$ 回ったところと同じです。
+      つまり $-\dfrac{\pi}{2}$ と $\dfrac{3\pi}{2}$ は同じ位置を指します（ちょうど一周 $2\pi$ だけ違う）。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜負の角</div>
+      <p class="key-lead key-big">時計回りに回る角は、マイナスをつけて表す。</p>
+      $$-\frac{\pi}{6}=-30^\circ,\quad -\frac{\pi}{2}=-90^\circ,\quad -\pi=-180^\circ$$
+      <ul>
+        <li>変換のしかたは正の角と同じ：$-90^\circ\times\dfrac{\pi}{180}=-\dfrac{\pi}{2}$。</li>
+        <li>$-\theta$ と $2\pi-\theta$ は同じ位置（例：$-\dfrac{\pi}{2}$ と $\dfrac{3\pi}{2}$）。3.3節の単位円で使います。</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>弧の長さと扇形</h2>
+
+    <p>
+      半径が $r$ の円は、半径 1 の円を $r$ 倍に拡大したものです。だから同じ中心角 $\blue{\theta}$ の弧の長さも $r$ 倍になり、$\blue{s}=r\blue{\theta}$。
+      扇形の面積は、円の面積 $\pi r^2$ に「一周 $2\pi$ のうちの $\frac{\theta}{2\pi}$」をかけて $S=\pi r^2\times\dfrac{\theta}{2\pi}=\dfrac12r^2\theta$ です。
+      度で書くと $2\pi r\times\dfrac{x}{360}$ のように 360 が出てきますが、ラジアンなら式がすっきりします。
+    </p>
+    <div class="widget" id="w-sector">
+      <div class="widget-head">扇形の弧の長さと面積 <span class="hint">半径 $r$ と中心角 $\theta$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="扇形の弧の長さと面積"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">中心角</span><span class="tex" data-r="th"></span></div>
+          <div class="row"><span class="k">弧の長さ</span><span class="tex" data-r="s"></span></div>
+          <div class="row"><span class="k">面積</span><span class="tex" data-r="S"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="key"><div class="key-ttl">覚える｜弧の長さと扇形の面積</div>
+      <p class="key-lead key-big">ラジアンなら、弧の長さは「半径 × 角」。</p>
+      $$s=r\theta,\qquad S=\frac12r^2\theta\ \left(=\frac12rs\right)$$
+      <p class="key-note">$r$ は半径、$\theta$ は中心角（ラジアン）。度のままでは使えないので、先にラジアンに直す。</p>
+    </div>
+
+    <h3 class="h-mini">なぜラジアンを使うの？</h3>
+    <ul>
+      <li><b>回る速さと進む速さ</b>：半径 $r$ の車輪が 1 秒に $\omega$ ラジアン回ると、ふちは 1 秒に $v=r\omega$ 進む（$s=r\theta$ から）。例：半径 $0.3$ m の車輪が 1 秒に 1 回転（$2\pi$）すると $v=0.3\times2\pi\approx1.9$ m/秒。</li>
+      <li><b>小さい角では $\sin x\approx x$</b>：$x$ をラジアンで測ると、$x$ が小さいとき $\sin x$ と $x$ がほとんど同じになる（下の表）。度で測るとこうはならない。</li>
+      <li><b>微分がきれいになる</b>：ラジアンのおかげで $(\sin x)'=\cos x$ という簡単な公式が成り立つ（微分の章で学ぶ）。度のままだと $\frac{\pi}{180}$ がついてまわる。</li>
+    </ul>
+    <div class="table-wrap"><table class="ratio-table">
+      <thead><tr><th>$x$（ラジアン）</th><td>$0.5$</td><td>$0.1$</td><td>$0.01$</td></tr></thead>
+      <tbody><tr><th>$\red{\sin x}$</th><td>$0.4794\ldots$</td><td>$0.09983\ldots$</td><td>$0.0099998\ldots$</td></tr></tbody>
+    </table></div>
+    <p class="note-small">比べると：$\sin1^\circ\approx0.01745$ で、「1」とはまったく違う。$1^\circ=\frac{\pi}{180}\approx0.01745$ ラジアンと見れば、$\sin x\approx x$ がちゃんと成り立っている。</p>
+
+    <div class="callout point">
+      <div class="ttl">小話：エラトステネスは地球の大きさを $s=r\theta$ で測った</div>
+      <p>約 2200 年前、エジプトのアレクサンドリアにいたエラトステネスは、夏至の正午に南のシエネ（今のアスワン）では太陽が真上に来るのに、
+      アレクサンドリアでは太陽の光が真上から $7.2^\circ$ ずれることに気づきました。$7.2^\circ$ は一周 $360^\circ$ の $\frac{1}{50}$ です。
+      2つの町の距離は約 925 km（5000 スタディア）だったので、地球一周は約 $925\times50\approx46000$ km。</p>
+      <p>弧度法で書くと $\theta=7.2^\circ=\frac{\pi}{25}\approx0.126$、$s=925$ km だから、$s=r\theta$ より地球の半径は $r=\frac{s}{\theta}\approx7400$ km。
+      本当の値（半径約 6400 km、一周約 40000 km）にかなり近い値を、棒の影だけで求めたのです。</p>
+    </div>
+
+    <h2 class="h-sub" id="archi"><span class="tag">(5)</span>正多角形で $\pi$ をはさむ（アルキメデス）</h2>
+
+    <p>
+      (1) で使った $\pi=3.14159\ldots$ は、どうやってわかったのでしょう。約 2200 年前、ギリシャのアルキメデスは、
+      円の内側と外側にぴったりの正多角形をかいて、その周の長さで円周をはさみました。
+    </p>
+    <p>
+      半径 1 の円の周の長さは $2\pi$、その半分が $\pi$ です。正 $n$ 角形の1辺は、中心角 $\frac{2\pi}{n}$ の二等辺三角形の底辺なので、
+      内側の周の半分は $\teal{n\sin\frac{\pi}{n}}$、外側の周の半分は $\red{n\tan\frac{\pi}{n}}$ です（$\sin,\ \tan$ は <a href="3-1.html">3.1節</a> の三角比）。
+      円周は内側の多角形より長く、外側の多角形より短いので、$\teal{n\sin\frac{\pi}{n}}\lt\pi\lt\red{n\tan\frac{\pi}{n}}$ です。
+    </p>
+    <div class="widget" id="w-archi">
+      <div class="widget-head">正多角形で π をはさむ <span class="hint">角の数を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="ns"></div></div>
+      <div class="stage"><canvas aria-label="円の内側と外側の正多角形"></canvas></div>
+      <div class="panel">
+        <div class="readout">
+          <div class="row"><span class="k t-teal">内側の半周</span><span class="tex" data-r="in"></span></div>
+          <div class="row"><span class="k t-red">外側の半周</span><span class="tex" data-r="out"></span></div>
+          <div class="row"><span class="k">はさむと</span><span class="tex big" data-r="pi"></span></div>
+        </div>
+      </div>
+    </div>
+    <p>
+      角の数を増やすほど、多角形は円に近づき、$\pi$ をはさむ幅が狭くなります。
+      アルキメデスは正 96 角形まで計算して、$3.1408\ldots\lt\pi\lt3.1428\ldots$ を示しました。
+      正 6 角形の内側の周の半分は、1辺が半径と同じ 1 なので、ちょうど $3$ です。
+    </p>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>円周</th><td>円周 ＝ 直径 × $\pi$ ＝ $2\pi r$、$\pi=3.14159\ldots$。単位円の円周は $2\pi$</td></tr>
+        <tr><th>弧度法</th><td>半径 1 の円の弧の長さで角を測る。$\pi=180^\circ$、$1\,\text{rad}\approx57.3^\circ$</td></tr>
+        <tr><th>変換</th><td>度 $\times\dfrac{\pi}{180}$ ＝ ラジアン、ラジアン $\times\dfrac{180}{\pi}$ ＝ 度</td></tr>
+        <tr><th>主な角</th><td>$30^\circ=\frac{\pi}{6}$、$45^\circ=\frac{\pi}{4}$、$60^\circ=\frac{\pi}{3}$、$90^\circ=\frac{\pi}{2}$、$360^\circ=2\pi$</td></tr>
+        <tr><th>負の角</th><td>時計回りはマイナス。$-90^\circ=-\frac{\pi}{2}$（$\frac{3\pi}{2}$ と同じ位置）</td></tr>
+        <tr><th>扇形</th><td>弧の長さ $s=r\theta$、面積 $S=\frac12r^2\theta$</td></tr>
+        <tr><th>アルキメデス</th><td>$n\sin\frac{\pi}{n}\lt\pi\lt n\tan\frac{\pi}{n}$（正 $n$ 角形ではさむ）</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：ラジアン・ピザ</h2>
+
+    <p>ラジアンで注文されたピザを、ちょうどの角度で切り分けましょう。ナイフの角度は <b>度</b> でしか表示されないので、頭の中で変換してください。
+    ふちの点をドラッグするか、スライダーで角度を決めて「切る」。3回まで切れて、<b>1回目でぴったりなら★3</b>。</p>
+    <div class="widget" id="w-game-pizza">
+      <div class="widget-head">ラジアン・ピザ <span class="game-total" data-r="total"></span><span class="hint">角度を決めて「切る」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="ラジアン・ピザ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次の角を弧度法で表せ。　$30^\circ,\ 45^\circ,\ 120^\circ,\ 300^\circ$</li>
+      <li>次の角を度数法で表せ。　$\dfrac{\pi}{6},\ \dfrac{\pi}{4},\ \dfrac{4\pi}{3},\ \dfrac{13\pi}{6}$</li>
+      <li>次の角を弧度法で表せ。　$60^\circ,\ 90^\circ,\ 150^\circ,\ 330^\circ$</li>
+      <li>次の角を度数法で表せ。　$\dfrac{\pi}{3},\ \dfrac{\pi}{2},\ \dfrac{5\pi}{3},\ \dfrac{7\pi}{6}$</li>
+      <li>半径 $4$、中心角 $\dfrac{\pi}{4}$ の扇形の弧の長さ $s$ と面積 $S$ を求めよ。</li>
+      <li>次の角を、度数法の角は弧度法で、弧度法の角は度数法で表せ。　$-90^\circ,\ -45^\circ,\ -\dfrac{\pi}{3},\ -\dfrac{3\pi}{2}$<br>また、$-\dfrac{\pi}{2}$ と同じ位置を指す $0$ 以上 $2\pi$ 未満の角を答えよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>$180^\circ=\pi$ を使って「半周の何分のいくつか」を考える。<br>
+          $30^\circ=\dfrac{180^\circ}{6}=\dfrac{\pi}{6}$、$45^\circ=\dfrac{180^\circ}{4}=\dfrac{\pi}{4}$、$120^\circ=2\times60^\circ=\dfrac{2\pi}{3}$、$300^\circ=5\times60^\circ=\dfrac{5\pi}{3}$</li>
+        <li>$\pi$ に $180^\circ$ を入れる。<br>
+          $\dfrac{\pi}{6}=30^\circ$、$\dfrac{\pi}{4}=45^\circ$、$\dfrac{4\pi}{3}=4\times60^\circ=240^\circ$、$\dfrac{13\pi}{6}=13\times30^\circ=390^\circ$</li>
+        <li>$60^\circ=\dfrac{\pi}{3}$、$90^\circ=\dfrac{\pi}{2}$、$150^\circ=5\times30^\circ=\dfrac{5\pi}{6}$、$330^\circ=11\times30^\circ=\dfrac{11\pi}{6}$</li>
+        <li>$\dfrac{\pi}{3}=60^\circ$、$\dfrac{\pi}{2}=90^\circ$、$\dfrac{5\pi}{3}=5\times60^\circ=300^\circ$、$\dfrac{7\pi}{6}=7\times30^\circ=210^\circ$</li>
+        <li>$s=r\theta=4\times\dfrac{\pi}{4}=\pi$<br>
+          $S=\dfrac12r^2\theta=\dfrac12\times4^2\times\dfrac{\pi}{4}=2\pi$</li>
+        <li>マイナスをつけたまま、正の角と同じように変換する。<br>
+          $-90^\circ=-\dfrac{\pi}{2}$、$-45^\circ=-\dfrac{\pi}{4}$、$-\dfrac{\pi}{3}=-60^\circ$、$-\dfrac{3\pi}{2}=-3\times90^\circ=-270^\circ$<br>
+          $-\dfrac{\pi}{2}$ は時計回りに $90^\circ$。一周 $2\pi$ を足して $-\dfrac{\pi}{2}+2\pi=\dfrac{3\pi}{2}$（反時計回りに $270^\circ$）が同じ位置。</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-1.html"><span class="dir">← 前の節</span><span class="nm">3.1 三角比</span></a>
+    <a class="next" href="3-3.html"><span class="dir">次の節 →</span><span class="nm">3.3 単位円と三角関数</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-2.js?v=202610211315"></script>
+</body>
+</html>

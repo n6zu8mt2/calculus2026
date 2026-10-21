@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>1.4 イージング | 多項式 | 解析学 2026</title>
-<meta name="description" content="第1回 多項式 1.4章：動きに強弱をつける">
+<meta name="description" content="第1章 多項式 1.4節：動きに強弱をつける">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610140157"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610140157">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
 </head>
 <body class="chapter ch4 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
-  <nav class="toc chapnav" aria-label="第1回の章の一覧">
-    <div class="toc-title">第1回 多項式</div>
-    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+  <nav class="toc chapnav" aria-label="第1章の節の一覧">
+    <div class="toc-title">第1章 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1章の目次</span></a>
     <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
     <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
     <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
@@ -31,13 +31,13 @@
   <header class="chap-hero">
     <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 54 C 34 54, 30 10, 56 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="8" cy="54" r="4" fill="currentColor"/><circle cx="56" cy="10" r="4" fill="currentColor"/></svg></div>
     <div>
-      <div class="eyebrow">第1回 多項式 ／ 1.4章</div>
+      <div class="eyebrow">第1章 多項式 ／ 1.4節</div>
       <h1><span class="chap-no">1.4</span>イージング</h1>
     </div>
   </header>
 
   <div class="goal">
-    <div class="goal-ttl">この章のゴール</div>
+    <div class="goal-ttl">この節のゴール</div>
     <ol>
       <li>位置の関数 $f(t)$ のグラフの傾きが「速さ」を表すことを説明できる。</li>
       <li>出だしの速さ <span class="t-amber">$v_0$</span> と終わりの速さ <span class="t-teal">$v_1$</span> から、3次のイージング関数を作れる。</li>
@@ -46,10 +46,10 @@
   </div>
 
   <section class="sec first" id="easing">
-    <p class="prereq">この章で使うこと：<a href="1-1.html">1.1章</a>の 傾き（$x$ が $1$ 増えたときの $y$ の変化）と補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$、<a href="1-2.html">1.2章</a>の 二次関数のグラフ</p>
+    <p class="prereq">この節で使うこと：<a href="1-1.html">1.1節</a>の 傾き（$x$ が $1$ 増えたときの $y$ の変化）と補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$、<a href="1-2.html">1.2節</a>の 二次関数のグラフ</p>
     <p>
       スマホでメニューを開くとき、メニューは一定の速さで動くのではなく、勢いよく出てきて、最後はゆっくり止まります。
-      この「動きの緩急」を決めているのが、この章で学ぶイージング関数です。まずは実物を見比べてみましょう。
+      この「動きの緩急」を決めているのが、この節で学ぶイージング関数です。まずは実物を見比べてみましょう。
     </p>
     <div class="widget" id="w-uidemo">
       <div class="widget-head">実例：スマホのメニューが開く動き <span class="hint">「メニューを開く」を押して、左右を見比べよう</span></div>
@@ -79,20 +79,20 @@
 <pre><code>.menu {
   transition: transform 0.3s ease-out;
 }</code></pre>
-        <p>ease-out の中身は 3次ベジェ曲線 <code>cubic-bezier(0, 0, 0.58, 1)</code>（1.5章）。</p>
+        <p>ease-out の中身は 3次ベジェ曲線 <code>cubic-bezier(0, 0, 0.58, 1)</code>（1.5節）。</p>
       </div>
       <div class="code-card">
         <div class="code-ttl">ゲーム（JavaScript）</div>
 <pre><code>// t: 経過時間の割合（0→1）
 const f = t => 1 - (1 - t) ** 3;
 x = start + (goal - start) * f(t);</code></pre>
-        <p>1.1章(2) の補間の $t$ を $f(t)$ に置き換えただけ。</p>
+        <p>1.1節(2) の補間の $t$ を $f(t)$ に置き換えただけ。</p>
       </div>
       <div class="code-card">
         <div class="code-ttl">ゲームエンジン（Unity／C#）</div>
 <pre><code>float s = Mathf.SmoothStep(0f, 1f, t);
 pos = Vector3.Lerp(a, b, s);</code></pre>
-        <p><code>SmoothStep</code> の中身は $3t^2-2t^3$（この章の smoothstep）。</p>
+        <p><code>SmoothStep</code> の中身は $3t^2-2t^3$（この節の smoothstep）。</p>
       </div>
     </div>
 
@@ -138,7 +138,7 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
       <ul>
         <li>傾きが急なところで速く、水平に近いところでゆっくり動く</li>
       </ul>
-      <p class="key-note">この「グラフの傾き」を求める計算を<b>微分</b>といい、$f'(t)$ と書きます。微分は後の回で詳しく学びます。この章では「$f'(t)$＝その点でのグラフの傾き（速さ）」とだけ思っておけば十分です。</p></div>
+      <p class="key-note">この「グラフの傾き」を求める計算を<b>微分</b>といい、$f'(t)$ と書きます。微分は後の章で詳しく学びます。この節では「$f'(t)$＝その点でのグラフの傾き（速さ）」とだけ思っておけば十分です。</p></div>
     <p>
       $\mathrm{smoothstep}\;3t^2-2t^3$ は、始まりと終わりで速さ（グラフの傾き）が $0$（$f'(0)=f'(1)=0$）になるよう調整した3次式です。
     </p>
@@ -147,7 +147,7 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
     <p>
       「出発するときの速さ $\amber{v_0}$」と「到着するときの速さ $\teal{v_1}$」を決めると、次の4条件を満たす3次多項式がただ1つに決まります。
     </p>
-    <div class="key"><div class="key-ttl">覚える｜3次で設計する4つの条件</div>$$\begin{gathered}f(0)=0,\quad f(1)=1\\[2pt] f'(0)=v_0,\quad f'(1)=v_1\end{gathered}$$<p class="key-note">$f'(0)$, $f'(1)$ は $t=0$, $t=1$ でのグラフの傾き（出だし・終わりの速さ）。微分の計算は後の回で学びます。</p></div>
+    <div class="key"><div class="key-ttl">覚える｜3次で設計する4つの条件</div>$$\begin{gathered}f(0)=0,\quad f(1)=1\\[2pt] f'(0)=v_0,\quad f'(1)=v_1\end{gathered}$$<p class="key-note">$f'(0)$, $f'(1)$ は $t=0$, $t=1$ でのグラフの傾き（出だし・終わりの速さ）。微分の計算は後の章で学びます。</p></div>
     <p>この4条件を満たす3次式は、次のようになります。</p>
     <div class="eq-box">$$\begin{aligned}f(t) = {}&(\amber{v_0}+\teal{v_1}-2)\,t^3\\ &+ (3-2\amber{v_0}-\teal{v_1})\,t^2 + \amber{v_0}\,t\end{aligned}$$</div>
     <p>
@@ -171,16 +171,16 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
       <p>
         つまみの位置は $\left(\tfrac13,\ \tfrac{v_0}{3}\right)$ と $\left(\tfrac23,\ 1-\tfrac{v_1}{3}\right)$ です。
         始点 $(0,0)$ からつまみへ引いた線の傾きが $v_0$、終点 $(1,1)$ へ入ってくる線の傾きが $v_1$ になっています。
-        実はこの4点 $(0,0),\ (\tfrac13,\tfrac{v_0}{3}),\ (\tfrac23,1-\tfrac{v_1}{3}),\ (1,1)$ を制御点とする3次ベジェ曲線の $y$ 成分が、この $f(t)$ そのものです。1.5章でその正体を見ます。
+        実はこの4点 $(0,0),\ (\tfrac13,\tfrac{v_0}{3}),\ (\tfrac23,1-\tfrac{v_1}{3}),\ (1,1)$ を制御点とする3次ベジェ曲線の $y$ 成分が、この $f(t)$ そのものです。1.5節でその正体を見ます。
       </p>
     </details>
   
   
-    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>イージング関数</th><td>時間の割合 $t$ → 進んだ割合 $f(t)$、$f(0)=0$、$f(1)=1$</td></tr>
         <tr><th>等速</th><td>$f(t)=t$</td></tr>
-        <tr><th>速さ</th><td>グラフの傾き $f'(t)$（微分：後の回で学ぶ）</td></tr>
+        <tr><th>速さ</th><td>グラフの傾き $f'(t)$（微分：後の章で学ぶ）</td></tr>
         <tr><th>3次で設計</th><td>$f(0)=0$、$f(1)=1$、$f'(0)=v_0$、$f'(1)=v_1$ で1つに決まる</td></tr>
         <tr><th>smoothstep</th><td>$3t^2-2t^3$（始まりと終わりの速さが $0$）</td></tr>
       </tbody></table></div>
@@ -213,7 +213,7 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
     <ol class="quiz">
         <li>smoothstep $f(t)=3t^2-2t^3$ について、$f(0),\ f(1)$ を求めよ。また、図(1) のグラフから $t=0$, $t=1$ での傾き $f'(0),\ f'(1)$ を読み取れ。</li>
         <li>$f(t)=t^2$（easeInQuad）のとき、時間の半分 $t=\tfrac12$ で、全体のどれだけ進んでいるか。</li>
-        <li>1.4章(2) の式 $$f(t)=(v_0+v_1-2)t^3+(3-2v_0-v_1)t^2+v_0t$$ で、$v_0=v_1=0$ とするとどうなるか。</li>
+        <li>1.4節(2) の式 $$f(t)=(v_0+v_1-2)t^3+(3-2v_0-v_1)t^2+v_0t$$ で、$v_0=v_1=0$ とするとどうなるか。</li>
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
@@ -225,18 +225,18 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
     </details>
   </section>
 
-  <nav class="pager" aria-label="前後の章">
-    <a class="prev" href="1-3.html"><span class="dir">← 前の章</span><span class="nm">1.3 放物線</span></a>
-    <a class="next" href="1-5.html"><span class="dir">次の章 →</span><span class="nm">1.5 ベジェ曲線</span></a>
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="1-3.html"><span class="dir">← 前の節</span><span class="nm">1.3 放物線</span></a>
+    <a class="next" href="1-5.html"><span class="dir">次の節 →</span><span class="nm">1.5 ベジェ曲線</span></a>
   </nav>
 </main>
 </div>
 
-<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+<footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610140157"></script>
-<script src="../assets/plot.js?v=202610140157"></script>
-<script src="../assets/game.js?v=202610140157"></script>
-<script src="polynomial.js?v=202610140157"></script>
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="polynomial.js?v=202610211315"></script>
 </body>
 </html>

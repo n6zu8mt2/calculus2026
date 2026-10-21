@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.5 円運動・回転と加法定理 | 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数 3.5節：回る点とグラフ・単振動・回転・加法定理">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter ch5 calm">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html" class="active" aria-current="page"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第3章 三角関数 ／ 3.5節</div>
+      <h1><span class="chap-no">3.5</span>円運動・回転と加法定理：回すと何が起きる？</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>等速円運動を $x=r\cos\omega t,\ y=r\sin\omega t$ で表し、周期を求められる。</li>
+      <li>点の回転の式を説明できる。</li>
+      <li>「回転を2回」から加法定理と倍角の公式を導ける。</li>
+    </ol>
+    <div class="goal-meta">図 4つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="3-3.html">3.3節</a>の 単位円、<a href="3-2.html">3.2節</a>の 弧度法</p>
+
+  <section class="sec first" id="main">
+
+    <h2 class="h-sub"><span class="tag">(1)</span>回る点の影：$\sin$ と $\cos$ のグラフ</h2>
+
+    <p>
+      単位円の上を、点 $\mathrm{P}$ が $(1,\,0)$（$\blue{\theta}=0$）から反時計回りに回ります。
+      <a href="3-3.html">3.3節</a>で見たとおり、$\mathrm{P}$ の座標は $(\teal{\cos\theta},\ \red{\sin\theta})$ です。
+      では、$\blue{\theta}$ が増えると、$\mathrm{P}$ の<b>高さ（$y$ 座標）</b>と<b>横の位置（$x$ 座標）</b>はどう変わるでしょう。
+    </p>
+    <p>
+      下の図では、$\mathrm{P}$ の高さを<b>右へ</b>まっすぐ写し、横の位置を<b>下へ</b>まっすぐ写しています。
+    </p>
+    <ul>
+      <li>右のグラフ：横の軸が $\blue{\theta}$、高さが $\mathrm{P}$ の $y$ 座標。つまり $y=\red{\sin\theta}$ のグラフ。</li>
+      <li>下のグラフ：$\blue{\theta}$ の軸が<b>下向き</b>、横の位置が $\mathrm{P}$ の $x$ 座標。つまり $x=\teal{\cos\theta}$ のグラフ。</li>
+    </ul>
+    <p>2つのグラフは円と同じ目盛りでかいてあるので、点線をたどると、円の点とグラフの点がいつも同じ高さ・同じ横の位置にあります。</p>
+
+    <div class="widget" id="w-unroll">
+      <div class="widget-head">回る点の影がグラフになる <span class="hint">再生／点 P をドラッグ／$\blue{\theta}$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">一時停止</button><button class="btn" type="button" data-r="reset">θ = 0 にもどす</button></div></div>
+      <div class="stage"><canvas aria-label="単位円を回る点と、右にかいた sin のグラフ、下にかいた cos のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">角</span><span class="tex" data-r="th"></span></div>
+          <div class="row"><span class="k">高さ</span><span class="tex" data-r="sin"></span></div>
+          <div class="row"><span class="k">横の位置</span><span class="tex" data-r="cos"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <ul>
+      <li>$\red{\sin\theta}$ は $0$ から始まり、$\blue{\theta}=\frac{\pi}{2}$（真上）で最大の $1$、$\pi$ で $0$、$\frac{3\pi}{2}$（真下）で最小の $-1$、$2\pi$ で $0$ にもどる。</li>
+      <li>$\teal{\cos\theta}$ は $1$ から始まり、$\frac{\pi}{2}$ で $0$、$\pi$（真左）で最小の $-1$、$2\pi$ で $1$ にもどる。</li>
+      <li>どちらも $-1$ から $1$ の間を行ったり来たりする<b>波</b>。$\mathrm{P}$ は 1 周（$\blue{\theta}$ が $2\pi$ 進む）すると元の場所にもどるので、グラフは <b>$2\pi$ ごとに同じ形</b>をくり返す。</li>
+      <li>下のグラフを左に $90^\circ$ 回して $\blue{\theta}$ の軸を右向きにすると、$\red{\sin}$ と同じ形の波を $\frac{\pi}{2}$ だけずらしたものになる（(4) で式でも確かめる。くわしくは 3.6節）。</li>
+    </ul>
+    <p class="note-small">
+      観覧車のゴンドラの高さも、この $\red{\sin}$ の波と同じように上がり下がりします（中心の高さ ＋ 半径 × $\red{\sin\theta}$）。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>円運動と単振動</h2>
+
+    <p>
+      円の上を一定の速さで回る動きを<b>等速円運動</b>といいます。1 秒に $\omega$（オメガ）ラジアンずつ回るとき、$\omega$ を<b>角速度</b>といいます（単位は rad/秒）。
+      $(r,\,0)$ から回り始めると、$t$ 秒後の角は $\blue{\theta}=\omega t$ です。半径 $r$ の円なら、単位円の点を $r$ 倍して
+    </p>
+    <div class="eq-box">$$x=r\,\teal{\cos\omega t},\qquad y=r\,\red{\sin\omega t}$$</div>
+    <p>
+      (1) の図で見たとおり、角が $2\pi$ 進むと点は 1 周して、同じ動きをくり返します。
+      1 周にかかる時間を<b>周期</b> $T$ といいます。$\omega T=2\pi$（$T$ 秒で $2\pi$ 回る）なので
+    </p>
+    <div class="eq-box">$$T=\frac{2\pi}{\omega}$$</div>
+    <p>
+      例：1 周 4 秒で回る点なら $\omega=\frac{2\pi}{4}=\frac{\pi}{2}$ rad/秒。1 秒後の角は $\frac{\pi}{2}$ なので、点は真上の $(0,\,r)$ にいます。
+      時計の長針は 60 分で 1 周（$2\pi$）するので、$\omega=\frac{2\pi}{60}=\frac{\pi}{30}$ rad/分です（$T=\frac{2\pi}{\omega}=60$ 分）。
+      また <a href="3-2.html">3.2節</a>の $s=r\theta$ から、1 秒に進む道のり（速さ）は $v=r\omega$ です。
+    </p>
+    <p>
+      この円運動を<b>真横から</b>見ると、点は上下に行ったり来たりするだけに見えます。この影の動き $y=r\sin\omega t$ を<b>単振動</b>といいます。
+      (1) の右のグラフは、この影の高さを時間とともに記録したものです。
+      ばねにつるしたおもりの上下の動きも、じつは単振動です。下の図では、回る点・$y$ 軸上の影・ばねのおもりを<b>1つの時計 $t$</b> で動かしているので、3つはいつも同じ高さにそろいます。
+    </p>
+
+    <div class="widget" id="w-shm">
+      <div class="widget-head">円運動・影・ばね <span class="hint">半径 $r$ と角速度 $\omega$ を動かす（実際の 1 秒 ＝ 1 秒）</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">一時停止</button><span class="ferris-now" data-r="now"></span></div></div>
+      <div class="stage"><canvas aria-label="円運動とその影とばねのおもり"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">位置</span><span class="tex" data-r="pos"></span></div>
+          <div class="row"><span class="k">周期</span><span class="tex" data-r="per"></span></div>
+          <div class="row"><span class="k">速さ</span><span class="tex" data-r="vel"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜円運動の式と周期</div>
+      <p class="key-lead key-big">一定の速さで回る点は $\cos$ と $\sin$ で書ける</p>
+      $$x=r\,\teal{\cos\omega t},\qquad y=r\,\red{\sin\omega t},\qquad T=\frac{2\pi}{\omega}$$
+      <ul>
+        <li>$\omega$：角速度（1 秒に回る角）、$T$：周期（1 周にかかる時間）、$v=r\omega$：速さ</li>
+        <li>点 $(\cos\theta,\ \sin\theta)$ の高さが $y=\red{\sin\theta}$、横の位置が $x=\teal{\cos\theta}$ のグラフ。どちらも $2\pi$ ごとに同じ形</li>
+        <li>はじめの角が $\varphi$（ファイ）なら、$t$ 秒後の角は $\omega t+\varphi$</li>
+      </ul>
+      <p class="key-note">真横から見た影 $y=r\sin\omega t$ が単振動。ばね・振り子・音の波（3.8節）も同じ式で書ける。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>点を回す</h2>
+
+    <p>
+      ゲームでキャラクターの向きを変えたり、写真を回したりするとき、コンピュータは「点 $\mathrm{P}(x,\,y)$ を原点のまわりに角 $\blue{\alpha}$ 回すと、どこへ行くか」を計算しています。
+      その式を作りましょう。
+    </p>
+    <p>
+      点 $\mathrm{P}(x,\,y)$ へは、原点から<b>右へ $\teal{x}$、上へ $\red{y}$</b> 進めば着きます。つまり、2本の矢印 $(1,\,0)$ と $(0,\,1)$ を使って
+      「$(1,\,0)$ の向きへ $\teal{x}$ 個分、$(0,\,1)$ の向きへ $\red{y}$ 個分」と行き方を表せます。
+      図形を丸ごと回しても形は変わらないので、回したあとの点 $\mathrm{P}'$ へは、<b>回した2本の矢印</b>の向きへ同じ $\teal{x}$ 個分、$\red{y}$ 個分進めば着きます。
+    </p>
+    <ul>
+      <li>$(1,\,0)$ を $\blue{\alpha}$ 回すと $(\cos\alpha,\ \sin\alpha)$（3.3節の定義そのもの）</li>
+      <li>$(0,\,1)$ を $\blue{\alpha}$ 回すと $(-\sin\alpha,\ \cos\alpha)$（$(\cos\alpha,\ \sin\alpha)$ をさらに $90^\circ$ 回した矢印。横と縦の長さが入れかわり、横が左向きになる）</li>
+    </ul>
+    <div class="eq-box">$$\begin{aligned}\mathrm{P}'&=\teal{x}\,(\cos\alpha,\ \sin\alpha)+\red{y}\,(-\sin\alpha,\ \cos\alpha)\\ &=(\teal{x}\cos\alpha-\red{y}\sin\alpha,\ \ \teal{x}\sin\alpha+\red{y}\cos\alpha)\end{aligned}$$</div>
+
+    <div class="widget" id="w-rot">
+      <div class="widget-head">点 $\mathrm{P}$ を $\blue{\alpha}$ 回す <span class="hint">点 P をドラッグ／$\alpha$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="点の回転と回した矢印"></canvas></div>
+      <div class="panel">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">点 P</span><span class="tex" data-r="p"></span></div>
+          <div class="row"><span class="k">点 P′</span><span class="tex" data-r="q"></span></div>
+          <div class="row"><span class="k">数値</span><span class="tex" data-r="num"></span></div>
+          <div class="row"><span class="k"></span><span class="tex" data-r="num2"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex" data-r="len"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜点の回転</div>
+      <p class="key-lead key-big">回す式は、回した2本の矢印から作れる</p>
+      <p>点 $\mathrm{P}(x,\ y)$ を原点のまわりに $\alpha$ 回した点を $\mathrm{P}'(x',\ y')$ とすると</p>
+      $$\begin{aligned}x'&=\teal{x}\cos\alpha-\red{y}\sin\alpha\\ y'&=\teal{x}\sin\alpha+\red{y}\cos\alpha\end{aligned}$$
+      <ul>
+        <li>$(1,\,0)\to(\cos\alpha,\ \sin\alpha)$、$(0,\,1)\to(-\sin\alpha,\ \cos\alpha)$ を覚えておけば、いつでも作り直せる。</li>
+        <li>例：$(2,\,1)$ を $90^\circ$ 回すと $(2\cdot0-1\cdot1,\ 2\cdot1+1\cdot0)$ $=(-1,\,2)$。</li>
+      </ul>
+      <p class="key-note">線形代数では、この計算を<b>回転行列</b> $\begin{pmatrix}\cos\alpha&-\sin\alpha\\ \sin\alpha&\cos\alpha\end{pmatrix}$ で表す。2つの列が、回した2本の矢印。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>回転を2回：加法定理</h2>
+
+    <p>
+      点 $(1,\,0)$ を、まず $\blue{\alpha}$ 回し、続けて $\violet{\beta}$ 回します。これは、まとめて $\blue{\alpha}+\violet{\beta}$ 回したのと同じ点に着きます。
+      この「同じ点」を2通りの方法で計算して比べると、大事な公式が出てきます。
+    </p>
+    <ol>
+      <li><b>まとめて回す</b>：$(1,\,0)$ を $\alpha+\beta$ 回した点は、3.3節の定義から $\big(\cos(\alpha+\beta),\ \sin(\alpha+\beta)\big)$。</li>
+      <li><b>2回に分けて回す</b>：$(1,\,0)$ を $\alpha$ 回すと $\mathrm{A}(\cos\alpha,\ \sin\alpha)$。この点を $\beta$ 回すので、(3) の回転の式に $x=\cos\alpha$、$y=\sin\alpha$ を入れて<br>
+        $x$ 座標は $\cos\alpha\cos\beta-\sin\alpha\sin\beta$、<br>$y$ 座標は $\cos\alpha\sin\beta+\sin\alpha\cos\beta$</li>
+    </ol>
+    <p>
+      同じ点なので、$x$ 座標どうし、$y$ 座標どうしが等しくなります。これが<b>加法定理</b>です。
+      下の図の点 $\mathrm{B}$ が $\big(\cos(\alpha+\beta),\ \sin(\alpha+\beta)\big)$ です。緑の矢印（$\mathrm{OA}$ の向きへ $\cos\beta$）と赤の矢印（それと直角な向きへ $\sin\beta$）をつなぐと、まとめて回した点にぴったり着くことを確かめましょう。
+    </p>
+
+    <div class="widget" id="w-add">
+      <div class="widget-head">回転を2回 ＝ まとめて1回 <span class="hint">$\alpha$・$\beta$ を動かす／「回してみる」で2つの道を比べる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="go">回してみる</button><span class="add-legend"><b class="t-blue">●</b> 2回に分けて　<b class="t-violet">○</b> まとめて</span></div></div>
+      <div class="stage"><canvas aria-label="回転を2回して加法定理を見る"></canvas></div>
+      <div class="panel">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">cos</span><span class="tex" data-r="c"></span></div>
+          <div class="row"><span class="k">sin</span><span class="tex" data-r="s"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex" data-r="chk"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜加法定理</div>
+      <p class="key-lead key-big">$\alpha$ 回して $\beta$ 回す ＝ $\alpha+\beta$ 回す</p>
+      $$\begin{aligned}\red{\sin(\alpha+\beta)}&=\sin\alpha\cos\beta+\cos\alpha\sin\beta\\ \teal{\cos(\alpha+\beta)}&=\cos\alpha\cos\beta-\sin\alpha\sin\beta\\ \amber{\tan(\alpha+\beta)}&=\frac{\tan\alpha+\tan\beta}{1-\tan\alpha\tan\beta}\end{aligned}$$
+      <ul>
+        <li>引き算は $\beta$ を $-\beta$ にする（$\cos(-\beta)=\cos\beta$、$\sin(-\beta)=-\sin\beta$）：<br>
+          $\sin(\alpha-\beta)=\sin\alpha\cos\beta-\cos\alpha\sin\beta$、　$\cos(\alpha-\beta)=\cos\alpha\cos\beta+\sin\alpha\sin\beta$</li>
+      </ul>
+      <p class="key-note">$\cos$ の式は「コス・コス」から「サイン・サイン」を<b>引く</b>（足し算の角なのに引き算になる）のに注意。</p>
+    </div>
+
+    <h3 class="h-mini">tan の加法定理</h3>
+    <p>
+      $\tan(\alpha+\beta)=\dfrac{\sin(\alpha+\beta)}{\cos(\alpha+\beta)}$ に加法定理を入れ、分子と分母を $\cos\alpha\cos\beta$ で割ります（$\dfrac{\sin\alpha}{\cos\alpha}=\tan\alpha$ を使う）。
+    </p>
+    <div class="eq-box">$$\tan(\alpha+\beta)=\frac{\sin\alpha\cos\beta+\cos\alpha\sin\beta}{\cos\alpha\cos\beta-\sin\alpha\sin\beta}=\frac{\dfrac{\sin\alpha}{\cos\alpha}+\dfrac{\sin\beta}{\cos\beta}}{1-\dfrac{\sin\alpha}{\cos\alpha}\cdot\dfrac{\sin\beta}{\cos\beta}}=\frac{\tan\alpha+\tan\beta}{1-\tan\alpha\tan\beta}$$</div>
+
+    <h3 class="h-mini">三角定規にない角の値</h3>
+    <p>
+      加法定理を使うと、$30^\circ$・$45^\circ$・$60^\circ$ を組み合わせた角の値が正確に求められます。
+    </p>
+    <div class="eq-box">$$\begin{aligned}\sin75^\circ&=\sin(45^\circ+30^\circ)=\sin45^\circ\cos30^\circ+\cos45^\circ\sin30^\circ=\frac{\sqrt2}{2}\cdot\frac{\sqrt3}{2}+\frac{\sqrt2}{2}\cdot\frac12=\frac{\sqrt6+\sqrt2}{4}\\ \cos15^\circ&=\cos(45^\circ-30^\circ)=\cos45^\circ\cos30^\circ+\sin45^\circ\sin30^\circ=\frac{\sqrt2}{2}\cdot\frac{\sqrt3}{2}+\frac{\sqrt2}{2}\cdot\frac12=\frac{\sqrt6+\sqrt2}{4}\end{aligned}$$</div>
+    <p>
+      $\sin75^\circ$ と $\cos15^\circ$ が同じになりました。$75^\circ=90^\circ-15^\circ$ なので、3.3節の「$\frac{\pi}{2}-\theta$ で $\sin$ と $\cos$ が入れかわる」とも合っています（$\frac{\sqrt6+\sqrt2}{4}\approx0.966$）。
+    </p>
+
+    <h3 class="h-mini">ずらした角の公式も加法定理から</h3>
+    <p>
+      3.3節で単位円から納得した公式は、加法定理に $\cos\frac{\pi}{2}=0$、$\sin\frac{\pi}{2}=1$ などを入れても出てきます。例えば
+    </p>
+    <div class="eq-box">$$\sin\left(x+\frac{\pi}{2}\right)=\sin x\underbrace{\cos\frac{\pi}{2}}_{0}+\cos x\underbrace{\sin\frac{\pi}{2}}_{1}=\cos x$$</div>
+    <p>
+      つまり $\cos x$ のグラフは、$\sin x$ のグラフを左へ $\frac{\pi}{2}$ ずらしたものです（3.6節で使います）。
+      (1) の図で、下の $\teal{\cos}$ のグラフを左に $90^\circ$ 回すと $\red{\sin}$ の波を $\frac{\pi}{2}$ ずらした形になったのは、この式のことです。
+    </p>
+
+    <h3 class="h-mini">倍角の公式</h3>
+    <p>
+      加法定理で $\beta=\alpha$ とすると（同じ角を2回回す）、$2\alpha$ の公式が出ます。
+    </p>
+    <div class="eq-box">$$\sin2\alpha=\sin(\alpha+\alpha)=\sin\alpha\cos\alpha+\cos\alpha\sin\alpha=2\sin\alpha\cos\alpha$$
+      $$\cos2\alpha=\cos(\alpha+\alpha)=\cos\alpha\cos\alpha-\sin\alpha\sin\alpha=\cos^2\alpha-\sin^2\alpha$$</div>
+    <p>
+      さらに $\sin^2\alpha+\cos^2\alpha=1$ で $\sin^2\alpha$ か $\cos^2\alpha$ を消すと、$\cos2\alpha$ はあと2通りに書けます。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜倍角の公式</div>
+      <p class="key-lead key-big">加法定理で $\beta=\alpha$ とおく</p>
+      $$\red{\sin2\alpha}=2\sin\alpha\cos\alpha$$
+      $$\teal{\cos2\alpha}=\cos^2\alpha-\sin^2\alpha=2\cos^2\alpha-1=1-2\sin^2\alpha$$
+      <p class="key-note">同じように $3\alpha=2\alpha+\alpha$ とすると3倍角の公式 $\sin3\alpha=3\sin\alpha-4\sin^3\alpha$、$\cos3\alpha=4\cos^3\alpha-3\cos\alpha$ も作れる（確認問題 4）。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：加法定理のおぼえ方</div>
+      <p>
+        $\sin(\alpha+\beta)=\underline{\sin}\alpha\,\underline{\cos}\beta+\underline{\cos}\alpha\,\underline{\sin}\beta$ は「<b>サイン・コサイン、コサイン・サイン</b>」、
+        $\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$ は「<b>コサイン・コサイン、マイナス サイン・サイン</b>」と、リズムで覚える人が多いです。
+        でも忘れても大丈夫。$\alpha=\beta=0$ や $\beta=\frac{\pi}{2}$ を入れて正しいか確かめられますし、何より「回転を2回」の図を思い出せば、いつでも作り直せます。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>円運動</th><td>$x=r\cos\omega t,\ y=r\sin\omega t$（$\omega$：角速度）、速さ $v=r\omega$</td></tr>
+        <tr><th>周期</th><td>$T=\dfrac{2\pi}{\omega}$（1 周 $2\pi$ にかかる時間）</td></tr>
+        <tr><th>グラフ</th><td>回る点の高さが $y=\sin\theta$、横の位置が $x=\cos\theta$。$2\pi$ ごとにくり返す波。真横から見た影の動きが単振動</td></tr>
+        <tr><th>回転</th><td>$(x,\,y)$ を $\alpha$ 回すと $(x\cos\alpha-y\sin\alpha,\ x\sin\alpha+y\cos\alpha)$</td></tr>
+        <tr><th>加法定理</th><td>$\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$<br>$\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$<br>$\tan(\alpha+\beta)=\dfrac{\tan\alpha+\tan\beta}{1-\tan\alpha\tan\beta}$</td></tr>
+        <tr><th>引き算</th><td>$\beta$ を $-\beta$ にする（$\sin$ の項の符号が変わる）</td></tr>
+        <tr><th>倍角</th><td>$\sin2\alpha=2\sin\alpha\cos\alpha$、$\cos2\alpha=\cos^2\alpha-\sin^2\alpha=2\cos^2\alpha-1=1-2\sin^2\alpha$</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>チャレンジ：弾幕を作れ</h2>
+
+    <p>
+      シューティングゲームの「弾幕」は、1発の弾の向きを、決まった角ずつ<b>回して</b>何発も作っています。プログラムが使うのは (3) の回転の式です。
+    </p>
+    <p>
+      あなたの仕事は、<b>中心の弾の向きを $\blue{\alpha}$ 回した「となりの弾」の向き</b>を計算して、$x$ 成分と $y$ 成分を入力すること。
+      正しく計算できれば、プログラムが同じ回転をくり返して（反対側は逆に回して）、すべての敵を一度に撃ち落とします。
+      入力は小数（例 <code>0.866</code>）でも、<code>√3/2</code> や <code>(√6+√2)/4</code> のような形でもかまいません。3回まで挑戦できます。ステージ1は練習（やり方の説明つき）です。
+    </p>
+    <div class="widget" id="w-game-danmaku">
+      <div class="widget-head">弾幕を作れ <span class="game-total" data-r="total"></span><span class="hint">となりの弾の向きを計算して「発射」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="弾幕を作れ：中心の弾の向きと、計算する向き"></canvas></div>
+      <div class="dm-steps" data-r="steps"></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次の式を、加法定理を使って $\alpha,\ \beta$ の三角関数で表せ。　(1) $\sin(\alpha+\beta)$　(2) $\cos(\alpha+\beta)$　(3) $\tan(\alpha+\beta)$</li>
+      <li>次の値を求めよ。　(1) $\sin15^\circ$　(2) $\cos\dfrac{5\pi}{12}$　(3) $\cos\dfrac{7\pi}{12}$　(4) $\tan\dfrac{5\pi}{12}$</li>
+      <li>加法定理を使って、次の式を $\sin x,\ \cos x$ を用いて表せ。　(1) $\sin\left(x+\dfrac{\pi}{2}\right)$　(2) $\cos(x-\pi)$　(3) $\sin(x+2\pi)$　(4) $\tan\left(\dfrac{\pi}{2}-x\right)$</li>
+      <li>(1) $\sin2x,\ \cos2x$ を $\sin x,\ \cos x$ を用いて表せ。<br>(2) $\sin3x$ を $\sin x$ を用いて、$\cos3x$ を $\cos x$ を用いて表せ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(1) $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$<br>
+          (2) $\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$<br>
+          (3) $\tan(\alpha+\beta)=\dfrac{\tan\alpha+\tan\beta}{1-\tan\alpha\tan\beta}$（(1)÷(2) の分子・分母を $\cos\alpha\cos\beta$ で割る）</li>
+        <li>(1) $\sin15^\circ=\sin(45^\circ-30^\circ)$<br>$=\sin45^\circ\cos30^\circ-\cos45^\circ\sin30^\circ$<br>$=\dfrac{\sqrt2}{2}\cdot\dfrac{\sqrt3}{2}-\dfrac{\sqrt2}{2}\cdot\dfrac12=\dfrac{\sqrt6-\sqrt2}{4}$<br>
+          (2) $\dfrac{5\pi}{12}=\dfrac{\pi}{4}+\dfrac{\pi}{6}$（$75^\circ=45^\circ+30^\circ$）なので<br>
+          $\cos\dfrac{5\pi}{12}=\cos\dfrac{\pi}{4}\cos\dfrac{\pi}{6}-\sin\dfrac{\pi}{4}\sin\dfrac{\pi}{6}$<br>$=\dfrac{\sqrt2}{2}\cdot\dfrac{\sqrt3}{2}-\dfrac{\sqrt2}{2}\cdot\dfrac12=\dfrac{\sqrt6-\sqrt2}{4}$<br>
+          (3) $\dfrac{7\pi}{12}=\dfrac{\pi}{3}+\dfrac{\pi}{4}$（$105^\circ=60^\circ+45^\circ$）なので<br>
+          $\cos\dfrac{7\pi}{12}=\cos\dfrac{\pi}{3}\cos\dfrac{\pi}{4}-\sin\dfrac{\pi}{3}\sin\dfrac{\pi}{4}$<br>$=\dfrac12\cdot\dfrac{\sqrt2}{2}-\dfrac{\sqrt3}{2}\cdot\dfrac{\sqrt2}{2}=\dfrac{\sqrt2-\sqrt6}{4}$<br>
+          (4) $\tan\dfrac{5\pi}{12}=\tan\left(\dfrac{\pi}{4}+\dfrac{\pi}{6}\right)=\dfrac{1+\frac{1}{\sqrt3}}{1-1\cdot\frac{1}{\sqrt3}}$<br>$=\dfrac{\sqrt3+1}{\sqrt3-1}=\dfrac{(\sqrt3+1)^2}{(\sqrt3-1)(\sqrt3+1)}=\dfrac{4+2\sqrt3}{2}=2+\sqrt3$<br>
+          （分子・分母に $\sqrt3$ をかけてから、分母を有理化した。$\tan\dfrac{\pi}{6}=\dfrac{1}{\sqrt3}=\dfrac{\sqrt3}{3}$）</li>
+        <li>(1) $\sin\left(x+\dfrac{\pi}{2}\right)=\sin x\cos\dfrac{\pi}{2}+\cos x\sin\dfrac{\pi}{2}$<br>$=\sin x\cdot0+\cos x\cdot1=\cos x$<br>
+          (2) $\cos(x-\pi)=\cos x\cos\pi+\sin x\sin\pi=\cos x\cdot(-1)+\sin x\cdot0=-\cos x$<br>
+          (3) $\sin(x+2\pi)=\sin x\cos2\pi+\cos x\sin2\pi=\sin x\cdot1+\cos x\cdot0=\sin x$（1 周回ると元にもどる）<br>
+          (4) $\sin\left(\dfrac{\pi}{2}-x\right)=\sin\dfrac{\pi}{2}\cos x-\cos\dfrac{\pi}{2}\sin x=\cos x$、$\cos\left(\dfrac{\pi}{2}-x\right)=\cos\dfrac{\pi}{2}\cos x+\sin\dfrac{\pi}{2}\sin x=\sin x$ なので<br>
+          $\tan\left(\dfrac{\pi}{2}-x\right)=\dfrac{\sin\left(\frac{\pi}{2}-x\right)}{\cos\left(\frac{\pi}{2}-x\right)}=\dfrac{\cos x}{\sin x}\left(=\dfrac{1}{\tan x}\right)$</li>
+        <li>(1) $\sin2x=\sin(x+x)=\sin x\cos x+\cos x\sin x=2\sin x\cos x$<br>
+          $\cos2x=\cos(x+x)=\cos x\cos x-\sin x\sin x=\cos^2x-\sin^2x$<br>
+          $\sin^2x=1-\cos^2x$ を入れると $\cos2x=2\cos^2x-1$、$\cos^2x=1-\sin^2x$ を入れると $\cos2x=1-2\sin^2x$<br>
+          (2) $\sin3x=\sin(2x+x)=\sin2x\cos x+\cos2x\sin x$<br>$=(2\sin x\cos x)\cos x+(1-2\sin^2x)\sin x$<br>
+          $=2\sin x\cos^2x+\sin x-2\sin^3x$<br>$=2\sin x(1-\sin^2x)+\sin x-2\sin^3x=3\sin x-4\sin^3x$<br>
+          $\cos3x=\cos(2x+x)=\cos2x\cos x-\sin2x\sin x$<br>$=(2\cos^2x-1)\cos x-(2\sin x\cos x)\sin x$<br>
+          $=2\cos^3x-\cos x-2\cos x(1-\cos^2x)=4\cos^3x-3\cos x$</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="3-4.html"><span class="dir">← 前の節</span><span class="nm">3.4 正弦定理・余弦定理</span></a>
+    <a class="next" href="3-6.html"><span class="dir">次の節 →</span><span class="nm">3.6 三角関数のグラフ</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="js/trig-common.js?v=202610211315"></script>
+<script src="js/3-5.js?v=202610211315"></script>
+</body>
+</html>

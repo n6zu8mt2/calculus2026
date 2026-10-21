@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>1.6 ラグランジュ補間 | 多項式 | 解析学 2026</title>
-<meta name="description" content="第1回 多項式 1.6章：データを通る曲線・過学習">
+<meta name="description" content="第1章 多項式 1.6節：データを通る曲線・過学習">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610140157"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610140157">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
 </head>
 <body class="chapter ch6 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
 
 <div class="layout">
-  <nav class="toc chapnav" aria-label="第1回の章の一覧">
-    <div class="toc-title">第1回 多項式</div>
-    <a href="index.html"><span class="cn">≡</span><span class="ct">第1回の目次</span></a>
+  <nav class="toc chapnav" aria-label="第1章の節の一覧">
+    <div class="toc-title">第1章 多項式</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第1章の目次</span></a>
     <a href="1-1.html"><span class="cn">1.1</span><span class="ct">一次関数</span></a>
     <a href="1-2.html"><span class="cn">1.2</span><span class="ct">二次関数</span></a>
     <a href="1-3.html"><span class="cn">1.3</span><span class="ct">放物線</span></a>
@@ -31,13 +31,13 @@
   <header class="chap-hero">
     <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 44 C 16 4, 28 64, 40 24 S 56 12, 60 18" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="10" cy="26" r="5" fill="currentColor"/><circle cx="30" cy="40" r="5" fill="currentColor"/><circle cx="48" cy="17" r="5" fill="currentColor"/></svg></div>
     <div>
-      <div class="eyebrow">第1回 多項式 ／ 1.6章</div>
+      <div class="eyebrow">第1章 多項式 ／ 1.6節</div>
       <h1><span class="chap-no">1.6</span>ラグランジュ補間とデータサイエンス</h1>
     </div>
   </header>
 
   <div class="goal">
-    <div class="goal-ttl">この章のゴール</div>
+    <div class="goal-ttl">この節のゴール</div>
     <ol>
       <li>与えられた点をすべて通る多項式を、ラグランジュ補間で作れる。</li>
       <li>多項式の次数を上げすぎると「過学習」が起きることを、図を使って説明できる。</li>
@@ -46,10 +46,10 @@
   </div>
 
   <section class="sec first" id="lagrange">
-    <p class="prereq">この章で使うこと：<a href="1-1.html">1.1章</a>の 2点を通る直線・補間・回帰直線、<a href="1-2.html">1.2章</a>の 二次関数</p>
+    <p class="prereq">この節で使うこと：<a href="1-1.html">1.1節</a>の 2点を通る直線・補間・回帰直線、<a href="1-2.html">1.2節</a>の 二次関数</p>
     <p>
-      これまでは「式」から「グラフ」を作りました。この章では逆に、<b>与えられた点をすべて通る式</b>を作ります。
-      たとえば2点を通る直線（一次関数）は、1.1章で求めたように1本だけ決まります。点を3つ、4つと増やすとどうなるでしょうか。
+      これまでは「式」から「グラフ」を作りました。この節では逆に、<b>与えられた点をすべて通る式</b>を作ります。
+      たとえば2点を通る直線（一次関数）は、1.1節で求めたように1本だけ決まります。点を3つ、4つと増やすとどうなるでしょうか。
     </p>
     <div class="key"><div class="key-ttl">覚える｜n 個の点を通る多項式</div><p class="key-lead">$x$ 座標がちがう $n$ 個の点をすべて通る、$(n-1)$ 次以下の多項式は、ちょうど1つだけある</p>
       <ul>
@@ -96,7 +96,7 @@
     </details>
     <p>
       2点のときは $L_1(x)=\dfrac{x-x_2}{x_1-x_2}$、$L_2(x)=\dfrac{x-x_1}{x_2-x_1}$ です。
-      $x=(1-t)x_1+t\,x_2$ とおくと $L_1=1-t$、$L_2=t$ となり、1.1章(2)の補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$ と同じです。
+      $x=(1-t)x_1+t\,x_2$ とおくと $L_1=1-t$、$L_2=t$ となり、1.1節(2)の補間 $(1-t)\boldsymbol{A}+t\boldsymbol{B}$ と同じです。
     </p>
     <p>
       下の図で点の数（2〜4）を切り替えて、式と図の対応を確かめましょう。
@@ -135,9 +135,9 @@
     </p>
     <ul>
       <li>補間：測定していない点の値を推定する（欠測値の補完、センサ値の間引き・再構成、画像の拡大縮小）。</li>
-      <li>数値計算：複雑な関数を多項式で近似して（近い式で置きかえて）、計算しやすくする（微分・積分の計算にも使われます。微分・積分は後の回で学びます）。</li>
+      <li>数値計算：複雑な関数を多項式で近似して（近い式で置きかえて）、計算しやすくする（微分・積分の計算にも使われます。微分・積分は後の章で学びます）。</li>
       <li>回帰：実際のデータには測定誤差（ランダムなずれ）がある。すべての点を通す必要はなく、全体の傾向をつかみたい。
-        そこで次数 $m$ を決め、各データ点と曲線との縦のずれを2乗して足した値（二乗誤差の合計）が最も小さい $m$ 次多項式を選ぶ。これが最小二乗法（多項式回帰）で、<a href="1-1.html">1.1章</a>の回帰直線（$m=1$）を曲線に広げたものです。</li>
+        そこで次数 $m$ を決め、各データ点と曲線との縦のずれを2乗して足した値（二乗誤差の合計）が最も小さい $m$ 次多項式を選ぶ。これが最小二乗法（多項式回帰）で、<a href="1-1.html">1.1節</a>の回帰直線（$m=1$）を曲線に広げたものです。</li>
     </ul>
     <p>
       ここで大切な落とし穴が<b>過学習</b>です。次数を上げるほど、手元のデータ（式を決めるのに使ったデータ。<b>訓練データ</b>といいます）とのずれは必ず小さくなり、
@@ -196,7 +196,7 @@
     </details>
   
   
-    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>通る多項式</th><td>$n$ 個の点（$x$ 座標が異なる）を通る $n-1$ 次以下の多項式はただ1つ</td></tr>
         <tr><th>補間の式</th><td>$P(x)=y_1L_1(x)+\cdots+y_nL_n(x)$<br>（ラグランジュ補間）</td></tr>
@@ -233,7 +233,7 @@
     <ol class="quiz">
         <li>3点 $(0,1),\ (1,3),\ (2,7)$ を通る二次関数を求めよ。</li>
         <li>$x$ 座標が異なる5点をすべて通る多項式は、何次以下のものがただ1つ存在するか。</li>
-        <li>1.6章(2) の図で、次数 $m$ を上げていくと、訓練誤差と「本当の傾向とのずれ」はそれぞれどう変化するか。</li>
+        <li>1.6節(2) の図で、次数 $m$ を上げていくと、訓練誤差と「本当の傾向とのずれ」はそれぞれどう変化するか。</li>
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
@@ -245,18 +245,18 @@
     </details>
   </section>
 
-  <nav class="pager" aria-label="前後の章">
-    <a class="prev" href="1-5.html"><span class="dir">← 前の章</span><span class="nm">1.5 ベジェ曲線</span></a>
-    <a class="next" href="index.html#summary"><span class="dir">第1回のまとめ →</span><span class="nm">多項式のまとめ</span></a>
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="1-5.html"><span class="dir">← 前の節</span><span class="nm">1.5 ベジェ曲線</span></a>
+    <a class="next" href="index.html#summary"><span class="dir">第1章のまとめ →</span><span class="nm">多項式のまとめ</span></a>
   </nav>
 </main>
 </div>
 
-<footer class="site-footer">解析学 2026 ／ 第1回 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+<footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610140157"></script>
-<script src="../assets/plot.js?v=202610140157"></script>
-<script src="../assets/game.js?v=202610140157"></script>
-<script src="polynomial.js?v=202610140157"></script>
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="polynomial.js?v=202610211315"></script>
 </body>
 </html>

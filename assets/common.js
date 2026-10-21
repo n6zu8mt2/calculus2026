@@ -140,7 +140,7 @@
       document.dispatchEvent(new Event('progress'));
     },
   };
-  // 章の一覧・章カードに、その章で取った★の数を表示する
+  // 節の一覧・章カードに、その章で取った★の数を表示する
   function renderStars() {
     const all = Lab.progress.all();
     Lab.$$('.chapnav a, a.chap-card').forEach(function (a) {
@@ -177,6 +177,7 @@
       { id: 'home', href: rootPath + 'index.html', title: 'トップ' },
       { id: 'polynomial', href: rootPath + 'polynomial/index.html', title: '多項式' },
       { id: 'explog', href: rootPath + 'explog/index.html', title: '指数・対数' },
+      { id: 'trig', href: rootPath + 'trig/index.html', title: '三角関数' },
     ];
     host.className = 'site-header';
     host.innerHTML =
@@ -238,7 +239,7 @@
     secs.forEach(function (s) { io.observe(s); });
   }
 
-  // 章の一覧が横スクロール(スマホ)のとき、いまの章が見える位置まで送る
+  // 節の一覧が横スクロール(スマホ)のとき、いまの章が見える位置まで送る
   function revealChapter() {
     const nav = document.querySelector('.chapnav'), a = nav && nav.querySelector('a.active');
     if (!a || nav.scrollWidth <= nav.clientWidth) return;
@@ -265,13 +266,13 @@
   let scrollTimer = 0;
   function queueMarkScrollables() { clearTimeout(scrollTimer); scrollTimer = setTimeout(markScrollables, 250); }
 
-  /* 章ページに「この章の『覚える』だけ印刷」ボタン */
+  /* 章ページに「この節の『覚える』だけ印刷」ボタン */
   function addPrintButton() {
     const goal = document.querySelector('.goal');
     if (!goal || !document.querySelector('.sec .key')) return;
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn small print-keys-btn';
-    b.textContent = '🖨 この章の「覚える」だけ印刷';
+    b.textContent = '🖨 この節の「覚える」だけ印刷';
     b.addEventListener('click', function () {
       document.body.classList.add('print-keys');
       window.print();

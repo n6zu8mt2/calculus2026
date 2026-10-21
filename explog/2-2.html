@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>2.2 指数関数のグラフ | 指数・対数 | 解析学 2026</title>
-<meta name="description" content="第2回 指数関数・対数関数 2.2章：y=a^x・平行移動・倍々の増え方">
+<meta name="description" content="第2章 指数関数・対数関数 2.2節：y=a^x・平行移動・倍々の増え方">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610140157"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610140157">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610140157">
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
 </head>
 <body class="chapter ch2 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
 
 <div class="layout">
-  <nav class="toc chapnav" aria-label="第2回の章の一覧">
-    <div class="toc-title">第2回 指数・対数</div>
-    <a href="index.html"><span class="cn">≡</span><span class="ct">第2回の目次</span></a>
+  <nav class="toc chapnav" aria-label="第2章の節の一覧">
+    <div class="toc-title">第2章 指数・対数</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第2章の目次</span></a>
     <a href="2-1.html"><span class="cn">2.1</span><span class="ct">指数を広げる</span></a>
     <a href="2-2.html" class="active" aria-current="page"><span class="cn">2.2</span><span class="ct">指数関数のグラフ</span></a>
     <a href="2-3.html"><span class="cn">2.3</span><span class="ct">倍々ゲームの威力</span></a>
@@ -31,27 +31,27 @@
   <header class="chap-hero">
     <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 56 C 24 55, 36 50, 44 36 S 54 10, 58 4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M4 58 H60" stroke="currentColor" stroke-width="2" opacity=".6"/></svg></div>
     <div>
-      <div class="eyebrow">第2回 指数関数・対数関数 ／ 2.2章</div>
+      <div class="eyebrow">第2章 指数関数・対数関数 ／ 2.2節</div>
       <h1><span class="chap-no">2.2</span>指数関数のグラフ</h1>
     </div>
   </header>
 
   <div class="goal">
-    <div class="goal-ttl">この章のゴール</div>
+    <div class="goal-ttl">この節のゴール</div>
     <ol>
       <li>$a>0,\ a\neq1$ のとき、指数関数 $y=a^x$ のグラフの形（増加・減少、点 $(0,1)$、漸近線）を説明できる。</li>
-      <li>$y=a^{x-p}+q$ が $y=a^x$ の平行移動であることを、1.2章と同じ考え方で説明できる。</li>
+      <li>$y=a^{x-p}+q$ が $y=a^x$ の平行移動であることを、1.2節と同じ考え方で説明できる。</li>
       <li>$x$ が 1 増えるごとに $y$ が $a$ 倍になる「倍々」の増え方が、多項式よりずっと速いことを説明できる。</li>
     </ol>
     <div class="goal-meta">図 3つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
   </div>
 
-  <p class="prereq">この章で使うこと：<a href="2-1.html">2.1章</a>の 指数の広げ方 $a^0=1$、$a^{-n}=\dfrac1{a^n}$、<a href="../polynomial/1-2.html#quadratic">1.2章</a>の 平行移動</p>
+  <p class="prereq">この節で使うこと：<a href="2-1.html">2.1節</a>の 指数の広げ方 $a^0=1$、$a^{-n}=\dfrac1{a^n}$、<a href="../polynomial/1-2.html#quadratic">1.2節</a>の 平行移動</p>
 
   <section class="sec first" id="main">
 
     <p>
-      2.1章で、$2^x$ は整数だけでなく分数（さらには実数）の $x$ に対して決まることがわかりました。
+      2.1節で、$2^x$ は整数だけでなく分数（さらには実数）の $x$ に対して決まることがわかりました。
       $a>0,\ a\neq1$ に対して、$y=a^x$ を<b>指数関数</b>といいます。
       $x$ が 1 増えるごとに $y$ が $a$ 倍になる、つまり同じ時間ごとに同じ倍率で増える（減る）量を表す関数です。
     </p>
@@ -91,7 +91,7 @@
     <h2 class="h-sub"><span class="tag">(2)</span>指数関数のグラフの平行移動</h2>
 
     <p>
-      第1回の <a href="../polynomial/1-2.html#quadratic">1.2章 (1) グラフを平行移動する</a> で、
+      第1章の <a href="../polynomial/1-2.html#quadratic">1.2節 (1) グラフを平行移動する</a> で、
       グラフ $y=f(x)$ を <span class="t-teal">$x$ 方向に $p$</span>、<span class="t-red">$y$ 方向に $q$</span> 平行移動すると、
       式は「$x$ を $x-\teal{p}$ に、$y$ を $y-\red{q}$ に置き換えた」$y-\red{q}=f(x-\teal{p})$ になることを学びました。
       これは $f(x)$ が何であっても成り立つので、$f(x)=a^x$ にもそのまま使えます。
@@ -100,7 +100,7 @@
     <div class="key"><div class="key-ttl">覚える｜平行移動</div>
       <p class="key-lead">$y=a^x$ のグラフを $x$ 方向に $\teal{p}$、$y$ 方向に $\red{q}$ 平行移動したグラフの式は</p>
       $$\begin{gathered}y-\red{q}=a^{x-\teal{p}}\\[4pt]\text{つまり}\quad y=a^{x-\teal{p}}+\red{q}\end{gathered}$$
-      <p class="key-note">1.2章の $y-\red{q}=f(x-\teal{p})$ で $f(x)=a^x$ としたもの。点 $(0,1)$ は $(\teal{p},\ \red{q}+1)$ に、漸近線 $y=0$ は $y=\red{q}$ に移る。</p>
+      <p class="key-note">1.2節の $y-\red{q}=f(x-\teal{p})$ で $f(x)=a^x$ としたもの。点 $(0,1)$ は $(\teal{p},\ \red{q}+1)$ に、漸近線 $y=0$ は $y=\red{q}$ に移る。</p>
     </div>
     <p>下の図で、底 $\blue{a}$ と移動量 $\teal{p},\ \red{q}$ を動かして確かめましょう。</p>
     <div class="widget" id="w-expgraph">
@@ -161,10 +161,10 @@
       「横に同じだけ進むと、縦に同じだけ上がる」のだから、対数目盛では $y=2^x$ は<b>まっすぐな直線</b>になります。</p>
       <p>一方、多項式 $x^{10}$ は、$x$ が $1\to2$ では $2^{10}=1024$ 倍になりますが、$10\to11$ では $1.1^{10}\approx2.6$ 倍、$100\to101$ では約 $1.1$ 倍にしかなりません。
       増える倍率がだんだん 1 に近づくので、対数目盛ではだんだん寝ていく曲線になり、いつも $\times2$ の直線にいつか必ず追い抜かれます。
-      この「目盛の高さ」を表すのが $\log_{10}$ で、2.4・2.5章で詳しく扱います（$\log_{10}2^x=x\log_{10}2$ は $x$ の1次式）。</p>
+      この「目盛の高さ」を表すのが $\log_{10}$ で、2.4・2.5節で詳しく扱います（$\log_{10}2^x=x\log_{10}2$ は $x$ の1次式）。</p>
     </div>
 
-    <div class="key summary"><div class="key-ttl">覚える｜この章のまとめ</div>
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>指数関数</th><td>$y=a^x$（$a>0,\ a\neq1$）：$x$ が 1 増えると $y$ は $a$ 倍</td></tr>
         <tr><th>グラフの形</th><td>$a>1$ で右上がり、$0\lt a\lt 1$ で右下がり</td></tr>
@@ -177,7 +177,7 @@
 
     <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：指数関数でコインを集めろ</h2>
 
-    <p>1.2章の放物線のチャレンジの指数関数版です。$y=\blue{a}^{x-\teal{p}}+\red{q}$ で、コインをすべて集めましょう。
+    <p>1.2節の放物線のチャレンジの指数関数版です。$y=\blue{a}^{x-\teal{p}}+\red{q}$ で、コインをすべて集めましょう。
     発射前はねらいの点線と、コインまでの縦のずれが表示されます（点線を消して命中すると 👑）。
     「$x$ が 1 増えると $y$ が何倍？」と、必ず通る点 $(p,\ q+1)$ が手がかりです。</p>
     <div class="widget" id="w-game-expcoin">
@@ -212,18 +212,18 @@
     </details>
   </section>
 
-  <nav class="pager" aria-label="前後の章">
-    <a class="prev" href="2-1.html"><span class="dir">← 前の章</span><span class="nm">2.1 指数を広げる</span></a>
-    <a class="next" href="2-3.html"><span class="dir">次の章 →</span><span class="nm">2.3 倍々ゲームの威力</span></a>
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="2-1.html"><span class="dir">← 前の節</span><span class="nm">2.1 指数を広げる</span></a>
+    <a class="next" href="2-3.html"><span class="dir">次の節 →</span><span class="nm">2.3 倍々ゲームの威力</span></a>
   </nav>
 </main>
 </div>
 
-<footer class="site-footer">解析学 2026 ／ 第2回 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+<footer class="site-footer">解析学 2026 ／ 第2章 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610140157"></script>
-<script src="../assets/plot.js?v=202610140157"></script>
-<script src="../assets/game.js?v=202610140157"></script>
-<script src="explog.js?v=202610140157"></script>
+<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/plot.js?v=202610211315"></script>
+<script src="../assets/game.js?v=202610211315"></script>
+<script src="explog.js?v=202610211315"></script>
 </body>
 </html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第3章 三角関数 | 解析学 2026</title>
+<meta name="description" content="第3章 三角関数：三角比・弧度法・単位円・三角形・回転と加法定理・グラフ・逆三角関数・波とフーリエ・形と動き">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202610211315"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202610211315">
+<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+</head>
+<body class="chapter calm index-page">
+<header id="site-header" data-root="../" data-current="trig"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第3章の節の一覧">
+    <div class="toc-title">第3章 三角関数</div>
+    <a href="index.html" class="active" aria-current="page"><span class="cn">≡</span><span class="ct">第3章の目次</span></a>
+    <a href="3-1.html"><span class="cn">3.1</span><span class="ct">三角比</span></a>
+    <a href="3-2.html"><span class="cn">3.2</span><span class="ct">弧度法</span></a>
+    <a href="3-3.html"><span class="cn">3.3</span><span class="ct">単位円と三角関数</span></a>
+    <a href="3-4.html"><span class="cn">3.4</span><span class="ct">正弦定理・余弦定理</span></a>
+    <a href="3-5.html"><span class="cn">3.5</span><span class="ct">円運動・回転と加法定理</span></a>
+    <a href="3-6.html"><span class="cn">3.6</span><span class="ct">三角関数のグラフ</span></a>
+    <a href="3-7.html"><span class="cn">3.7</span><span class="ct">逆三角関数と atan2</span></a>
+    <a href="3-8.html"><span class="cn">3.8</span><span class="ct">波を足す</span></a>
+    <a href="3-9.html"><span class="cn">3.9</span><span class="ct">形と動き</span></a>
+  </nav>
+
+<main>
+  <div class="page-hero">
+    <div class="eyebrow">第3章</div>
+    <h1>三角関数</h1>
+    <p class="lead">
+      三角関数は「回転」と「波」の言葉です。直角三角形の比から始めて、角度を長さで測り直し（弧度法）、単位円で「どんな角度でも使える関数」に広げます。
+      円を回すと横から見た影が波になり、波を足し合わせると音や図形が作れます。逆に「この向きは何度？」を求めるのが逆三角関数です。
+      9つの節で体験します。各節で特に大事なことは <span class="key-mark">覚える</span> の枠にまとめてあります。
+    </p>
+  </div>
+
+  <section class="sec first" id="chapters">
+    <h2 class="h-sub"><span class="tag">節</span>第3章の節</h2>
+    <div class="cards">
+      <a class="card chap-card ch1" href="3-1.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.1節</span>
+          <h3>三角比</h3>
+          <p>相似と三角比・三角定規・坂道の「10%」・高さを測る</p>
+        </div>
+      </a>
+      <a class="card chap-card ch2" href="3-2.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.2節</span>
+          <h3>弧度法</h3>
+          <p>ラジアン・負の角・扇形・円周率</p>
+        </div>
+      </a>
+      <a class="card chap-card ch3" href="3-3.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.3節</span>
+          <h3>単位円と三角関数</h3>
+          <p>単位円・負の角・符号・対称な角</p>
+        </div>
+      </a>
+      <a class="card chap-card ch4" href="3-4.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.4節</span>
+          <h3>正弦定理・余弦定理</h3>
+          <p>三角測量・余弦定理・モーリーの定理</p>
+        </div>
+      </a>
+      <a class="card chap-card ch5" href="3-5.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.5節</span>
+          <h3>円運動・回転と加法定理</h3>
+          <p>観覧車・単振動・回転・加法定理</p>
+        </div>
+      </a>
+      <a class="card chap-card ch6" href="3-6.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.6節</span>
+          <h3>三角関数のグラフ</h3>
+          <p>sin・cos・tan のグラフ・合成・ゆらゆらアニメ</p>
+        </div>
+      </a>
+      <a class="card chap-card ch7" href="3-7.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.7節</span>
+          <h3>逆三角関数と atan2</h3>
+          <p>arcsin・arctan・atan2・砲台</p>
+        </div>
+      </a>
+      <a class="card chap-card ch8" href="3-8.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.8節</span>
+          <h3>波を足す</h3>
+          <p>純音・うなり・逆位相・フーリエ・自分の声</p>
+        </div>
+      </a>
+      <a class="card chap-card ch9" href="3-9.html">
+        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="3" opacity=".5"/><path d="M32 32 L52 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="20" r="5" fill="currentColor"/></svg></div>
+        <div>
+          <span class="badge">3.9節</span>
+          <h3>形と動き</h3>
+          <p>リサジュー・サイクロイド・スピログラフ・ロボットアーム</p>
+        </div>
+      </a>
+    </div>
+    <a class="card island-card" href="island.html">
+      <span class="isl-ic" aria-hidden="true">🏝</span>
+      <div>
+        <span class="badge">ミニゲーム</span>
+        <h3>砲台の島</h3>
+        <p>各節のチャレンジの★を地図に集め、総合ステージ「島を守れ」で章のバッジ「三角関数マスター」をとろう</p>
+      </div>
+      <span class="isl-meter-v" data-isl-total></span>
+    </a>
+  </section>
+
+  <section class="sec" id="summary">
+    <h2 class="h-sub"><span class="tag">まとめ</span>第3章のまとめ</h2>
+    <a class="card keys-card" href="keys.html">
+      <span class="keys-card-ttl">覚えることのまとめ <span aria-hidden="true">→</span></span>
+      <span class="keys-card-sub">9つの節の「覚える｜この節のまとめ」を1ページに集めました（印刷もできます）</span>
+    </a>
+    <div class="key summary"><div class="key-ttl">覚える｜第3章 三角関数の全体像</div>
+      <p class="key-lead">三角関数は「回転」と「波」の言葉。角度から向き（$\cos,\ \sin$）を、向きから角度（$\mathrm{atan2}$）を求められる</p>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>三角比</th><td>$\sin\theta=\dfrac{\text{高さ}}{\text{斜辺}},\ \cos\theta=\dfrac{\text{底辺}}{\text{斜辺}},\ \tan\theta=\dfrac{\text{高さ}}{\text{底辺}}$<span class="use">直角三角形の形を数で表す（<a href="3-1.html">3.1</a>）</span></td></tr>
+        <tr><th>弧度法</th><td>$\pi=180^\circ$、弧の長さ $s=r\theta$<span class="use">角度を弧の長さで測る（<a href="3-2.html">3.2</a>）</span></td></tr>
+        <tr><th>単位円</th><td>点 $(\cos\theta,\ \sin\theta)$、$\sin^2\theta+\cos^2\theta=1$<span class="use">どんな角度でも使える（<a href="3-3.html">3.3</a>）</span></td></tr>
+        <tr><th>正弦・余弦定理</th><td>$\dfrac{a}{\sin A}=2R$、$a^2=b^2+c^2-2bc\cos A$<span class="use">三角形を解く・三角測量（<a href="3-4.html">3.4</a>）</span></td></tr>
+        <tr><th>加法定理</th><td>$\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$<br>$\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$<span class="use">回転を2回 ＝ 角度の足し算（<a href="3-5.html">3.5</a>）</span></td></tr>
+        <tr><th>グラフ</th><td>$y=A\sin\bigl(B(x-p)\bigr)+q$：振幅 $A$、周期 $\dfrac{2\pi}{B}$<span class="use">波の形を決める数・合成（<a href="3-6.html">3.6</a>）</span></td></tr>
+        <tr><th>逆三角関数</th><td>$\arcsin,\ \arccos,\ \arctan$、向き $(x,y)$ の角度は $\mathrm{atan2}(y,x)$<span class="use">向きから角度へ（<a href="3-7.html">3.7</a>）</span></td></tr>
+        <tr><th>波と音</th><td>$y=A\sin(2\pi ft)$、どんな周期的な波も $\sin$ の足し算（フーリエ級数）<span class="use">うなり・逆位相・音色（<a href="3-8.html">3.8</a>）</span></td></tr>
+        <tr><th>形と動き</th><td>極座標 $(r\cos\theta,\ r\sin\theta)$、リサジュー $x=\sin(at+\delta),\ y=\sin bt$<span class="use">ロボットアーム・視界判定（<a href="3-9.html">3.9</a>）</span></td></tr>
+      </tbody></table></div>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="移動">
+    <a class="prev" href="../explog/index.html"><span class="dir">← 第2章</span><span class="nm">指数関数・対数関数</span></a>
+    <a class="next" href="3-1.html"><span class="dir">最初の節 →</span><span class="nm">3.1 三角比</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第3章 三角関数</footer>
+<script src="../assets/common.js?v=202610211315"></script>
+<script>
+  // 「砲台の島」カードに、各節のチャレンジで集めた★の合計を表示
+  (function () {
+    var box = document.querySelector('[data-isl-total]');
+    if (!box || !window.Lab) return;
+    function show() {
+      var all = Lab.progress.all(), n = 0;
+      ['3-1', '3-2', '3-3', '3-5', '3-6', '3-7', '3-8', '3-9'].forEach(function (k) {
+        var v = all[k + ':game'] || {};
+        Object.keys(v).forEach(function (i) { n += +v[i] || 0; });
+      });
+      box.textContent = (all['3-badge'] && all['3-badge'].master ? '🏅 ' : '') + '★ ' + n + ' / 120';
+    }
+    show();
+    document.addEventListener('progress', show);
+  })();
+</script>
+</body>
+</html>
