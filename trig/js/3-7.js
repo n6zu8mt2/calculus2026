@@ -153,16 +153,16 @@
   const FNS = [
     { name: 'sin', inv: Math.asin, f: Math.sin, lo: -PI / 2, hi: PI / 2, dom: [-1, 1], col: 'accent', mac: 'red',
       pre: [0.5, r3 / 2, -0.5, 1, -r2], view: [-2.1, 2.1, -1.8, 1.8],
-      rng: '-\\frac{\\pi}{2}\\leqq\\arcsin x\\leqq\\frac{\\pi}{2}\\quad(-1\\leqq x\\leqq1)',
-      note: '$\\sin^{-1}x$ とも書くが、$\\dfrac{1}{\\sin x}$ ではない。' },
+      rng: '-\\frac{\\pi}{2}\\leqq\\sin^{-1} x\\leqq\\frac{\\pi}{2}\\quad(-1\\leqq x\\leqq1)',
+      note: '$\\sin^{-1}x$ は $\\arcsin x$ とも書く。$\\dfrac{1}{\\sin x}$ ではない。' },
     { name: 'cos', inv: Math.acos, f: Math.cos, lo: 0, hi: PI, dom: [-1, 1], col: 'teal', mac: 'teal',
       pre: [0.5, -0.5, 0, -r3 / 2, 1], view: [-1.75, 3.55, -1.25, 3.4],
-      rng: '0\\leqq\\arccos x\\leqq\\pi\\quad(-1\\leqq x\\leqq1)',
+      rng: '0\\leqq\\cos^{-1} x\\leqq\\pi\\quad(-1\\leqq x\\leqq1)',
       note: '$\\cos$ は上半分（$0$〜$\\pi$）にしぼる。右半分だと $\\cos(-\\theta)=\\cos\\theta$ で区別できない。' },
     { name: 'tan', inv: Math.atan, f: Math.tan, lo: -PI / 2, hi: PI / 2, open: true, dom: [-4.5, 4.5], col: 'amber', mac: 'amber',
       pre: [1, r3, -1, 1 / r3, 0], view: [-4.3, 4.3, -2.05, 2.05],
-      rng: '-\\frac{\\pi}{2}\\lt\\arctan x\\lt\\frac{\\pi}{2}\\quad(x\\ \\text{は何でもよい})',
-      note: '$x$ が大きくなると $\\arctan x$ は $\\frac{\\pi}{2}$ に近づくが、届かない（真上には $\\tan$ がない）。' },
+      rng: '-\\frac{\\pi}{2}\\lt\\tan^{-1} x\\lt\\frac{\\pi}{2}\\quad(x\\ \\text{は何でもよい})',
+      note: '$x$ が大きくなると $\\tan^{-1} x$ は $\\frac{\\pi}{2}$ に近づくが、届かない（真上には $\\tan$ がない）。' },
   ];
   function initInv() {
     const root = $id('w-inv');
@@ -173,7 +173,7 @@
     function buildPre() {
       pre = chipRow(R(root, 'pre'), F().pre.map((v) => ({ tex: T.exactTeX(v), v })), 0, (it) => { st.x = it.v; update(); });
     }
-    chipRow(R(root, 'fns'), FNS.map((f) => ({ tex: '\\' + f.name + '\\ \\leftrightarrow\\ \\arc' + f.name })), 0, (it, i) => {
+    chipRow(R(root, 'fns'), FNS.map((f) => ({ tex: '\\' + f.name + '\\ \\leftrightarrow\\ \\' + f.name + '^{-1}' })), 0, (it, i) => {
       st.k = i; st.x = F().pre[0]; buildPre(); update();
     });
     buildPre();
@@ -183,7 +183,7 @@
       const f = F(), x = st.x, y = f.inv(x), ex = isSpecial(x) && isNiceAngle(y);
       pre.forEach((b, j) => b.setAttribute('aria-pressed', String(Math.abs(f.pre[j] - x) < 1e-9)));
       const xs = ex ? T.exactTeX(x) : num(x, 2), ys = ex ? T.radTeX(y) : num(y, 3);
-      tex(root, 'val', '\\blue{\\arc' + f.name + '}\\,' + paren(xs) + (ex ? '=' : '\\approx') + '\\blue{' + ys + '}' + (ex ? '\\,(=' + T.degTeX(y) + ')' : '\\,(\\approx' + num(y / DEG, 1) + '^\\circ)'));
+      tex(root, 'val', '\\blue{\\' + f.name + '^{-1}}\\,' + paren(xs) + (ex ? '=' : '\\approx') + '\\blue{' + ys + '}' + (ex ? '\\,(=' + T.degTeX(y) + ')' : '\\,(\\approx' + num(y / DEG, 1) + '^\\circ)'));
       const lo = f.name === 'cos' ? '0' : '-\\frac{\\pi}{2}', hi = f.name === 'cos' ? '\\pi' : '\\frac{\\pi}{2}', le = f.open ? '\\lt' : '\\leqq';
       tex(root, 'say', '\\' + f.mac + '{\\' + f.name + '}\\,' + paren(ys) + (ex ? '=' : '\\approx') + xs + '\\ \\text{かつ}\\ ' + lo + le + ys + le + hi);
       tex(root, 'rng', f.rng);
@@ -232,7 +232,7 @@
         tan: [[[-3, Math.atan(-3), { dy: 12, align: 'center', valign: 'top' }], [3, Math.atan(3), { dy: -12, align: 'center', valign: 'bottom' }]], [[1.05, Math.tan(1.05), { dx: 10, align: 'left' }], [-1.05, Math.tan(-1.05), { dx: -10, align: 'right' }]]],
       }[f.name];
       const p1 = far(L1[0], x, y), p2 = far(L1[1], y, x);
-      g.tex('y=\\arc' + f.name + ' x', p1[0], p1[1], Object.assign({ size: 15, color: c.primary, avoid: true }, p1[2]));
+      g.tex('y=\\' + f.name + '^{-1} x', p1[0], p1[1], Object.assign({ size: 15, color: c.primary, avoid: true }, p1[2]));
       g.tex('y=\\' + f.name + ' x', p2[0], p2[1], Object.assign({ size: 15, color: col, avoid: true }, p2[2]));
     };
     update();
@@ -282,10 +282,10 @@
         rows.innerHTML = row('P', x, y) + (st.q ? row('Q', -x + 0, -y + 0) : '');
         typeset(rows);
         let m, ok = false;
-        if (x === 0) m = '真上・真下では y/x が割り算できず、arctan は使えない。atan2 は割り算しないので ' + (st.q ? '90° と −90°' : (y > 0 ? '90°' : '−90°')) + ' と答えられる。';
-        else if (st.q) m = 'P と Q は y/x が同じなので、arctan の答えも同じ（金の点線は1本だけ）。でも P と Q は反対の方向。atan2 は x と y の符号を別々に見るので、どちらも正しい。';
-        else if (x < 0) m = 'P は左半分（x < 0）。arctan は 180° ずれて反対向きを指す！ atan2 は正しい方向。';
-        else { m = 'P は右半分（x > 0）。このときは arctan と atan2 は同じ答え。'; ok = true; }
+        if (x === 0) m = '真上・真下では y/x が割り算できず、tan⁻¹ は使えない。atan2 は割り算しないので ' + (st.q ? '90° と −90°' : (y > 0 ? '90°' : '−90°')) + ' と答えられる。';
+        else if (st.q) m = 'P と Q は y/x が同じなので、tan⁻¹(y/x) の答えも同じ（金の点線は1本だけ）。でも P と Q は反対の方向。atan2 は x と y の符号を別々に見るので、どちらも正しい。';
+        else if (x < 0) m = 'P は左半分（x < 0）。tan⁻¹(y/x) は 180° ずれて反対向きを指す！ atan2 は正しい方向。';
+        else { m = 'P は右半分（x > 0）。このときは tan⁻¹(y/x) と atan2 は同じ答え。'; ok = true; }
         msg.className = 'msg ' + (ok ? 'ok' : 'ng'); msg.textContent = m;
       }
       plot.invalidate();
@@ -316,35 +316,35 @@
     plot.draw = function (g) {
       const c = g.c, ctx = g.ctx, x = st.x, y = st.y;
       fit(g, -4.7, 4.7, -3.75, 3.75);
-      // arctan の答えが来ない左半分
+      // tan⁻¹ の答えが来ない左半分
       ctx.save(); ctx.fillStyle = c.amber; ctx.globalAlpha = 0.07; ctx.fillRect(0, 0, g.X(0), g.h); ctx.restore();
       g.grid({ step: 1, labels: false, xlabel: 'x', ylabel: 'y' });
       // 左半分にある点と重ならない方の角に書く
       const lowLeft = (x < 0 && y < 0) || (st.q && x > 0 && y > 0);
-      g.texPx('\\text{arctan の答えは来ない}', 6, lowLeft ? 6 : g.h - 6, { align: 'left', valign: lowLeft ? 'top' : 'bottom', size: 11, color: c.amber });
+      g.texPx('\\tan^{-1}\\frac yx\\ \\text{の答えは来ない}', 6, lowLeft ? 6 : g.h - 6, { align: 'left', valign: lowLeft ? 'top' : 'bottom', size: 11, color: c.amber });
       if (x !== 0) {
         const ph = Math.atan(y / x);
         // 名前は矢印の、x 軸（三角形）から遠い側に
         const sd = ph < 0 ? -1 : 1, nx = -sd * Math.sin(ph), ny = sd * Math.cos(ph);
-        g.tex('\\amber{\\arctan\\frac yx}', 1.45 * Math.cos(ph), 1.45 * Math.sin(ph), { dx: 18 * nx, dy: -18 * ny, align: nx < -0.3 ? 'right' : nx > 0.3 ? 'left' : 'center', valign: ny > 0 ? 'bottom' : 'top', size: g.w > 520 ? 17 : 14, color: c.amber, avoid: true });
+        g.tex('\\amber{\\tan^{-1}\\frac yx}', 1.45 * Math.cos(ph), 1.45 * Math.sin(ph), { dx: 18 * nx, dy: -18 * ny, align: nx < -0.3 ? 'right' : nx > 0.3 ? 'left' : 'center', valign: ny > 0 ? 'bottom' : 'top', size: g.w > 520 ? 17 : 14, color: c.amber, avoid: true });
       }
       drawPt(g, 'P', x, y, 0.6, true);
       if (st.q) drawPt(g, 'Q', -x + 0, -y + 0, 0.95, false);
-      // arctan の矢印は一番上に（本当の方向の矢印と重なっても見えるように）
+      // tan⁻¹ の矢印は一番上に（本当の方向の矢印と重なっても見えるように）
       if (x !== 0) { const ph = Math.atan(y / x), L2 = 2.3; g.arrow(0, 0, L2 * Math.cos(ph), L2 * Math.sin(ph), { color: c.amber, width: 3, dash: [7, 5], head: 13 }); }
     };
     update();
   }
 
   /* ==========================================================
-     3.7(3) バグの体験：arctan(y/x) で作った砲台
+     3.7(3) バグの体験：tan⁻¹(y/x) で作った砲台
      ========================================================== */
   function initBug() {
     const root = $id('w-bug');
     const plot = new Plot(root.querySelector('canvas'), { xmin: -4, xmax: 4, ymin: -3, ymax: 3, ratio: [0.8, 0.48] });
     const st = { mode: 0, run: true, e: 0.4, r: 2.6, aim: 0, bullets: [], cool: 0, shots: 0, hits: 0, flash: 0 };
     const CODE = ['<code>angle = Math.atan(dy / dx);</code>', '<code>angle = Math.atan2(dy, dx);</code>'];
-    chipRow(R(root, 'mode'), [{ tex: '\\arctan\\frac{y}{x}\\ \\text{で作る}' }, { tex: '\\mathrm{atan2}(y,x)\\ \\text{で作る}' }], 0, (it, i) => {
+    chipRow(R(root, 'mode'), [{ tex: '\\tan^{-1}\\frac{y}{x}\\ \\text{で作る}' }, { tex: '\\mathrm{atan2}(y,x)\\ \\text{で作る}' }], 0, (it, i) => {
       st.mode = i; st.shots = 0; st.hits = 0; st.bullets = []; update(); anim.kick();
     });
     const bPlay = R(root, 'play');
@@ -568,7 +568,7 @@
       tex(root, 'g', '(\\teal{g_x},\\ \\red{g_y},\\ g_z)=(\\teal{' + num(gx, 2) + '},\\ \\red{' + num(gy, 2) + '},\\ ' + num(gz, 2) + ')');
       tex(root, 'th', flat ? '\\text{画面がほぼ水平：向きが決まらない}' : '\\blue{\\theta}=\\mathrm{atan2}(\\red{' + num(gy, 2) + '},\\ \\teal{' + num(gx, 2) + '})\\approx\\blue{' + num(th / DEG, 1) + '^\\circ}');
       tex(root, 'roll', flat ? '-' : '\\theta+90^\\circ\\approx' + num(T.wrapPi(th + PI / 2) / DEG, 1) + '^\\circ');
-      tex(root, 'phi', '\\varphi=\\arccos(' + num(-gz, 2) + ')\\approx' + num(Math.acos(clamp(-gz, -1, 1)) / DEG, 1) + '^\\circ');
+      tex(root, 'phi', '\\varphi=\\cos^{-1}(' + num(-gz, 2) + ')\\approx' + num(Math.acos(clamp(-gz, -1, 1)) / DEG, 1) + '^\\circ');
       plot.invalidate();
     }
     plot.draw = function (g) {
@@ -607,23 +607,23 @@
     { name: '右上', tur: [0, 0], tg: () => [3, 3], ans: A(3, 3),
       text: '的は $(3,\\ 3)$。原点の砲台を何度に向ける？',
       hint: '右上（第1象限）。$\\tan\\theta=\\dfrac33=1$ の角。',
-      answer: '<b>$45^\\circ\\ \\left(=\\dfrac{\\pi}{4}\\right)$</b><br>$\\theta=\\mathrm{atan2}(3,\\,3)=\\dfrac{\\pi}{4}$。第1象限なので $\\arctan\\dfrac33=\\arctan1=\\dfrac{\\pi}{4}$ でも同じ。' },
+      answer: '<b>$45^\\circ\\ \\left(=\\dfrac{\\pi}{4}\\right)$</b><br>$\\theta=\\mathrm{atan2}(3,\\,3)=\\dfrac{\\pi}{4}$。第1象限なので $\\tan^{-1}\\dfrac33=\\tan^{-1}1=\\dfrac{\\pi}{4}$ でも同じ。' },
     { name: '左上', tur: [0, 0], tg: () => [-4, 4], ans: A(4, -4),
       text: '的は $(-4,\\ 4)$。原点の砲台を何度に向ける？',
-      hint: '左上（第2象限）。$\\arctan\\dfrac{4}{-4}=-45^\\circ$ は右下を向いてしまう。',
-      answer: '<b>$135^\\circ\\ \\left(=\\dfrac{3\\pi}{4}\\right)$</b><br>$\\mathrm{atan2}(4,\\,-4)=\\dfrac{3\\pi}{4}$。<br>$\\arctan\\dfrac{4}{-4}=\\arctan(-1)=-\\dfrac{\\pi}{4}$ は反対向き。左半分なので $\\pi$ 足して $-\\dfrac{\\pi}{4}+\\pi=\\dfrac{3\\pi}{4}$。' },
+      hint: '左上（第2象限）。$\\tan^{-1}\\dfrac{4}{-4}=-45^\\circ$ は右下を向いてしまう。',
+      answer: '<b>$135^\\circ\\ \\left(=\\dfrac{3\\pi}{4}\\right)$</b><br>$\\mathrm{atan2}(4,\\,-4)=\\dfrac{3\\pi}{4}$。<br>$\\tan^{-1}\\dfrac{4}{-4}=\\tan^{-1}(-1)=-\\dfrac{\\pi}{4}$ は反対向き。左半分なので $\\pi$ 足して $-\\dfrac{\\pi}{4}+\\pi=\\dfrac{3\\pi}{4}$。' },
     { name: '真下', tur: [0, 0], tg: () => [0, -3], ans: A(-3, 0),
       text: '的は $(0,\\ -3)$。原点の砲台を何度に向ける？',
       hint: '$x=0$ なので $\\dfrac{y}{x}$ は計算できない。図で向きを見よう。',
-      answer: '<b>$-90^\\circ\\ \\left(=-\\dfrac{\\pi}{2}\\right)$</b>（$270^\\circ$ でも同じ向き）<br>$\\mathrm{atan2}(-3,\\,0)=-\\dfrac{\\pi}{2}$。$\\arctan\\dfrac{-3}{0}$ は割り算できないので、$\\arctan$ だけでは求まらない。' },
+      answer: '<b>$-90^\\circ\\ \\left(=-\\dfrac{\\pi}{2}\\right)$</b>（$270^\\circ$ でも同じ向き）<br>$\\mathrm{atan2}(-3,\\,0)=-\\dfrac{\\pi}{2}$。$\\tan^{-1}\\dfrac{-3}{0}$ は割り算できないので、$\\tan^{-1}$ だけでは求まらない。' },
     { name: '砲台が原点にない', tur: [1, 2], tg: () => [-3, -1], ans: A(-3, -4),
       text: '砲台は $(1,\\ 2)$、的は $(-3,\\ -1)$。砲台を何度に向ける？（小数第1位まで）',
-      hint: '砲台から的への向きは $(-3-1,\\ -1-2)=(-4,\\ -3)$。左下（第3象限）。$\\arctan\\dfrac34\\approx36.9^\\circ$。',
-      answer: '<b>約 $-143.1^\\circ$</b>（$216.9^\\circ$ でも同じ向き）<br>向き $(-4,\\,-3)$。$\\arctan\\dfrac{3}{4}\\approx36.87^\\circ$ なので、左下は $-(180^\\circ-36.87^\\circ)=-143.13^\\circ$。<br><code>Math.atan2(-3, -4)</code> $\\approx-2.498$ ラジアン。' },
+      hint: '砲台から的への向きは $(-3-1,\\ -1-2)=(-4,\\ -3)$。左下（第3象限）。$\\tan^{-1}\\dfrac34\\approx36.9^\\circ$。',
+      answer: '<b>約 $-143.1^\\circ$</b>（$216.9^\\circ$ でも同じ向き）<br>向き $(-4,\\,-3)$。$\\tan^{-1}\\dfrac{3}{4}\\approx36.87^\\circ$ なので、左下は $-(180^\\circ-36.87^\\circ)=-143.13^\\circ$。<br><code>Math.atan2(-3, -4)</code> $\\approx-2.498$ ラジアン。' },
     { name: '動く的', tur: [0, 0], moving: true, fireT: 4, tg: (t) => [5 - 2 * t, 2], ans: A(2, -3),
       text: '的は $t$ 秒後に $(5-2t,\\ 2)$ にいる。砲台（原点）は $t=4$ 秒に撃つ。何度に向ける？（小数第1位まで）',
       hint: 'まず $t=4$ のときの的の位置を求める：$(5-8,\\ 2)=(-3,\\ 2)$。左上（第2象限）。',
-      answer: '<b>約 $146.3^\\circ$</b><br>$t=4$ で的は $(-3,\\ 2)$。$\\arctan\\dfrac23\\approx33.69^\\circ$ なので、左上は $180^\\circ-33.69^\\circ=146.31^\\circ$。<br><code>Math.atan2(2, -3)</code> $\\approx2.554$ ラジアン。' },
+      answer: '<b>約 $146.3^\\circ$</b><br>$t=4$ で的は $(-3,\\ 2)$。$\\tan^{-1}\\dfrac23\\approx33.69^\\circ$ なので、左上は $180^\\circ-33.69^\\circ=146.31^\\circ$。<br><code>Math.atan2(2, -3)</code> $\\approx2.554$ ラジアン。' },
   ];
   // 角度の入力を読む（度、またはラジアン。π / pi を含めばラジアン）
   function parseAngle(str, unit) {
@@ -690,7 +690,7 @@
         conf.fire(plot.X(p[0]), plot.Y(p[1]));
       } else {
         let m;
-        if (Math.abs(T.wrapPi(d - PI)) <= 4 * DEG) m = '反対向き！ arctan(y/x) の答えをそのまま使っていない？ 的のある象限を確かめよう。';
+        if (Math.abs(T.wrapPi(d - PI)) <= 4 * DEG) m = '反対向き！ $\\tan^{-1}\\frac yx$ の答えをそのまま使っていない？ 的のある象限を確かめよう。';
         else m = 'はずれ。' + (d > 0 ? '時計回り' : '反時計回り') + 'にあと約 ' + num(Math.abs(d) / DEG, 0) + '° 回すと当たる。';
         if (game.used >= 3) { m += '　― 3回使い切りました。「やり直す」で再挑戦！'; B.bMain.disabled = true; }
         else B.bMain.disabled = false;

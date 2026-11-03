@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610211315"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610211315">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
 </head>
 <body class="chapter calm keys-page">
 <header id="site-header" data-root="../" data-current="trig"></header>
@@ -117,12 +117,12 @@
       <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>ひっくり返す</th><td>$\sin x=k$ となる $x$ は無数にある → 範囲を決めて1つ選ぶ</td></tr>
-        <tr><th>arcsin</th><td>$\sin y=x$、$-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$（例：$\arcsin\frac12=\frac{\pi}{6}$）</td></tr>
-        <tr><th>arccos</th><td>$\cos y=x$、$0\leqq y\leqq\pi$（例：$\arccos\left(-\frac12\right)=\frac{2\pi}{3}$）</td></tr>
-        <tr><th>arctan</th><td>$\tan y=x$、$-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$（例：$\arctan1=\frac{\pi}{4}$、$\arctan\sqrt3=\frac{\pi}{3}$）</td></tr>
-        <tr><th>記号</th><td>$\sin^{-1}x=\arcsin x$（$\frac{1}{\sin x}$ ではない）</td></tr>
-        <tr><th>グラフ</th><td>範囲をしぼった $y=\sin x$ と $y=\arcsin x$ は直線 $y=x$ について対称</td></tr>
-        <tr><th>atan2</th><td>$\mathrm{atan2}(y,x)$：向き $(x,y)$ の角度（$-\pi\lt\theta\leqq\pi$）。<code>Math.atan2(y, x)</code> は $y$ が先。傾きから角度 → $\arctan$、向きから角度 → $\mathrm{atan2}$</td></tr>
+        <tr><th>$\sin^{-1}$</th><td>$\sin y=x$、$-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$（例：$\sin^{-1}\frac12=\frac{\pi}{6}$）</td></tr>
+        <tr><th>$\cos^{-1}$</th><td>$\cos y=x$、$0\leqq y\leqq\pi$（例：$\cos^{-1}\left(-\frac12\right)=\frac{2\pi}{3}$）</td></tr>
+        <tr><th>$\tan^{-1}$</th><td>$\tan y=x$、$-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$（例：$\tan^{-1}1=\frac{\pi}{4}$、$\tan^{-1}\sqrt3=\frac{\pi}{3}$）</td></tr>
+        <tr><th>記号</th><td>$\sin^{-1}x$ は $\frac{1}{\sin x}$ ではない。$\arcsin x$ とも書く（プログラムでは asin, acos, atan）</td></tr>
+        <tr><th>グラフ</th><td>範囲をしぼった $y=\sin x$ と $y=\sin^{-1} x$ は直線 $y=x$ について対称</td></tr>
+        <tr><th>atan2</th><td>$\mathrm{atan2}(y,x)$：向き $(x,y)$ の角度（$-\pi\lt\theta\leqq\pi$）。<code>Math.atan2(y, x)</code> は $y$ が先。傾きから角度 → $\tan^{-1}$、向きから角度 → $\mathrm{atan2}$</td></tr>
         <tr><th>折り返し</th><td>角度の差 $\Delta$ は $-\pi\lt\Delta\leqq\pi$ に直す（$\pm2\pi$ する）と、近い方へ回る</td></tr>
       </tbody></table></div>
     </div>
@@ -158,6 +158,6 @@
 
 <footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 覚えることのまとめ（tools/build.py で自動生成）</footer>
 
-<script src="../assets/common.js?v=202610211315"></script>
+<script src="../assets/common.js?v=202611031018"></script>
 </body>
 </html>

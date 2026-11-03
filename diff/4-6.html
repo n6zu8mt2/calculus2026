@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.6 逆関数の微分 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.6節：逆関数の微分・逆三角関数の微分">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch6 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html" class="active" aria-current="page"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.6節</div>
+      <h1><span class="chap-no">4.6</span>逆関数の微分：逆向きの傾き</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>逆関数のグラフの傾きが、もとの傾きの逆数になることを説明できる。</li>
+      <li>$(\sin^{-1}x)'=\dfrac{1}{\sqrt{1-x^2}}$、$(\cos^{-1}x)'=-\dfrac{1}{\sqrt{1-x^2}}$、$(\tan^{-1}x)'=\dfrac{1}{1+x^2}$ を導ける。</li>
+      <li>$\sin^{-1}x+\cos^{-1}x=\dfrac{\pi}{2}$ から、2つの微分が逆符号になる理由を説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-3.html">4.3節</a>の 微分の公式、<a href="../trig/3-7.html">3.7節</a>の 逆三角関数、<a href="../explog/2-4.html">2.4節</a>の 逆関数</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      $y=e^x$ と $y=\log x$、$y=\sin x$ と $y=\sin^{-1}x$ のように、入力と出力を入れかえた関数を<b>逆関数</b>といいました（<a href="../explog/2-4.html">2.4節</a>・<a href="../trig/3-7.html">3.7節</a>）。
+      逆関数のグラフは、もとのグラフを<b>直線 $y=x$ で折り返した</b>ものです。
+      この節では「折り返すと接線の傾きはどうなるか」を調べて、逆関数の微分の公式を作ります。短い節ですが、ここで出てくる $\dfrac{1}{1+x^2}$ などの式は、後で積分を学ぶときに大活躍します。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>折り返すと傾きは逆数</h2>
+
+    <p>
+      $y=f(x)$ のグラフの上の点 $\mathrm{P}(a,\ b)$（$b=f(a)$）での接線の傾きを $m=f'(a)$ とします。
+      直線 $y=x$ で折り返すと、点 P は $\mathrm{Q}(b,\ a)$ に移り、Q は逆関数 $y=f^{-1}(x)$ のグラフの上の点になります。
+      接線も一緒に折り返されて、Q での接線になります。
+    </p>
+    <p>
+      傾きは「横に 1 進むと縦に $m$ 進む」という意味でした。折り返すと<b>横と縦が入れかわる</b>ので、「横に $m$ 進むと縦に 1 進む」になります。
+      つまり折り返した接線の傾きは $\dfrac{1}{m}$、<b>もとの傾きの逆数</b>です。下の図で確かめましょう。
+    </p>
+
+    <div class="widget" id="w-mirror">
+      <div class="widget-head">$y=x$ で折り返すと、傾きは逆数 <span class="hint">関数を選ぶ／緑の点をドラッグ／▶ で折り返す</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fs"></div>
+        <button class="btn primary" type="button" data-r="play">▶ 折り返す</button></div></div>
+      <div class="stage"><canvas aria-label="関数のグラフと、直線 y = x で折り返した逆関数のグラフ。接線も折り返される"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">もとの点</span><span class="tex" data-r="p"></span></div>
+          <div class="row"><span class="k">P での傾き</span><span class="tex" data-r="m"></span></div>
+          <div class="row"><span class="k">折り返した点</span><span class="tex" data-r="q"></span></div>
+          <div class="row"><span class="k">Q での傾き</span><span class="tex big" data-r="mi"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      Q の $x$ 座標は $b$ で、$a=f^{-1}(b)$ です。Q での傾き $(f^{-1})'(b)$ が $\dfrac{1}{f'(a)}=\dfrac{1}{f'(f^{-1}(b))}$ になる、ということなので、$b$ を $x$ と書き直すと次の公式になります。
+    </p>
+    <div class="eq-box eq-hero">$$\left(f^{-1}\right)'(x)=\frac{1}{f'\!\left(f^{-1}(x)\right)}$$</div>
+    <p>
+      $\dfrac{dy}{dx}$ の記号（<a href="4-2.html">4.2節</a>）を使うと、もっと覚えやすくなります。
+      $y=f^{-1}(x)$ は $x=f(y)$ と同じことなので、$y$ で微分すると $\dfrac{dx}{dy}=f'(y)$。これをひっくり返せば $\dfrac{dy}{dx}$ が出ます。
+    </p>
+    <div class="eq-box">$$\frac{dy}{dx}=\frac{1}{\ \dfrac{dx}{dy}\ }\qquad\bigl(\text{横の変化と縦の変化の比を、逆さにする}\bigr)$$</div>
+    <p>
+      分数のように逆さにできるのが、ライプニッツの記号の便利なところです。
+      ただし、もとの傾きが $0$（接線が水平）の点では、折り返すと接線が<b>縦にまっすぐ</b>になり、傾きは決まりません。
+      図の $y=x^3$ で $a=0$ にすると、$y=\sqrt[3]{x}$ の原点での接線が縦（$y$ 軸）になることがわかります。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜逆関数の微分</div>
+      <p class="key-lead key-big">$y=x$ で折り返すと、接線の傾きは逆数になる</p>
+      $$\left(f^{-1}\right)'(x)=\frac{1}{f'\!\left(f^{-1}(x)\right)},\qquad \frac{dy}{dx}=\frac{1}{\ \dfrac{dx}{dy}\ }$$
+      <ul>
+        <li>使い方：$y=f^{-1}(x)$ を $x=f(y)$ に直し、$\dfrac{dx}{dy}$ を求めて逆数にする。最後に $y$ を $x$ の式に戻す</li>
+        <li>もとの傾きが $0$ の点では、逆関数の接線は縦になり、微分できない</li>
+      </ul>
+      <p class="key-note">例：$y=\sqrt{x}$ は $x=y^2\ (y\geqq0)$ なので $\dfrac{dx}{dy}=2y$、$\dfrac{dy}{dx}=\dfrac{1}{2y}=\dfrac{1}{2\sqrt{x}}$（4.3節の確認問題と同じ答え）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>log x の微分をもう一度</h2>
+
+    <p>
+      <a href="4-3.html">4.3節</a>では、$(\log x)'=\dfrac1x$ をグラフの折り返しで説明しました。今の公式で、式でも確かめましょう。
+    </p>
+    <div class="eq-box">$$\begin{gathered}y=\log x\iff x=e^y\\ \text{なので}\quad \frac{dx}{dy}=e^y=x\end{gathered}$$</div>
+    <p>（$e^y$ の微分は $e^y$。そして $e^y$ は $x$ そのもの。）ひっくり返すと</p>
+    <div class="eq-box">$$\left(\log x\right)'=\frac{dy}{dx}=\frac{1}{\ \dfrac{dx}{dy}\ }=\frac{1}{e^y}=\frac{1}{x}$$</div>
+    <p>
+      4.3節と同じ答えになりました。図の「$y=e^x$」でも、$e^x$ の傾き $e^a$ と、$\log x$ の傾き $\dfrac{1}{e^a}$ が逆数になっていることが読みとれます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>逆三角関数の微分</h2>
+
+    <p>
+      <a href="../trig/3-7.html">3.7節</a>で学んだ逆三角関数を、同じ方法で微分します。値の範囲（どの角を答えにするか）が大切なので、思い出しておきましょう。
+    </p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>関数</th><th>意味</th><th>$x$ の範囲</th><th>値 $y$ の範囲</th></tr></thead>
+      <tbody>
+        <tr><td>$y=\sin^{-1}x$</td><td>$\sin y=x$ となる角 $y$</td><td>$-1\leqq x\leqq1$</td><td>$-\dfrac{\pi}{2}\leqq y\leqq\dfrac{\pi}{2}$</td></tr>
+        <tr><td>$y=\cos^{-1}x$</td><td>$\cos y=x$ となる角 $y$</td><td>$-1\leqq x\leqq1$</td><td>$0\leqq y\leqq\pi$</td></tr>
+        <tr><td>$y=\tan^{-1}x$</td><td>$\tan y=x$ となる角 $y$</td><td>すべての実数</td><td>$-\dfrac{\pi}{2}\lt y\lt\dfrac{\pi}{2}$</td></tr>
+      </tbody>
+    </table></div>
+    <p class="sub">※ $\sin^{-1}x$ は $\arcsin x$ とも書きます（$\cos^{-1}x=\arccos x$、$\tan^{-1}x=\arctan x$）。$\dfrac{1}{\sin x}$ のことではありません。</p>
+
+    <h3 class="h-mini">sin⁻¹x の微分</h3>
+    <p>
+      $y=\sin^{-1}x$ とおくと、$x=\sin y$ $\left(-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}\right)$ です。$y$ で微分すると $\dfrac{dx}{dy}=\cos y$。
+      これを $x$ の式に直すために $\sin^2y+\cos^2y=1$ を使います。$y$ は $-\frac{\pi}{2}$ から $\frac{\pi}{2}$ の角なので $\cos y\geqq0$、よって
+      $\cos y=\sqrt{1-\sin^2y}=\sqrt{1-x^2}$ です（マイナスのほうの $-\sqrt{\ }$ は選ばない）。
+    </p>
+    <div class="eq-box">$$\left(\sin^{-1}x\right)'=\frac{1}{\ \dfrac{dx}{dy}\ }=\frac{1}{\cos y}=\frac{1}{\sqrt{1-\sin^2y}}=\frac{1}{\sqrt{1-x^2}}\qquad(-1\lt x\lt1)$$</div>
+
+    <h3 class="h-mini">cos⁻¹x の微分</h3>
+    <p>
+      同じように、$y=\cos^{-1}x$ とおくと $x=\cos y$ $(0\leqq y\leqq\pi)$ で、$\dfrac{dx}{dy}=-\sin y$ です。
+      今度は $y$ が $0$ から $\pi$ の角なので $\sin y\geqq0$、よって $\sin y=\sqrt{1-\cos^2y}=\sqrt{1-x^2}$ です。
+    </p>
+    <div class="eq-box">$$\left(\cos^{-1}x\right)'=\frac{1}{\ \dfrac{dx}{dy}\ }=\frac{1}{-\sin y}=-\frac{1}{\sqrt{1-\cos^2y}}=-\frac{1}{\sqrt{1-x^2}}\qquad(-1\lt x\lt1)$$</div>
+    <p>
+      $\sin^{-1}x$ の微分に、ちょうどマイナスがついた形です。$\sin^{-1}x$ はいつも右上がり、$\cos^{-1}x$ はいつも右下がりのグラフなので、符号はグラフとも合っています。
+    </p>
+
+    <h3 class="h-mini">なぜ逆符号？：sin⁻¹x + cos⁻¹x = π/2</h3>
+    <p>
+      斜辺が $1$、縦の辺が $x$ の直角三角形を考えます（$0\lt x\lt1$）。左下の角を $\alpha$ とすると、$\sin\alpha=\dfrac{x}{1}=x$ なので $\alpha=\sin^{-1}x$。
+      上の角を $\beta$ とすると、$\beta$ のとなりの辺が $x$ なので $\cos\beta=x$、つまり $\beta=\cos^{-1}x$。
+      直角三角形の直角以外の2つの角の和は $\frac{\pi}{2}$（$90^\circ$）なので
+    </p>
+    <div class="eq-box eq-hero">$$\sin^{-1}x+\cos^{-1}x=\frac{\pi}{2}$$</div>
+
+    <div class="widget" id="w-comp">
+      <div class="widget-head">直角三角形の2つの角 <span class="hint">縦の辺 $x$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="斜辺 1、縦の辺 x の直角三角形。左下の角が sin⁻¹x、上の角が cos⁻¹x"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">左下の角</span><span class="tex" data-r="a"></span></div>
+          <div class="row"><span class="k">上の角</span><span class="tex" data-r="b"></span></div>
+          <div class="row"><span class="k">和</span><span class="tex big" data-r="s"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      この式は $-1\leqq x\leqq1$ のすべての $x$ で成り立ちます（理由：$y=\cos^{-1}x$ なら $\sin\left(\frac{\pi}{2}-y\right)=\cos y=x$ で、$\frac{\pi}{2}-y$ は $-\frac{\pi}{2}$ から $\frac{\pi}{2}$ の角なので、$\frac{\pi}{2}-y=\sin^{-1}x$）。
+      和がいつも一定の $\frac{\pi}{2}$ なので、和の傾きは $0$ です。だから
+    </p>
+    <div class="eq-box">$$\begin{gathered}\left(\sin^{-1}x\right)'+\left(\cos^{-1}x\right)'=\left(\frac{\pi}{2}\right)'=0\\ \text{より}\quad \left(\cos^{-1}x\right)'=-\left(\sin^{-1}x\right)'=-\frac{1}{\sqrt{1-x^2}}\end{gathered}$$</div>
+    <p>
+      と、さっきの計算をしなくても $\cos^{-1}x$ の微分がわかります。グラフで見ると、$y=\cos^{-1}x$ は $y=\sin^{-1}x$ を<b>上下にひっくり返して $\frac{\pi}{2}$ 上げた</b>形です。上下にひっくり返すと傾きの符号が逆になります。
+    </p>
+
+    <h3 class="h-mini">tan⁻¹x の微分</h3>
+    <p>
+      $y=\tan^{-1}x$ とおくと $x=\tan y$ $\left(-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}\right)$。$(\tan y)'=\dfrac{1}{\cos^2y}$（<a href="4-4.html">4.4節</a>の商の微分）と、
+      $1+\tan^2y=\dfrac{1}{\cos^2y}$（$\sin^2y+\cos^2y=1$ の両辺を $\cos^2y$ で割った式）を使うと
+    </p>
+    <div class="eq-box">$$\begin{gathered}\frac{dx}{dy}=\frac{1}{\cos^2y}=1+\tan^2y=1+x^2\\ \text{より}\quad \left(\tan^{-1}x\right)'=\frac{1}{1+x^2}\end{gathered}$$</div>
+    <p>
+      今度はルートもなく、すべての $x$ で使えるきれいな式です。下の図で、3つの関数のグラフ（青）と接線（緑）、導関数のグラフ（金）を見比べましょう。
+    </p>
+
+    <div class="widget" id="w-atrig">
+      <div class="widget-head">逆三角関数の接線と導関数 <span class="hint">関数を選ぶ／緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><div class="chips" data-r="fs"></div>
+        <label class="check"><input type="checkbox" data-r="deriv" checked>導関数のグラフ（金）も表示</label></div></div>
+      <div class="stage"><canvas aria-label="逆三角関数のグラフ、接線、導関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">値</span><span class="tex" data-r="v"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex big" data-r="m"></span></div>
+          <div class="row"><span class="k">公式で</span><span class="tex" data-r="id"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $\sin^{-1}x$ は $x=\pm1$ の端で接線が縦になります。これは、もとの $\sin x$ が $x=\pm\frac{\pi}{2}$（山と谷）で傾き $0$ だからです（(1) の「傾き $0$ の逆数はない」）。
+      一方、$\tan x$ の傾き $\dfrac{1}{\cos^2x}$ は $0$ にならないので、$\tan^{-1}x$ はどこでもなめらかに微分できます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜逆三角関数の微分</div>
+      <p class="key-lead key-big">$x=\sin y$ などに直して、$\dfrac{dx}{dy}$ を逆数にする</p>
+      $$\left(\sin^{-1}x\right)'=\frac{1}{\sqrt{1-x^2}},\qquad \left(\cos^{-1}x\right)'=-\frac{1}{\sqrt{1-x^2}},\qquad \left(\tan^{-1}x\right)'=\frac{1}{1+x^2}$$
+      <ul>
+        <li>$\cos y=\sqrt{1-x^2}$（$\sin^{-1}$）・$\sin y=\sqrt{1-x^2}$（$\cos^{-1}$）は、値の範囲から $\geqq0$ の方を選ぶ</li>
+        <li>$\sin^{-1}x+\cos^{-1}x=\dfrac{\pi}{2}$（一定）なので、2つの微分は逆符号</li>
+        <li>$\tan^{-1}$ では $1+\tan^2y=\dfrac{1}{\cos^2y}$ を使う</li>
+      </ul>
+      <p class="key-note">$\sin^{-1}x$ は $\arcsin x$ とも書く。プログラムでは <code>Math.asin</code>・<code>Math.acos</code>・<code>Math.atan</code>、向きから角度を出すときは <code>Math.atan2(y, x)</code>（3.7節）。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：三角関数の消えた答え</div>
+      <p>
+        $\tan^{-1}x$ を微分すると、三角関数が消えて $\dfrac{1}{1+x^2}$ というただの分数になりました。逆に読むと「$\dfrac{1}{1+x^2}$ を微分の答えにもつ関数は $\tan^{-1}x$」ということです。
+        積分の章で、$\displaystyle\int\frac{1}{1+x^2}\,dx=\tan^{-1}x+C$ や $\displaystyle\int\frac{1}{\sqrt{1-x^2}}\,dx=\sin^{-1}x+C$ として、この節の結果がそのまま使われます。
+        円周率を $\pi=4\tan^{-1}1$ として計算する方法（マチンの公式など）も、この式から生まれました。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>逆関数の微分</th><td>$\left(f^{-1}\right)'(x)=\dfrac{1}{f'\!\left(f^{-1}(x)\right)}$、$\dfrac{dy}{dx}=1\Big/\dfrac{dx}{dy}$（$y=x$ で折り返すと傾きは逆数）</td></tr>
+        <tr><th>対数</th><td>$y=\log x\iff x=e^y$ より $(\log x)'=\dfrac{1}{e^y}=\dfrac1x$</td></tr>
+        <tr><th>逆三角関数</th><td>$(\sin^{-1}x)'=\dfrac{1}{\sqrt{1-x^2}}$、$(\cos^{-1}x)'=-\dfrac{1}{\sqrt{1-x^2}}$、$(\tan^{-1}x)'=\dfrac{1}{1+x^2}$</td></tr>
+        <tr><th>関係式</th><td>$\sin^{-1}x+\cos^{-1}x=\dfrac{\pi}{2}$（和が一定なので、微分は逆符号）</td></tr>
+      </tbody></table></div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次を求めよ。　(1) $(\sin^{-1}x)'$　(2) $(\cos^{-1}x)'$　(3) $(\tan^{-1}x)'$</li>
+      <li>$\sin^{-1}x+\cos^{-1}x=\dfrac{\pi}{2}$ $(-1\leqq x\leqq1)$ を示せ。また、この式を使って、$(\cos^{-1}x)'$ を $(\sin^{-1}x)'$ から求めよ。</li>
+      <li>(1) 曲線 $y=\sin^{-1}x$ の、$x=\dfrac12$ での接線の傾きを求めよ。<br>
+        (2) 曲線 $y=\tan^{-1}x$ の、$x=1$ での接線の式を求めよ。</li>
+      <li>$y=\sqrt{x}$ $(x\gt0)$ を $x=y^2$ $(y\gt0)$ と書き直し、$\dfrac{dy}{dx}=1\Big/\dfrac{dx}{dy}$ を使って $(\sqrt{x})'$ を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(1) $y=\sin^{-1}x$ とおくと $x=\sin y$ $\left(-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}\right)$。<br>
+          $\dfrac{dx}{dy}=\cos y$ で、$\cos y\geqq0$ なので $\cos y=\sqrt{1-\sin^2y}=\sqrt{1-x^2}$。<br>
+          よって $(\sin^{-1}x)'=\dfrac{1}{\cos y}=\dfrac{1}{\sqrt{1-x^2}}$<br>
+          (2) $y=\cos^{-1}x$ とおくと $x=\cos y$ $(0\leqq y\leqq\pi)$。<br>
+          $\dfrac{dx}{dy}=-\sin y$ で、$\sin y\geqq0$ なので $\sin y=\sqrt{1-\cos^2y}=\sqrt{1-x^2}$。<br>
+          よって $(\cos^{-1}x)'=\dfrac{1}{-\sin y}=-\dfrac{1}{\sqrt{1-x^2}}$<br>
+          (3) $y=\tan^{-1}x$ とおくと $x=\tan y$ $\left(-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}\right)$。<br>
+          $\dfrac{dx}{dy}=\dfrac{1}{\cos^2y}=1+\tan^2y=1+x^2$。<br>
+          よって $(\tan^{-1}x)'=\dfrac{1}{1+x^2}$</li>
+        <li>$y=\cos^{-1}x$ とおくと $\cos y=x$、$0\leqq y\leqq\pi$。<br>
+          $\sin\left(\dfrac{\pi}{2}-y\right)=\cos y=x$ で、<br>
+          $-\dfrac{\pi}{2}\leqq\dfrac{\pi}{2}-y\leqq\dfrac{\pi}{2}$ なので、$\dfrac{\pi}{2}-y=\sin^{-1}x$。<br>
+          よって $\sin^{-1}x+\cos^{-1}x=\sin^{-1}x+y=\dfrac{\pi}{2}$<br>
+          両辺を微分すると、右辺は定数なので $0$：<br>
+          $(\sin^{-1}x)'+(\cos^{-1}x)'=0$<br>
+          $(\cos^{-1}x)'=-(\sin^{-1}x)'=-\dfrac{1}{\sqrt{1-x^2}}$</li>
+        <li>(1) $(\sin^{-1}x)'=\dfrac{1}{\sqrt{1-x^2}}$ に $x=\dfrac12$ を入れる。<br>
+          $\dfrac{1}{\sqrt{1-\frac14}}=\dfrac{1}{\frac{\sqrt3}{2}}=\dfrac{2}{\sqrt3}=\dfrac{2\sqrt3}{3}$<br>
+          (2) ① 点：$\tan^{-1}1=\dfrac{\pi}{4}$ なので、接点は $\left(1,\ \dfrac{\pi}{4}\right)$<br>
+          ② 傾き：$\dfrac{1}{1+1^2}=\dfrac12$<br>
+          ③ 接線：$y-\dfrac{\pi}{4}=\dfrac12(x-1)$ より $y=\dfrac12x-\dfrac12+\dfrac{\pi}{4}$</li>
+        <li>$x=y^2$ を $y$ で微分すると $\dfrac{dx}{dy}=2y$。<br>
+          $\dfrac{dy}{dx}=\dfrac{1}{2y}$ で、$y=\sqrt{x}$ なので<br>
+          $(\sqrt{x})'=\dfrac{1}{2\sqrt{x}}$<br>
+          （確かめ：$(x^{\frac12})'=\dfrac12x^{-\frac12}=\dfrac{1}{2\sqrt x}$ と一致する。）</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-5.html"><span class="dir">← 前の節</span><span class="nm">4.5 増減と極値</span></a>
+    <a class="next" href="4-7.html"><span class="dir">次の節 →</span><span class="nm">4.7 高階微分と近似</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-6.js?v=202611031018"></script>
+</body>
+</html>

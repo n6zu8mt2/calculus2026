@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.7 高階微分と近似 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.7節：2回微分・1次近似・マクローリン展開・テイラー展開">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch7 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html" class="active" aria-current="page"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.7節</div>
+      <h1><span class="chap-no">4.7</span>高階微分と近似：テイラー展開</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>2回微分を、加速度やグラフの曲がり方として説明できる。</li>
+      <li>1次近似 $f(a+h)\approx f(a)+f'(a)h$ を使って値を見積もれる。</li>
+      <li>$e^x,\ \sin x,\ \cos x$ などのマクローリン展開を書ける。</li>
+    </ol>
+    <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-1.html">4.1節</a>の 瞬間の速さ、<a href="4-2.html">4.2節</a>の 接線の式、<a href="4-3.html">4.3節</a>の 微分の公式、<a href="../polynomial/1-6.html">1.6節</a>の 多項式で近似する考え方</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      電卓やパソコンは、たし算・かけ算しかできないのに、$\sin0.5$ や $e^{0.2}$ をあっという間に計算します。どうやっているのでしょうか。
+      答えは「<b>微分を何回もくり返して、関数を多項式（たし算とかけ算だけの式）で近似する</b>」です。
+      この節では、2回、3回…と微分をくり返す「高階微分」から始めて、接線による近似（1次近似）、そして多項式による近似（テイラー展開）へ進みます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>2回微分：速さの速さ・曲がり方</h2>
+
+    <p>
+      <a href="4-1.html">4.1節</a>で、静かに落としたボールは $t$ 秒で $x=5t^2$（m）落ちることを使いました。これを微分すると、瞬間の速さ $v$ が出ます。
+      さらに、その速さ $v$ を<b>もう一度微分</b>すると、「速さが 1 秒あたりどれだけ増えるか」、つまり<b>加速度</b> $a$ が出ます。
+    </p>
+    <div class="eq-box">$$\begin{gathered}x=5t^2\ \xrightarrow{\ \text{微分}\ }\ v=x'=10t\\ \xrightarrow{\ \text{微分}\ }\ a=v'=x''=10\end{gathered}$$</div>
+    <div class="table-wrap ratio-table-wrap" style="border:0;background:transparent"><table class="ratio-table">
+      <thead><tr><th>時刻 $t$（秒）</th><th>$0$</th><th>$1$</th><th>$2$</th><th>$3$</th></tr></thead>
+      <tbody>
+        <tr><th>位置 $x=5t^2$（m）</th><td>0</td><td>5</td><td>20</td><td>45</td></tr>
+        <tr><th>速さ $v=10t$（m/秒）</th><td>0</td><td>10</td><td>20</td><td>30</td></tr>
+        <tr><th>加速度 $a=10$（m/秒²）</th><td>10</td><td>10</td><td>10</td><td>10</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      速さは 1 秒ごとに $10$ m/秒ずつ増えています。この $10$（正確には $g\approx9.8$）が重力の加速度です。「速さの速さ」が加速度、というわけです。
+      このように、導関数 $f'(x)$ をもう一度微分したものを <b>2回微分</b>（第2次導関数）といい、$f''(x)$ と書きます。
+      3回なら $f'''(x)$、$n$ 回なら $f^{(n)}(x)$ と書きます（$n$ 回微分、第 $n$ 次導関数）。$\dfrac{d^2y}{dx^2}$ という書き方もあります。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜2回微分</div>
+      <p class="key-lead key-big">2回微分は「傾きの変わる速さ」。位置を2回微分すると加速度</p>
+      $$\begin{gathered}f''(x)=\bigl(f'(x)\bigr)'\\ f^{(n)}(x)=\bigl(f^{(n-1)}(x)\bigr)'\end{gathered}$$
+      <ul>
+        <li>位置 $x(t)$ → 速さ $v=x'$ → 加速度 $a=v'=x''$</li>
+        <li>$f''(x)$ は $\dfrac{d^2y}{dx^2}$ とも書く。3回以上は $f^{(3)}(x),\ f^{(4)}(x),\ \ldots$</li>
+      </ul>
+      <p class="key-note">例：$f(x)=x^3$ なら $f'(x)=3x^2$、$f''(x)=6x$、$f'''(x)=6$、$f^{(4)}(x)=0$。</p>
+    </div>
+
+    <h3 class="h-mini">グラフの曲がり方</h3>
+    <p>
+      $f''(x)$ は「$f'(x)$ の傾き」です。$f''(x)\gt0$ のところでは、$f'(x)$（接線の傾き）が<b>右へ行くほど大きくなる</b>ので、
+      グラフは左から右へ「下り坂 → ゆるやか → 上り坂」と、<b>下にふくらんだ形</b>（笑った口 ∪）になります。これを<b>下に凸</b>といいます。
+      逆に $f''(x)\lt0$ なら接線の傾きがだんだん小さくなり、<b>上にふくらんだ形</b>（∩）になります。これを<b>上に凸</b>といいます。
+      曲がり方が切りかわる点を<b>変曲点</b>といいます。
+    </p>
+
+    <div class="widget" id="w-curv">
+      <div class="widget-head">$f''$ の符号とグラフの曲がり方 <span class="hint">関数を選ぶ／緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fs"></div></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="d1">$\amber{f'(x)}$ も表示</label>
+        <label class="check"><input type="checkbox" data-r="d2">$f''(x)$（灰色）も表示</label></div></div>
+      <div class="stage"><canvas aria-label="関数のグラフと接線。f'' の符号で背景の色が変わる"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">関数</span><span class="tex" data-r="f"></span></div>
+          <div class="row"><span class="k">傾き</span><span class="tex" data-r="m"></span></div>
+          <div class="row"><span class="k">2回微分</span><span class="tex big" data-r="m2"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      下に凸のところでは、グラフは<b>接線より上</b>にあり、上に凸のところでは<b>接線より下</b>にあります。この「接線からのずれ」が、あとで近似の精度を考えるときに大事になります。
+      なお、<a href="4-5.html">4.5節</a>で見つけた「$f'(a)=0$ の点」は、$f''(a)\gt0$ なら谷（極小）、$f''(a)\lt0$ なら山（極大）です。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜2回微分とグラフの曲がり方</div>
+      <p class="key-lead key-big">$f''\gt0$ なら下に凸（∪）、$f''\lt0$ なら上に凸（∩）</p>
+      <ul>
+        <li>$f''(x)\gt0$：接線の傾きが増えていく。グラフは接線より上</li>
+        <li>$f''(x)\lt0$：接線の傾きが減っていく。グラフは接線より下</li>
+        <li>曲がり方が変わる点が変曲点（$f''$ の符号が変わる）</li>
+      </ul>
+      <p class="key-note">例：$y=x^3-3x$ は $f''(x)=6x$ なので、$x\lt0$ で上に凸、$x\gt0$ で下に凸。原点が変曲点。</p>
+    </div>
+
+    <h3 class="h-mini">n 回微分のパターン</h3>
+    <p>
+      何回も微分すると、関数によってはきれいなパターンが現れます。下の図で「微分する」を押して、何回も微分してみましょう。
+    </p>
+
+    <div class="widget" id="w-nth">
+      <div class="widget-head">$n$ 回微分のパターン <span class="hint">関数を選ぶ／「微分する」を何回も押す</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fs"></div></div>
+        <div class="btn-row"><button class="btn primary" type="button" data-r="go">微分する</button><button class="btn" type="button" data-r="back">1つもどす</button><button class="btn" type="button" data-r="reset">最初から</button></div></div>
+      <div class="d47-nth" data-r="list" aria-live="polite"></div>
+      <div class="panel">
+        <div class="readout">
+          <div class="row"><span class="k">きまり</span><span class="tex big" data-r="rule"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <ul>
+      <li>$e^x$ は何回微分しても $e^x$：$\left(e^x\right)^{(n)}=e^x$</li>
+      <li>$\sin x$ は 4 回で元にもどる：$\sin x\to\cos x$ $\to{-\sin x}$ $\to{-\cos x}$ $\to\sin x$。1回微分するごとにグラフが左に $\frac{\pi}{2}$ ずれるので、$\left(\sin x\right)^{(n)}=\sin\!\left(x+\dfrac{n\pi}{2}\right)$</li>
+      <li>$\dfrac1x=x^{-1}$ は、微分するたびに前に $-1,\ -2,\ -3,\ \ldots$ がかかる：$\left(\dfrac1x\right)^{(n)}=\dfrac{(-1)^n\,n!}{x^{n+1}}$</li>
+      <li>$x^4$ のような多項式は、何回か微分すると定数になり、その次から $0$ になる</li>
+    </ul>
+    <p class="sub">※ $n!$（$n$ の階乗）は $1\times2\times\cdots\times n$ のこと。$3!=6,\ 4!=24,\ 5!=120$。また $0!=1$ と約束します。</p>
+
+    <div class="key"><div class="key-ttl">覚える｜n 回微分</div>
+      <p class="key-lead key-big">$e^x$ は変わらない、$\sin$・$\cos$ は 4 回で一周</p>
+      $$\begin{aligned}\left(e^x\right)^{(n)}&=e^x\\ \left(\sin x\right)^{(n)}&=\sin\!\left(x+\frac{n\pi}{2}\right)\\ \left(\cos x\right)^{(n)}&=\cos\!\left(x+\frac{n\pi}{2}\right)\\ \left(\frac1x\right)^{(n)}&=\frac{(-1)^n\,n!}{x^{n+1}}\\ \left(\log x\right)^{(n)}&=\frac{(-1)^{n-1}(n-1)!}{x^n}\end{aligned}$$
+      <p class="key-note">$(\log x)'=\dfrac1x$ なので、$\log x$ の $n$ 回微分は $\dfrac1x$ の $(n-1)$ 回微分と同じ。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>1次近似：接線で見積もる</h2>
+
+    <p>
+      <a href="4-1.html">4.1節</a>の虫めがねで見たように、なめらかな曲線は、拡大すると<b>まっすぐ（接線）</b>に見えます。
+      だから、$a$ の近くでは、グラフを接線 $y=f(a)+f'(a)(x-a)$ で置きかえても、ほとんど同じです。$x=a+\red{h}$ とすると
+    </p>
+    <div class="eq-box eq-hero">$$\begin{gathered}f(a+\red{h})\approx f(a)+f'(a)\,\red{h}\\ (\red{h}\ \text{が小さいとき})\end{gathered}$$</div>
+    <p>
+      これを<b>1次近似</b>といいます。「今の値」と「今の変化の速さ」だけで、少し先の値を見積もる方法です。例を見ましょう。
+    </p>
+    <ul>
+      <li>$\sqrt{1.02}$：$f(x)=\sqrt{x}$、$a=1$、$\red{h}=0.02$。$f(1)=1$、$f'(x)=\dfrac{1}{2\sqrt{x}}$ より $f'(1)=\dfrac12$。よって $\sqrt{1.02}\approx1+\dfrac12\times0.02=1.01$（本当は $1.00995\ldots$）</li>
+      <li>$\sin0.1$：$f(x)=\sin x$、$a=0$。$f(0)=0$、$f'(0)=\cos0=1$ より $\sin0.1\approx0+1\times0.1=0.1$（本当は $0.09983\ldots$）。<a href="../trig/3-2.html">3.2節</a>の「小さい角では $\sin x\approx x$」の理由はこれです</li>
+      <li>$(1.01)^{10}$：$f(x)=x^{10}$、$a=1$。$f(1)=1$、$f'(1)=10$ より $(1.01)^{10}\approx1+10\times0.01=1.1$（本当は $1.1046\ldots$）</li>
+    </ul>
+
+    <div class="widget" id="w-lin">
+      <div class="widget-head">接線で見積もる：$\blue{f(a+h)}\approx\teal{f(a)+f'(a)h}$ <span class="hint">関数を選ぶ／赤い点をドラッグして $\red{h}$ を変える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fs"></div></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="zoom">$a$ のまわりを拡大する（虫めがね）</label></div></div>
+      <div class="stage"><canvas aria-label="関数のグラフと接線。h だけ進んだところで、本当の値と接線の値をくらべる"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">接線で</span><span class="tex" data-r="ap"></span></div>
+          <div class="row"><span class="k">本当の値</span><span class="tex" data-r="tr"></span></div>
+          <div class="row"><span class="k">ずれ</span><span class="tex big" data-r="err"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $\red{h}$ を半分にすると、ずれはおよそ $\frac14$ になります（ずれは $\red{h}^2$ に比例）。ずれ $\div\,\red{h}^2$ の値は $\dfrac{f''(a)}{2}$ に近づきます。
+      つまり、ずれの大きさを決めているのは<b>曲がり方 $f''$</b> です。これが (3) の「2次の項」の正体です。
+      $a=0$ のまわりの、よく使う 1次近似をまとめておきます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜1次近似</div>
+      <p class="key-lead key-big">少し先の値 ≒ 今の値 ＋ 変化の速さ × 進む量</p>
+      $$\begin{gathered}f(a+h)\approx f(a)+f'(a)\,h\\ (h\ \text{が小さいとき})\end{gathered}$$
+      <ul>
+        <li>$x$ が小さいとき：$(1+x)^p\approx1+px$、$\sin x\approx x$、$e^x\approx1+x$、$\log(1+x)\approx x$</li>
+        <li>ずれはおよそ $\dfrac{f''(a)}{2}h^2$。$h$ を半分にすると、ずれは約 $\frac14$</li>
+      </ul>
+      <p class="key-note">例：$\sqrt{1.02}=(1+0.02)^{\frac12}\approx1+\frac12\times0.02=1.01$。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：スマホの「あと 3 時間」</div>
+      <p>
+        スマホのバッテリーの残り時間は、1次近似で見積もっています。今の残量を $Q$（%）、減る速さを $-Q'$（% / 時間）とすると、$T$ 時間後の残量は $Q(t+T)\approx Q+Q'\,T$。
+        これが $0$ になる $T$ を求めると
+      </p>
+      <div class="eq-box">$$T\approx\frac{Q}{-Q'}$$</div>
+      <p>
+        例えば、残り $45$%、1時間に $15$% ずつ減っているなら $T\approx\dfrac{45}{15}=3$ 時間です。
+        ゲームを始めると減る速さ $-Q'$ が急に大きくなるので、「あと 3 時間」が「あと 1 時間」に変わります。1次近似は「今の速さがこのまま続けば」という見積もりだからです。
+      </p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：地平線まで何 km？</div>
+      <p>
+        海岸で目の高さ $h$ から見える地平線までの距離 $d$ を考えます。地球の半径を $R\approx6400$ km とすると、目と地平線と地球の中心は直角三角形になるので、三平方の定理から
+      </p>
+      <div class="eq-box">$$\begin{aligned}d^2+R^2&=(R+h)^2\\&=R^2+2Rh+h^2\\ d&=\sqrt{2Rh+h^2}\approx\sqrt{2Rh}\end{aligned}$$</div>
+      <p>
+        $h$ は $R$ にくらべてとても小さいので、$h^2$ は無視できます（$(R+h)^2\approx R^2+2Rh$ は $h$ についての 1次近似）。
+        目の高さ $1.6$ m（$=0.0016$ km）なら $d\approx\sqrt{2\times6400\times0.0016}\approx4.5$ km。意外と近いですね。
+        東京スカイツリーの展望台（約 $450$ m）からなら $d\approx\sqrt{2\times6400\times0.45}\approx76$ km 先まで見えます。
+      </p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：72の法則の理由</div>
+      <p>
+        <a href="../explog/2-6.html">2.6節</a>の「72の法則」（年利 $R$% の複利で、お金が 2 倍になるのは約 $72\div R$ 年）も 1次近似で説明できます。
+        年利 $r$（$=R\div100$）で $n$ 年後に 2 倍になるとすると $(1+r)^n=2$。両辺の $\log$ をとると $n\log(1+r)=\log2$ です。
+        $r$ が小さいとき $\log(1+r)\approx r$ なので
+      </p>
+      <div class="eq-box">$$n=\frac{\log2}{\log(1+r)}\approx\frac{0.693}{r}=\frac{69.3}{R}$$</div>
+      <p>
+        実は $\log(1+r)$ は $r$ より少し小さい（$\log(1+r)\approx r-\frac{r^2}{2}$、(3) を参照）ので、$69.3$ を少し大きめの $72$ にすると、よく使う年利でぴったりに近くなります。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>多項式で近似する：マクローリン展開</h2>
+
+    <p>
+      接線（1次式）は、$x=a$ で<b>値 $f(a)$ と傾き $f'(a)$</b> を合わせた直線でした。でも、少し離れると曲線から外れていきます。
+      そこで、<b>曲がり方 $f''(a)$</b>、さらに $f'''(a),\ \ldots$ まで合わせた多項式を作れば、もっと遠くまで重なるはずです。
+      <a href="../polynomial/1-6.html">1.6節</a>では「データの点を通る多項式」で近似しましたが、ここでは「<b>1 点での微分の値をすべて合わせる</b>」多項式を作ります。
+    </p>
+    <p>まず $a=0$ で考えます。多項式 $P(x)=c_0+c_1x+c_2x^2+c_3x^3+\cdots$ を何回か微分して、$x=0$ を入れると</p>
+    <div class="eq-box">$$\begin{aligned}
+      P(x)&=c_0+c_1x+c_2x^2+c_3x^3+\cdots\\
+      P'(x)&=c_1+2c_2x+3c_3x^2+\cdots\\
+      P''(x)&=2c_2+3\cdot2\,c_3x+\cdots\\
+      P'''(x)&=3\cdot2\cdot1\,c_3+\cdots
+    \end{aligned}$$</div>
+    <div class="eq-box">$$\begin{aligned}P(0)&=c_0, & P'(0)&=c_1,\\ P''(0)&=2c_2, & P'''(0)&=3!\,c_3\end{aligned}$$</div>
+    <p>
+      $x=0$ を入れると、$x$ を含む項がすべて消えるので、$P^{(n)}(0)=n!\,c_n$ となります。これを $f^{(n)}(0)$ に合わせるには、$c_n=\dfrac{f^{(n)}(0)}{n!}$ とすればよいのです。
+    </p>
+    <div class="eq-box eq-hero">$$\begin{aligned}f(x)\approx{}&f(0)+f'(0)\,x+\frac{f''(0)}{2!}x^2\\ &+\frac{f'''(0)}{3!}x^3+\cdots+\frac{f^{(n)}(0)}{n!}x^n\end{aligned}$$</div>
+    <p>
+      右辺を $f(x)$ の<b>$n$ 次のマクローリン多項式</b>といい、$n$ をどこまでも大きくした無限の和を<b>マクローリン展開</b>といいます。
+      $n=1$ のときは $f(0)+f'(0)x$、つまり接線（1次近似）です。具体的な関数で計算しましょう。
+    </p>
+    <ul>
+      <li>$e^x$：何回微分しても $e^x$ なので $f^{(n)}(0)=e^0=1$。よって $e^x=1+x+\dfrac{x^2}{2!}+\dfrac{x^3}{3!}+\cdots$</li>
+      <li>$\sin x$：$f^{(n)}(0)$ は $\sin0,\ \cos0,\ -\sin0,\ -\cos0,\ \ldots$ $=0,\ 1,\ 0,\ -1,\ 0,\ 1,\ \ldots$ なので、奇数次の項だけが残る</li>
+      <li>$\cos x$：$f^{(n)}(0)$ は $1,\ 0,$ $-1,\ 0,$ $1,\ \ldots$ なので、偶数次の項だけが残る</li>
+      <li>$\log(1+x)$：$f'=\dfrac{1}{1+x}$、$f''=\dfrac{-1}{(1+x)^2}$、$f'''=\dfrac{2}{(1+x)^3}$、… より $f^{(n)}(0)=(-1)^{n-1}(n-1)!$。$n!$ で割ると $\dfrac{(-1)^{n-1}}{n}$</li>
+      <li>$\dfrac{1}{1-x}$：$f^{(n)}(x)=\dfrac{n!}{(1-x)^{n+1}}$ より $f^{(n)}(0)=n!$。係数はすべて $1$（等比数列の和）</li>
+    </ul>
+
+    <div class="widget" id="w-mac">
+      <div class="widget-head">次数を上げると重なっていく：マクローリン展開 <span class="hint">関数を選ぶ／次数 $n$ を動かす／紫の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fs"></div></div>
+        <div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 次数を上げていく</button>
+        <label class="check"><input type="checkbox" data-r="num">分母を計算した数で書く</label></div></div>
+      <div class="stage"><canvas aria-label="関数のグラフと、マクローリン多項式のグラフ"></canvas></div>
+      <div class="d47-poly" data-r="poly"></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">紫の点</span><span class="tex" data-r="pt"></span></div>
+          <div class="row"><span class="k">ずれ</span><span class="tex big" data-r="err"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $e^x,\ \sin x,\ \cos x$ は、次数を上げるほど、どこまでも遠くまで重なっていきます（どんな $x$ でも、項を増やせば本当の値に近づく）。
+      ところが $\log(1+x)$ は、$-1\lt x\leqq1$ の範囲でしか近づきません。$x\gt1$ では、次数を上げるほど<b>かえって大きく外れ</b>ます。
+      $\dfrac{1}{1-x}$ も $-1\lt x\lt1$ でだけ使えます（$x=2$ を入れると $1+2+4+8+\cdots$ となって、$\dfrac{1}{1-2}=-1$ にはなりません）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜マクローリン展開</div>
+      <p class="key-lead key-big">$x=0$ での値・傾き・曲がり方… をすべて合わせた多項式</p>
+      $$\begin{aligned}f(x)&=f(0)+f'(0)\,x+\frac{f''(0)}{2!}x^2+\cdots\\ &=\sum_{n=0}^{\infty}\frac{f^{(n)}(0)}{n!}x^n\end{aligned}$$
+      $$\begin{aligned}
+        e^x&=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots\\
+        \sin x&=x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots\\
+        \cos x&=1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots\\
+        \log(1+x)&=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots\\
+        \frac{1}{1-x}&=1+x+x^2+x^3+\cdots
+      \end{aligned}$$
+      <p class="key-note">$e^x,\ \sin x,\ \cos x$ はすべての $x$ で成り立つ。$\log(1+x)$ は $-1\lt x\leqq1$、$\dfrac{1}{1-x}$ は $-1\lt x\lt1$ でだけ成り立つ。係数は $\dfrac{f^{(n)}(0)}{n!}$。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>テイラー展開</h2>
+
+    <p>
+      $x=0$ から遠いところの値（例えば $\sqrt{4.1}$）を知りたいときは、中心を $x=a$ にずらします。$x$ の代わりに $(x-a)$ を使って、$x=a$ での微分の値を合わせると
+    </p>
+    <div class="eq-box eq-hero">$$\begin{aligned}f(x)\approx{}&f(a)+f'(a)(x-a)\\ &+\frac{f''(a)}{2!}(x-a)^2+\cdots\\ &+\frac{f^{(n)}(a)}{n!}(x-a)^n\end{aligned}$$</div>
+    <p>
+      これを $x=a$ を中心とする<b>テイラー展開</b>といいます（マクローリン展開は $a=0$ の場合）。1次までで止めると、接線の式 $y=f(a)+f'(a)(x-a)$ そのものです。
+    </p>
+    <h3 class="h-mini">例：√x を x = 4 のまわりで</h3>
+    <p>$f(x)=\sqrt{x}=x^{\frac12}$ とすると</p>
+    <div class="eq-box">$$\begin{aligned}f(x)&=x^{\frac12} &&\to\ f(4)=2\\ f'(x)&=\frac{1}{2}x^{-\frac12} &&\to\ f'(4)=\frac14\\ f''(x)&=-\frac14x^{-\frac32} &&\to\ f''(4)=-\frac{1}{32}\end{aligned}$$</div>
+    <p>なので、2次までのテイラー展開は</p>
+    <div class="eq-box">$$\sqrt{x}\approx2+\frac14(x-4)-\frac{1}{64}(x-4)^2$$</div>
+    <p>
+      $x=4.1$ を入れると $\sqrt{4.1}\approx2+0.025-0.00015625$ $=2.02484375$。本当の値は $2.0248456\ldots$ なので、小数第 5 位まで合っています。
+    </p>
+    <h3 class="h-mini">例：cos x を x = π/3 のまわりで</h3>
+    <p>
+      $f(x)=\cos x$ とすると、$f\!\left(\frac{\pi}{3}\right)=\frac12$、$f'\!\left(\frac{\pi}{3}\right)=-\sin\frac{\pi}{3}=-\frac{\sqrt3}{2}$、$f''\!\left(\frac{\pi}{3}\right)=-\cos\frac{\pi}{3}=-\frac12$ なので
+    </p>
+    <div class="eq-box">$$\begin{aligned}\cos x\approx{}&\frac12-\frac{\sqrt3}{2}\left(x-\frac{\pi}{3}\right)\\ &-\frac14\left(x-\frac{\pi}{3}\right)^2\end{aligned}$$</div>
+    <p>1次までが $x=\frac{\pi}{3}$ での接線です。下の図で中心 $a$ を動かして、どこでも中心のまわりで重なることを確かめましょう。</p>
+
+    <div class="widget" id="w-taylor">
+      <div class="widget-head">中心 $\teal{a}$ を動かすテイラー展開 <span class="hint">関数を選ぶ／緑の点（中心）をドラッグ／次数 $n$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fs"></div></div></div>
+      <div class="stage"><canvas aria-label="関数のグラフと、中心 a のテイラー多項式のグラフ"></canvas></div>
+      <div class="d47-poly" data-r="poly"></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">中心</span><span class="tex" data-r="c"></span></div>
+          <div class="row"><span class="k">試しに</span><span class="tex" data-r="test"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜テイラー展開</div>
+      <p class="key-lead key-big">中心 $x=a$ で、値・傾き・曲がり方… を合わせる</p>
+      $$\begin{aligned}f(x)&=f(a)+f'(a)(x-a)\\ &\quad+\frac{f''(a)}{2!}(x-a)^2+\cdots\\ &=\sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n\end{aligned}$$
+      <ul>
+        <li>$a=0$ のときがマクローリン展開</li>
+        <li>1次までで止めると接線（1次近似）、2次までで止めると 2次近似</li>
+      </ul>
+      <p class="key-note">知りたい値の近くに、値がわかる点 $a$ を選ぶのがこつ。$\sqrt{4.1}$ なら $a=4$。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>計算機の中の sin</h2>
+
+    <p>
+      いよいよ、計算機がどうやって $\sin0.5$ を計算するかです。マクローリン展開 $\sin x=x-\dfrac{x^3}{3!}+\dfrac{x^5}{5!}-\cdots$ に $x=0.5$ を入れて、項を 1 つずつ足していきます。
+    </p>
+    <div class="table-wrap ratio-table-wrap" style="border:0;background:transparent"><table class="ratio-table">
+      <thead><tr><th>項</th><th>項の値</th><th>ここまでの和</th><th>本当の値とのずれ</th></tr></thead>
+      <tbody>
+        <tr><th>$x$</th><td>0.5</td><td>0.5</td><td>0.02057</td></tr>
+        <tr><th>$-\dfrac{x^3}{3!}$</th><td>−0.0208333</td><td>0.4791667</td><td>0.00026</td></tr>
+        <tr><th>$+\dfrac{x^5}{5!}$</th><td>0.0002604</td><td>0.4794271</td><td>0.0000015</td></tr>
+        <tr><th>$-\dfrac{x^7}{7!}$</th><td>−0.0000016</td><td>0.4794255</td><td>0.000000005</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      本当の値は $\sin0.5=0.4794255386\ldots$ です。項を 1 つ足すごとに、ずれが<b>100 分の 1 以下</b>になっていきます。
+      分母の $n!$ が急に大きくなる（$7!=5040$、$9!=362880$）ので、$x$ が小さければ、少しの項でとても正確になるのです。
+      ただし、$x$ が大きいと（例えば $x=3$）たくさんの項が必要です。そこで計算機は、まず $\sin(x+2\pi)=\sin x$ や $\sin(\pi-x)=\sin x$ を使って角を<b>小さい範囲に直してから</b>、多項式で計算します。
+    </p>
+
+    <div class="widget" id="w-sincalc">
+      <div class="widget-head">多項式で $\sin x$ を計算する <span class="hint">$x$ と 項の数を変える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">項の数</span><div class="chips" data-r="ns"></div></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="red">$\sin x=\sin(\pi-x)$ で角を小さくしてから計算する</label></div></div>
+      <div class="stage"><canvas aria-label="sin x のグラフと、多項式のグラフ"></canvas></div>
+      <div class="table-wrap d47-calc-wrap"><table class="ratio-table d47-calc"><thead><tr><th>項</th><th>項の値</th><th>ここまでの和</th><th>ずれ</th></tr></thead><tbody data-r="rows"></tbody></table></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">計算に使う角</span><span class="tex" data-r="u"></span></div>
+          <div class="row"><span class="k">本当の値</span><span class="tex" data-r="tr"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="sub">※ 実際のライブラリでは、角を $-\frac{\pi}{4}$〜$\frac{\pi}{4}$ くらいに直し、テイラー展開をもとに係数を少し調整した多項式を使っています。$e^x$ や $\log x$ も同じように多項式で計算されます。</p>
+
+    <div class="callout point">
+      <div class="ttl">小話：0.1 + 0.2 は 0.3 じゃない？</div>
+      <p>
+        多くのプログラミング言語で <code>0.1 + 0.2</code> を計算すると、<code>0.30000000000000004</code> と表示されます。
+        コンピュータは数を 2 進数で持っていますが、$0.1$ は 2 進数では $0.000110011001100\ldots$ と無限に続くので、途中で切って<b>近似</b>しているからです。
+        計算機の中の数は、ほとんどが「近似値」です。だから、計算機の $\sin$ も「本物とのずれが、どうせ切り捨てる桁より小さければ十分」という考えで作られています。
+        プログラムで小数を比べるときは、<code>a == b</code> ではなく「差がとても小さいか」で比べるのが安全です。
+      </p>
+    </div>
+    <div class="callout point">
+      <div class="ttl">小話：ゲームの振り子と sin x ≈ x</div>
+      <p>
+        振り子の運動を正確に計算すると $\sin\theta$ が出てきて、式が難しくなります。ところが、ふれ幅が小さいときは 1次近似 $\sin\theta\approx\theta$ が使えて、
+        <a href="../trig/3-5.html">3.5節</a>の単振動（$\theta=A\cos\omega t$）になります。ゲームの物理エンジンでも、このような近似で計算を速くすることがよくあります。
+        ただし、大きくふれるときは近似のずれが目に見えてくるので、ずれが小さい範囲で使うのがポイントです。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>2回微分</th><td>$f''(x)=(f'(x))'$。位置を 2回微分すると加速度。$f''\gt0$ で下に凸、$f''\lt0$ で上に凸</td></tr>
+        <tr><th>$n$ 回微分</th><td>$(e^x)^{(n)}=e^x$、$(\sin x)^{(n)}=\sin\!\left(x+\frac{n\pi}{2}\right)$、$\left(\frac1x\right)^{(n)}=\dfrac{(-1)^nn!}{x^{n+1}}$</td></tr>
+        <tr><th>1次近似</th><td>$f(a+h)\approx f(a)+f'(a)h$。$\sqrt{1+x}\approx1+\frac{x}{2}$、$\sin x\approx x$、$e^x\approx1+x$</td></tr>
+        <tr><th>マクローリン<br>展開</th><td>$f(x)=\displaystyle\sum_{n=0}^{\infty}\frac{f^{(n)}(0)}{n!}x^n$。$e^x=1+x+\frac{x^2}{2!}+\cdots$、$\sin x=x-\frac{x^3}{3!}+\cdots$、$\cos x=1-\frac{x^2}{2!}+\cdots$</td></tr>
+        <tr><th>テイラー<br>展開</th><td>$f(x)=\displaystyle\sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n$（中心 $x=a$）</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：近似で当てろ</h2>
+
+    <p>
+      電卓を使わずに、1次近似や 2次近似で値を見積もって入力し、「判定」を押しましょう。各ステージ 3 回まで判定できます。
+      本当の値とのずれが小さいほど★が増えます（1回目で当てると★がそのまま、2回目以降は 1 つずつ減ります）。★3 をねらうには、2次の項まで使うのがこつです。
+    </p>
+    <div class="widget" id="w-game-approx">
+      <div class="widget-head">近似で当てろ <span class="game-total" data-r="total"></span><span class="hint">見積もった値を入力して「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="問題の関数のグラフと、近似に使う点"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>$n$ を正の整数とする。次の $n$ 回微分を求めよ。　(1) $\left(\dfrac1x\right)^{(n)}$　(2) $\left(e^x\right)^{(n)}$　(3) $\left(\sin x\right)^{(n)}$　(4) $\left(\log x\right)^{(n)}$</li>
+      <li>次の関数のマクローリン展開を求めよ。　(1) $e^x$　(2) $e^{2x}$　(3) $\log(1+x)$<br>
+        (4) $f(x)=x^2+x+1$ の、$x=1$ を中心とするテイラー展開を求めよ。</li>
+      <li>$\sin x\approx x-\dfrac{x^3}{3!}$ を使って、$\sin0.1$ を小数第 4 位まで求めよ。ただし、ずれは $\dfrac{x^4}{4!}$ 以下であることを使ってよい。</li>
+      <li>$f(x)=\cos x$ について、次に答えよ。<br>
+        (1) $x=\dfrac{\pi}{3}$ における接線の方程式を求めよ。<br>
+        (2) マクローリン展開を 4次式まで求めよ。<br>
+        (3) (2) を使って $\cos\dfrac{\pi}{6}$ の近似値を求めよ（$\dfrac{\pi}{6}\approx0.523$ とし、電卓を使ってよい）。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>何回か微分して、パターンを見つける（きちんと示すには数学的帰納法を使う）。<br>
+          (1) $\dfrac1x=x^{-1}$ なので、微分するたびに前に指数がかかり、指数が 1 つ減る。<br>
+          $\left(\dfrac1x\right)'=-x^{-2}$<br>
+          $\left(\dfrac1x\right)''=(-1)(-2)x^{-3}$<br>$=\dfrac{2}{x^3}$<br>
+          $\left(\dfrac1x\right)'''=(-1)(-2)(-3)x^{-4}$<br>$=-\dfrac{6}{x^4}$<br>
+          よって<br>$\left(\dfrac1x\right)^{(n)}=(-1)(-2)\cdots(-n)\,x^{-(n+1)}$<br>$=\dfrac{(-1)^n\,n!}{x^{n+1}}$<br>
+          (2) 何回微分しても変わらないので $\left(e^x\right)^{(n)}=e^x$<br>
+          (3) 4 回で一周する：<br>$\sin x\to\cos x\to-\sin x$<br>$\to-\cos x\to\sin x$<br>
+          $\cos x=\sin\!\left(x+\dfrac{\pi}{2}\right)$ なので、1回微分するごとに $\dfrac{\pi}{2}$ ずつ増える：<br>
+          $\left(\sin x\right)^{(n)}=\sin\!\left(x+\dfrac{n\pi}{2}\right)$<br>
+          (4) $(\log x)'=\dfrac1x$ なので、あとは (1) を $n-1$ 回使う：<br>
+          $\left(\log x\right)^{(n)}=\left(\dfrac1x\right)^{(n-1)}$<br>$=\dfrac{(-1)^{n-1}(n-1)!}{x^n}$</li>
+        <li>$f(0),\ f'(0),\ f''(0),\ \ldots$ を計算して、$\dfrac{f^{(n)}(0)}{n!}x^n$ を並べる。<br>
+          (1) $f^{(n)}(x)=e^x$ なので $f^{(n)}(0)=1$。<br>
+          $e^x=1+x+\dfrac{x^2}{2!}+\dfrac{x^3}{3!}+\cdots$<br>$=\displaystyle\sum_{n=0}^{\infty}\frac{x^n}{n!}$<br>
+          (2) $(e^{2x})'=2e^{2x}$（4.4節の合成関数の微分）なので<br>$f^{(n)}(x)=2^ne^{2x}$、$f^{(n)}(0)=2^n$。<br>
+          $e^{2x}=1+2x+\dfrac{2^2x^2}{2!}+\dfrac{2^3x^3}{3!}+\cdots$<br>$=\displaystyle\sum_{n=0}^{\infty}\frac{2^n}{n!}x^n$<br>
+          （(1) の $x$ に $2x$ を入れたものと同じ）<br>
+          (3) $f(x)=\log(1+x)$ とすると $f(0)=0$<br>
+          $f'(x)=\dfrac{1}{1+x}\to f'(0)=1$<br>
+          $f''(x)=-\dfrac{1}{(1+x)^2}$<br>$\to f''(0)=-1$<br>
+          $f'''(x)=\dfrac{2}{(1+x)^3}\to f'''(0)=2$<br>
+          $f^{(n)}(0)=(-1)^{n-1}(n-1)!$ なので、係数は<br>$\dfrac{(-1)^{n-1}(n-1)!}{n!}=\dfrac{(-1)^{n-1}}{n}$<br>
+          $\log(1+x)=x-\dfrac{x^2}{2}+\dfrac{x^3}{3}-\cdots$<br>（$-1\lt x\leqq1$）<br>
+          (4) $f(1)=1+1+1=3$<br>
+          $f'(x)=2x+1\to f'(1)=3$<br>
+          $f''(x)=2\to f''(1)=2$、3回目からは $0$。<br>
+          $f(x)=3+3(x-1)+\dfrac{2}{2!}(x-1)^2$<br>$=3+3(x-1)+(x-1)^2$<br>
+          （確かめ：展開すると<br>$3+3x-3+x^2-2x+1$<br>$=x^2+x+1$）</li>
+        <li>$x=0.1$ を入れると<br>
+          $0.1-\dfrac{0.1^3}{6}=0.1-\dfrac{0.001}{6}$<br>$=0.1-0.0001666\ldots$<br>$=0.0998333\ldots$<br>
+          ずれは<br>$\dfrac{0.1^4}{4!}=\dfrac{0.0001}{24}$<br>$\approx0.000004\lt0.00001$<br>
+          なので、$\sin0.1$ は $0.0998233\ldots$ と $0.0998433\ldots$ の間にある。<br>
+          よって、小数第 4 位までは $\sin0.1\approx0.0998$<br>
+          （本当の値は $\sin0.1=0.0998334\ldots$）</li>
+        <li>(1) 接線の式 $y-f(a)=f'(a)(x-a)$ を使う。<br>
+          $f\!\left(\dfrac{\pi}{3}\right)=\cos\dfrac{\pi}{3}=\dfrac12$<br>
+          $f'(x)=-\sin x$ なので<br>$f'\!\left(\dfrac{\pi}{3}\right)=-\sin\dfrac{\pi}{3}=-\dfrac{\sqrt3}{2}$<br>
+          よって $y-\dfrac12=-\dfrac{\sqrt3}{2}\left(x-\dfrac{\pi}{3}\right)$<br>
+          つまり $y=-\dfrac{\sqrt3}{2}x+\dfrac{\sqrt3\,\pi}{6}+\dfrac12$<br>
+          (2) $f(x)=\cos x\to f(0)=1$<br>
+          $f'(x)=-\sin x\to f'(0)=0$<br>
+          $f''(x)=-\cos x\to f''(0)=-1$<br>
+          $f'''(x)=\sin x\to f'''(0)=0$<br>
+          $f^{(4)}(x)=\cos x\to f^{(4)}(0)=1$<br>
+          よって<br>$\cos x\approx1+0\cdot x+\dfrac{-1}{2!}x^2$<br>$\quad+\dfrac{0}{3!}x^3+\dfrac{1}{4!}x^4$<br>$=1-\dfrac{x^2}{2}+\dfrac{x^4}{24}$<br>
+          (3) $x=0.523$ を入れると<br>
+          $1-\dfrac{0.523^2}{2}+\dfrac{0.523^4}{24}$<br>$=1-0.1367645+0.0031174\ldots$<br>$=0.86635\ldots$<br>
+          よって $\cos\dfrac{\pi}{6}\approx0.866$<br>
+          （確かめ：$\cos\dfrac{\pi}{6}=\dfrac{\sqrt3}{2}=0.866025\ldots$ なので、よい近似になっている）</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-6.html"><span class="dir">← 前の節</span><span class="nm">4.6 逆関数の微分</span></a>
+    <a class="next" href="4-8.html"><span class="dir">次の節 →</span><span class="nm">4.8 極限のくらべ方</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-7.js?v=202611031018"></script>
+</body>
+</html>

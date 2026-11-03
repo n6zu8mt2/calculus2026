@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.8 極限のくらべ方 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.8節：sin x/x・増え方の順位・ロピタルの定理">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch8 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html" class="active" aria-current="page"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.8節</div>
+      <h1><span class="chap-no">4.8</span>極限のくらべ方：0/0 になったら</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>$\dfrac{\sin x}{x}\to1$ などの極限を、接線の傾きとして説明できる。</li>
+      <li>$\log x,\ x^a,\ e^x$ の増え方の違いを説明できる。</li>
+      <li>$\dfrac00$ の形の極限を、テイラー展開やロピタルの定理で求められる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ 確認問題 3問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-3.html">4.3節</a>の 微分の公式、<a href="4-7.html">4.7節</a>の テイラー展開、<a href="../explog/2-6.html">2.6節</a>の 極限</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      $\dfrac{\sin x}{x}$ に $x=0$ を入れると $\dfrac{0}{0}$ になって、値が決まりません。でも $x$ を $0$ に<b>近づける</b>と、ある数に近づいていきます。
+      このように「そのまま入れると $\dfrac00$ や $\dfrac{\infty}{\infty}$ になる極限」を<b>不定形</b>といいます。
+      この節では、微分（接線の傾き）とテイラー展開（<a href="4-7.html">4.7節</a>）を使って、不定形の極限を求めます。また、$x\to\infty$ で「どの関数がいちばん速く大きくなるか」をくらべます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>0/0 の形の極限</h2>
+
+    <p>
+      まず $\dfrac{\sin x}{x}$ に、$0$ に近い $x$ を入れてみましょう（$x$ はラジアン）。
+    </p>
+    <div class="table-wrap ratio-table-wrap" style="border:0;background:transparent"><table class="ratio-table">
+      <thead><tr><th></th><th>$x=0.5$</th><th>$x=0.1$</th><th>$x=0.01$</th><th>$x=0.001$</th><th>行き先</th></tr></thead>
+      <tbody>
+        <tr><th>$\dfrac{\sin x}{x}$</th><td>0.95885</td><td>0.99833</td><td>0.99998</td><td>0.9999998</td><td>$1$</td></tr>
+        <tr><th>$\dfrac{e^x-1}{x}$</th><td>1.29744</td><td>1.05171</td><td>1.00502</td><td>1.00050</td><td>$1$</td></tr>
+        <tr><th>$\dfrac{\log(1+x)}{x}$</th><td>0.81093</td><td>0.95310</td><td>0.99503</td><td>0.99950</td><td>$1$</td></tr>
+        <tr><th>$\dfrac{1-\cos x}{x^2}$</th><td>0.48967</td><td>0.49958</td><td>0.4999958</td><td>0.5000000</td><td>$\frac12$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      上の3つは $1$ に近づきます。なぜでしょうか。$f(x)=\sin x$ とすると $f(0)=0$ なので
+    </p>
+    <div class="eq-box">$$\frac{\sin x}{x}=\frac{f(x)-f(0)}{x-0}=\bigl(\text{原点と点 }(x,\ f(x))\text{ を結ぶ割線の傾き}\bigr)$$</div>
+    <p>
+      です。$x\to0$ とすると割線は接線に近づくので、行き先は<b>原点での接線の傾き</b> $f'(0)=\cos0=1$ です（<a href="4-1.html">4.1節</a>・<a href="4-2.html">4.2節</a>の微分の定義そのもの）。
+      同じように、$e^x-1$ の原点での傾きは $e^0=1$、$\log(1+x)$ の原点での傾きは $\dfrac{1}{1+0}=1$ です（<a href="4-3.html">4.3節</a>）。
+      どれも原点での接線が $y=x$ なので、<b>原点の近くを拡大すると、グラフは直線 $y=x$ にしか見えません</b>。下の図で「拡大」をオンにして、$h$ を小さくしてみましょう。
+    </p>
+
+    <div class="widget" id="w-zero">
+      <div class="widget-head">0/0 の極限は、原点での接線の傾き <span class="hint">式を選ぶ／$|h|$ のつまみを右へ（$h$ を小さく）</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="fs"></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="zoom">$h$ に合わせて拡大</label>
+        <label class="check"><input type="checkbox" data-r="neg">$h$ をマイナスに</label></div></div>
+      <div class="stage"><canvas aria-label="原点を通る関数のグラフと、原点から引いた割線・接線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">今の h</span><span class="tex" data-r="h"></span></div>
+          <div class="row"><span class="k">比</span><span class="tex big" data-r="r"></span></div>
+          <div class="row"><span class="k">行き先</span><span class="tex" data-r="lim"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">(1 − cos x)/x² は テイラー展開で</h3>
+    <p>
+      $1-\cos x$ も原点を通りますが、原点での傾きは $\sin0=0$（接線は水平）です。だから $\dfrac{1-\cos x}{x}\to0$ ですが、$x^2$ で割ると話が変わります。
+      こういうときは <a href="4-7.html">4.7節</a>のテイラー展開（マクローリン展開）が便利です。
+    </p>
+    <div class="eq-box">$$\begin{gathered}\cos x=1-\frac{x^2}{2}+\frac{x^4}{24}-\cdots\\ \text{より}\quad \frac{1-\cos x}{x^2}=\frac{\frac{x^2}{2}-\frac{x^4}{24}+\cdots}{x^2}=\frac12-\frac{x^2}{24}+\cdots\ \longrightarrow\ \frac12\end{gathered}$$</div>
+    <p>
+      分子を $x$ の多項式に直せば、分母の $x^2$ と約分できて、$x=0$ を入れられるようになります。
+      つまり $0$ の近くで $1-\cos x$ は $\dfrac{x^2}{2}$ とほぼ同じ、ということです（図の4つめのボタン）。
+      上の3つも同じように、$\sin x=x-\dfrac{x^3}{6}+\cdots$、$e^x-1=x+\dfrac{x^2}{2}+\cdots$、$\log(1+x)=x-\dfrac{x^2}{2}+\cdots$ を $x$ で割ると、$1+(\text{$x$ を含む項})\to1$ とわかります。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜基本の極限</div>
+      <p class="key-lead key-big">原点での接線の傾き（またはテイラー展開の最初の項）を見る</p>
+      $$\lim_{x\to0}\frac{\sin x}{x}=1,\qquad \lim_{x\to0}\frac{e^x-1}{x}=1,\qquad \lim_{x\to0}\frac{\log(1+x)}{x}=1,\qquad \lim_{x\to0}\frac{1-\cos x}{x^2}=\frac12$$
+      <ul>
+        <li>$f(0)=0$ のとき、$\dfrac{f(x)}{x}\to f'(0)$（原点から引いた割線の傾き → 接線の傾き）</li>
+        <li>$0$ の近くでは $\sin x\approx x$、$e^x-1\approx x$、$\log(1+x)\approx x$、$1-\cos x\approx\dfrac{x^2}{2}$</li>
+      </ul>
+      <p class="key-note">底が $a$ なら $\displaystyle\lim_{x\to0}\frac{a^x-1}{x}=\log a$（$a^x$ の原点での傾き。4.3節）。$\sin x$ の $x$ はラジアンで。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>増え方の順位</h2>
+
+    <p>
+      $x\to\infty$ とすると、$\log x,\ \sqrt{x},\ x,\ x^2,\ e^x$ はどれも限りなく大きくなります。では、$\dfrac{x^2}{e^x}$ は $\dfrac{\infty}{\infty}$ になって、どうなるのでしょうか。
+      $x=10$ では $\dfrac{100}{22026}\approx0.0045$、$x=100$ では $\approx3.7\times10^{-40}$ と、あっという間に $0$ に近づきます。分母の $e^x$ のほうが<b>けた違いに速く</b>大きくなるのです。
+      下の図で、5つの関数のレースを見てみましょう。$X$ を大きくするとズームアウトします。
+    </p>
+
+    <div class="widget" id="w-race">
+      <div class="widget-head">増え方のレース：$\log x,\ \sqrt{x},\ x,\ x^a,\ e^x$ <span class="hint">$X$ を動かしてズームアウト／縦軸を対数目盛りに</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">べき</span><div class="chips" data-r="pw"></div>
+        <label class="check"><input type="checkbox" data-r="log">縦軸を対数目盛り（10倍ずつ）にする</label></div></div>
+      <div class="stage"><canvas aria-label="log x、√x、x、x の a 乗、e の x 乗のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">x = X での順位</span><span class="tex big" data-r="rank"></span></div>
+          <div class="row"><span class="k">べき ÷ 指数</span><span class="tex" data-r="r1"></span></div>
+          <div class="row"><span class="k">対数 ÷ x</span><span class="tex" data-r="r2"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $x^{10}$ にすると、しばらくは $x^{10}$ のほうが $e^x$ より大きいのですが、$x\approx35.8$ で抜かれ、その後は差が開く一方です。
+      どんなに大きな $a$ でも、<b>最後は必ず $e^x$ が勝ちます</b>。逆に、$\log x$ はどんな小さな $a\gt0$ の $x^a$（例えば $\sqrt{x}$）にも最後は負けます。
+    </p>
+    <p class="sub">
+      ※ 理由（ざっくり）：$e^x=1+x+\dfrac{x^2}{2}+\cdots+\dfrac{x^n}{n!}+\cdots$（4.7節）は、$x\gt0$ ならどの項よりも大きいので、$a$ より大きい $n$ をとると $\dfrac{x^a}{e^x}\lt\dfrac{n!\,x^a}{x^n}\to0$。
+      また $x=e^t$ とおくと $\dfrac{\log x}{x}=\dfrac{t}{e^t}\to0$ です。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜増え方の順位</div>
+      <p class="key-lead key-big">$x\to\infty$ で、対数 ≪ べき ≪ 指数</p>
+      $$\log x\ \ll\ x^a\ \ll\ e^x\qquad(a\gt0)$$
+      $$\lim_{x\to\infty}\frac{x^a}{e^x}=0,\qquad \lim_{x\to\infty}\frac{\log x}{x^a}=0$$
+      <ul>
+        <li>「$\ll$」は「けた違いに小さい」の意味。割り算すると $0$ に近づく</li>
+        <li>逆さにすると $\dfrac{e^x}{x^a}\to\infty$、$\dfrac{x^a}{\log x}\to\infty$</li>
+      </ul>
+      <p class="key-note">$x\to+0$ では $x^a\log x\to0$（$x=\frac1t$ とおくと $-\frac{\log t}{t^a}\to0$）。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：プログラムの速さの順位</div>
+      <p>
+        データが $n$ 個のときの計算の回数も、この順位でくらべます。二分探索は $\log n$ 回、全部を見るのは $n$ 回、2重ループは $n^2$ 回、すべての組み合わせを試すと $2^n$ 回。
+        $n=100$ なら、$\log_2 n\approx7$、$n^2=10000$ ですが、$2^n\approx1.3\times10^{30}$ で、今のコンピュータでも宇宙の年齢より時間がかかります。指数で増える計算は、少し $n$ が増えるだけで手に負えなくなるのです。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>ロピタルの定理（紹介）</h2>
+
+    <p>
+      不定形の極限には、名前のついた便利な定理があります。分子と分母を<b>それぞれ微分してから</b>割ってよい、というものです。
+    </p>
+    <div class="eq-box eq-hero">$$\lim_{x\to a}\frac{f(x)}{g(x)}=\lim_{x\to a}\frac{f'(x)}{g'(x)}$$</div>
+    <p>
+      ただし、使ってよいのは次の条件がそろったときだけです（$a$ は $\pm\infty$ でもよい）。
+    </p>
+    <ul>
+      <li>左の極限が $\dfrac{0}{0}$ の形（$f(x)\to0,\ g(x)\to0$）か、$\dfrac{\infty}{\infty}$ の形（$f(x),\ g(x)\to\pm\infty$）であること</li>
+      <li>$x=a$ の近くで $g'(x)\neq0$ で、右の極限 $\displaystyle\lim_{x\to a}\frac{f'(x)}{g'(x)}$ が決まる（収束するか $\pm\infty$）こと</li>
+    </ul>
+    <p>
+      $\dfrac00$ の形のわけは、(1) と同じ「接線」です。$f(a)=g(a)=0$ なら、$a$ の近くで $f(x)\approx f'(a)(x-a)$、$g(x)\approx g'(a)(x-a)$ なので、比はほぼ $\dfrac{f'(a)}{g'(a)}$ になります。
+    </p>
+    <div class="eq-box">$$\begin{aligned}\lim_{x\to0}\frac{1-\cos x}{x^2}&=\lim_{x\to0}\frac{\sin x}{2x}=\frac12\cdot1=\frac12 &&\Bigl(\frac00\text{ の形}\Bigr)\\ \lim_{x\to\infty}\frac{x^2}{e^x}&=\lim_{x\to\infty}\frac{2x}{e^x}=\lim_{x\to\infty}\frac{2}{e^x}=0 &&\Bigl(\frac{\infty}{\infty}\text{ の形。2回使う}\Bigr)\end{aligned}$$</div>
+    <div class="callout warn">
+      <div class="ttl">注意：形を確かめてから使う</div>
+      <p>
+        $\displaystyle\lim_{x\to0}\frac{x+1}{x+2}=\frac12$ は不定形ではありません。ここで分子・分母を微分すると $\dfrac11=1$ となり、まちがった答えになります。
+        また、実際の計算では<b>テイラー展開のほうが簡単</b>なことが多いです（何回も微分しなくてよい・条件を気にしなくてよい）。ロピタルの定理は「答えの確かめ」に使うくらいがおすすめです。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>小話：アキレスと亀</h2>
+
+    <p>
+      古代ギリシャのゼノンは、こんな話をしました。足の速いアキレスが、100 m 先の亀を追いかけます（アキレスは亀の10倍の速さ）。
+      アキレスが 100 m 走ると、亀は 10 m 先にいる。その 10 m を走ると、亀は 1 m 先に。その 1 m を走ると、亀は 0.1 m 先に……。
+      「何回くり返しても亀は少し先にいるので、アキレスは永遠に追いつけない」？
+    </p>
+    <p>
+      かかる時間を足してみましょう。アキレスが秒速 10 m なら、10 秒、1 秒、0.1 秒、0.01 秒、……と、毎回 $\frac{1}{10}$ 倍になります。
+    </p>
+    <div class="eq-box">$$10+1+0.1+0.01+\cdots=11.111\cdots=\frac{100}{9}\ \text{秒}$$</div>
+    <p>
+      無限に多くの段階があっても、その合計は<b>有限の値に収束</b>します（等比数列の和。<a href="../explog/2-6.html">2.6節</a>の極限の考え方）。約 11.1 秒後に、アキレスはちゃんと亀に追いつきます。
+    </p>
+
+    <h3 class="h-mini">lerp のカメラは永遠に着かない？</h3>
+    <p>
+      ゲームで、カメラをキャラクターにゆっくり追いかけさせるとき、毎フレーム「残りの距離の $k$ 倍だけ近づく」という書き方をよく使います（lerp、線形補間）。
+    </p>
+    <pre class="d48-code"><code>// 毎フレーム
+camera.x += k * (target.x - camera.x);</code></pre>
+    <p>
+      残りの距離 $d_n$ は毎回 $(1-k)$ 倍になるので $d_n=(1-k)^n d_0$。<b>$0$ には決してなりません</b>が、$n\to\infty$ で $d_n\to0$ に収束します。
+      アキレスとは逆で、こちらは本当に「永遠に着かない」のですが、すぐに 1 ピクセルより近くなるので、目には着いたように見えます。
+    </p>
+
+    <div class="widget" id="w-lerp">
+      <div class="widget-head">残りの距離 $d_n=(1-k)^n\times100$ <span class="hint">$k$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="フレームごとの残りの距離。だんだん 0 に近づくが 0 にはならない"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">きまり</span><span class="tex" data-r="rule"></span></div>
+          <div class="row"><span class="k">10 フレーム後</span><span class="tex" data-r="d10"></span></div>
+          <div class="row"><span class="k">1 より近くなる</span><span class="tex" data-r="n1"></span></div>
+        </div>
+      </div>
+    </div>
+    <p class="sub">
+      ※ 実際のプログラムでは、残りが小さくなったら目標にぴったり合わせる（スナップする）か、計算機の数の細かさの限界で止まります。フレームの長さ $\Delta t$ が変わっても同じ動きにしたいときは、$k=1-e^{-\lambda\Delta t}$ とします（$e$ が出てくるのは、2.6節の連続複利と同じ理由）。
+    </p>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>0/0 の極限</th><td>$\displaystyle\lim_{x\to0}\frac{\sin x}{x}=\lim_{x\to0}\frac{e^x-1}{x}=\lim_{x\to0}\frac{\log(1+x)}{x}=1$（原点での接線の傾き）</td></tr>
+        <tr><th>テイラー展開で</th><td>$\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^2}=\frac12$（$1-\cos x\approx\frac{x^2}{2}$）</td></tr>
+        <tr><th>増え方の順位</th><td>$\log x\ll x^a\ll e^x$：$\dfrac{x^a}{e^x}\to0$、$\dfrac{\log x}{x^a}\to0$（$x\to\infty,\ a\gt0$）</td></tr>
+        <tr><th>ロピタルの定理</th><td>$\frac00$・$\frac{\infty}{\infty}$ の形なら $\displaystyle\lim\frac{f}{g}=\lim\frac{f'}{g'}$（形を確かめてから。テイラー展開のほうが楽なことが多い）</td></tr>
+        <tr><th>等比の減り方</th><td>$d_n=(1-k)^n d_0\to0$（$0\lt k\lt1$）。無限個の和 $10+1+0.1+\cdots$ も有限になる</td></tr>
+      </tbody></table></div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次の極限を求めよ。ただし $a\gt0$ とする。<br>
+        (1) $\displaystyle\lim_{x\to0}\frac{a^x-1}{x}$　(2) $\displaystyle\lim_{x\to0}\frac{\log(1+x)}{x}$　(3) $\displaystyle\lim_{x\to0}\frac{\sin x}{x}$<br>
+        (4) $\displaystyle\lim_{x\to\infty}\frac{e^x}{x^a}$　(5) $\displaystyle\lim_{x\to\infty}\frac{x^a}{\log x}$</li>
+      <li>次の極限を求めよ。<br>
+        (1) $\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^2}$　(2) $\displaystyle\lim_{x\to0}\frac{e^x-1-x}{x^2}$　(3) $\displaystyle\lim_{x\to\infty}x\sin\frac{3}{x}$</li>
+      <li>次の極限を求めよ。<br>
+        (1) $\displaystyle\lim_{x\to0}\frac{2x^5+3x^3-x^2}{x^4-3x^3+3x^2}$　(2) $\displaystyle\lim_{x\to\infty}\frac{8x^6-2x^3+7}{2x^6+3x^4-1}$<br>
+        (3) $\displaystyle\lim_{x\to-\infty}\frac{3\cdot4^x-5\cdot3^x+6\cdot2^x}{2\cdot4^x-3\cdot2^x}$　(4) $\displaystyle\lim_{x\to\infty}\frac{1}{\sqrt{x^2+2x}-x}$</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(1) $f(x)=a^x$ とすると $f(0)=1$ なので、$\dfrac{a^x-1}{x}=\dfrac{f(x)-f(0)}{x-0}$。<br>
+          $x\to0$ で原点での傾き $f'(0)=a^0\log a=\log a$ に近づく。答え $\log a$<br>
+          (2) $\log(1+x)$ の $x=0$ での傾き $\dfrac{1}{1+0}=1$。答え $1$<br>
+          (3) $\sin x$ の $x=0$ での傾き $\cos0=1$。答え $1$<br>
+          (4) $\dfrac{x^a}{e^x}\to0$（増え方の順位）で、その逆数なので $\infty$<br>
+          (5) $\dfrac{\log x}{x^a}\to0$ の逆数なので $\infty$<br>
+          （ロピタルの定理でも：(3) は $\dfrac{\cos x}{1}\to1$。(5) は $\dfrac{ax^{a-1}}{\frac1x}=ax^a\to\infty$。）</li>
+        <li>(1) $\cos x=1-\dfrac{x^2}{2}+\dfrac{x^4}{24}-\cdots$ より<br>
+          $\dfrac{1-\cos x}{x^2}=\dfrac12-\dfrac{x^2}{24}+\cdots\to\dfrac12$<br>
+          (2) $e^x=1+x+\dfrac{x^2}{2}+\dfrac{x^3}{6}+\cdots$ より<br>
+          $\dfrac{e^x-1-x}{x^2}=\dfrac{\frac{x^2}{2}+\frac{x^3}{6}+\cdots}{x^2}$<br>
+          $=\dfrac12+\dfrac{x}{6}+\cdots\to\dfrac12$<br>
+          (3) $t=\dfrac3x$ とおくと $x=\dfrac3t$ で、$x\to\infty$ のとき $t\to+0$。<br>
+          $x\sin\dfrac3x=\dfrac{3}{t}\sin t=3\cdot\dfrac{\sin t}{t}\to3\cdot1=3$</li>
+        <li>(1) 分子・分母を $x^2$ で割る（$x\neq0$）。<br>
+          $\dfrac{2x^3+3x-1}{x^2-3x+3}\to\dfrac{0+0-1}{0-0+3}=-\dfrac13$<br>
+          (2) 分子・分母を $x^6$ で割る。<br>
+          $\dfrac{8-\frac{2}{x^3}+\frac{7}{x^6}}{2+\frac{3}{x^2}-\frac{1}{x^6}}\to\dfrac82=4$<br>
+          (3) $x\to-\infty$ では $4^x,\ 3^x,\ 2^x$ はすべて $0$ に近づくが、いちばんゆっくりなのは $2^x$。分子・分母を $2^x$ で割る。<br>
+          $\dfrac{3\cdot2^x-5\cdot\left(\frac32\right)^x+6}{2\cdot2^x-3}$<br>
+          $x\to-\infty$ で $2^x\to0,\ \left(\frac32\right)^x\to0$ なので $\to\dfrac{6}{-3}=-2$<br>
+          (4) 分母の $\sqrt{\ }$ をなくすため、分子・分母に $\sqrt{x^2+2x}+x$ をかける。<br>
+          $\dfrac{\sqrt{x^2+2x}+x}{(x^2+2x)-x^2}=\dfrac{\sqrt{x^2+2x}+x}{2x}$<br>
+          $=\dfrac{\sqrt{1+\frac2x}+1}{2}\to\dfrac{1+1}{2}=1$</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-7.html"><span class="dir">← 前の節</span><span class="nm">4.7 高階微分と近似</span></a>
+    <a class="next" href="4-9.html"><span class="dir">次の節 →</span><span class="nm">4.9 微分を使う</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-8.js?v=202611031018"></script>
+</body>
+</html>

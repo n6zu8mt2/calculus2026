@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.1 速さと傾き | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.1節：平均の速さ・割線と接線・虫めがね・指の動き">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch1 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html" class="active" aria-current="page"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.1節</div>
+      <h1><span class="chap-no">4.1</span>速さと傾き：平均から瞬間へ</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>平均の速さを、グラフの2点を結ぶ直線（割線）の傾きとして説明できる。</li>
+      <li>時間の幅を小さくすると、割線が接線に近づき「瞬間の速さ」になることを説明できる。</li>
+      <li>曲線を拡大するとまっすぐに見えることと、接線の関係を説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 4つ ・ 計算機 1つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="../polynomial/1-1.html">1.1節</a>の 直線の傾き、<a href="../polynomial/1-3.html">1.3節</a>の 放物線（落下の式）</p>
+
+  <section class="sec first" id="main">
+
+    <h2 class="h-sub"><span class="tag">(1)</span>スピードメーターの「瞬間の速さ」</h2>
+
+    <p>
+      車のスピードメーターの針が「60」を指しているとします。これは時速 60 km、つまり「<b>この速さのまま 1 時間走り続けたら 60 km 進む</b>」という意味です。
+      でも、車は本当に 1 時間走って測ったわけではありません。次の瞬間にはブレーキを踏むかもしれません。
+      メーターが表しているのは、<b>いま、この瞬間</b>の速さです。
+    </p>
+    <p>
+      ふつう、速さは次の式で計算します。
+    </p>
+    <div class="eq-box">$$\text{速さ}=\frac{\text{進んだ距離}}{\text{かかった時間}}$$</div>
+    <p>
+      例えば 2 時間で 120 km 進んだら、速さは $120\div2=60$ で時速 60 km です。
+      ただしこれは、2 時間の間に速くなったり遅くなったりしたのをならした<b>平均の速さ</b>です。
+      では「ある一瞬」の速さはどう計算すればよいでしょう。一瞬の間に進む距離は $0$、かかる時間も $0$ なので、そのままでは $0\div0$ になって計算できません。
+    </p>
+    <p>
+      この節では、この問いに次のように答えます。
+    </p>
+    <ul>
+      <li>短い時間の<b>平均の速さ</b>を計算する。これは位置のグラフの <span class="t-red">2点を結ぶ直線の傾き</span>（(2)）。</li>
+      <li>時間の幅をどんどん小さくしていくと、平均の速さはある数に近づく。それを<b>瞬間の速さ</b>とする。グラフでは<span class="t-teal">接線の傾き</span>（(3)）。</li>
+      <li>曲線を拡大すると、まっすぐな線に見える。その線が接線（(4)）。</li>
+    </ul>
+    <p>この「瞬間の変化の速さ」を求めることを<b>微分</b>といいます。第4章では、微分の計算のしかたと使い方を学びます。</p>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>平均の速さ＝割線の傾き</h2>
+
+    <p>
+      信号が青になって、車が発進しました。動き始めてから $t$ 秒後に、スタートの線から $x$ m の位置にいるとします。この車は、だんだん速くなりながら
+    </p>
+    <div class="eq-box">$$x=2t^2$$</div>
+    <p>のように進むとします（5 秒後まで）。1 秒ごとの位置を表にすると次のとおりです。</p>
+    <div class="table-wrap"><table class="ratio-table">
+      <thead><tr><th>時刻 $t$（秒）</th><td>$0$</td><td>$1$</td><td>$2$</td><td>$3$</td><td>$4$</td><td>$5$</td></tr></thead>
+      <tbody>
+        <tr><th>位置 $x$（m）</th><td>$0$</td><td>$2$</td><td>$8$</td><td>$18$</td><td>$32$</td><td>$50$</td></tr>
+        <tr><th>その1秒に進んだ距離</th><td></td><td>$2$</td><td>$6$</td><td>$10$</td><td>$14$</td><td>$18$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      1 秒に進む距離が $2,\ 6,\ 10,\ \dots$ と増えていくので、速さがだんだん上がっているのがわかります。
+      $t_1$ 秒から $t_2$ 秒までの<b>平均の速さ</b>は「進んだ距離 ÷ かかった時間」です。
+      変化した量を $\Delta$（デルタ）をつけて表し、かかった時間を $\red{\Delta t}=t_2-t_1$、進んだ距離を $\red{\Delta x}$ と書きます。
+    </p>
+    <p>
+      例えば 1 秒から 3 秒まででは、$\red{\Delta t}=3-1=2$ 秒、$\red{\Delta x}=18-2=16$ m なので、平均の速さは $\dfrac{16}{2}=8$ m/秒です。
+    </p>
+    <p>
+      これをグラフで見ましょう。横の軸を時刻 $t$、縦の軸を位置 $x$ にすると、$x=2t^2$ のグラフは放物線（<a href="../polynomial/1-3.html">1.3節</a>）になります。
+      グラフの上の 2 点 $\mathrm{A}$（$t_1$ 秒の位置）と $\mathrm{B}$（$t_2$ 秒の位置）を結ぶ直線を<b>割線</b>（かっせん：曲線を切る線）といいます。
+      割線の傾きは「縦の変化 ÷ 横の変化」（<a href="../polynomial/1-1.html">1.1節</a>）なので、ちょうど $\dfrac{\red{\Delta x}}{\red{\Delta t}}$、つまり平均の速さです。
+      上の道路の図は車の位置を横に並べたもので、下のグラフでは同じ位置を縦にとっています。
+    </p>
+
+    <div class="widget" id="w-avg">
+      <div class="widget-head">平均の速さと割線 <span class="hint">グラフの点 A・B をドラッグ／スライダーで $t_1,\ t_2$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="道路を走る車の位置（t1 秒と t2 秒）"></canvas></div>
+      <div class="stage"><canvas aria-label="位置のグラフ x=2t^2 と、2点を結ぶ割線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">時間</span><span class="tex" data-r="dt"></span></div>
+          <div class="row"><span class="k">進んだ距離</span><span class="tex" data-r="dx"></span></div>
+          <div class="row"><span class="k">平均の速さ</span><span class="tex big" data-r="v"></span></div>
+          <div class="row"><span class="k">時速にすると</span><span class="tex" data-r="kmh"></span></div>
+        </div>
+      </div>
+    </div>
+    <p>
+      A と B の間が同じ 1 秒でも、後のほうほど割線が急になり、平均の速さが大きくなります。グラフが<b>急なところほど速く</b>動いています。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜平均の速さは割線の傾き</div>
+      <p class="key-lead key-big">「進んだ距離 ÷ かかった時間」は、グラフの2点を結ぶ直線の傾き</p>
+      $$\text{平均の速さ}=\frac{\red{\Delta x}}{\red{\Delta t}}=\frac{x(t_2)-x(t_1)}{t_2-t_1}$$
+      <ul>
+        <li>$\Delta$（デルタ）は「変化した量」。$\red{\Delta t}=t_2-t_1$（かかった時間）、$\red{\Delta x}=x(t_2)-x(t_1)$（進んだ距離）。$x(t)$ は「$t$ 秒後の位置」。</li>
+        <li>一般の関数 $y=f(x)$ では、$x$ が $a$ から $b$ まで変わるときの $\dfrac{f(b)-f(a)}{b-a}$ を<b>平均変化率</b>という。</li>
+        <li>例：$x=2t^2$ の 1 秒から 3 秒までは $\dfrac{18-2}{3-1}=8$ m/秒。</li>
+      </ul>
+      <p class="key-note">m/秒を km/時に直すには $3.6$ 倍する（1 時間 $=3600$ 秒、1 km $=1000$ m なので $\times\frac{3600}{1000}$）。8 m/秒 $=28.8$ km/時。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>時間の幅を小さくする：割線から接線へ</h2>
+
+    <p>
+      では、ちょうど $t=2$ 秒の<b>瞬間</b>の速さは何 m/秒でしょう。
+      $t=2$ 秒から $\red{\Delta t}$ 秒後までの平均の速さを、$\red{\Delta t}$ を $1,\ 0.1,\ 0.01,\ \dots$ と小さくしながら計算してみます。
+      例えば $\red{\Delta t}=0.1$ なら、$2.1$ 秒の位置は $2\times2.1^2=8.82$ m なので、$\red{\Delta x}=8.82-8=0.82$、平均の速さは $\dfrac{0.82}{0.1}=8.2$ m/秒です。
+    </p>
+
+    <div class="widget" id="w-shrink">
+      <div class="widget-head">時間の幅 $\red{\Delta t}$ を小さくする <span class="hint">$\Delta t$ のボタン／「小さくしていく」／$t_0$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 小さくしていく</button><span class="chips" data-r="chips"></span></div></div>
+      <div class="stage"><canvas aria-label="割線が接線に近づいていく様子"></canvas></div>
+      <div class="ratio-table-wrap" data-r="table"></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">平均の速さ</span><span class="tex" data-r="avg"></span></div>
+          <div class="row"><span class="k">瞬間の速さ<br>（接線の傾き）</span><span class="tex big" data-r="inst"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $\red{\Delta t}$ を小さくすると、平均の速さは $10,\ 9,\ 8.2,\ 8.02,\ 8.002,\ \dots$ と、$8$ にどんどん近づきます。
+      そこで、$t=2$ 秒の<b>瞬間の速さは 8 m/秒</b>（時速 28.8 km）と決めます。スピードメーターが指しているのは、この数です。
+    </p>
+    <p>
+      グラフでは、$\red{\Delta t}$ を小さくすると点 B が点 A に近づき、<span class="t-red">割線</span>は点 A で曲線にふれる直線に近づいていきます。この直線を、点 A での<span class="t-teal">接線</span>といいます。
+      つまり、瞬間の速さは<b>接線の傾き</b>です。$t_0$ を動かすと、$t_0=1$ では $4$、$t_0=3$ では $12$ のように、瞬間の速さは時刻によって変わります（いつも $4t_0$ になっています。理由は 4.2節で）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜瞬間の速さは接線の傾き</div>
+      <p class="key-lead key-big">時間の幅 $\Delta t$ を $0$ に近づけたときの平均の速さが、瞬間の速さ</p>
+      $$\text{瞬間の速さ}=\teal{\text{接線の傾き}}\approx\frac{\red{\Delta x}}{\red{\Delta t}}$$
+      <p class="note-small" style="text-align:center">（$\approx$ は「$\red{\Delta t}$ がとても小さいとき、ほぼ等しい」）</p>
+      <ul>
+        <li>$\Delta t$ をぴったり $0$ にはしない（$0\div0$ になる）。$0$ にどんどん近づけたとき、平均の速さが近づいていく数を見る。</li>
+        <li>グラフでは、点 B が点 A に近づくと割線が<span class="t-teal">接線</span>（点 A で曲線にふれる直線）に近づく。</li>
+        <li>例：$x=2t^2$ の $t=2$ 秒の瞬間の速さは $8$ m/秒（表：$10,\ 9,\ 8.2,\ 8.02,\ 8.002\ \to 8$）。</li>
+      </ul>
+      <p class="key-note">「どんどん近づけたときの行き先」を<b>極限</b>といい、記号 $\lim$ で書く。式で計算する方法は <a href="4-2.html">4.2節</a>。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>虫めがねで曲線を拡大する</h2>
+
+    <p>
+      なぜ、割線は「まっすぐな」接線に近づくのでしょう。地球は丸いのに、足もとの地面は平らに見えます。
+      それと同じように、なめらかな曲線も、1 点のまわりを<b>拡大していくと、まっすぐな線に見えてきます</b>。
+      下の図の左は曲線全体と虫めがねの範囲、右はその範囲を拡大した図です。倍率を上げてみましょう。
+    </p>
+
+    <div class="widget" id="w-mag">
+      <div class="widget-head">虫めがねで拡大する <span class="hint">曲線を選ぶ／点 P をドラッグ／倍率を上げる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="chips" data-r="chips"></span><button class="btn primary" type="button" data-r="play">▶ 拡大していく</button></div></div>
+      <div class="duo">
+        <div class="stage"><canvas aria-label="曲線全体と、虫めがねの範囲"></canvas></div>
+        <div class="stage"><canvas aria-label="虫めがねで拡大した図"></canvas></div>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">倍率</span><span class="tex" data-r="zoom"></span></div>
+          <div class="row"><span class="k">拡大図の傾き</span><span class="tex" data-r="slope"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex" data-r="tan"></span></div>
+          <div class="row"><span class="k">見た目のずれ</span><span class="tex" data-r="dev"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <ul>
+      <li>「拡大図の傾き」は、点 P から拡大図の右のはしまでの割線の傾き（$w$ は点 P から右のはしまでの横の幅）。倍率を上げると、<span class="t-teal">接線の傾き</span>に近づく。</li>
+      <li>「見た目のずれ」は、拡大図の中で曲線が接線（緑の点線）からいちばん離れている長さ（画面の点の数）。1 より小さくなると、画面ではまっすぐな線と区別できない。</li>
+      <li>$y=\sin x$ の $x=0$ では、拡大すると傾き $1$ の直線 $y=x$ に見える。<a href="../trig/3-2.html">3.2節</a>の $\sin x\approx x$（ラジアン）のことです。</li>
+      <li>$y=|x|$ の $x=0$ は「角」なので、何倍に拡大しても角のままで、まっすぐになりません。ここでは接線が引けません。</li>
+    </ul>
+
+    <div class="key"><div class="key-ttl">覚える｜曲線は拡大するとまっすぐに見える</div>
+      <p class="key-lead key-big">なめらかな曲線は、1点のまわりを拡大すると直線に見え、その直線が接線</p>
+      <ul>
+        <li>拡大した図の傾き ＝ <span class="t-teal">接線の傾き</span> ＝ その点での瞬間の変化の速さ。</li>
+        <li>例：$y=x^2$ の $x=1$ では傾き $2$、$y=\sin x$ の $x=0$ では傾き $1$。</li>
+        <li>$y=|x|$ の $x=0$ のような角は、拡大しても角のまま。接線は引けない。</li>
+      </ul>
+      <p class="key-note">「拡大すると直線」だから、曲線の計算をその点の近くでは直線（接線）の計算でおきかえられる（4.7節の近似）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>自分の指の動きを微分する</h2>
+
+    <p>
+      今度は、あなたの指（PC ならマウス）の動きの速さを計算してみましょう。
+      左の縦長の板に指を置いて（マウスならボタンを押したまま）、上下にゆっくり・速くと動かしてください。<b>4 秒間</b>の位置が記録され、上のグラフになります。
+      下のグラフは、その位置から $\dfrac{\red{\Delta x}}{\red{\Delta t}}$ で計算した速さです（上向きがプラス、下向きがマイナス）。
+      うまく動かせないときは「お手本の動き」を押してください。
+    </p>
+
+    <div class="widget" id="w-finger">
+      <div class="widget-head">指の動きの位置と速さ <span class="hint">左の板を上下になぞる（4 秒間）／$\Delta t$ を変える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn" type="button" data-r="demo">お手本の動き</button><button class="btn" type="button" data-r="clear">消す</button><span class="finger-msg" data-r="msg"></span></div></div>
+      <div class="finger-grid">
+        <canvas class="finger-pad" aria-label="ここを指でなぞる（上下）"></canvas>
+        <div class="stage"><canvas aria-label="指の位置のグラフ"></canvas></div>
+      </div>
+      <div class="stage"><canvas aria-label="指の速さのグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">記録</span><span class="tex" data-r="n"></span></div>
+          <div class="row"><span class="k">速さの計算</span><span class="tex" data-r="dt"></span></div>
+          <div class="row"><span class="k">最も速いとき</span><span class="tex" data-r="vmax"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $\red{\Delta t}$ をいちばん小さく（約 $\frac{1}{60}$ 秒）すると、速さのグラフはギザギザになります。これを<b>ノイズ</b>といいます。
+      画面は 1 秒に約 60 回しか指の位置を読まず、位置も画面の点の単位でしか測れないうえ、指も少しふるえます。
+      その小さな誤差を、小さな $\red{\Delta t}$ で割ると、大きな誤差になってしまうのです。
+      $\red{\Delta t}$ を大きくすると、グラフはなめらかになりますが、急な動きはぼやけます。
+    </p>
+    <div class="callout point">
+      <div class="ttl">数学の世界と、測った値</div>
+      <p>
+        (3) のように式 $x=2t^2$ がわかっていれば、$\Delta t$ をいくらでも小さくして、正確な瞬間の速さに近づけます。
+        でも、センサーで測った値には必ず誤差があるので、$\Delta t$ を小さくしすぎると逆に不正確になります。
+        スマホの歩数計や車の速度計は、ほどよい幅で平均をとったり、何回か測った値をならしたりして、なめらかな速さを出しています。
+      </p>
+    </div>
+
+    <div class="callout try">
+      <div class="ttl">小話：マリオの重力</div>
+      <p>
+        ゲームのキャラクターのジャンプは、現実よりキビキビしていることが多いです。重力がどのくらい強いのか、ジャンプの<b>高さ $H$</b> と<b>滞空時間 $T$</b>（跳んでから着地するまで）から計算してみましょう。
+      </p>
+      <p>
+        最高点では縦の速さが $0$ になり（<a href="../polynomial/1-3.html">1.3節</a>）、そこから $\frac{T}{2}$ 秒かけて $H$ だけ落ちてきます。
+        止まった状態から $t$ 秒で落ちる距離は $\frac12gt^2$（地球では $g\approx9.8$ なので、およそ $5t^2$）なので
+      </p>
+      <div class="eq-box">$$H=\frac12\,g\left(\frac{T}{2}\right)^2=\frac{gT^2}{8}$$ $$\text{よって}\quad g=\frac{8H}{T^2}$$</div>
+      <p>
+        例えば、高さ $4$ m・滞空時間 $0.8$ 秒なら $g=\frac{8\times4}{0.8^2}=50$ m/秒²で、地球の約 5 倍です（数値は例です）。
+        動画を 1 コマずつ止めて、キャラの身長を目安に高さを、コマ数から時間を測ってみましょう。
+      </p>
+    </div>
+    <div class="widget" id="w-mario">
+      <div class="widget-head">重力の計算機 <span class="hint">高さ $H$ と滞空時間 $T$ を入れる</span></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">重力加速度</span><span class="tex big" data-r="g"></span></div>
+          <div class="row"><span class="k">地球とくらべる</span><span class="tex" data-r="ratio"></span></div>
+          <div class="row"><span class="k">着地の速さ</span><span class="tex" data-r="v"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>平均の速さ</th><td>$\dfrac{\Delta x}{\Delta t}=\dfrac{x(t_2)-x(t_1)}{t_2-t_1}$ ＝ グラフの2点を結ぶ割線の傾き</td></tr>
+        <tr><th>平均変化率</th><td>$y=f(x)$ で $x$ が $a$ から $b$ まで変わるとき $\dfrac{f(b)-f(a)}{b-a}$</td></tr>
+        <tr><th>瞬間の速さ</th><td>$\Delta t$ を $0$ に近づけたときの平均の速さの行き先 ＝ 接線の傾き</td></tr>
+        <tr><th>例</th><td>$x=2t^2$ の $t=2$ で $8$ m/秒（$\Delta t=0.1,\ 0.01,\ 0.001$ で $8.2,\ 8.02,\ 8.002$）</td></tr>
+        <tr><th>拡大</th><td>なめらかな曲線は拡大すると直線に見え、その傾きが接線の傾き。角（$y=|x|$ の $x=0$）は例外</td></tr>
+        <tr><th>単位</th><td>m/秒 $\times3.6$ ＝ km/時</td></tr>
+        <tr><th>測った値</th><td>誤差があるので、$\Delta t$ を小さくしすぎると速さがギザギザ（ノイズ）になる</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：接線を当てろ</h2>
+
+    <p>
+      曲線の上の点 $\mathrm{P}$ を通る直線の傾き $\violet{m}$ をスライダーで決めて、<span class="t-teal">接線</span>にぴったり重ねましょう。
+      接線は、点 $\mathrm{P}$ のまわりで曲線に沿い、点のすぐ近くでは曲線を横切りません。「拡大して見る」をオンにすると、(4) の虫めがねで点のまわりを見られます。
+      傾きのずれが $0.1$ 以内なら成功です。3回まで決定でき、<b>1回目で成功すると★3</b>。
+    </p>
+    <div class="widget" id="w-game-tangent">
+      <div class="widget-head">接線を当てろ <span class="game-total" data-r="total"></span><span class="hint">傾き $m$ を決めて「決定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="接線を当てろ：曲線と点 P と、傾き m の直線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>関数 $f(x)=x^2$ について、$x$ が次のように変わるときの平均変化率を求めよ。　(1) $1$ から $3$　(2) $1$ から $1.1$　(3) $1$ から $1.01$</li>
+      <li>静かに落としたボールが $t$ 秒間に落ちる距離は $x=5t^2$（m）である。　(1) $t=1$ から $t=2$ までの平均の速さを求めよ。　(2) $t=1$ から $t=1.1$ までの平均の速さを求めよ。　(3) $t=1$ 秒の瞬間の速さは何 m/秒と考えられるか。</li>
+      <li>下のグラフは、ある人が歩いたときの時刻 $t$（秒）と位置 $x$（m）である。　(1) 区間 $\mathrm{A}$（0〜2 秒）、$\mathrm{B}$（2〜4 秒）、$\mathrm{C}$（4〜6 秒）の速さをそれぞれ求めよ。　(2) 0 秒から 6 秒までの平均の速さを求めよ。
+        <div class="widget quiz-fig" id="w-qgraph"><div class="stage"><canvas aria-label="歩いた人の位置のグラフ（折れ線）"></canvas></div></div>
+      </li>
+      <li>関数 $f(x)=x^2-4x$ について、$x$ が次のように変わるときの平均変化率を求めよ。　(1) $0$ から $1$　(2) $0$ から $4$　(3) (2) の答えから、グラフについてどんなことがわかるか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(1) $\dfrac{f(3)-f(1)}{3-1}=\dfrac{9-1}{2}=4$<br>
+          (2) $\dfrac{f(1.1)-f(1)}{1.1-1}=\dfrac{1.21-1}{0.1}$<br>$=\dfrac{0.21}{0.1}=2.1$<br>
+          (3) $\dfrac{f(1.01)-f(1)}{1.01-1}$<br>$=\dfrac{1.0201-1}{0.01}=2.01$（幅を小さくすると $2$ に近づく。$x=1$ での接線の傾きは $2$）</li>
+        <li>(1) $\dfrac{5\cdot2^2-5\cdot1^2}{2-1}=\dfrac{20-5}{1}=15$ m/秒<br>
+          (2) $5\times1.1^2=6.05$ なので $\dfrac{6.05-5}{0.1}=\dfrac{1.05}{0.1}=10.5$ m/秒<br>
+          (3) $t=1$ から $1.01$ では $\dfrac{5.1005-5}{0.01}=10.05$。幅を小さくすると $10.5,\ 10.05,\ \dots$ と $10$ に近づくので、約 $10$ m/秒</li>
+        <li>(1) $\mathrm{A}$：$\dfrac{4-0}{2-0}=2$ m/秒、$\mathrm{B}$：$\dfrac{4-4}{4-2}=0$ m/秒（止まっている）、$\mathrm{C}$：$\dfrac{10-4}{6-4}=3$ m/秒<br>
+          （グラフが直線の区間では、どこでも速さが同じで、直線の傾きが速さ。水平な区間は止まっている）<br>
+          (2) $\dfrac{10-0}{6-0}=\dfrac{10}{6}=\dfrac53\approx1.67$ m/秒</li>
+        <li>(1) $f(0)=0$、$f(1)=1-4=-3$ なので $\dfrac{-3-0}{1-0}=-3$<br>
+          (2) $f(4)=16-16=0$ なので $\dfrac{0-0}{4-0}=0$<br>
+          (3) 平均変化率が $0$ なので、$x=0$ と $x=4$ でグラフの高さが同じ（割線が水平）。途中で下がってから上がっている（放物線の頂点は $x=2$）。平均が $0$ でも、途中の変化が $0$ とは限らない</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="index.html"><span class="dir">← 第4章の目次</span><span class="nm">微分</span></a>
+    <a class="next" href="4-2.html"><span class="dir">次の節 →</span><span class="nm">4.2 微分の定義と導関数</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-1.js?v=202611031018"></script>
+</body>
+</html>

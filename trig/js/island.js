@@ -206,8 +206,8 @@
     { name: '見張り塔', mode: 'angle', btn: '🔥 発射', ans: Math.atan2(TOWER_H, -4), tol: 1.2 * DEG,
       skills: ['3.1 三角比（tan で高さ）', '3.7 atan2（向きから角度）'],
       text: '敵の見張り塔のてっぺんの旗を撃て。偵察兵が塔から $3$ 離れた所で、てっぺんを見上げる角 $60^\\circ$ を測った。砲台（原点）から塔までは $4$。砲台を何度に向ける？（小数第1位まで）',
-      hint: 'まず塔の高さ $h=3\\tan60^\\circ$。次に、砲台から旗への向きは $(-4,\\ h)$。左上（第2象限）なので $\\arctan$ の答えをそのまま使うと反対向きになる。',
-      answer: '<b>約 $127.6^\\circ$</b>（$\\approx2.227$ ラジアン）<br>高さ $h=3\\tan60^\\circ=3\\sqrt3\\approx5.20$。砲台から旗への向きは $(-4,\\ 3\\sqrt3)$。<br>$\\arctan\\dfrac{3\\sqrt3}{4}\\approx52.4^\\circ$。旗は左上（第2象限）なので<br>$\\theta=\\mathrm{atan2}(3\\sqrt3,\\ -4)$<br>$=180^\\circ-52.4^\\circ=127.6^\\circ$。' },
+      hint: 'まず塔の高さ $h=3\\tan60^\\circ$。次に、砲台から旗への向きは $(-4,\\ h)$。左上（第2象限）なので $\\tan^{-1}$ の答えをそのまま使うと反対向きになる。',
+      answer: '<b>約 $127.6^\\circ$</b>（$\\approx2.227$ ラジアン）<br>高さ $h=3\\tan60^\\circ=3\\sqrt3\\approx5.20$。砲台から旗への向きは $(-4,\\ 3\\sqrt3)$。<br>$\\tan^{-1}\\dfrac{3\\sqrt3}{4}\\approx52.4^\\circ$。旗は左上（第2象限）なので<br>$\\theta=\\mathrm{atan2}(3\\sqrt3,\\ -4)$<br>$=180^\\circ-52.4^\\circ=127.6^\\circ$。' },
     { name: '霧の中の3隻', mode: 'angle', btn: '🔥 3方向に発射', ans: 75 * DEG, tol: 1.2 * DEG, sym: 120 * DEG,
       skills: ['3.5 加法定理', '3.5 弾幕（回転）', '3.3 単位円'],
       text: '霧で船が見えない！ レーダーによると、船の1隻は $(\\sqrt6-\\sqrt2,\\ \\sqrt6+\\sqrt2)$ にいて、3隻は島を中心に $120^\\circ$ ずつ回った位置にいる。$120^\\circ$ ずつ開いた3方向の弾幕を、何度に向ければ3隻とも当たる？',
@@ -345,7 +345,7 @@
         const tg = s.ship ? shipPos(SHIP.tf) : TOWER;
         if (Math.abs(d) <= s.tol) return finish(true, s.ship ? '💥 海賊船に命中！' : '💥 旗に命中！', tg[0], tg[1]);
         let m;
-        if (Math.abs(T.wrapPi(d - PI)) <= 4 * DEG) m = '反対向き！ $\\arctan\\frac{y}{x}$ の答えをそのまま使っていない？ 的のある象限を確かめよう。';
+        if (Math.abs(T.wrapPi(d - PI)) <= 4 * DEG) m = '反対向き！ $\\tan^{-1}\\frac{y}{x}$ の答えをそのまま使っていない？ 的のある象限を確かめよう。';
         else m = 'はずれ。' + (d > 0 ? '時計回り' : '反時計回り') + 'にあと約 ' + num(Math.abs(d) / DEG, 0) + '° 回すと当たる。';
         return finish(false, m, 0, 0);
       }

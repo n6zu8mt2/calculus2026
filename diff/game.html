@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>微分の山脈 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 ミニゲーム「微分の山脈」：各節のチャレンジの★を集め、総合ステージ「山脈を越えろ」で章のバッジをとろう">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch1 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M4 54 L22 22 L30 34 L40 14 L60 54 Z" fill="currentColor" opacity=".4"/><path d="M33 9 L48 20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="14" r="4" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ ミニゲーム</div>
+      <h1>微分の山脈</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この山脈の遊び方</div>
+    <ol>
+      <li>地図の場所をクリックすると、その節のチャレンジに行けます。取った★は地図に記録されます。</li>
+      <li>最後に、いくつもの節の道具を組み合わせる総合ステージ「山脈を越えろ」に挑戦します。</li>
+      <li>全部の節のチャレンジで★を1つ以上取り、総合ステージをクリアすると、章のバッジ「微分マスター」がもらえます。</li>
+    </ol>
+    <div class="goal-meta">チャレンジ 8か所 ・ 総合ステージ 5ステージ ・ ★の記録はこのブラウザの中だけに保存されます</div>
+  </div>
+
+  <section class="sec first" id="map">
+    <h2 class="h-sub"><span class="tag">地図</span>山脈の地図と★</h2>
+
+    <div class="isl-meter" id="mt-meter">
+      <div class="isl-meter-top"><span class="isl-meter-k">各節のチャレンジで集めた★</span><span class="isl-meter-v" data-r="total">★ 0 / 120</span></div>
+      <div class="isl-bar" aria-hidden="true"><i data-r="bar"></i></div>
+    </div>
+
+    <div class="isl-map" id="mt-map">
+      <svg viewBox="0 0 600 380" role="img" aria-label="微分の山脈の地図">
+        <rect class="mt-sky" x="0" y="0" width="600" height="380" rx="14"/>
+        <path class="mt-far" d="M0 250 L70 170 L140 214 L230 120 L314 44 L400 120 L470 150 L530 120 L600 190 L600 380 L0 380 Z"/>
+        <path class="mt-near" d="M0 330 C 40 300, 80 214, 120 210 C 160 206, 170 262, 196 262 C 226 262, 232 168, 260 160 C 290 152, 296 72, 314 72 C 334 72, 350 150, 372 154 C 396 158, 404 250, 424 250 C 446 250, 460 190, 482 190 C 508 190, 520 300, 548 310 C 570 318, 590 330, 600 334 L600 380 L0 380 Z"/>
+        <path class="mt-snow" d="M300 92 L314 72 L328 92 L320 88 L314 96 L307 88 Z"/>
+        <path class="mt-tan" d="M250 72 L378 72"/>
+        <path class="isl-route" d="M60 300 L120 196 L196 248 L250 150 L314 62 L372 140 L424 236 L482 176 L548 296"/>
+        <g class="mt-cloud"><ellipse cx="90" cy="70" rx="34" ry="12"/><ellipse cx="110" cy="62" rx="22" ry="12"/><ellipse cx="500" cy="60" rx="30" ry="11"/><ellipse cx="482" cy="54" rx="18" ry="10"/></g>
+      </svg>
+      <div class="isl-pins" data-r="pins"></div>
+    </div>
+
+    <div class="isl-spots" id="mt-spots"></div>
+  </section>
+
+  <section class="sec" id="final">
+    <h2 class="h-sub"><span class="tag">総合</span>総合ステージ：山脈を越えろ</h2>
+
+    <p>
+      山脈の5つの難所を越えていきます。どのステージも、<b>2つ以上の節の道具</b>を組み合わせないと解けません。
+      紙と電卓で計算してから、答えの数を入力しましょう（<code>-3/4</code> のような分数も入れられます）。3回まで挑戦できて、<b>1回目で正解すると★3</b>です。
+    </p>
+
+    <div class="widget" id="w-game-range">
+      <div class="widget-head">山脈を越えろ <span class="game-total" data-r="total"></span><span class="hint">計算してから入力</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="isl-skills" data-r="skills"></div>
+      <div class="stage"><canvas aria-label="山脈を越えろ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="badge">
+    <h2 class="h-sub"><span class="tag">バッジ</span>章のバッジ</h2>
+    <div class="isl-badge" data-r="badge">
+      <div class="isl-medal" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><path class="isl-ribbon" d="M30 58 L18 94 L34 86 L42 98 L50 66 Z M70 58 L82 94 L66 86 L58 98 L50 66 Z"/><circle class="isl-disc" cx="50" cy="42" r="32"/><circle class="isl-disc-in" cx="50" cy="42" r="24"/><path class="isl-wave" d="M30 54 Q 50 14, 70 54"/><path class="isl-wave" d="M36 30 L64 30"/><circle class="isl-dot" cx="50" cy="30" r="4"/></svg>
+      </div>
+      <div class="isl-badge-body">
+        <div class="isl-badge-ttl" data-r="bttl">微分マスター</div>
+        <div class="isl-badge-st" data-r="bst">まだです</div>
+        <ul class="isl-check" data-r="blist"></ul>
+      </div>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="移動">
+    <a class="prev" href="4-10.html"><span class="dir">← 前の節</span><span class="nm">4.10 誤差逆伝播法</span></a>
+    <a class="next" href="index.html"><span class="dir">第4章の目次 →</span><span class="nm">微分</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/game.js?v=202611031018"></script>
+</body>
+</html>

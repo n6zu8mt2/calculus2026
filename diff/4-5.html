@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.5 増減と極値 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.5節：増減表・極大と極小・最適化・缶の形">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch5 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html" class="active" aria-current="page"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.5節</div>
+      <h1><span class="chap-no">4.5</span>増減と極値：最大・最小を見つける</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>$f'(x)$ の符号から、関数の増加・減少を説明できる。</li>
+      <li>増減表を作り、極大・極小を求められる。</li>
+      <li>最大・最小を求める問題（最適化）を、微分を使って解ける。</li>
+    </ol>
+    <div class="goal-meta">図 5つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-2.html">4.2節</a>〜<a href="4-4.html">4.4節</a>の 微分、<a href="../polynomial/1-2.html">1.2節</a>の 頂点、<a href="../polynomial/1-3.html">1.3節</a>の ボールの最高点、<a href="../trig/3-6.html">3.6節</a>の 合成</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      ジュースの缶は、同じ量が入るなら、材料（アルミの板）が少ないほど安く作れます。では、<b>いちばん材料が少ない缶</b>は、太くて低い形でしょうか、細くて高い形でしょうか。
+      こうした「いちばん○○になるのはどこ？」という問題を<b>最適化</b>といいます。
+      この節では、4.2節の「$f'(x)$ ＝ 接線の傾き」を使って、グラフの<b>山の頂上と谷の底</b>を見つける方法を学び、最後に缶の形の答えを出します。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>傾きの符号と増減</h2>
+
+    <p>
+      4.2節で見たように、グラフが<b>上り坂</b>（右上がり）のところでは接線の傾きがプラス、<b>下り坂</b>のところではマイナスでした。
+      これを逆に使うと、$f'(x)$ の<b>符号</b>（プラスかマイナスか）を調べるだけで、グラフが上っているか下っているかがわかります。
+    </p>
+    <ul>
+      <li>$\amber{f'(x)\gt0}$ のところでは、$x$ を増やすと $\blue{f(x)}$ も増える。これを「$f(x)$ は<b>増加</b>する」という。</li>
+      <li>$\amber{f'(x)\lt0}$ のところでは、$x$ を増やすと $\blue{f(x)}$ は減る。これを「$f(x)$ は<b>減少</b>する」という。</li>
+    </ul>
+    <p>
+      下の図で、緑の点を左から右へ動かしてみましょう。上の図の色は $\blue{f}$ の上り坂（青）と下り坂（赤）、下の図はそのときの傾き $\amber{f'(x)}$ です。
+      青の区間では $\amber{f'}$ のグラフが横軸より上、赤の区間では下にあることを確かめましょう。
+    </p>
+
+    <div class="widget" id="w-sign">
+      <div class="widget-head">傾きの符号と増減 <span class="hint">関数を選ぶ／緑の点をドラッグ／▶ で動かす</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div>
+        <div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 動かす</button></div>
+      </div>
+      <div class="stage"><span class="cap l">上：$\blue{y=f(x)}$ と接線</span><canvas aria-label="関数のグラフ。上り坂と下り坂の区間に色がついている"></canvas></div>
+      <div class="stage"><span class="cap l">下：$\amber{y=f'(x)}$（傾き）</span><canvas aria-label="導関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">傾き</span><span class="tex big" data-r="m"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      上り坂から下り坂に変わるところ（<b>山の頂上</b>）と、下り坂から上り坂に変わるところ（<b>谷の底</b>）では、接線が水平になり $\amber{f'(x)=0}$ です。
+      $\amber{f'}$ のグラフで言えば、横軸を<b>上から下へ</b>横切るところが山、<b>下から上へ</b>横切るところが谷です。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜傾きの符号と増減</div>
+      <p class="key-lead key-big">$f'(x)$ がプラスなら上り坂、マイナスなら下り坂</p>
+      $$f'(x)\gt0\ \Rightarrow\ f(x)\ \text{は増加},\qquad f'(x)\lt0\ \Rightarrow\ f(x)\ \text{は減少}$$
+      <ul>
+        <li>山の頂上・谷の底では接線が水平で、$f'(x)=0$</li>
+        <li>山：$f'$ の符号が $+$ から $-$ に変わる。谷：$-$ から $+$ に変わる</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>増減表</h2>
+
+    <p>
+      $f'(x)$ の符号と $f(x)$ の増え方・減り方を1つの表にまとめたものを<b>増減表</b>といいます。
+      増減表があれば、グラフの形（どこで上り、どこで下り、山と谷の高さはいくつか）がひと目でわかります。
+      例として $f(x)=x^3-3x+1$ の増減表を、順番に作ってみましょう。
+    </p>
+    <ol>
+      <li><b>微分する</b>：$f'(x)=3x^2-3$ $=3(x^2-1)$ $=3(x+1)(x-1)$。かけ算の形（因数分解）にしておくと、次の 2・3 が楽になります。</li>
+      <li><b>$f'(x)=0$ を解く</b>：$3(x+1)(x-1)=0$ より $x=-1,\ 1$。この2つの $x$ で、数直線を3つの区間に区切ります。</li>
+      <li><b>区間ごとに $f'(x)$ の符号を調べる</b>：区間から1つ数を選んで入れればわかります。例えば $f'(-2)=9\gt0$、$f'(0)=-3\lt0$、$f'(2)=9\gt0$。</li>
+      <li><b>矢印を書く</b>：$f'\gt0$ の区間は $\nearrow$（増加）、$f'\lt0$ の区間は $\searrow$（減少）。</li>
+      <li><b>山と谷の高さを計算する</b>：$f(-1)=-1+3+1=3$、$f(1)=1-3+1=-1$。$\nearrow$ から $\searrow$ に変わる $x=-1$ が山、$\searrow$ から $\nearrow$ に変わる $x=1$ が谷です。</li>
+    </ol>
+    <div class="table-wrap d45-zt-wrap"><table class="d45-zt">
+      <tbody>
+        <tr><th>$x$</th><td>$\cdots$</td><td>$-1$</td><td>$\cdots$</td><td>$1$</td><td>$\cdots$</td></tr>
+        <tr><th>$f'(x)$</th><td>$+$</td><td>$0$</td><td>$-$</td><td>$0$</td><td>$+$</td></tr>
+        <tr><th>$f(x)$</th><td>$\nearrow$</td><td><span class="zt-tag">極大</span>$3$</td><td>$\searrow$</td><td><span class="zt-tag">極小</span>$-1$</td><td>$\nearrow$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      下の図で「次へ」を押すと、この 1〜5 の手順が1つずつ進み、表とグラフが同時にできあがっていきます。ほかの関数を選んだり、「自分で作る」で3次関数の係数を変えたりして、増減表を作る練習をしましょう。
+      緑の点を動かすと、いまいる区間の列が表の上で光ります（表の列をクリックしても動きます）。
+    </p>
+
+    <div class="widget" id="w-table">
+      <div class="widget-head">増減表とグラフ <span class="hint">関数を選ぶ／「次へ」で手順を進める／緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div>
+        <div class="d45-coef" data-r="coef" hidden></div>
+        <div class="btn-row">
+          <button class="btn" type="button" data-r="prev">← 前へ</button>
+          <button class="btn primary" type="button" data-r="next">次へ →</button>
+          <button class="btn" type="button" data-r="all">全部見る</button>
+          <span class="lbl-sm" data-r="stepno"></span>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="関数のグラフ。増減表の手順にあわせて印がつく"></canvas></div>
+      <div class="d45-steps" data-r="steps"></div>
+      <div class="table-wrap d45-zt-wrap"><table class="d45-zt live" data-r="table"></table></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">関数</span><span class="tex big" data-r="f"></span></div>
+          <div class="row"><span class="k">この点</span><span class="tex" data-r="pt"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜増減表とグラフ</div>
+      <p class="key-lead key-big">$f'(x)=0$ で区切って、区間ごとに $f'$ の符号を調べる</p>
+      <ol>
+        <li>$f'(x)$ を計算し、$f'(x)=0$ となる $x$ を求める（因数分解しておくと楽）</li>
+        <li>その $x$ で区切って<b>増減表</b>を作る。$f'(x)\gt0$ の区間では<b>増加</b>（$\nearrow$）、$f'(x)\lt0$ の区間では<b>減少</b>（$\searrow$）</li>
+        <li>増加から減少に変わる点が<b>極大</b>、減少から増加に変わる点が<b>極小</b>。その値（<b>極大値・極小値</b>）や $y$ 軸との交点を計算してグラフを描く</li>
+      </ol>
+      <p class="key-note">極大値と極小値をまとめて<b>極値</b>という。「極」は「その近くでいちばん」という意味。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>極大・極小と最大・最小</h2>
+
+    <h3 class="h-mini">f'(x) = 0 でも山や谷とは限らない</h3>
+    <p>
+      山の頂上や谷の底では必ず $f'(x)=0$ ですが、逆に「$f'(x)=0$ なら山か谷」とは<b>限りません</b>。
+      例えば $f(x)=x^3$ は $f'(x)=3x^2$ なので $f'(0)=0$ ですが、$x=0$ の前後でずっと $f'\geqq0$（上り坂）です。
+      グラフは $x=0$ で一瞬だけ水平になり、そのまま上り続けます（上の図の「$x^3$」や「$x^4-4x^3$」で確かめられます）。
+    </p>
+    <div class="table-wrap d45-zt-wrap"><table class="d45-zt">
+      <tbody>
+        <tr><th>$x$</th><td>$\cdots$</td><td>$0$</td><td>$\cdots$</td></tr>
+        <tr><th>$f'(x)$</th><td>$+$</td><td>$0$</td><td>$+$</td></tr>
+        <tr><th>$f(x)$</th><td>$\nearrow$</td><td>$0$</td><td>$\nearrow$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      だから増減表で<b>前後の符号が変わるかどうか</b>を確かめることが大切です。符号が変わらなければ、極大でも極小でもありません。
+    </p>
+
+    <h3 class="h-mini">範囲があるときの最大・最小</h3>
+    <p>
+      「極大」は<b>その近くで</b>いちばん高い点で、グラフ全体でいちばん高いとは限りません。
+      $x$ の範囲 $a\leqq x\leqq b$ が決まっているときの<b>最大値・最小値</b>は、次の候補をくらべて決めます。
+    </p>
+    <ul>
+      <li>範囲の中にある<b>極大値・極小値</b></li>
+      <li>範囲の<b>両端</b>の値 $f(a),\ f(b)$</li>
+    </ul>
+    <p>下の図で、範囲の両端（赤い点）を動かして、最大・最小がどこになるか確かめましょう。端が最大・最小になることもよくあります。</p>
+
+    <div class="widget" id="w-range">
+      <div class="widget-head">範囲の中の最大・最小 <span class="hint">関数を選ぶ／赤い点（範囲の両端）をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div></div>
+      <div class="stage"><canvas aria-label="関数のグラフと、範囲の中の最大・最小"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">範囲</span><span class="tex" data-r="rg"></span></div>
+          <div class="row"><span class="k">候補</span><span class="tex" data-r="cand"></span></div>
+          <div class="row"><span class="k">結果</span><span class="tex big" data-r="res"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜最大・最小の求め方</div>
+      <p class="key-lead key-big">極値と両端の値を、全部くらべる</p>
+      <ul>
+        <li>$f'(x)=0$ でも、前後で $f'$ の符号が変わらなければ極値ではない（例：$x^3$ の $x=0$）</li>
+        <li>範囲 $a\leqq x\leqq b$ での最大・最小は、範囲の中の極値と $f(a),\ f(b)$ をくらべて決める</li>
+      </ul>
+    </div>
+
+    <h3 class="h-mini">前の章の「最大・最小」を微分で見直す</h3>
+    <ul>
+      <li><b>放物線の頂点</b>（<a href="../polynomial/1-2.html">1.2節</a>）：$f(x)=ax^2+bx+c$ なら $f'(x)=2ax+b$。$f'(x)=0$ を解くと $x=-\dfrac{b}{2a}$ で、平方完成で求めた頂点の $x$ 座標とぴったり同じです。</li>
+      <li><b>ボールの最高点</b>（<a href="../polynomial/1-3.html">1.3節</a>）：高さ $y(t)=h_0+v_y t-\frac12 gt^2$ を時刻 $t$ で微分すると $y'(t)=v_y-gt$。これは<b>縦の速さ</b>そのものです。最高点では縦の速さが $0$、つまり $y'(t)=0$ から $t=\dfrac{v_y}{g}$ が出てきます。</li>
+      <li><b>合成の最大値</b>（<a href="../trig/3-6.html">3.6節</a>）：$f(x)=a\sin x+b\cos x$ なら $f'(x)=a\cos x-b\sin x$。$f'(x)=0$ となる $x$ では $\tan x=\dfrac{a}{b}$ となり、ここで $f$ は最大値 $\sqrt{a^2+b^2}$ または最小値 $-\sqrt{a^2+b^2}$ をとります。合成 $r\sin(x+\alpha)$ で求めた値と一致します。</li>
+    </ul>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>いちばん安い缶の形</h2>
+
+    <p>
+      いよいよ最初の問題です。体積 $V=350\ \text{cm}^3$（$350\ \text{mL}$）が入る円柱の缶を、なるべく少ないアルミで作りたいとします。
+      底面の半径を $r$、高さを $h$（cm）とすると、体積が決まっているので、$r$ を決めると $h$ も決まります。
+    </p>
+    <div class="eq-box">$$V=\pi r^2 h\quad\text{より}\quad h=\frac{V}{\pi r^2}$$</div>
+    <p>
+      缶の表面積 $S$ は、ふたと底（半径 $r$ の円が2枚）と側面（広げると、たて $h$・横 $2\pi r$ の長方形）の和です。$h$ を消して、$r$ だけの式にしましょう。
+    </p>
+    <div class="eq-box">$$S(r)=\underbrace{2\pi r^2}_{\text{ふたと底}}+\underbrace{2\pi r h}_{\text{側面}}=2\pi r^2+2\pi r\cdot\frac{V}{\pi r^2}=2\pi r^2+\frac{2V}{r}$$</div>
+    <p>
+      太くするとふたと底（$2\pi r^2$）が大きくなり、細くすると背が高くなって側面（$\frac{2V}{r}$）が大きくなります。そのちょうど間に、いちばん小さくなる $r$ があるはずです。
+      下の図で $r$ を動かして、$\blue{S(r)}$ のグラフの谷の底を探しましょう。
+    </p>
+
+    <div class="widget" id="w-can">
+      <div class="widget-head">缶の形と表面積 $\blue{S(r)}$ <span class="hint">$r$ を動かす／緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">体積</span><div class="chips" data-r="vol"></div>
+          <label class="check"><input type="checkbox" data-r="parts" checked>ふたと底・側面の内訳も表示</label></div>
+      </div>
+      <div class="d45-duo">
+        <div class="stage"><canvas aria-label="円柱の缶の見取り図"></canvas></div>
+        <div class="stage"><canvas aria-label="表面積 S(r) のグラフ"></canvas></div>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">形</span><span class="tex" data-r="dim"></span></div>
+          <div class="row"><span class="k">表面積</span><span class="tex big" data-r="s"></span></div>
+          <div class="row"><span class="k">傾き</span><span class="tex" data-r="m"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>微分して、谷の底を計算で求めましょう。$\dfrac{2V}{r}=2Vr^{-1}$ と見て、$(x^n)'=nx^{n-1}$ を使います（$V$ は定数）。</p>
+    <div class="eq-box">$$S'(r)=4\pi r-\frac{2V}{r^2}=\frac{2(2\pi r^3-V)}{r^2}$$</div>
+    <p>
+      $S'(r)=0$ となるのは $2\pi r^3=V$ のときです。それより細い（$r$ が小さい）と $S'\lt0$（下り坂）、太いと $S'\gt0$（上り坂）なので、ここが谷の底＝最小です。
+      このとき高さは
+    </p>
+    <div class="eq-box">$$h=\frac{V}{\pi r^2}=\frac{2\pi r^3}{\pi r^2}=2r$$</div>
+    <p>
+      つまり、<b>高さ ＝ 直径</b>（真横から見ると正方形）の缶がいちばん材料が少ないのです。$V=350$ なら $r=\sqrt[3]{\dfrac{350}{2\pi}}\approx3.82$ cm、$h\approx7.64$ cm、$S\approx275\ \text{cm}^2$ です。
+    </p>
+    <div class="key"><div class="key-ttl">覚える｜最適化の手順</div>
+      <p class="key-lead key-big">変数を1つにして、$f'=0$ を解き、増減を確かめる</p>
+      <ol>
+        <li>いちばん大きく（小さく）したい量を、<b>1つの変数</b>の式で表す（条件を使って、ほかの文字を消す）</li>
+        <li>微分して $f'=0$ を解く</li>
+        <li>前後の $f'$ の符号（増減表）で、本当に最大（最小）か確かめる。範囲の端もくらべる</li>
+      </ol>
+      <p class="key-note">缶の例：体積が一定のとき、表面積がいちばん小さい円柱は 高さ $h$ ＝ 直径 $2r$。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">小話：本物の缶はなぜ縦長？</div>
+      <p>
+        自動販売機の $350$ mL 缶は、直径約 $6.6$ cm、高さ約 $12$ cm で、「高さ ＝ 直径」よりずっと縦長です。でも図の「実物の太さ」の点を見ると、表面積は最小の場合より数％しか増えていません。
+        谷の底の近くではグラフが平らなので、<b>少しずれても損は小さい</b>のです（これも $f'=0$ の性質です）。
+        そのうえで縦長にする理由があります。①ふたは中の圧力に耐え、開け口もつけるので、側面より<b>厚くて高い</b>。ふたの値段が側面の $k$ 倍なら、同じ計算で $h=2kr$ になり（チャレンジのステージ5）、ふたを節約するほど細長くなります。②細いほうが<b>手で持ちやすく</b>、自動販売機や箱に<b>たくさん並べやすい</b>。
+        最適化の答えは「何をいちばん大事にするか」で変わる、というよい例です。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>身の回りの最適化</h2>
+
+    <h3 class="h-mini">箱の容積をいちばん大きく</h3>
+    <p>
+      1辺 $12$ cm の正方形の紙の四すみから、1辺 $x$ cm の正方形を切り取り、折り曲げてふたのない箱を作ります。
+      底面は1辺 $12-2x$ の正方形、高さは $x$ なので、容積は
+    </p>
+    <div class="eq-box">$$V(x)=x(12-2x)^2\qquad(0\lt x\lt6)$$</div>
+    <p>
+      切り取りが小さいと箱は浅く、大きいと底がせまくなります。下の図で、容積がいちばん大きくなる $x$ を探しましょう。
+    </p>
+
+    <div class="widget" id="w-box">
+      <div class="widget-head">紙から作る箱の容積 $\blue{V(x)}$ <span class="hint">$x$ を動かす／緑の点をドラッグ</span></div>
+      <div class="d45-duo">
+        <div class="stage"><canvas aria-label="四すみを切り取った紙と、組み立てた箱"></canvas></div>
+        <div class="stage"><canvas aria-label="容積 V(x) のグラフ"></canvas></div>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">箱</span><span class="tex" data-r="dim"></span></div>
+          <div class="row"><span class="k">容積</span><span class="tex big" data-r="v"></span></div>
+          <div class="row"><span class="k">傾き</span><span class="tex" data-r="m"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>展開してから微分すると</p>
+    <div class="eq-box">$$\begin{aligned}V(x)&=x(144-48x+4x^2)=4x^3-48x^2+144x\\ V'(x)&=12x^2-96x+144=12(x^2-8x+12)=12(x-2)(x-6)\end{aligned}$$</div>
+    <p>$0\lt x\lt6$ で $V'(x)=0$ となるのは $x=2$ だけです。増減表は</p>
+    <div class="table-wrap d45-zt-wrap"><table class="d45-zt">
+      <tbody>
+        <tr><th>$x$</th><td>$0$</td><td>$\cdots$</td><td>$2$</td><td>$\cdots$</td><td>$6$</td></tr>
+        <tr><th>$V'(x)$</th><td></td><td>$+$</td><td>$0$</td><td>$-$</td><td></td></tr>
+        <tr><th>$V(x)$</th><td>$(0)$</td><td>$\nearrow$</td><td><span class="zt-tag">極大</span>$128$</td><td>$\searrow$</td><td>$(0)$</td></tr>
+      </tbody>
+    </table></div>
+    <p>となり、$x=2$ cm で容積は最大 $V(2)=2\times8^2=128\ \text{cm}^3$ です。両端（$x\to0$、$x\to6$）では容積は $0$ に近づくので、極大値がそのまま最大値です。</p>
+
+    <h3 class="h-mini">投げる角度と走り幅跳び</h3>
+    <p>
+      <a href="../polynomial/1-3.html">1.3節</a>で、地面から速さ $v_0$、角度 $\theta$ で投げたボールの飛距離は $\dfrac{2v_xv_y}{g}=\dfrac{2v_0^2\sin\theta\cos\theta}{g}$ でした。
+      <a href="../trig/3-5.html">3.5節</a>の倍角の公式 $2\sin\theta\cos\theta=\sin2\theta$ でまとめて $\dfrac{v_0^2\sin2\theta}{g}$ とし、$\theta$ で微分すると、4.3節の規則 $(f(\omega t))'=\omega f'(\omega t)$ から
+    </p>
+    <div class="eq-box">$$\left(\frac{v_0^2\sin2\theta}{g}\right)'=\frac{2v_0^2\cos2\theta}{g}=0\quad\text{より}\quad 2\theta=90^\circ,\quad \theta=45^\circ$$</div>
+    <p>
+      となり、1.3節の「$45^\circ$ がいちばん遠くへ飛ぶ」が計算で確かめられます（空気の抵抗がないとき）。
+      ところが走り幅跳びの選手は、$20^\circ$ くらいの低い角度で踏み切ります。人は助走の速さを保ったまま高く跳び上がることができず、角度を大きくすると $v_0$ が小さくなってしまうからです。
+      「$v_0$ も角度で変わる」と式を作り直すと、最適な角度は $45^\circ$ よりずっと小さくなります。何が変数とつながっているかで、答えが変わるのです。
+    </p>
+
+    <h3 class="h-mini">イージングの条件（1.4節）</h3>
+    <p>
+      <a href="../polynomial/1-4.html">1.4節</a>のイージングでは「出だしの速さ $f'(0)=v_0$、終わりの速さ $f'(1)=v_1$」という条件で3次式を設計しました。
+      smoothstep $f(t)=3t^2-2t^3$ の速さは $f'(t)=6t-6t^2$ です。この速さがいちばん大きくなる瞬間を求めるには、<b>速さ $f'(t)$ をもう一度微分</b>して $0$ とおきます：$(6t-6t^2)'=6-12t=0$ より $t=\frac12$。
+      動きのちょうどまん中で最高速度 $f'(\frac12)=\frac32$ になります。最大にしたいものが「速さ」でも、同じ方法が使えます。
+    </p>
+
+    <div class="callout point">
+      <div class="ttl">小話：虹はなぜ 42° に見える？</div>
+      <p>
+        雨上がりに太陽を背にして立つと、虹は自分の影の頭の方向から約 $42^\circ$ はなれた円の上に見えます。
+        太陽の光が丸い雨粒に入り、中で1回反射して出てくるとき、光の曲がる角度は、雨粒のどこに当たるか（入る角度 $i$）で変わります。
+        曲がる角度を $i$ の関数として調べると、ある $i$ で最小になり、そこでは<b>グラフが平ら</b>（傾き $0$）です。
+        平らなところでは、少しずつちがう場所に当たった光がみんな<b>ほぼ同じ方向</b>に出てくるので、その方向だけ光が集まって明るく見えます。それが $180^\circ-138^\circ=42^\circ$ の方向です。
+        色によって水の曲げ方（屈折率）が少しちがうので、赤は約 $42^\circ$、紫は約 $40^\circ$ と分かれ、色の帯になります。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>増減</th><td>$f'(x)\gt0$ なら増加（$\nearrow$）、$f'(x)\lt0$ なら減少（$\searrow$）</td></tr>
+        <tr><th>増減表</th><td>$f'(x)=0$ を解き、その $x$ で区切って区間ごとに $f'$ の符号を調べる</td></tr>
+        <tr><th>極大・極小</th><td>$f'$ が $+\to-$ で極大、$-\to+$ で極小。$f'=0$ でも符号が変わらなければ極値ではない（$x^3$）</td></tr>
+        <tr><th>最大・最小</th><td>範囲の中の極値と、両端の値をくらべる</td></tr>
+        <tr><th>最適化</th><td>1つの変数の式にして $f'=0$ を解く。缶は $h=2r$、箱は $x=\frac{a}{6}$（1辺 $a$ の紙）、投げる角度は $45^\circ$</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：最強の缶を作れ</h2>
+
+    <p>
+      5つの最適化の問題です。スライダーで変数を決めて「判定」を押しましょう。<b>グラフは判定するまで見えません</b>。$f'=0$ を計算して、一発で当てるのが目標です。
+      はずれると、その点での接線（緑）が表示され、傾きの符号から「もっと大きく」「もっと小さく」がわかります。
+      1回目で当てれば★3、2回目なら★2、3回目なら★1（記録はこのブラウザに保存されます）。
+    </p>
+    <div class="widget" id="w-game-can">
+      <div class="widget-head">最強の缶を作れ <span class="game-total" data-r="total"></span><span class="hint">スライダーで決めて「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="d45-duo">
+        <div class="stage"><canvas aria-label="問題の図。スライダーで形が変わる"></canvas></div>
+        <div class="stage"><canvas aria-label="判定した点と接線。クリアするとグラフ全体が見える"></canvas></div>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>$y=x^3-3x+1$ の増減表を作り、グラフをかけ。</li>
+      <li>$f(x)=2x^3-3x^2+1$ とおく。<br>
+        (1) $f'(x)$ を求めよ。　(2) $f'(x)=0$ の解を求めよ。　(3) 増減表を作り、$y=f(x)$ のグラフをかけ。</li>
+      <li>$2$次関数 $f(x)=-x^2+4x+5$ について、次の問いに答えよ。<br>
+        (1) グラフの頂点の座標を、微分を使って求めよ。<br>
+        (2) グラフが $x$ 軸と交わる点の座標を求めよ。<br>
+        (3) $0\leqq x\leqq6$ での最大値・最小値と、それぞれをとる $x$ の値を求めよ。</li>
+      <li>1辺 $30$ cm の正方形の厚紙の四すみから、1辺 $x$ cm の正方形を切り取り、ふたのない箱を作る。容積 $V(x)$ を $x$ の式で表し、容積が最大になる $x$ と、そのときの容積を求めよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>$f(x)=x^3-3x+1$ とおくと<br>
+          $f'(x)=3x^2-3$<br>$=3(x^2-1)=3(x+1)(x-1)$<br>
+          $f'(x)=0$ の解は $x=-1,\ 1$。<br>
+          $f(-1)=-1+3+1=3$<br>$f(1)=1-3+1=-1$<br>
+          増減表は次のようになる。
+          <div class="table-wrap d45-zt-wrap"><table class="d45-zt">
+            <tbody>
+              <tr><th>$x$</th><td>$\cdots$</td><td>$-1$</td><td>$\cdots$</td><td>$1$</td><td>$\cdots$</td></tr>
+              <tr><th>$f'(x)$</th><td>$+$</td><td>$0$</td><td>$-$</td><td>$0$</td><td>$+$</td></tr>
+              <tr><th>$f(x)$</th><td>$\nearrow$</td><td><span class="zt-tag">極大</span>$3$</td><td>$\searrow$</td><td><span class="zt-tag">極小</span>$-1$</td><td>$\nearrow$</td></tr>
+            </tbody>
+          </table></div>
+          $x=-1$ で極大値 $3$、$x=1$ で極小値 $-1$。$y$ 軸との交点は $f(0)=1$ より $(0,\ 1)$。
+          <div class="stage quiz-fig"><canvas data-q="1" aria-label="y = x³ − 3x + 1 のグラフ"></canvas></div></li>
+        <li>(1) $f'(x)=2\cdot3x^2-3\cdot2x$<br>$=6x^2-6x=6x(x-1)$<br>
+          (2) $6x(x-1)=0$ より $x=0,\ 1$<br>
+          (3) $f(0)=1$<br>$f(1)=2-3+1=0$
+          <div class="table-wrap d45-zt-wrap"><table class="d45-zt">
+            <tbody>
+              <tr><th>$x$</th><td>$\cdots$</td><td>$0$</td><td>$\cdots$</td><td>$1$</td><td>$\cdots$</td></tr>
+              <tr><th>$f'(x)$</th><td>$+$</td><td>$0$</td><td>$-$</td><td>$0$</td><td>$+$</td></tr>
+              <tr><th>$f(x)$</th><td>$\nearrow$</td><td><span class="zt-tag">極大</span>$1$</td><td>$\searrow$</td><td><span class="zt-tag">極小</span>$0$</td><td>$\nearrow$</td></tr>
+            </tbody>
+          </table></div>
+          $x=0$ で極大値 $1$、$x=1$ で極小値 $0$（$x$ 軸に接する）。
+          <div class="stage quiz-fig"><canvas data-q="2" aria-label="y = 2x³ − 3x² + 1 のグラフ"></canvas></div></li>
+        <li>(1) $f'(x)=-2x+4$。$f'(x)=0$ より $x=2$。<br>
+          $x\lt2$ で $f'\gt0$（増加）、$x\gt2$ で $f'\lt0$（減少）なので、$x=2$ で極大（山の頂上）。<br>
+          $f(2)=-4+8+5=9$ より、頂点は $(2,\ 9)$。<br>
+          （確かめ：平方完成すると $-x^2+4x+5=-(x-2)^2+9$）<br>
+          (2) $-x^2+4x+5=0$<br>$-(x^2-4x-5)=0$<br>$-(x-5)(x+1)=0$ より $x=5,\ -1$。<br>
+          交点は $(-1,\ 0)$ と $(5,\ 0)$。<br>
+          (3) 頂点の $x=2$ は範囲 $0\leqq x\leqq6$ に入るので、候補は $f(0)=5$、$f(2)=9$、$f(6)=-36+24+5=-7$。<br>
+          よって $x=2$ で<b>最大値 $9$</b>、$x=6$ で<b>最小値 $-7$</b>。<br>
+          頂点だけでなく、範囲の端もくらべることが大切。
+          <div class="stage quiz-fig"><canvas data-q="3" aria-label="y = −x² + 4x + 5 のグラフと、0 ≦ x ≦ 6 の部分"></canvas></div></li>
+        <li>底面は1辺 $30-2x$ の正方形、高さは $x$ なので<br>
+          $V(x)=x(30-2x)^2$<br>$(0\lt x\lt15)$<br>
+          展開すると $V(x)=4x^3-120x^2+900x$<br>
+          $V'(x)=12x^2-240x+900$<br>$=12(x^2-20x+75)$<br>$=12(x-5)(x-15)$<br>
+          $0\lt x\lt15$ で $V'(x)=0$ となるのは $x=5$。$0\lt x\lt5$ で $V'\gt0$、$5\lt x\lt15$ で $V'\lt0$ なので、$x=5$ で極大かつ最大。<br>
+          $V(5)=5\times20^2=2000$<br>
+          答え：$x=5$ cm のとき、最大の容積 $2000\ \text{cm}^3$。<br>
+          （1辺 $a$ の紙なら $x=\frac{a}{6}$。本文の $a=12$ の例では $x=2$）</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-4.html"><span class="dir">← 前の節</span><span class="nm">4.4 積・商・合成関数の微分</span></a>
+    <a class="next" href="4-6.html"><span class="dir">次の節 →</span><span class="nm">4.6 逆関数の微分</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-5.js?v=202611031018"></script>
+</body>
+</html>

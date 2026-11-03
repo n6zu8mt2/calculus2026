@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.9 微分を使う | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.9節：ニュートン法・勾配降下法・数値微分">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch9 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html" class="active" aria-current="page"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.9節</div>
+      <h1><span class="chap-no">4.9</span>微分を使う：ニュートン法・勾配降下法</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>ニュートン法で方程式の解を近似できる。</li>
+      <li>勾配降下法で関数の最小値を探すしくみを説明できる。</li>
+      <li>数値微分の式と、ノイズに弱いことを説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 7つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-2.html#w-tanline">4.2節</a>の 接線の式、<a href="4-5.html">4.5節</a>の 極値、<a href="4-1.html#w-mag">4.1節</a>の「拡大するとまっすぐ」</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      ここまでの節で、微分は「接線の傾き」を求める道具だと学びました。この節では、その傾きを使って<b>計算機が答えを探す方法</b>を3つ見ていきます。
+      方程式の解を探す<b>ニュートン法</b>、AI が学習するときに使う<b>勾配降下法</b>、そして式がわからないデータから傾きを求める<b>数値微分</b>です。
+      どれも「グラフを拡大するとまっすぐに見える（<a href="4-1.html#w-mag">4.1節</a>）」ことを、うまく利用しています。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>ニュートン法：接線で解に近づく</h2>
+
+    <p>
+      電卓の $\sqrt{\ }$ ボタンを使わずに、$\sqrt2=1.41421356\cdots$ を求めるにはどうすればよいでしょうか。
+      $\sqrt2$ は方程式 $x^2-2=0$ の解なので、グラフ $y=\blue{x^2-2}$ と $x$ 軸の<b>交点</b>の $x$ 座標です。
+      曲線と $x$ 軸の交点はすぐにはわかりませんが、<b>直線</b>と $x$ 軸の交点なら簡単に計算できます。そこで、曲線を<b>接線</b>で置きかえます。
+    </p>
+    <ol>
+      <li>解に近そうな数 $x_0$ を1つ決める（例えば $x_0=2$）。</li>
+      <li>点 $(x_0,\ f(x_0))$ で接線を引き、接線と $x$ 軸の交点を $x_1$ とする。</li>
+      <li>$x_1$ で同じことをくり返して $x_2,\ x_3,\ \ldots$ を作る。</li>
+    </ol>
+    <p>
+      $x_1$ を式で求めましょう。点 $(x_n,\ f(x_n))$ での接線の式は（<a href="4-2.html#w-tanline">4.2節</a>）
+    </p>
+    <div class="eq-box">$$y-f(x_n)=\teal{f'(x_n)}\,(x-x_n)$$</div>
+    <p>
+      です。$x$ 軸との交点では $y=0$ なので、$-f(x_n)=f'(x_n)(x-x_n)$。両辺を $f'(x_n)$ で割って $x$ について解くと、次の式が得られます。
+    </p>
+    <div class="eq-box eq-hero">$$x_{n+1}=x_n\red{-\frac{f(x_n)}{f'(x_n)}}$$</div>
+    <p>
+      赤い部分が「1回でどれだけ動くか」です。これを<b>ニュートン法</b>といいます。下の図で「1ステップ」を押して、接線をたどってみましょう。
+      解の近くでは $x_n$ がすぐにくっついて見えなくなるので、「拡大」ボタンで近づいて見てください。
+    </p>
+
+    <div class="widget" id="w-newton">
+      <div class="widget-head">ニュートン法：接線と $x$ 軸の交点をくり返す <span class="hint">「1ステップ」／▶ 自動／緑の点（スタート）をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div>
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-r="step">1ステップ</button>
+          <button class="btn" type="button" data-r="play">▶ 自動</button>
+          <button class="btn" type="button" data-r="reset">最初から</button>
+        </div>
+        <div class="btn-row">
+          <span class="lbl-sm">表示</span>
+          <button class="btn small" type="button" data-r="zin" aria-label="拡大">＋ 拡大</button>
+          <button class="btn small" type="button" data-r="zout" aria-label="縮小">− 縮小</button>
+          <button class="btn small" type="button" data-r="zall">全体</button>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="関数のグラフと、ニュートン法の接線の列"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">くり返しの式</span><span class="tex" data-r="rec"></span></div>
+          <div class="row"><span class="k">いま</span><span class="tex big" data-r="now"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+      <div class="table-wrap d49-tab-wrap"><table class="d49-tab">
+        <thead><tr><th>$n$</th><th>$x_n$（<b class="d49-ok">合っている桁</b>）</th><th>$f(x_n)$</th><th>解とのずれ</th></tr></thead>
+        <tbody data-r="tbody"></tbody>
+      </table></div>
+    </div>
+
+    <h3 class="h-mini">√2 では：正しい桁が倍々に増える</h3>
+    <p>
+      $f(x)=x^2-2$ なら $f'(x)=2x$ なので、くり返しの式は
+    </p>
+    <div class="eq-box">$$x_{n+1}=x_n-\frac{x_n^2-2}{2x_n}=\frac{1}{2}\left(x_n+\frac{2}{x_n}\right)$$</div>
+    <p>
+      となります。$x_n$ が $\sqrt2$ より大きいと $\frac{2}{x_n}$ は $\sqrt2$ より小さいので、その<b>平均</b>をとって近づけているわけです（古代バビロニアでも使われていた計算法です）。
+      $x_0=2$ から分数のまま正確に計算すると、次のようになります。
+    </p>
+    <div class="table-wrap d49-tab-wrap" style="margin:8px 0 14px"><table class="d49-tab d49-sqrt2">
+      <thead><tr><th>$n$</th><th>$x_n$</th><th>小数（<b class="d49-ok">合っている桁</b>）</th><th>合っている小数の桁数</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>$2$</td><td class="mono">2.0000000000000000000000000</td><td>0</td></tr>
+        <tr><td>1</td><td>$\frac{3}{2}$</td><td class="mono"><b class="d49-ok">1.</b>5000000000000000000000000</td><td>0</td></tr>
+        <tr><td>2</td><td>$\frac{17}{12}$</td><td class="mono"><b class="d49-ok">1.41</b>66666666666666666666667</td><td>2</td></tr>
+        <tr><td>3</td><td>$\frac{577}{408}$</td><td class="mono"><b class="d49-ok">1.41421</b>56862745098039215686</td><td>5</td></tr>
+        <tr><td>4</td><td>$\frac{665857}{470832}$</td><td class="mono"><b class="d49-ok">1.41421356237</b>46899106262956</td><td>11</td></tr>
+        <tr><td>5</td><td>$\frac{886731088897}{627013566048}$</td><td class="mono"><b class="d49-ok">1.41421356237309504880168</b>96</td><td>23</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      合っている桁は $2\to5\to11\to23$ と、1回ごとに<b>およそ2倍</b>に増えています。わずか5回の計算で、小数23桁まで正確です。
+      理由は、「解とのずれ」を $e_n=x_n-\sqrt2$ とすると、次のずれがおよそ
+    </p>
+    <div class="eq-box">$$e_{n+1}=\frac{e_n^{\,2}}{2x_n}$$</div>
+    <p>
+      と、<b>ずれの2乗</b>になるからです（確認問題2）。ずれが $10^{-5}$ なら次は $10^{-10}$ くらい、つまり0の並ぶ桁数が2倍になります。これを<b>2次収束</b>といいます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜ニュートン法</div>
+      <p class="key-lead key-big">接線と $x$ 軸の交点を、次の近似にする</p>
+      $$x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}\qquad(n=0,\ 1,\ 2,\ \ldots)$$
+      <ul>
+        <li>点 $(x_n,\ f(x_n))$ での接線 $y-f(x_n)=f'(x_n)(x-x_n)$ に $y=0$ を入れて解いた式</li>
+        <li>解の近くでは、1回ごとに正しい桁数がおよそ2倍になる（2次収束）</li>
+      </ul>
+      <p class="key-note">例：$f(x)=x^2-2$ なら $x_{n+1}=\dfrac12\left(x_n+\dfrac{2}{x_n}\right)$。$x_0=2$ から $\dfrac32,\ \dfrac{17}{12},\ \dfrac{577}{408},\ \ldots\to\sqrt2$。</p>
+    </div>
+
+    <h3 class="h-mini">うまくいかないとき</h3>
+    <p>ニュートン法はとても速いのですが、いつでもうまくいくわけではありません。上の図の関数とスタート地点を変えて、次の場合を確かめましょう。</p>
+    <ul>
+      <li><b>接線が水平に近い</b>（$f'(x_n)\approx0$）：接線が $x$ 軸となかなか交わらず、ずっと遠くへ飛んでいきます。$f'(x_n)=0$ ちょうどなら、0 で割ることになり計算できません（$x^2-2$ でスタートを $0$ の近くにしてみよう）。</li>
+      <li><b>行ったり来たり</b>：$f(x)=x^3-2x+2$ を $x_0=0$ から始めると、$0\to1\to0\to1\to\cdots$ とくり返して、解に近づきません。</li>
+      <li><b>だんだん遠ざかる</b>：$f(x)=\tan^{-1}x$（解は $0$）を $x_0=1.5$ から始めると、接線の交点が反対側の、もっと遠くに出てしまい、どんどん離れていきます。</li>
+      <li><b>解が2つ以上ある</b>：どの解にたどり着くかは、スタート地点しだいです（$x^2-2$ で $x_0\lt0$ にすると $-\sqrt2$ へ）。</li>
+    </ul>
+    <p>
+      実際に使うときは、グラフを描いたり、別の方法で大まかな位置を調べたりして、<b>解に近いところからスタート</b>させるのがコツです。
+      くわしくは確認問題で扱いますが、$f'(x)\gt0$ かつ $f''(x)\gt0$（右上がりで下に凸）の区間で、解より右からスタートすれば、必ず解に近づくことが知られています。
+    </p>
+
+    <div class="callout point">
+      <div class="ttl">小話：ゲーム「Quake III」の魔法の数 0x5f3759df</div>
+      <p>
+        3D ゲームでは、光の当たり方などを計算するために、ベクトルの長さで割る計算 $\dfrac{1}{\sqrt{x}}$ を1秒に何百万回もします。
+        1999年のゲーム「Quake III Arena」のプログラムには、これを高速に計算する、謎めいた数 <code>0x5f3759df</code> を使ったコードが入っていました。
+      </p>
+      <ul>
+        <li>小数をコンピュータの中の<b>ビット列のまま整数とみなして</b>、半分にして魔法の数から引く（これで、だいたいの値が出る）</li>
+        <li>そのあと<b>ニュートン法を1回だけ</b>行って、精度を上げる</li>
+      </ul>
+      <p>
+        $y=\dfrac{1}{\sqrt{x}}$ は方程式 $g(y)=\dfrac{1}{y^2}-x=0$ の解です。$g'(y)=-\dfrac{2}{y^3}$ なので、ニュートン法の式は
+        $y_{n+1}=y_n-\dfrac{g(y_n)}{g'(y_n)}=y_n\left(\dfrac32-\dfrac{x}{2}y_n^{\,2}\right)$ となり、<b>割り算も $\sqrt{\ }$ も使わずに</b>計算できます。下の図で、どれくらい正確か試してみましょう。
+      </p>
+    </div>
+
+    <div class="widget" id="w-quake">
+      <div class="widget-head">高速逆平方根：魔法の数 ＋ ニュートン法1回 <span class="hint">$x$ を動かす</span></div>
+      <div class="d49-code code-line">i = 0x5f3759df - (i &gt;&gt; 1);　　y = y * (1.5 - 0.5 * x * y * y);</div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">正しい値</span><span class="tex" data-r="true"></span></div>
+          <div class="row"><span class="k">魔法の数で</span><span class="tex" data-r="y0"></span></div>
+          <div class="row"><span class="k">ニュートン法1回</span><span class="tex big" data-r="y1"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt">最初の推測でも誤差は数％。ニュートン法を1回するだけで、誤差は 0.2％ 以下になります（ゲームの画面にはこれで十分）。</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>勾配降下法：AI は霧の中で谷を探す</h2>
+
+    <p>
+      AI（ニューラルネットワーク）の「学習」とは、<b>まちがいの大きさ</b>（誤差、損失ともいう）を表す関数 $f(x)$ を、できるだけ小さくする $x$ を探すことです（$x$ は AI の中の「重み」と呼ばれる数）。
+      <a href="4-5.html">4.5節</a>では、最小値は $f'(x)=0$ を解いて探しました。でも AI の誤差の式はとても複雑で、$f'(x)=0$ を式で解くことはできません。
+    </p>
+    <p>
+      そこで、<b>霧で何も見えない山の中で、谷底へ下りる</b>ことを考えます。遠くは見えませんが、足元の地面の<b>傾き</b>ならわかります。
+    </p>
+    <ul>
+      <li>傾き $f'(x)\gt0$（右が上り坂）なら、<b>左へ</b>進む</li>
+      <li>傾き $f'(x)\lt0$（右が下り坂）なら、<b>右へ</b>進む</li>
+      <li>急な坂なら大きく、ゆるやかな坂なら小さく進む</li>
+    </ul>
+    <p>つまり「傾きと<b>反対向き</b>に、傾きに比例した分だけ進む」。これを式にしたものが<b>勾配降下法</b>です。</p>
+    <div class="eq-box eq-hero">$$x_{n+1}=x_n\red{-\eta\,f'(x_n)}$$</div>
+    <p>
+      $\eta$（イータ）は1歩の大きさを決める正の数で、<b>学習率</b>といいます。
+      なぜ下りられるのかは、1次近似 $f(x+p)\approx f(x)+f'(x)\,p$（接線で近似、<a href="4-7.html">4.7節</a>）で説明できます。$p=-\eta f'(x)$ だけ動くと
+    </p>
+    <div class="eq-box">$$f\bigl(x-\eta f'(x)\bigr)\approx f(x)-\eta\,\bigl(f'(x)\bigr)^2\ \leqq\ f(x)$$</div>
+    <p>
+      となり、$\eta$ が小さければ、$f$ の値は必ず下がります（$f'(x)=0$ の谷底に着いたら止まります）。下の図でボールを転がして、学習率 $\eta$ を変えると何が起こるか調べましょう。
+    </p>
+
+    <div class="widget" id="w-gd">
+      <div class="widget-head">勾配降下法：ボールを谷底へ <span class="hint">学習率 $\eta$ を変える／緑のボール（スタート）をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">地形</span><div class="chips" data-r="fns"></div>
+          <label class="check"><input type="checkbox" data-r="fog">霧（足元しか見えない）</label></div>
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-r="step">1歩</button>
+          <button class="btn" type="button" data-r="play">▶ 転がす</button>
+          <button class="btn" type="button" data-r="reset">最初から</button>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="地形のグラフと、勾配降下法で動くボール"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">いま</span><span class="tex big" data-r="now"></span></div>
+          <div class="row"><span class="k">次の1歩</span><span class="tex" data-r="next"></span></div>
+          <div class="row"><span class="k">ようす</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+      <div class="table-wrap d49-tab-wrap"><table class="d49-tab">
+        <thead><tr><th>$n$</th><th>$x_n$</th><th>傾き $\teal{f'(x_n)}$</th><th>動く量 $\red{-\eta f'(x_n)}$</th><th>高さ $\blue{f(x_n)}$</th></tr></thead>
+        <tbody data-r="tbody"></tbody>
+      </table></div>
+    </div>
+
+    <p>図で、次のことを確かめましょう。</p>
+    <ul>
+      <li><b>$\eta$ が小さすぎる</b>：確実に下りますが、1歩が小さく、なかなか谷底に着きません。</li>
+      <li><b>$\eta$ が大きすぎる</b>：谷を飛びこえて反対側へ。左右に<b>振動</b>したり、どんどん高くなって<b>発散</b>（画面の外へ飛んでいく）したりします。</li>
+      <li><b>局所的な谷</b>：「でこぼこ」の地形で右からスタートすると、右の浅い谷で止まってしまいます。そこも $f'(x)=0$ なので、足元の傾きだけでは「もっと深い谷がある」ことはわかりません（極小値だが最小値ではない、4.5節）。</li>
+    </ul>
+    <p>
+      放物線 $f(x)=x^2$ なら、くわしく計算できます。$f'(x)=2x$ なので $x_{n+1}=x_n-2\eta x_n=(1-2\eta)\,x_n$。
+      毎回 $(1-2\eta)$ 倍になるので、$0\lt\eta\lt1$ なら $0$ に近づき、$\eta=\frac12$ ならちょうど1歩で谷底、$\eta=1$ なら $\pm$ の行ったり来たり、$\eta\gt1$ なら発散します（確認問題3）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜勾配降下法</div>
+      <p class="key-lead key-big">傾きと反対向きに、少しずつ進んで最小値を探す</p>
+      $$x_{n+1}=x_n-\eta\,f'(x_n)\qquad(\eta\gt0\ \text{は学習率})$$
+      <ul>
+        <li>$f'\gt0$ なら左へ、$f'\lt0$ なら右へ。$\eta$ が小さければ $f$ の値は下がっていく</li>
+        <li>$\eta$ が大きすぎると振動・発散し、小さすぎると遅い。局所的な谷（極小）で止まることもある</li>
+      </ul>
+      <p class="key-note">最大値を探すときは $x_{n+1}=x_n+\eta f'(x_n)$（傾きと同じ向きに進む）。ニュートン法とちがい、2回微分 $f''$ を使わなくてよい。</p>
+    </div>
+
+    <div class="callout point">
+      <div class="ttl">本物の AI では：重みが何十億個（→ 4.10節）</div>
+      <p>
+        ここでは $x$ が1つでしたが、本物の AI では、調整する重みが何百万〜何十億個もあります。それぞれの重みについて「その重みだけを少し動かしたときの誤差の傾き」を求め、全部の重みを同時に $w\leftarrow w-\eta\times(\text{傾き})$ と直していきます。
+        重みが10億個あるとき、傾きを1つずつ数値で求めるのは大変です。出口（誤差）から入口へ向かって連鎖律（<a href="4-4.html">4.4節</a>）のかけ算をたどると、<b>すべての重みの傾きを一度に</b>求められます。これが<a href="4-10.html">4.10節</a>の<b>誤差逆伝播法</b>です。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>数値微分とノイズ</h2>
+
+    <p>
+      ニュートン法も勾配降下法も、傾き $f'(x)$ が必要でした。でも、測定したデータや、複雑なプログラムの中の関数では、式で微分できないことがあります。
+      そんなときは、4.2節の定義で <b>$h$ を小さな数で止めて</b>、割り算で傾きを求めます。これを<b>数値微分</b>といいます。
+    </p>
+    <div class="eq-box">$$\text{前進差分}\quad \frac{f(x+\red{h})-f(x)}{\red{h}},\qquad \text{中心差分}\quad \frac{f(x+\red{h})-f(x-\red{h})}{2\red{h}}$$</div>
+    <p>
+      中心差分は、$x$ の<b>左右</b>を同じだけ見て傾きを求めます。こちらのほうがずっと正確です。例えば $f(x)=x^2$ では
+    </p>
+    <div class="eq-box">$$\frac{(x+h)^2-x^2}{h}=2x+\red{h},\qquad \frac{(x+h)^2-(x-h)^2}{2h}=\frac{4xh}{2h}=2x$$</div>
+    <p>
+      と、前進差分には $h$ のずれが残りますが、中心差分はぴったり $2x$ になります。一般には、前進差分のずれは $h$ に比例し、中心差分のずれは $h^2$ に比例します（テイラー展開、<a href="4-7.html">4.7節</a>）。
+      では、$h$ はどこまでも小さくすればよいのでしょうか。下の図で、$f(x)=\sin x$ の $x=1$ での傾き（正しい値は $\cos1$）を、実際にコンピュータで計算してみます。
+    </p>
+
+    <div class="widget" id="w-numdiff">
+      <div class="widget-head">$\red{h}$ を小さくすると、誤差はどうなる？ <span class="hint">$h$ のスライダーを動かす（横軸・縦軸とも 10 倍ごとの目盛り）</span></div>
+      <div class="stage"><canvas aria-label="h と数値微分の誤差のグラフ（両対数）"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">正しい値</span><span class="tex" data-r="true"></span></div>
+          <div class="row"><span class="k">前進差分</span><span class="tex" data-r="fwd"></span></div>
+          <div class="row"><span class="k">中心差分</span><span class="tex big" data-r="cen"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $h$ を小さくすると、はじめは誤差が減っていきます（右から左へ、グラフが下がる）。ところが、ある所から<b>逆に誤差が増えて</b>ギザギザになります。
+      コンピュータは数を<b>16桁くらい</b>までしか覚えていないので、$f(x+h)$ と $f(x)$ がほとんど同じになると、引き算で正しい桁が消えてしまう（<b>丸め誤差</b>）のです。
+      その小さな誤差を、小さな $h$ で割るので、大きくふくらみます。ちょうどよい $h$ は、前進差分で $10^{-8}$、中心差分で $10^{-5}$ くらいです。
+    </p>
+
+    <h3 class="h-mini">測ったデータのノイズ</h3>
+    <p>
+      測定したデータには、必ず小さな<b>ノイズ</b>（ゆらぎ）が混じっています。<a href="4-1.html#w-finger">4.1節</a>の「自分の指の動きを微分」で、速さのグラフがギザギザになったのを覚えていますか。
+      差分の式は「ノイズの差 ÷ $2h$」も計算してしまうので、間隔 $h$ が小さいほどノイズが拡大されます。下の図で、位置のデータ（青）と、そこから中心差分で求めた速さ（金）を比べましょう。
+    </p>
+
+    <div class="widget" id="w-noise">
+      <div class="widget-head">センサーのデータを微分する <span class="hint">ノイズの大きさと、差分の間隔 $h$ を変える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn" type="button" data-r="regen">ノイズを取り直す</button></div></div>
+      <div class="stage"><span class="cap l">位置（測ったデータ）</span><canvas aria-label="ノイズのある位置のデータ"></canvas></div>
+      <div class="stage d49-sub"><span class="cap l">速さ（中心差分）</span><canvas aria-label="中心差分で求めた速さ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">計算式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      ノイズが小さく見えても、微分するとギザギザが大きくなります。間隔 $h$ を広げるとなめらかになりますが、こんどは急な変化がぼやけます。
+      実際のセンサー（スマホの加速度センサーやゲームのコントローラー）では、データを<b>なめらかにしてから</b>差分をとるなどの工夫をしています。
+    </p>
+
+    <h3 class="h-mini">画像のエッジ検出も「差分」</h3>
+    <p>
+      写真の中の物の<b>輪郭（エッジ）</b>は、明るさが急に変わる所です。となりの画素との明るさの差（差分）を計算すると、変化が大きい所だけが明るく光ります。
+      これは、カメラのピント合わせや、自動運転の白線の検出、AI の画像認識の第一歩にも使われています。
+    </p>
+
+    <div class="widget" id="w-edge">
+      <div class="widget-head">画像の差分でエッジを見つける <span class="hint">調べる行を動かす／ノイズ・ぼかしを切りかえる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row">
+        <label class="check"><input type="checkbox" data-r="noise">ノイズを加える</label>
+        <label class="check"><input type="checkbox" data-r="blur">差分の前にぼかす</label></div></div>
+      <div class="d49-imgs">
+        <figure><canvas class="d49-img" data-r="img" aria-label="元の画像"></canvas><figcaption>元の画像（明るさ）</figcaption></figure>
+        <figure><canvas class="d49-img" data-r="edge" aria-label="差分の大きさの画像"></canvas><figcaption>差分の大きさ（エッジ）</figcaption></figure>
+      </div>
+      <div class="stage d49-sub"><canvas aria-label="選んだ行の明るさと、その差分のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">計算式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜数値微分</div>
+      <p class="key-lead key-big">$h$ を小さな数で止めて、割り算で傾きを求める</p>
+      $$f'(x)\approx\frac{f(x+h)-f(x-h)}{2h}\qquad(\text{中心差分})$$
+      <ul>
+        <li>前進差分 $\dfrac{f(x+h)-f(x)}{h}$ より正確（ずれが $h$ ではなく $h^2$ に比例）</li>
+        <li>$h$ が大きすぎると近似が粗く、小さすぎると丸め誤差やノイズが $\dfrac{1}{h}$ 倍に拡大される</li>
+      </ul>
+      <p class="key-note">画像のエッジ検出は、となりの画素との明るさの差分。ノイズがあるときは、先にぼかしてから差分をとる。</p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>ニュートン法</th><td>$x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$：接線と $x$ 軸の交点をくり返して $f(x)=0$ の解へ。正しい桁が倍々に増える</td></tr>
+        <tr><th>勾配降下法</th><td>$x_{n+1}=x_n-\eta f'(x_n)$：傾きと反対向きに進んで最小値へ。学習率 $\eta$ は大きすぎず小さすぎず</td></tr>
+        <tr><th>数値微分</th><td>$f'(x)\approx\dfrac{f(x+h)-f(x-h)}{2h}$：$h$ は小さすぎても大きすぎてもだめ。ノイズに弱い</td></tr>
+        <tr><th>AI の学習</th><td>勾配降下法で誤差を小さくする。たくさんの重みの傾きは誤差逆伝播法（4.10節）で求める</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>チャレンジ：谷底を探せ</h2>
+
+    <p>
+      学習率 $\eta$（ステージ4ではスタート地点も）を決めて「▶ 転がす」を押すと、勾配降下法でボールが動きます。決められた回数以内に、<b>いちばん深い谷底</b>（旗の位置）にたどり着いて止まればクリアです。
+      谷底に着くまでの<b>歩数が少ないほど★が多く</b>もらえます。何度でも挑戦できます。
+    </p>
+    <div class="widget" id="w-game-gd">
+      <div class="widget-head">谷底を探せ <span class="game-total" data-r="total"></span><span class="hint">$\eta$ を決めて「▶ 転がす」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="谷底を探すゲームの地形とボール"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">歩数</span><span data-r="prog"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>$f(x)=x^2-2$ とする。<br>
+        (1) ニュートン法の式 $x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$ を、$x_{n+1}=\dfrac12\left(x_n+\dfrac{2}{x_n}\right)$ の形に変形せよ。<br>
+        (2) $x_0=2$ として、$x_1,\ x_2,\ x_3$ を分数で求めよ。また、$x_3$ を小数で表し、$\sqrt2=1.41421356\cdots$ と比べよ。</li>
+      <li>$a\gt0$ とし、$f(x)=x^2-a$ に対するニュートン法 $x_{n+1}=\dfrac12\left(x_n+\dfrac{a}{x_n}\right)$ を考える（$x_n\gt0$）。<br>
+        (1) $x_{n+1}-\sqrt a=\dfrac{(x_n-\sqrt a)^2}{2x_n}$ を示せ。<br>
+        (2) (1) を使って、$x_0\gt0$ ならば $x_1,\ x_2,\ \ldots$ はすべて $\sqrt a$ 以上であることを説明せよ。また、$x_n-\sqrt a=10^{-4}$、$x_n\approx1.4$ のとき、$x_{n+1}-\sqrt a$ はおよそいくつか。</li>
+      <li>$f(x)=(x-3)^2$ の最小値を、勾配降下法 $x_{n+1}=x_n-\eta f'(x_n)$ で探す。<br>
+        (1) $\eta=0.25,\ x_0=0$ のとき、$x_1,\ x_2,\ x_3$ を求めよ。<br>
+        (2) $x_{n+1}-3=(1-2\eta)(x_n-3)$ を示し、$x_n$ を $n,\ \eta,\ x_0$ で表せ。<br>
+        (3) $x_n$ が $3$ に近づくための $\eta$ の範囲を求めよ。また、$\eta=1$ や $\eta=1.5$ のときはどうなるか。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(1) $f'(x)=2x$ なので<br>
+          $x_{n+1}=x_n-\dfrac{x_n^2-2}{2x_n}$<br>$=\dfrac{2x_n^2-(x_n^2-2)}{2x_n}$<br>$=\dfrac{x_n^2+2}{2x_n}$<br>$=\dfrac12\left(x_n+\dfrac{2}{x_n}\right)$<br>
+          (2) $x_1=\dfrac12\left(2+\dfrac22\right)=\dfrac32$<br>
+          $x_2=\dfrac12\left(\dfrac32+\dfrac{4}{3}\right)$<br>$=\dfrac12\cdot\dfrac{17}{6}=\dfrac{17}{12}$<br>
+          $x_3=\dfrac12\left(\dfrac{17}{12}+\dfrac{24}{17}\right)$<br>$=\dfrac12\cdot\dfrac{289+288}{204}=\dfrac{577}{408}$<br>
+          $x_3=1.4142156\cdots$ なので、$\sqrt2=1.4142135\cdots$ と小数第5位まで一致する（ずれは約 $2.1\times10^{-6}$）。
+          <div class="stage quiz-fig"><canvas data-q="1" aria-label="y = x² − 2 と、x₀ = 2, x₁ = 1.5 での接線"></canvas></div></li>
+        <li>(1) $x_{n+1}-\sqrt a$<br>$=\dfrac12\left(x_n+\dfrac{a}{x_n}\right)-\sqrt a$<br>
+          $=\dfrac{x_n^2+a-2\sqrt a\,x_n}{2x_n}$<br>
+          $=\dfrac{x_n^2-2\sqrt a\,x_n+(\sqrt a)^2}{2x_n}$<br>$=\dfrac{(x_n-\sqrt a)^2}{2x_n}$<br>
+          (2) $x_n\gt0$ なら、右辺は（2乗）÷（正の数）なので $0$ 以上。よって $x_{n+1}\geqq\sqrt a$（$x_{n+1}$ も正なので、次も同じことがいえる）。<br>
+          $x_n-\sqrt a=10^{-4}$、$x_n\approx1.4$ なら<br>
+          $x_{n+1}-\sqrt a\approx\dfrac{(10^{-4})^2}{2\times1.4}$<br>$=\dfrac{10^{-8}}{2.8}\approx3.6\times10^{-9}$<br>
+          ずれ $10^{-4}$ が1回で $10^{-9}$ くらいになる（正しい桁がおよそ2倍、2次収束）。</li>
+        <li>(1) $f'(x)=2(x-3)$ なので<br>$x_{n+1}=x_n-0.25\times2(x_n-3)$<br>$=x_n-0.5(x_n-3)$<br>
+          $x_1=0-0.5\times(0-3)=1.5$<br>
+          $x_2=1.5-0.5\times(-1.5)=2.25$<br>
+          $x_3=2.25-0.5\times(-0.75)$<br>$\phantom{x_3}=2.625$<br>
+          （ずれ $3,\ 1.5,\ 0.75,\ 0.375$ と、毎回半分になって $3$ に近づく）<br>
+          (2) $x_{n+1}-3$<br>$=x_n-2\eta(x_n-3)-3$<br>$=(x_n-3)-2\eta(x_n-3)$<br>$=(1-2\eta)(x_n-3)$<br>
+          ずれが毎回 $(1-2\eta)$ 倍になるので<br>$x_n-3=(1-2\eta)^n(x_0-3)$<br>つまり $x_n=3+(1-2\eta)^n(x_0-3)$<br>
+          (3) $(1-2\eta)^n\to0$ となるのは $-1\lt1-2\eta\lt1$ のとき。よって $0\lt\eta\lt1$（$x_0\neq3$ のとき）。<br>
+          $\eta=\dfrac12$ なら $1-2\eta=0$ で、1歩でちょうど $x_1=3$。<br>
+          $\eta=1$ なら $1-2\eta=-1$ で、$x_n-3=(-1)^n(x_0-3)$。谷の左右を行ったり来たりして近づかない（振動）。<br>
+          $\eta=1.5$ なら $1-2\eta=-2$ で、ずれが毎回 $-2$ 倍。左右に振れながら遠ざかる（発散）。</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-8.html"><span class="dir">← 前の節</span><span class="nm">4.8 極限のくらべ方</span></a>
+    <a class="next" href="4-10.html"><span class="dir">次の節 →</span><span class="nm">4.10 誤差逆伝播法</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-9.js?v=202611031018"></script>
+</body>
+</html>

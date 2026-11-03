@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610211315"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610211315">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
 </head>
 <body class="chapter ch6 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -135,7 +135,7 @@
     </p>
     <ul>
       <li>補間：測定していない点の値を推定する（欠測値の補完、センサ値の間引き・再構成、画像の拡大縮小）。</li>
-      <li>数値計算：複雑な関数を多項式で近似して（近い式で置きかえて）、計算しやすくする（微分・積分の計算にも使われます。微分・積分は後の章で学びます）。</li>
+      <li>数値計算：複雑な関数を多項式で近似して（近い式で置きかえて）、計算しやすくする（微分・積分の計算にも使われます。微分は<a href="../diff/4-1.html">第4章</a>で学びます。関数を多項式で近似する方法は<a href="../diff/4-7.html">4.7節</a>のテイラー展開）。</li>
       <li>回帰：実際のデータには測定誤差（ランダムなずれ）がある。すべての点を通す必要はなく、全体の傾向をつかみたい。
         そこで次数 $m$ を決め、各データ点と曲線との縦のずれを2乗して足した値（二乗誤差の合計）が最も小さい $m$ 次多項式を選ぶ。これが最小二乗法（多項式回帰）で、<a href="1-1.html">1.1節</a>の回帰直線（$m=1$）を曲線に広げたものです。</li>
     </ul>
@@ -254,9 +254,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610211315"></script>
-<script src="../assets/plot.js?v=202610211315"></script>
-<script src="../assets/game.js?v=202610211315"></script>
-<script src="polynomial.js?v=202610211315"></script>
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="polynomial.js?v=202611031018"></script>
 </body>
 </html>

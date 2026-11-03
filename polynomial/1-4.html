@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610211315"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610211315">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
 </head>
 <body class="chapter ch4 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -138,7 +138,7 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
       <ul>
         <li>傾きが急なところで速く、水平に近いところでゆっくり動く</li>
       </ul>
-      <p class="key-note">この「グラフの傾き」を求める計算を<b>微分</b>といい、$f'(t)$ と書きます。微分は後の章で詳しく学びます。この節では「$f'(t)$＝その点でのグラフの傾き（速さ）」とだけ思っておけば十分です。</p></div>
+      <p class="key-note">この「グラフの傾き」を求める計算を<b>微分</b>といい、$f'(t)$ と書きます。微分は<a href="../diff/4-1.html">第4章</a>で詳しく学びます。この節では「$f'(t)$＝その点でのグラフの傾き（速さ）」とだけ思っておけば十分です。</p></div>
     <p>
       $\mathrm{smoothstep}\;3t^2-2t^3$ は、始まりと終わりで速さ（グラフの傾き）が $0$（$f'(0)=f'(1)=0$）になるよう調整した3次式です。
     </p>
@@ -147,7 +147,7 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
     <p>
       「出発するときの速さ $\amber{v_0}$」と「到着するときの速さ $\teal{v_1}$」を決めると、次の4条件を満たす3次多項式がただ1つに決まります。
     </p>
-    <div class="key"><div class="key-ttl">覚える｜3次で設計する4つの条件</div>$$\begin{gathered}f(0)=0,\quad f(1)=1\\[2pt] f'(0)=v_0,\quad f'(1)=v_1\end{gathered}$$<p class="key-note">$f'(0)$, $f'(1)$ は $t=0$, $t=1$ でのグラフの傾き（出だし・終わりの速さ）。微分の計算は後の章で学びます。</p></div>
+    <div class="key"><div class="key-ttl">覚える｜3次で設計する4つの条件</div>$$\begin{gathered}f(0)=0,\quad f(1)=1\\[2pt] f'(0)=v_0,\quad f'(1)=v_1\end{gathered}$$<p class="key-note">$f'(0)$, $f'(1)$ は $t=0$, $t=1$ でのグラフの傾き（出だし・終わりの速さ）。微分の計算は<a href="../diff/4-2.html">4.2節</a>で学びます（smoothstep の $f'(0)=f'(1)=0$ も確かめます）。</p></div>
     <p>この4条件を満たす3次式は、次のようになります。</p>
     <div class="eq-box">$$\begin{aligned}f(t) = {}&(\amber{v_0}+\teal{v_1}-2)\,t^3\\ &+ (3-2\amber{v_0}-\teal{v_1})\,t^2 + \amber{v_0}\,t\end{aligned}$$</div>
     <p>
@@ -180,7 +180,7 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>イージング関数</th><td>時間の割合 $t$ → 進んだ割合 $f(t)$、$f(0)=0$、$f(1)=1$</td></tr>
         <tr><th>等速</th><td>$f(t)=t$</td></tr>
-        <tr><th>速さ</th><td>グラフの傾き $f'(t)$（微分：後の章で学ぶ）</td></tr>
+        <tr><th>速さ</th><td>グラフの傾き $f'(t)$（微分：<a href="../diff/4-1.html">第4章</a>で学ぶ）</td></tr>
         <tr><th>3次で設計</th><td>$f(0)=0$、$f(1)=1$、$f'(0)=v_0$、$f'(1)=v_1$ で1つに決まる</td></tr>
         <tr><th>smoothstep</th><td>$3t^2-2t^3$（始まりと終わりの速さが $0$）</td></tr>
       </tbody></table></div>
@@ -234,9 +234,9 @@ pos = Vector3.Lerp(a, b, s);</code></pre>
 
 <footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610211315"></script>
-<script src="../assets/plot.js?v=202610211315"></script>
-<script src="../assets/game.js?v=202610211315"></script>
-<script src="polynomial.js?v=202610211315"></script>
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="polynomial.js?v=202611031018"></script>
 </body>
 </html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.2 微分の定義と導関数 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.2節：微分の定義・x^n の微分・導関数・接線の式">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch2 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html" class="active" aria-current="page"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.2節</div>
+      <h1><span class="chap-no">4.2</span>微分の定義と導関数：傾きを式で表す</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>微分の定義 $f'(a)=\displaystyle\lim_{h\to0}\frac{f(a+h)-f(a)}{h}$ の意味を説明できる。</li>
+      <li>$(x^n)'=nx^{n-1}$ を使って多項式を微分できる。</li>
+      <li>導関数のグラフと、接線の式 $y-f(a)=f'(a)(x-a)$ を求められる。</li>
+    </ol>
+    <div class="goal-meta">図 3つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-1.html">4.1節</a>の 割線と接線、<a href="../polynomial/1-4.html">1.4節</a>の イージング、<a href="../explog/2-6.html">2.6節</a>の 記号 $\lim$</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      <a href="4-1.html">4.1節</a>では、2点を結ぶ<b>割線の傾き</b>（平均の速さ）を、2点の間隔をせまくしながら調べると、<b>接線の傾き</b>（瞬間の速さ）に近づいていくことを見ました。
+      この節では、この「近づけていく」計算を<b>式で書き</b>、$x^2$ や $x^3$ の接線の傾きを、表やグラフにたよらずに<b>計算で</b>求められるようにします。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>h を小さくしていく</h2>
+
+    <p>
+      関数 $y=\blue{f(x)}$ のグラフの上に、$x=a$ の点 A と、そこから横に $\red{h}$ だけ進んだ $x=a+\red{h}$ の点 B をとります。
+      A から B まで、横には $\red{h}$、縦には $\blue{f(a+h)}-\blue{f(a)}$ だけ進むので、割線 AB の傾きは
+    </p>
+    <div class="eq-box">$$\begin{aligned}\red{\text{割線の傾き}}&=\frac{\text{縦の増え方}}{\text{横の増え方}}\\[4pt]&=\frac{f(a+\red{h})-f(a)}{\red{h}}\end{aligned}$$</div>
+    <p>
+      です。下の図で $\red{h}$ をだんだん小さくしてみましょう。点 B が A に近づき、赤い割線が緑の接線にほとんど重なっていきます。
+      $\red{h}$ はマイナスでもかまいません（B が A の左にくる）。
+    </p>
+
+    <div class="widget" id="w-def">
+      <div class="widget-head">$\red{h}$ を小さくすると割線は接線に近づく <span class="hint">ボタンで $h$ を小さく／点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div>
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-r="div10">$h$ を $\frac{1}{10}$ に</button>
+          <button class="btn" type="button" data-r="half">$h$ を半分に</button>
+          <button class="btn" type="button" data-r="neg">符号を反対に</button>
+          <button class="btn" type="button" data-r="reset">$h=1$ にもどす</button>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="曲線と割線・接線。h を小さくすると割線が接線に近づく"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">割線の傾き</span><span class="tex big" data-r="slope"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex" data-r="tan"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt">赤：割線（A と B を結ぶ）、緑の点線：A での接線</span></div>
+        </div>
+      </div>
+      <div class="table-wrap htab-wrap"><table class="htab">
+        <thead><tr><th>$\red{h}$</th><th>$f(a+\red{h})-f(a)$</th><th>割線の傾き $\dfrac{f(a+h)-f(a)}{h}$</th></tr></thead>
+        <tbody data-r="tbody"></tbody>
+      </table></div>
+    </div>
+
+    <p>
+      表を見ると、$\red{h}$ を $1,\ 0.1,\ 0.01,\ 0.001$ と小さくしていくほど、割線の傾きはある1つの数に近づいていきます（$h$ がマイナスのときも同じ数に近づきます）。
+      この「<b>$\red{h}$ を $0$ にどこまでも近づけたときの行き先</b>」を、記号 $\displaystyle\lim_{h\to0}$ で表します。
+      $\lim$ は <a href="../explog/2-6.html">2.6節</a>の $e=\displaystyle\lim_{n\to\infty}\left(1+\frac1n\right)^n$ で出てきた記号で、あのときは $n$ を大きくしていったときの行き先でした。今度は $\red{h}$ を $0$ に近づけます。
+    </p>
+    <p>
+      注意：$\red{h}=0$ をそのまま代入することはできません。分母が $0$ になり、$\frac{0}{0}$ という意味のない式になってしまうからです。
+      だから「$h$ を $0$ にしたら」ではなく、「<b>$0$ にどこまでも近づけたら</b>」と考えるのです。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜微分係数の定義</div>
+      <p class="key-lead key-big">$h$ を $0$ に近づけたときの、割線の傾きの行き先が $f'(a)$</p>
+      $$f'(a)=\lim_{\red{h}\to0}\frac{f(a+\red{h})-f(a)}{\red{h}}$$
+      <ul>
+        <li>$f'(a)$ は「$x=a$ での接線の傾き」＝「$x=a$ での瞬間の変化の速さ」。$a$ における<b>微分係数</b>という（「エフ・ダッシュ・エー」と読む）</li>
+        <li>$\red{h}$ はプラスでもマイナスでもよい。ただし $\red{h}=0$ は代入できない</li>
+      </ul>
+      <p class="key-note">$\lim$ は limit（極限、行き先）の略。「$\displaystyle\lim_{h\to0}$（式）」は「$h$ を $0$ に近づけたときの（式）の行き先」と読む。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>x² の微分を計算する</h2>
+
+    <p>
+      では、$f(x)=x^2$ のとき、$f'(a)$ を計算で求めてみましょう。$f(a+\red{h})=(a+\red{h})^2$ なので、割線の傾きは次のように整理できます（$\red{h}$ を赤で書きます）。
+    </p>
+    <div class="eq-box">$$\begin{aligned}\frac{f(a+\red{h})-f(a)}{\red{h}}&=\frac{(a+\red{h})^2-a^2}{\red{h}}\\[4pt]&=\frac{a^2+2a\red{h}+\red{h}^2-a^2}{\red{h}}&&\text{（展開する）}\\[4pt]&=\frac{2a\red{h}+\red{h}^2}{\red{h}}&&\text{（$a^2$ が消える）}\\[4pt]&=2a+\red{h}&&\text{（$\red{h}$ で約分する）}\end{aligned}$$</div>
+    <p>
+      約分できるのは、$\red{h}$ が $0$ ではない（$0$ に近いだけ）からです。ここまで来れば、$\red{h}$ を $0$ に近づけるのはかんたんです。$2a+\red{h}$ は $2a$ に近づきます。
+    </p>
+    <div class="eq-box">$$f'(a)=\lim_{\red{h}\to0}(2a+\red{h})=2a$$</div>
+    <p>
+      例えば $a=1$ なら、割線の傾きは $2+\red{h}$ です。$\red{h}=0.1$ で $2.1$、$\red{h}=0.01$ で $2.01$、$\red{h}=-0.01$ で $1.99$……と、図(1)の表とぴったり合い、行き先は $f'(1)=2$ です。
+      $a=3$ なら $f'(3)=6$。1つの計算で、<b>どの点の接線の傾きも</b>わかってしまいました。
+    </p>
+    <p>
+      最後に、$a$ を $x$ に書きかえると $f'(x)=2x$ という<b>新しい関数</b>ができます。「$x$ を入れると、そこでの接線の傾きが出てくる関数」です。これを $f(x)$ の<b>導関数</b>といい、(4) でそのグラフを見ます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜x² の微分</div>
+      <p class="key-lead key-big">$y=x^2$ の $x$ での接線の傾きは $2x$</p>
+      $$(x^2)'=2x$$
+      <ul>
+        <li>割線の傾きは $2x+\red{h}$。$\red{h}\to0$ で $2x$</li>
+        <li>$x=1$ で傾き $2$、$x=3$ で傾き $6$、$x=0$（頂点）で傾き $0$、$x=-1$ で傾き $-2$</li>
+      </ul>
+      <p class="key-note">計算のこつ：展開 → 引き算で消す → $h$ で約分 → $h\to0$。$h$ で約分するまでは $h=0$ を入れない。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>xⁿ の微分と多項式</h2>
+
+    <p>同じやり方で $f(x)=x^3$ も計算できます。$(x+\red{h})^3=x^3+3x^2\red{h}+3x\red{h}^2+\red{h}^3$ を使うと</p>
+    <div class="eq-box">$$\begin{aligned}\frac{(x+\red{h})^3-x^3}{\red{h}}&=\frac{3x^2\red{h}+3x\red{h}^2+\red{h}^3}{\red{h}}\\[4pt]&=3x^2+3x\red{h}+\red{h}^2\ \longrightarrow\ 3x^2\quad(\red{h}\to0)\end{aligned}$$</div>
+    <p>となり、$(x^3)'=3x^2$ です。ここまでの結果を並べてみましょう（$(x)'=1$ は、直線 $y=x$ の傾きが $1$ だから）。</p>
+    <div class="eq-box">$$(x)'=1,\qquad (x^2)'=2x,\qquad (x^3)'=3x^2,\qquad (x^4)'=4x^3,\ \dots$$</div>
+    <p>
+      「<b>指数を前に出して、指数を1つ下げる</b>」という規則が見えます。なぜそうなるかは、$(x+\red{h})^n$ を展開したときの<b>はじめの2つの項</b>を見るとわかります。
+    </p>
+    <div class="eq-box">$$(x+\red{h})^n=x^n+n\,x^{n-1}\red{h}+\bigl(\red{h}^2,\ \red{h}^3,\ \dots\text{ がつく項}\bigr)$$</div>
+    <p>
+      $(x+h)^n=(x+h)(x+h)\cdots(x+h)$ を展開するとき、$n$ 個のかっこの<b>どれか1つ</b>から $\red{h}$ を、残りの $n-1$ 個から $x$ を選ぶと $x^{n-1}\red{h}$ になり、その選び方が $n$ 通りあるので $n\,x^{n-1}\red{h}$ です。
+      $x^n$ を引いて $\red{h}$ で割ると $n\,x^{n-1}+(\red{h}\text{ がつく項})$ となり、$\red{h}\to0$ で $\red{h}$ がつく項はすべて $0$ に近づきます。残るのは $n\,x^{n-1}$ です（きちんとした証明は二項定理を使います）。
+    </p>
+
+    <h3 class="h-mini">定数・定数倍・和の微分</h3>
+    <p>多項式を微分するには、あと3つの性質を使います。どれもグラフで考えると自然です。</p>
+    <ul>
+      <li><b>定数</b>：$y=5$ のような水平な直線は、どこでも傾き $0$。だから $(c)'=0$。</li>
+      <li><b>定数倍</b>：グラフを縦に $c$ 倍すると、縦の増え方も $c$ 倍になるので、傾きも $c$ 倍。$(c\,f(x))'=c\,f'(x)$。</li>
+      <li><b>和</b>：$f+g$ の縦の増え方は、$f$ の増え方と $g$ の増え方の和。割線の傾きで書くと下の式になり、$h\to0$ とすると $(f+g)'=f'+g'$。</li>
+    </ul>
+    <div class="eq-box">$$\begin{aligned}&\frac{(f+g)(x+h)-(f+g)(x)}{h}\\&\quad=\frac{f(x+h)-f(x)}{h}+\frac{g(x+h)-g(x)}{h}\end{aligned}$$</div>
+    <p>これらを組み合わせると、多項式は<b>1つの項ずつ</b>微分すればよいことになります。</p>
+    <div class="eq-box">$$\begin{aligned}(2x^3-5x^2+4x-7)'&=2\cdot3x^2-5\cdot2x+4\cdot1-0\\&=6x^2-10x+4\end{aligned}$$</div>
+
+    <div class="key"><div class="key-ttl">覚える｜xⁿ の微分と多項式の微分</div>
+      <p class="key-lead key-big">指数を前に出して、指数を1つ下げる。多項式は項ごとに</p>
+      $$\begin{gathered}(x^n)'=n\,x^{n-1}\\[4pt](c)'=0,\qquad (c\,f)'=c\,f',\qquad (f+g)'=f'+g'\end{gathered}$$
+      <ul>
+        <li>$(x^5)'=5x^4$、$(x)'=1$、$(7)'=0$（$c$ は定数）</li>
+        <li>例：$(4x^3+x^2-6x+2)'=12x^2+2x-6$</li>
+      </ul>
+      <p class="key-note">引き算も同じ：$(f-g)'=f'-g'$（$-g=(-1)\cdot g$ と定数倍を使う）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>導関数：傾きを並べたグラフ</h2>
+
+    <p>
+      導関数 $\amber{f'(x)}$ は、「各点での接線の傾き」を $x$ ごとに並べた関数です。グラフで見るとどうなるでしょうか。
+      下の図で、上の青いグラフ $y=\blue{f(x)}$ の上の緑の点を動かしてみましょう。そこでの接線の傾きが、下の図に<b>金色の点</b>（高さ＝傾き）として記録されていきます。▶ で左から右へ自動で動かすこともできます。
+    </p>
+
+    <div class="widget" id="w-deriv">
+      <div class="widget-head">$\blue{f}$ の傾きを並べると $\amber{f'}$ のグラフになる <span class="hint">緑の点をドラッグ／▶ で動かす</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div>
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-r="play">▶ 動かす</button>
+          <button class="btn" type="button" data-r="clear">点を消す</button>
+          <label class="check"><input type="checkbox" data-r="all">$\amber{f'}$ のグラフ全体を表示</label>
+        </div>
+      </div>
+      <div class="stage"><span class="cap l">上：$\blue{f}$ のグラフと接線</span><canvas aria-label="関数のグラフと、動かせる接線"></canvas></div>
+      <div class="stage"><span class="cap l">下：$\amber{f'}$ のグラフ（傾き）</span><canvas aria-label="導関数のグラフ。接線の傾きを点で記録する"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex big" data-r="val"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>図から、$\blue{f}$ のグラフの形と $\amber{f'}$ の符号（プラス・マイナス）には、次の関係があることがわかります。</p>
+    <ul>
+      <li>$\blue{f}$ が<b>上り坂</b>（右上がり）のところでは、接線の傾きがプラスなので $\amber{f'(x)\gt0}$（金色の点は横軸より上）。</li>
+      <li>$\blue{f}$ が<b>下り坂</b>（右下がり）のところでは $\amber{f'(x)\lt0}$（横軸より下）。</li>
+      <li>$\blue{f}$ の<b>山の頂上・谷の底</b>では接線が水平になり $\amber{f'(x)=0}$（金色のグラフが横軸と交わる）。</li>
+    </ul>
+    <p>
+      例えば $f(x)=x^3-3x$ なら $f'(x)=3x^2-3=3(x+1)(x-1)$ で、$x=\pm1$ で $f'=0$ になります。図でも $x=-1$ が山、$x=1$ が谷になっています。
+      このように $f'$ を見て山や谷を探す方法は、<a href="4-5.html">4.5節</a>（最大・最小）でくわしく学びます。
+      $\sin x$ を選ぶと、傾きのグラフは $\cos x$ にそっくりな形になります。本当に $(\sin x)'=\cos x$ になることは、<a href="4-3.html">4.3節</a>で確かめます。
+    </p>
+
+    <h3 class="h-mini">1.4節のイージングを微分する</h3>
+    <p>
+      <a href="../polynomial/1-4.html">1.4節</a>の smoothstep $f(t)=3t^2-2t^3$ は「ゆっくり動き出して、ゆっくり止まる」イージングでした。あのときはグラフを見て「始まりと終わりの傾きが $0$」と読み取りましたが、今なら<b>計算で</b>確かめられます。
+    </p>
+    <div class="eq-box">$$\begin{gathered}f'(t)=3\cdot2t-2\cdot3t^2=\amber{6t-6t^2}=6t(1-t)\\[4pt]f'(0)=0,\qquad f'(1)=0,\qquad f'\!\left(\tfrac12\right)=\tfrac32\end{gathered}$$</div>
+    <p>
+      出発（$t=0$）と到着（$t=1$）で速さがちょうど $0$、まん中（$t=\frac12$）でいちばん速く、等速（速さ $1$）の $1.5$ 倍です。図で「smoothstep」を選ぶと、傾きのグラフが $0$ から始まって山になり、$0$ にもどる様子が見えます。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜導関数</div>
+      <p class="key-lead key-big">各 $x$ での接線の傾きを並べた関数が導関数 $f'(x)$</p>
+      $$f'(x)=\lim_{\red{h}\to0}\frac{f(x+\red{h})-f(x)}{\red{h}}$$
+      <ul>
+        <li>導関数を求めることを、$f(x)$ を<b>微分する</b>という</li>
+        <li>$\blue{f}$ が上り坂 ⇔ $\amber{f'\gt0}$、下り坂 ⇔ $\amber{f'\lt0}$、山の頂上・谷の底で $\amber{f'=0}$</li>
+      </ul>
+      <p class="key-note">$f'(a)$（微分係数）は1つの数、$f'(x)$（導関数）は関数。$f'(x)$ に $x=a$ を入れると $f'(a)$ になる。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>接線の式</h2>
+
+    <p>
+      接線の傾きがわかると、<b>接線そのものの式</b>も書けます。接線は「点 $(a,\ f(a))$ を通り、傾き $f'(a)$ の直線」です。
+      点 $(x_1,\ y_1)$ を通り傾き $m$ の直線は $y-y_1=m(x-x_1)$ でした（点 $(x,\ y)$ が直線上にあれば、$\frac{y-y_1}{x-x_1}=m$）。ここに $x_1=a,\ y_1=f(a),\ m=f'(a)$ を入れればよいのです。
+    </p>
+    <p>例：$y=x^2$ の $x=1$ での接線。$f(1)=1$、$f'(x)=2x$ より $f'(1)=2$ なので</p>
+    <div class="eq-box">$$y-1=2(x-1)\quad\text{つまり}\quad \teal{y=2x-1}$$</div>
+    <p>下の図で、点を動かして接線の式がどう変わるか確かめましょう。</p>
+
+    <div class="widget" id="w-tanline">
+      <div class="widget-head">接線の式 $\teal{y-f(a)=f'(a)(x-a)}$ <span class="hint">緑の点をドラッグ／関数を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="fns"></div></div></div>
+      <div class="stage"><canvas aria-label="曲線と、点を動かせる接線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">① 点</span><span class="tex" data-r="pt"></span></div>
+          <div class="row"><span class="k">② 傾き</span><span class="tex" data-r="m"></span></div>
+          <div class="row"><span class="k">③ 接線</span><span class="tex big" data-r="eq"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜接線の式</div>
+      <p class="key-lead key-big">点 $(a,\ f(a))$ を通り、傾き $f'(a)$ の直線</p>
+      $$\teal{y-f(a)=f'(a)(x-a)}$$
+      <ul>
+        <li>手順：① $f(a)$ を求める ② 微分して $f'(a)$ を求める ③ 式に入れて $y=\cdots$ に整理する</li>
+      </ul>
+      <p class="key-note">例：$y=x^3$ の $x=1$ での接線は、$f(1)=1,\ f'(1)=3$ より $y-1=3(x-1)$、つまり $y=3x-2$。</p>
+    </div>
+
+    <h3 class="h-mini">1.4節の「4つの条件」を解く</h3>
+    <p>
+      1.4節では、出だしの速さ $\amber{v_0}$ と終わりの速さ $\teal{v_1}$ を決めて、3次のイージングを作りました。条件は $f(0)=0$、$f(1)=1$、$f'(0)=\amber{v_0}$、$f'(1)=\teal{v_1}$ の4つでした。
+      微分ができるようになったので、このとき使った式を自分で導けます。$f(t)=pt^3+qt^2+rt+s$ とおくと $f'(t)=3pt^2+2qt+r$ なので
+    </p>
+    <div class="eq-box">$$\begin{aligned}f(0)=0&\ \text{より}\ s=0, &\quad f'(0)=\amber{v_0}&\ \text{より}\ r=\amber{v_0}\\ f(1)=1&\ \text{より}\ p+q+\amber{v_0}=1, &\quad f'(1)=\teal{v_1}&\ \text{より}\ 3p+2q+\amber{v_0}=\teal{v_1}\end{aligned}$$</div>
+    <p>下の2つの式から $q=1-\amber{v_0}-p$ を消去すると、$3p+2(1-\amber{v_0}-p)+\amber{v_0}=\teal{v_1}$ より</p>
+    <div class="eq-box">$$p=\amber{v_0}+\teal{v_1}-2,\qquad q=3-2\amber{v_0}-\teal{v_1}$$</div>
+    <p>
+      となり、1.4節の式がそのまま出てきます。
+    </p>
+    <div class="eq-box">$$\begin{aligned}f(t)={}&(\amber{v_0}+\teal{v_1}-2)\,t^3\\&+(3-2\amber{v_0}-\teal{v_1})\,t^2+\amber{v_0}\,t\end{aligned}$$</div>
+    <p>
+      $\amber{v_0}=\teal{v_1}=0$ とすれば $p=-2,\ q=3$ で、smoothstep $3t^2-2t^3$ です。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>記号 dy/dx</h2>
+
+    <p>
+      微分は、17世紀後半に、イギリスの<b>ニュートン</b>（1643–1727）とドイツの<b>ライプニッツ</b>（1646–1716）が、ほぼ同じころ別々に考え出しました。
+      どちらが先かで、二人とその仲間たちは長い間はげしく争ったことで知られています。
+    </p>
+    <p>
+      二人は記号もちがいました。ニュートンは、時間とともに変わる量 $x$ の速さを、上に点をつけて $\dot{x}$ と書きました（今でも物理で使います）。
+      ライプニッツは、4.1節の「$y$ の増え方 $\Delta y$ ÷ $x$ の増え方 $\Delta x$」の $\Delta$ を、限りなく小さくした $d$ に変えて
+    </p>
+    <div class="eq-box">$$\frac{\Delta y}{\Delta x}\ \xrightarrow{\ \Delta x\to0\ }\ \frac{dy}{dx}\qquad\text{（ディーワイ・ディーエックス と読む）}$$</div>
+    <p>
+      と書きました。この記号は「$y$ の変化 ÷ $x$ の変化」という意味がそのまま見えるので、とても便利です。$\frac{dy}{dx}$ は分数ではなく1つの記号ですが、分数のように扱える場面があり、<a href="4-4.html">4.4節</a>（合成関数）や <a href="4-6.html">4.6節</a>（逆関数）で活躍します。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜微分の書き方</div>
+      <p class="key-lead key-big">次の4つはどれも同じ「$y=f(x)$ の導関数」</p>
+      $$f'(x),\qquad y',\qquad \frac{dy}{dx},\qquad \frac{d}{dx}f(x)$$
+      <ul>
+        <li>例：$y=x^3$ なら $y'=3x^2$、$\dfrac{dy}{dx}=3x^2$、$\dfrac{d}{dx}x^3=3x^2$</li>
+        <li>この講義では、主に $f'(x)$ を使う</li>
+      </ul>
+      <p class="key-note">$f'$ の書き方はラグランジュ、$\frac{dy}{dx}$ はライプニッツ、$\dot{x}$ はニュートンによる。</p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>定義</th><td>$f'(a)=\displaystyle\lim_{h\to0}\frac{f(a+h)-f(a)}{h}$（割線の傾きの行き先＝接線の傾き）</td></tr>
+        <tr><th>$x^n$</th><td>$(x^n)'=nx^{n-1}$。$(x^2)'=2x$、$(x^3)'=3x^2$、$(c)'=0$</td></tr>
+        <tr><th>多項式</th><td>$(cf)'=cf'$、$(f+g)'=f'+g'$ なので、項ごとに微分する</td></tr>
+        <tr><th>導関数</th><td>傾きを並べた関数 $f'(x)$。上り坂で $f'\gt0$、下り坂で $f'\lt0$、山・谷で $f'=0$</td></tr>
+        <tr><th>接線</th><td>$y-f(a)=f'(a)(x-a)$</td></tr>
+        <tr><th>記号</th><td>$f'(x)=y'=\dfrac{dy}{dx}=\dfrac{d}{dx}f(x)$</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(7)</span>チャレンジ：傾きのグラフを描け</h2>
+
+    <p>
+      上の青いグラフ $y=\blue{f(x)}$ を見て、その導関数 $y=\amber{f'(x)}$ のグラフを（ア）〜（エ）から選び、「判定」を押しましょう。3回まで判定でき、<b>1回目で正解なら★3</b> です。
+      上り坂・下り坂・水平なところ（山・谷）を探して、$\amber{f'}$ がプラス・マイナス・$0$ になる場所を考えるのがこつです。問題のグラフの上の緑の点を動かすと、その点での接線の傾きを調べられます。
+    </p>
+    <div class="widget" id="w-game-slope">
+      <div class="widget-head">傾きのグラフを描け <span class="game-total" data-r="total"></span><span class="hint">$\amber{f'}$ のグラフを選んで「判定」</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="関数 f のグラフ。緑の点で接線の傾きを調べられる"></canvas></div>
+      <div class="opt-grid" data-r="opts"></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>$f(x)=x^2$ について、微分の定義 $f'(3)=\displaystyle\lim_{h\to0}\frac{f(3+h)-f(3)}{h}$ を使って $f'(3)$ を求めよ。</li>
+      <li>次の関数を微分せよ。　(1) $3x^4-2x^2+5x-1$　(2) $\dfrac{x^3}{3}-\dfrac{x^2}{2}+7$　(3) $(x+1)(x-2)$　(4) $(2x-1)^2$</li>
+      <li>曲線 $y=x^2-2x$ の、$x=3$ での接線の式を求めよ。</li>
+      <li>smoothstep $f(t)=3t^2-2t^3$ の導関数 $f'(t)$ を求め、$f'(0),\ f'\!\left(\dfrac12\right),\ f'(1)$ を計算せよ。また、それぞれの値は動きのどんな様子を表しているか答えよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>$f(3+h)-f(3)$<br>$=(3+h)^2-3^2$<br>$=9+6h+h^2-9=6h+h^2$ なので<br>
+          $\dfrac{f(3+h)-f(3)}{h}=\dfrac{6h+h^2}{h}$<br>$=6+h$<br>（$h\neq0$ なので約分できる）<br>
+          $h\to0$ とすると $6+h\to6$。よって $f'(3)=6$<br>
+          （確かめ：$(x^2)'=2x$ に $x=3$ を入れても $2\times3=6$）</li>
+        <li>(1) $(3x^4-2x^2+5x-1)'$<br>$=3\cdot4x^3-2\cdot2x+5\cdot1-0$<br>$=12x^3-4x+5$<br>
+          (2) $\left(\dfrac{x^3}{3}-\dfrac{x^2}{2}+7\right)'$<br>$=\dfrac{3x^2}{3}-\dfrac{2x}{2}+0=x^2-x$<br>
+          (3) まず展開する：$(x+1)(x-2)=x^2-x-2$。よって $(x^2-x-2)'=2x-1$<br>
+          (4) まず展開する：$(2x-1)^2=4x^2-4x+1$。よって $(4x^2-4x+1)'=8x-4$<br>
+          （かけ算の形のまま微分する方法（積の微分）は 4.4節で学ぶ）</li>
+        <li>$f(x)=x^2-2x$ とおく。<br>
+          ① 点：$f(3)=9-6=3$ なので、接点は $(3,\ 3)$<br>
+          ② 傾き：$f'(x)=2x-2$ なので $f'(3)=6-2=4$<br>
+          ③ 接線：$y-3=4(x-3)$ より $y=4x-12+3$、つまり $y=4x-9$
+          <div class="stage quiz-fig"><canvas data-q="3" aria-label="y = x² − 2x と、x = 3 での接線 y = 4x − 9"></canvas></div></li>
+        <li>$f'(t)=3\cdot2t-2\cdot3t^2$<br>$=6t-6t^2$<br>
+          $f'(0)=0$、$f'(1)=6-6=0$<br>$f'\!\left(\dfrac12\right)=6\cdot\dfrac12-6\cdot\dfrac14$<br>$=3-\dfrac32=\dfrac32$<br>
+          $f'(0)=0$：動き出す瞬間の速さが $0$（ゆっくり動き出す）。<br>$f'(1)=0$：止まる瞬間の速さが $0$（ゆっくり止まる）。<br>
+          $f'\!\left(\dfrac12\right)=\dfrac32$：まん中でいちばん速く、等速（速さ $1$）の $1.5$ 倍の速さ。
+          <div class="stage quiz-fig"><canvas data-q="4" aria-label="smoothstep のグラフとその導関数 6t − 6t² のグラフ"></canvas></div></li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-1.html"><span class="dir">← 前の節</span><span class="nm">4.1 速さと傾き</span></a>
+    <a class="next" href="4-3.html"><span class="dir">次の節 →</span><span class="nm">4.3 いろいろな関数の微分</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-2.js?v=202611031018"></script>
+</body>
+</html>

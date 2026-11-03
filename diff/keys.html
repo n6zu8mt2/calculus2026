@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>覚えることのまとめ | 第4章 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分の各節の「覚える」をまとめたページ（印刷用）">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter calm keys-page">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero"><div><div class="eyebrow">第4章 微分</div><h1>覚えることのまとめ</h1></div></header>
+  <p class="keys-intro">各節の「覚える｜この節のまとめ」を集めたページです。節の名前を押すとその節に移動します。<button class="btn small" type="button" onclick="window.print()">🖨 このページを印刷</button></p>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-1.html">4.1速さと傾き：平均から瞬間へ</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>平均の速さ</th><td>$\dfrac{\Delta x}{\Delta t}=\dfrac{x(t_2)-x(t_1)}{t_2-t_1}$ ＝ グラフの2点を結ぶ割線の傾き</td></tr>
+        <tr><th>平均変化率</th><td>$y=f(x)$ で $x$ が $a$ から $b$ まで変わるとき $\dfrac{f(b)-f(a)}{b-a}$</td></tr>
+        <tr><th>瞬間の速さ</th><td>$\Delta t$ を $0$ に近づけたときの平均の速さの行き先 ＝ 接線の傾き</td></tr>
+        <tr><th>例</th><td>$x=2t^2$ の $t=2$ で $8$ m/秒（$\Delta t=0.1,\ 0.01,\ 0.001$ で $8.2,\ 8.02,\ 8.002$）</td></tr>
+        <tr><th>拡大</th><td>なめらかな曲線は拡大すると直線に見え、その傾きが接線の傾き。角（$y=|x|$ の $x=0$）は例外</td></tr>
+        <tr><th>単位</th><td>m/秒 $\times3.6$ ＝ km/時</td></tr>
+        <tr><th>測った値</th><td>誤差があるので、$\Delta t$ を小さくしすぎると速さがギザギザ（ノイズ）になる</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-2.html">4.2微分の定義と導関数：傾きを式で表す</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>定義</th><td>$f'(a)=\displaystyle\lim_{h\to0}\frac{f(a+h)-f(a)}{h}$（割線の傾きの行き先＝接線の傾き）</td></tr>
+        <tr><th>$x^n$</th><td>$(x^n)'=nx^{n-1}$。$(x^2)'=2x$、$(x^3)'=3x^2$、$(c)'=0$</td></tr>
+        <tr><th>多項式</th><td>$(cf)'=cf'$、$(f+g)'=f'+g'$ なので、項ごとに微分する</td></tr>
+        <tr><th>導関数</th><td>傾きを並べた関数 $f'(x)$。上り坂で $f'\gt0$、下り坂で $f'\lt0$、山・谷で $f'=0$</td></tr>
+        <tr><th>接線</th><td>$y-f(a)=f'(a)(x-a)$</td></tr>
+        <tr><th>記号</th><td>$f'(x)=y'=\dfrac{dy}{dx}=\dfrac{d}{dx}f(x)$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-3.html">4.3いろいろな関数の微分：指数・対数・三角・双曲線</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ（微分の公式）</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>多項式</th><td>$(x^n)'=nx^{n-1}$（4.2節）</td></tr>
+        <tr><th>指数関数</th><td>$(e^x)'=e^x$、$(a^x)'=a^x\log a$</td></tr>
+        <tr><th>対数関数</th><td>$(\log x)'=\dfrac1x$、$(\log|x|)'=\dfrac1x$、$(\log_a x)'=\dfrac{1}{x\log a}$</td></tr>
+        <tr><th>三角関数</th><td>$(\sin x)'=\cos x$、$(\cos x)'=-\sin x$（$x$ はラジアン）</td></tr>
+        <tr><th>双曲線関数</th><td>$(\sinh x)'=\cosh x$、$(\cosh x)'=\sinh x$、$\cosh^2x-\sinh^2x=1$</td></tr>
+        <tr><th>単振動</th><td>$(r\cos\omega t)'=-r\omega\sin\omega t$（$(f(\omega t))'=\omega f'(\omega t)$ を使う）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-4.html">4.4積・商・合成関数の微分：組み合わせた関数</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>積</th><td>$(fg)'=f'g+fg'$、$(fgh)'=f'gh+fg'h+fgh'$（長方形の面積の増え方）</td></tr>
+        <tr><th>商</th><td>$\left(\dfrac1g\right)'=-\dfrac{g'}{g^2}$、$\left(\dfrac fg\right)'=\dfrac{f'g-fg'}{g^2}$、$(\tan x)'=\dfrac{1}{\cos^2x}$</td></tr>
+        <tr><th>合成関数</th><td>$\{f(g(x))\}'=f'(g(x))\,g'(x)$、$\dfrac{dy}{dx}=\dfrac{dy}{du}\cdot\dfrac{du}{dx}$（速さのかけ算）</td></tr>
+        <tr><th>1次式の中身</th><td>$(f(ax+b))'=af'(ax+b)$、$(e^{kx})'=ke^{kx}$、$(\sin\omega t)'=\omega\cos\omega t$</td></tr>
+        <tr><th>シグモイド</th><td>$\sigma=\dfrac{1}{1+e^{-x}}$、$\sigma'=\sigma(1-\sigma)\leqq\dfrac14$</td></tr>
+        <tr><th>対数微分法</th><td>$(\log|f|)'=\dfrac{f'}{f}$、$(x^x)'=x^x(\log x+1)$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-5.html">4.5増減と極値：最大・最小を見つける</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>増減</th><td>$f'(x)\gt0$ なら増加（$\nearrow$）、$f'(x)\lt0$ なら減少（$\searrow$）</td></tr>
+        <tr><th>増減表</th><td>$f'(x)=0$ を解き、その $x$ で区切って区間ごとに $f'$ の符号を調べる</td></tr>
+        <tr><th>極大・極小</th><td>$f'$ が $+\to-$ で極大、$-\to+$ で極小。$f'=0$ でも符号が変わらなければ極値ではない（$x^3$）</td></tr>
+        <tr><th>最大・最小</th><td>範囲の中の極値と、両端の値をくらべる</td></tr>
+        <tr><th>最適化</th><td>1つの変数の式にして $f'=0$ を解く。缶は $h=2r$、箱は $x=\frac{a}{6}$（1辺 $a$ の紙）、投げる角度は $45^\circ$</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-6.html">4.6逆関数の微分：逆向きの傾き</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>逆関数の微分</th><td>$\left(f^{-1}\right)'(x)=\dfrac{1}{f'\!\left(f^{-1}(x)\right)}$、$\dfrac{dy}{dx}=1\Big/\dfrac{dx}{dy}$（$y=x$ で折り返すと傾きは逆数）</td></tr>
+        <tr><th>対数</th><td>$y=\log x\iff x=e^y$ より $(\log x)'=\dfrac{1}{e^y}=\dfrac1x$</td></tr>
+        <tr><th>逆三角関数</th><td>$(\sin^{-1}x)'=\dfrac{1}{\sqrt{1-x^2}}$、$(\cos^{-1}x)'=-\dfrac{1}{\sqrt{1-x^2}}$、$(\tan^{-1}x)'=\dfrac{1}{1+x^2}$</td></tr>
+        <tr><th>関係式</th><td>$\sin^{-1}x+\cos^{-1}x=\dfrac{\pi}{2}$（和が一定なので、微分は逆符号）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-7.html">4.7高階微分と近似：テイラー展開</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>2回微分</th><td>$f''(x)=(f'(x))'$。位置を 2回微分すると加速度。$f''\gt0$ で下に凸、$f''\lt0$ で上に凸</td></tr>
+        <tr><th>$n$ 回微分</th><td>$(e^x)^{(n)}=e^x$、$(\sin x)^{(n)}=\sin\!\left(x+\frac{n\pi}{2}\right)$、$\left(\frac1x\right)^{(n)}=\dfrac{(-1)^nn!}{x^{n+1}}$</td></tr>
+        <tr><th>1次近似</th><td>$f(a+h)\approx f(a)+f'(a)h$。$\sqrt{1+x}\approx1+\frac{x}{2}$、$\sin x\approx x$、$e^x\approx1+x$</td></tr>
+        <tr><th>マクローリン<br>展開</th><td>$f(x)=\displaystyle\sum_{n=0}^{\infty}\frac{f^{(n)}(0)}{n!}x^n$。$e^x=1+x+\frac{x^2}{2!}+\cdots$、$\sin x=x-\frac{x^3}{3!}+\cdots$、$\cos x=1-\frac{x^2}{2!}+\cdots$</td></tr>
+        <tr><th>テイラー<br>展開</th><td>$f(x)=\displaystyle\sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n$（中心 $x=a$）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-8.html">4.8極限のくらべ方：0/0 になったら</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>0/0 の極限</th><td>$\displaystyle\lim_{x\to0}\frac{\sin x}{x}=\lim_{x\to0}\frac{e^x-1}{x}=\lim_{x\to0}\frac{\log(1+x)}{x}=1$（原点での接線の傾き）</td></tr>
+        <tr><th>テイラー展開で</th><td>$\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^2}=\frac12$（$1-\cos x\approx\frac{x^2}{2}$）</td></tr>
+        <tr><th>増え方の順位</th><td>$\log x\ll x^a\ll e^x$：$\dfrac{x^a}{e^x}\to0$、$\dfrac{\log x}{x^a}\to0$（$x\to\infty,\ a\gt0$）</td></tr>
+        <tr><th>ロピタルの定理</th><td>$\frac00$・$\frac{\infty}{\infty}$ の形なら $\displaystyle\lim\frac{f}{g}=\lim\frac{f'}{g'}$（形を確かめてから。テイラー展開のほうが楽なことが多い）</td></tr>
+        <tr><th>等比の減り方</th><td>$d_n=(1-k)^n d_0\to0$（$0\lt k\lt1$）。無限個の和 $10+1+0.1+\cdots$ も有限になる</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-9.html">4.9微分を使う：ニュートン法・勾配降下法</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>ニュートン法</th><td>$x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$：接線と $x$ 軸の交点をくり返して $f(x)=0$ の解へ。正しい桁が倍々に増える</td></tr>
+        <tr><th>勾配降下法</th><td>$x_{n+1}=x_n-\eta f'(x_n)$：傾きと反対向きに進んで最小値へ。学習率 $\eta$ は大きすぎず小さすぎず</td></tr>
+        <tr><th>数値微分</th><td>$f'(x)\approx\dfrac{f(x+h)-f(x-h)}{2h}$：$h$ は小さすぎても大きすぎてもだめ。ノイズに弱い</td></tr>
+        <tr><th>AI の学習</th><td>勾配降下法で誤差を小さくする。たくさんの重みの傾きは誤差逆伝播法（4.10節）で求める</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+    <section class="sec keys-ch">
+      <h2 class="h-sub"><a href="4-10.html">4.10誤差逆伝播法：AI はどうやって学ぶか</a></h2>
+      <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>AI の学習</th><td>誤差 $E=(y-t)^2$ が小さくなるように、つまみ（重み $w$、バイアス $b$）を直すこと</td></tr>
+        <tr><th>傾きの記号</th><td>$\dfrac{\partial E}{\partial w}$：$w$ だけを少し動かしたときの $E$ の傾き</td></tr>
+        <tr><th>計算グラフ</th><td>計算を小さな装置に分けて、つないだ図。$E$ は合成関数</td></tr>
+        <tr><th>連鎖律</th><td>$\dfrac{\partial E}{\partial w}=\dfrac{dE}{dy}\cdot\dfrac{dy}{du}\cdot\dfrac{\partial u}{\partial w}$<br>$\quad=2(y-t)\cdot y(1-y)\cdot x$</td></tr>
+        <tr><th>手順</th><td>前向き（値を計算）→ 後ろ向き（$1$ から傾きをかけて伝える）→ 更新 $w\leftarrow w-\eta\frac{\partial E}{\partial w}$</td></tr>
+        <tr><th>なぜ逆？</th><td>共通のかけ算を使い回せるので、1往復ですべてのつまみの傾きが出る（数値微分はつまみ1個ごとに1回）</td></tr>
+      </tbody></table></div>
+    </div>
+    </section>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 覚えることのまとめ（tools/build.py で自動生成）</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+</body>
+</html>

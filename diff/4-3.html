@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.3 いろいろな関数の微分 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.3節：e^x・log x・sin x・cos x・双曲線関数">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch3 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html" class="active" aria-current="page"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.3節</div>
+      <h1><span class="chap-no">4.3</span>いろいろな関数の微分：指数・対数・三角・双曲線</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>$(e^x)'=e^x,\ (\log x)'=\dfrac1x$ をグラフの傾きとして説明できる。</li>
+      <li>$(\sin x)'=\cos x,\ (\cos x)'=-\sin x$ を単位円の点の動きから説明できる。</li>
+      <li>双曲線関数 $\sinh x,\ \cosh x$ を定義し、微分できる。</li>
+    </ol>
+    <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ（タイムアタックつき） ・ 確認問題 4問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-2.html">4.2節</a>の 導関数、<a href="../explog/2-6.html">2.6節</a>の ネイピア数 $e$、<a href="../explog/2-4.html">2.4節</a>の 対数、<a href="../trig/3-2.html">3.2節</a>の 弧度法、<a href="../trig/3-5.html">3.5節</a>の 円運動</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      4.2節で、$x^n$ のような多項式は $(x^n)'=nx^{n-1}$ で微分できるようになりました。
+      でも、お金が増える $2^x$、音の大きさの $\log x$、波の $\sin x$ のような関数は、多項式ではありません。
+      この節では、これらの関数のグラフの<b>接線の傾き</b>を図で調べて、微分の公式をそろえます。
+      どの公式も「グラフを見ると、なるほど」と納得できるものばかりです。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>指数関数の微分</h2>
+
+    <p>
+      $f(x)=a^x$（$a\gt0$）を、4.2節の定義どおりに微分してみましょう。指数法則 $a^{x+h}=a^x\cdot a^h$ を使うと
+    </p>
+    <div class="eq-box">$$\frac{f(x+\red{h})-f(x)}{\red{h}}=\frac{a^x a^{\red{h}}-a^x}{\red{h}}=\blue{a^x}\times\frac{a^{\red{h}}-1}{\red{h}}$$</div>
+    <p>
+      となります。右の $\dfrac{a^{h}-1}{h}$ は $x$ を含まないので、$h\to0$ としたときの値は<b>どの $x$ でも同じ数</b>です。
+      しかもこれは、$x=0$ での平均の傾き $\dfrac{f(0+h)-f(0)}{h}$ そのものなので、その行き先は<b>$x=0$ での接線の傾き</b>です。つまり
+    </p>
+    <div class="eq-box">$$\left(a^x\right)'=\blue{a^x}\times\bigl(\,x=0\ \text{での接線の傾き}\,\bigr)$$</div>
+    <p>
+      「どこでの傾きも、そこでの<b>高さ</b>の一定倍」になる、という不思議な性質です。$h$ を小さくして、この「一定倍」を調べてみましょう。
+    </p>
+    <div class="table-wrap ratio-table-wrap" style="border:0;background:transparent"><table class="ratio-table">
+      <thead><tr><th>$\dfrac{a^h-1}{h}$</th><th>$h=0.1$</th><th>$h=0.01$</th><th>$h=0.001$</th><th>$\log a$</th></tr></thead>
+      <tbody>
+        <tr><th>$a=2$</th><td>0.71773</td><td>0.69556</td><td>0.69339</td><td>0.69315</td></tr>
+        <tr><th>$a=e$</th><td>1.05171</td><td>1.00502</td><td>1.00050</td><td>1</td></tr>
+        <tr><th>$a=3$</th><td>1.16123</td><td>1.10467</td><td>1.09922</td><td>1.09861</td></tr>
+        <tr><th>$a=10$</th><td>2.58925</td><td>2.32930</td><td>2.30524</td><td>2.30259</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      行き先は、ちょうど<b>自然対数 $\log a$</b>（$e$ を底とする対数）になっています。
+      <a href="../explog/2-6.html">2.6節</a>で見たとおり、$x=0$ での傾きがちょうど $1$ になる底が $e$ でした（$\log e=1$）。だから $e^x$ は
+    </p>
+    <div class="eq-box eq-hero">$$\left(e^x\right)'=e^x$$</div>
+    <p>
+      となり、「<b>接線の傾き ＝ 高さ</b>」という、微分しても形が変わらない特別な関数になります。下の図で、点を動かして確かめましょう。
+    </p>
+
+    <div class="widget" id="w-exp">
+      <div class="widget-head">$y=\blue{a^x}$ の接線の傾きと高さ <span class="hint">底 $a$ を動かす／緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">底</span><div class="chips" data-r="presets"></div>
+        <label class="check"><input type="checkbox" data-r="deriv">導関数 $\amber{y=(a^x)'}$ も表示</label></div></div>
+      <div class="stage"><canvas aria-label="y = a^x のグラフと接線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">高さ</span><span class="tex" data-r="h"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex" data-r="m"></span></div>
+          <div class="row"><span class="k">傾き ÷ 高さ</span><span class="tex big" data-r="ratio"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      点をどこに動かしても「傾き ÷ 高さ」は変わらず、$\log a$ になります。$a=e$ にすると、傾きと高さがぴったり同じ（比が $1$）になります。
+      $a\lt1$（例えば $a=\frac12$）では $\log a\lt0$ なので、傾きはマイナス（右下がり）です。
+    </p>
+    <p class="sub">
+      ※ $\log a$ になる理由：対数の意味から $a=e^{\log a}$ なので、$a^x=e^{(\log a)x}$ です。これは $y=e^x$ のグラフを横に $\frac{1}{\log a}$ 倍に縮めた（または伸ばした）形で、横に縮めると傾きは $\log a$ 倍になります（くわしくは <a href="4-4.html">4.4節</a>の合成関数の微分で）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜指数関数の微分</div>
+      <p class="key-lead key-big">$e^x$ は「接線の傾き ＝ 高さ」</p>
+      $$\left(e^x\right)'=e^x,\qquad \left(a^x\right)'=a^x\log a$$
+      <ul>
+        <li>$a^x$ の傾きは、どこでも高さ $a^x$ の $\log a$ 倍（$\log$ は自然対数）</li>
+        <li>$\log a$ は $y=a^x$ の $x=0$ での接線の傾き。これが $1$ になる底が $e$</li>
+      </ul>
+      <p class="key-note">例：$(2^x)'=2^x\log2\approx0.69\times2^x$、$(5e^x)'=5e^x$（定数倍はそのまま）。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>対数関数の微分</h2>
+
+    <p>
+      $y=\log x$ のグラフは、$y=e^x$ のグラフを直線 $y=x$ で折り返したものでした（<a href="../explog/2-4.html">2.4節</a>）。
+      $y=e^x$ の上の点 $(t,\ e^{t})$ での傾きは $e^{t}$ です。折り返すと縦と横が入れかわるので、傾きは<b>逆数</b> $\dfrac{1}{e^{t}}$ になり、点は $(e^{t},\ t)$ に移ります。
+      この点の $x$ 座標は $x=e^{t}$ なので、$y=\log x$ の点 $x$ での傾きは $\dfrac1x$ です。
+    </p>
+    <div class="eq-box eq-hero">$$\left(\log x\right)'=\frac{1}{x}$$</div>
+    <p>
+      つまり、$x=2$ での傾きは $\frac12$、$x=10$ での傾きは $\frac1{10}$ と、<b>右へ行くほど傾きはゆるやか</b>になります。
+      下の図で、傾きと $x$ をかけるといつでも $1$ になることを確かめましょう。
+    </p>
+
+    <div class="widget" id="w-log">
+      <div class="widget-head">$y=\blue{\log x}$ の接線の傾き <span class="hint">緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="mode"></div>
+        <label class="check"><input type="checkbox" data-r="mirror">$y=e^x$ と折り返して比べる</label></div></div>
+      <div class="stage"><canvas aria-label="y = log x のグラフと接線"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">点</span><span class="tex" data-r="pt"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex" data-r="m"></span></div>
+          <div class="row"><span class="k">傾き × x</span><span class="tex big" data-r="prod"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">マイナスの x：log|x|</h3>
+    <p>
+      $\log x$ は $x\gt0$ でしか考えられませんが、$y=\log|x|$ なら $x\lt0$ でも使えます。$x\lt0$ の部分は、$y=\log x$ のグラフを $y$ 軸で<b>左右に折り返した</b>形です。
+      左右に折り返すと傾きの符号が逆になるので、$x=-b$（$b\gt0$）での傾きは $-\dfrac{1}{b}=\dfrac{1}{x}$。結局、同じ式 $\dfrac1x$ になります（図の「$\log|x|$」で確かめられます）。
+    </p>
+    <h3 class="h-mini">底が e でない対数</h3>
+    <p>
+      底の変換公式（2.4節）で $\log_a x=\dfrac{\log x}{\log a}$ と、自然対数の定数倍に直せます。$\dfrac{1}{\log a}$ は定数なので、そのままかければよいのです。
+    </p>
+    <div class="eq-box">$$\left(\log_a x\right)'=\left(\frac{1}{\log a}\log x\right)'=\frac{1}{x\log a}$$</div>
+    <p class="sub">※ 「折り返すと傾きが逆数になる」ことは、<a href="4-6.html">4.6節</a>（逆関数の微分）できちんと説明します。</p>
+
+    <div class="key"><div class="key-ttl">覚える｜対数関数の微分</div>
+      <p class="key-lead key-big">$\log x$ の傾きは $\dfrac1x$（右へ行くほどゆるやか）</p>
+      $$\left(\log x\right)'=\frac{1}{x},\qquad \left(\log|x|\right)'=\frac{1}{x},\qquad \left(\log_a x\right)'=\frac{1}{x\log a}$$
+      <ul>
+        <li>$y=e^x$ を $y=x$ で折り返したグラフなので、傾きは $e^x$ の逆数になる</li>
+        <li>$\log|x|$ は $x\lt0$ でも使える。微分は同じ $\dfrac1x$</li>
+      </ul>
+      <p class="key-note">例：$(\log_{10}x)'=\dfrac{1}{x\log10}\approx\dfrac{0.434}{x}$、$(3\log x)'=\dfrac{3}{x}$。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>三角関数の微分</h2>
+
+    <p>
+      $y=\sin x$ のグラフの傾きを、いくつかの点で読んでみましょう。$x=0$ では傾き $1$（3.2節の「小さい角では $\sin x\approx x$」）、山の頂上 $x=\frac{\pi}{2}$ では傾き $0$、$x=\pi$ では傾き $-1$ です。
+      この $1,\ 0,\ -1$ は、ちょうど $\cos0,\ \cos\frac{\pi}{2},\ \cos\pi$ の値です。実は、どこでも <b>$\sin x$ の傾き ＝ $\cos x$</b> になっています。
+    </p>
+    <p>
+      理由は、<a href="../trig/3-5.html">3.5節</a>の円運動で見えます。単位円の上の点 $\mathrm{P}(\cos x,\ \sin x)$ が、1 秒に $1$ ラジアンずつ回るとします（時刻 $x$ 秒で角 $x$）。
+    </p>
+    <ul>
+      <li><b>速さは 1</b>：弧の長さは（半径）×（角）なので、1 秒に進む道のりは $1\times1=1$。これは角を<b>ラジアン</b>で測ったからです。</li>
+      <li><b>向きは半径に垂直</b>：円の接線の向きなので、半径の向き $(\cos x,\ \sin x)$ を $90^\circ$ 回した $\teal{(-\sin x,\ \cos x)}$。</li>
+    </ul>
+    <p>
+      点の高さ $\sin x$ が増える速さは、速度の<b>縦の成分</b> $\amber{\cos x}$ です。同じように、横の位置 $\cos x$ が増える速さは<b>横の成分</b> $\amber{-\sin x}$ です。
+    </p>
+
+    <div class="widget" id="w-sin">
+      <div class="widget-head">単位円の点の速度と、$y=\blue{\sin x}$ の傾き <span class="hint">▶ で回す／青い点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="mode"></div>
+        <button class="btn primary" type="button" data-r="play">▶ 回す</button>
+        <label class="check"><input type="checkbox" data-r="deriv">導関数のグラフも表示</label></div></div>
+      <div class="d43-duo">
+        <div class="stage"><span class="cap l">単位円</span><canvas aria-label="単位円の点と速度の矢印"></canvas></div>
+        <div class="stage"><canvas aria-label="三角関数のグラフと接線"></canvas></div>
+      </div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">角</span><span class="tex" data-r="ang"></span></div>
+          <div class="row"><span class="k">点の速度</span><span class="tex" data-r="vel"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex big" data-r="m"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜三角関数の微分</div>
+      <p class="key-lead key-big">$\sin$ を微分すると $\cos$、$\cos$ を微分すると $-\sin$</p>
+      $$\left(\sin x\right)'=\cos x,\qquad \left(\cos x\right)'=-\sin x$$
+      <ul>
+        <li>単位円の点 $(\cos x,\ \sin x)$ の速度が $(-\sin x,\ \cos x)$（速さ $1$）だから</li>
+        <li>$x$ は<b>ラジアン</b>で測ること（度では成り立たない）</li>
+      </ul>
+      <p class="key-note">$\cos$ の微分のマイナスに注意。$x=0$ から右へ行くと、$\cos x$ は $1$ から下がっていく（傾きがマイナス）。</p>
+    </div>
+
+    <h3 class="h-mini">度で測るとどうなる？（3.2節の約束）</h3>
+    <p>
+      <a href="../trig/3-2.html">3.2節</a>で「ラジアンのおかげで $(\sin x)'=\cos x$ が成り立つ。度のままだと $\frac{\pi}{180}$ がついてまわる」と約束しました。
+      角を度で測ると、$1^\circ$ は $\frac{\pi}{180}\approx0.01745$ ラジアンなので、$1^\circ$ 回っても点は $0.01745$ しか進みません。$x=0$ での傾きを、4.2節と同じように $h$ を小さくして調べると
+    </p>
+    <div class="table-wrap ratio-table-wrap" style="border:0;background:transparent"><table class="ratio-table">
+      <thead><tr><th>$h$（度）</th><th>$1$</th><th>$0.1$</th><th>$0.01$</th><th>$\frac{\pi}{180}$</th></tr></thead>
+      <tbody><tr><th>$\dfrac{\sin h^\circ}{h}$</th><td>0.0174524</td><td>0.0174533</td><td>0.01745329</td><td>0.01745329</td></tr></tbody>
+    </table></div>
+    <p>となり、傾きは $1$ ではなく $\frac{\pi}{180}$ です。どの角でも同じことが起こるので</p>
+    <div class="eq-box">$$\left(\sin x^\circ\right)'=\frac{\pi}{180}\cos x^\circ,\qquad \left(\cos x^\circ\right)'=-\frac{\pi}{180}\sin x^\circ$$</div>
+    <p>
+      と、余計な $\frac{\pi}{180}$ がつきます。数学やプログラム（<code>Math.sin</code> など）でラジアンを使うのは、このためです。
+      なお、$\tan x$ の微分は、$\tan x=\dfrac{\sin x}{\cos x}$ と見て <a href="4-4.html">4.4節</a>（商の微分）で求めます（答えは $\dfrac{1}{\cos^2x}$）。
+    </p>
+
+    <h3 class="h-mini">単振動の速さ（3.5節の続き）</h3>
+    <p>
+      <a href="../trig/3-5.html">3.5節</a>では、半径 $r$ の円を角速度 $\omega$ で回る点の影の動き（単振動）を $x=r\cos\omega t$ と表しました。この動きの速度を求めましょう。
+      ここで、次の便利な規則を使います（理由は <a href="4-4.html">4.4節</a>の合成関数の微分で）。
+    </p>
+    <div class="eq-box">$$\bigl(f(\omega t)\bigr)'=\omega\,f'(\omega t)$$</div>
+    <p>
+      「時間を $\omega$ 倍速で進めると、変化の速さも $\omega$ 倍になる」という意味です（動画の早送りと同じ）。これを使うと
+    </p>
+    <div class="eq-box">$$v=\left(r\cos\omega t\right)'=r\cdot\omega\cdot(-\sin\omega t)=-r\omega\sin\omega t$$</div>
+    <p>
+      となります。$\sin$ の値は $-1$〜$1$ なので、いちばん速いときの速さは $r\omega$。これは 3.5節の「円運動の速さ $v=r\omega$」と一致します。
+      また、端（$x=\pm r$）では $\sin\omega t=0$ なので速さは $0$、まん中（$x=0$）を通るときがいちばん速い、というばねの動きもこの式から読めます。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>双曲線関数</h2>
+
+    <p>
+      $e^x$ と $e^{-x}$ を半分ずつ足したり引いたりすると、三角関数によく似た性質をもつ関数ができます。これを<b>双曲線関数</b>といいます。
+    </p>
+    <div class="eq-box">$$\cosh x=\frac{e^x+e^{-x}}{2},\qquad \sinh x=\frac{e^x-e^{-x}}{2},\qquad \tanh x=\frac{\sinh x}{\cosh x}$$</div>
+    <p>
+      読み方は「ハイパボリック・コサイン」「ハイパボリック・サイン」「ハイパボリック・タンジェント」です（コッシュ・シンチ・タンチとも）。$h$ は hyperbolic（双曲線の）の頭文字です。
+      $\cosh x$ は左右対称で、いちばん低いところが $\cosh0=1$。$\sinh x$ は原点を通って右上がりです。
+      $\tanh x$ の値は $-1$ と $1$ の間におさまり、AI（ニューラルネットワーク）で「値を $-1$〜$1$ に押しこむ関数」としても使われています。
+    </p>
+
+    <h3 class="h-mini">微分してみよう</h3>
+    <p>
+      まず $e^{-x}$ の微分です。$e^{-x}=\left(\dfrac1e\right)^x$ なので、(1) の $(a^x)'=a^x\log a$ で $a=\dfrac1e$ とすると、$\log\dfrac1e=-1$ より
+    </p>
+    <div class="eq-box">$$\left(e^{-x}\right)'=e^{-x}\times(-1)=-e^{-x}$$</div>
+    <p>
+      （$y=e^{-x}$ は $y=e^x$ を左右に折り返したグラフなので、傾きの符号が逆になる、と見ても同じです。）これを使うと
+    </p>
+    <div class="eq-box">$$\begin{aligned}\left(\sinh x\right)'&=\frac{e^x-(-e^{-x})}{2}=\frac{e^x+e^{-x}}{2}=\cosh x\\ \left(\cosh x\right)'&=\frac{e^x+(-e^{-x})}{2}=\frac{e^x-e^{-x}}{2}=\sinh x\end{aligned}$$</div>
+    <p>
+      三角関数と違って、<b>マイナスがつかない</b>のがポイントです。$\tanh x$ の微分は <a href="4-4.html">4.4節</a>の商の微分で求めます（答えは $\dfrac{1}{\cosh^2 x}$）。
+    </p>
+
+    <div class="widget" id="w-hyp">
+      <div class="widget-head">双曲線関数のグラフと接線 <span class="hint">関数を選ぶ／緑の点をドラッグ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="mode"></div></div>
+        <div class="btn-row"><label class="check"><input type="checkbox" data-r="parts" checked>$\frac{e^x}{2}$ と $\frac{e^{-x}}{2}$ も表示</label>
+        <label class="check"><input type="checkbox" data-r="deriv">導関数のグラフも表示</label></div></div>
+      <div class="stage"><canvas aria-label="双曲線関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">値</span><span class="tex" data-r="val"></span></div>
+          <div class="row"><span class="k">接線の傾き</span><span class="tex big" data-r="m"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex" data-r="id"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-mini">cosh² − sinh² = 1：「双曲線」の名前のわけ</h3>
+    <p>$\cos^2x+\sin^2x=1$ に対応する式があります。$e^x e^{-x}=1$ を使って計算すると</p>
+    <div class="eq-box">$$\cosh^2x-\sinh^2x=\frac{(e^x+e^{-x})^2-(e^x-e^{-x})^2}{4}=\frac{4e^xe^{-x}}{4}=1$$</div>
+    <p>
+      $(\cos t,\ \sin t)$ が円 $x^2+y^2=1$ の上を動くのに対して、点 $(\cosh t,\ \sinh t)$ は<b>双曲線</b> $x^2-y^2=1$ の上を動きます。これが「双曲線関数」という名前の由来です。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜双曲線関数</div>
+      <p class="key-lead key-big">$e^x$ と $e^{-x}$ の平均と差。微分しても符号は変わらない</p>
+      $$\begin{gathered}\cosh x=\frac{e^x+e^{-x}}{2},\qquad \sinh x=\frac{e^x-e^{-x}}{2},\qquad \tanh x=\frac{\sinh x}{\cosh x}\\[4pt] \left(\sinh x\right)'=\cosh x,\qquad \left(\cosh x\right)'=\sinh x\\[4pt] \cosh^2x-\sinh^2x=1\end{gathered}$$
+      <ul>
+        <li>$(e^{-x})'=-e^{-x}$ を使うと、2つの微分はすぐ確かめられる</li>
+        <li>三角関数の $\cos^2x+\sin^2x=1$（円）に対して、$\cosh^2x-\sinh^2x=1$（双曲線）</li>
+      </ul>
+      <p class="key-note">$(\cos x)'=-\sin x$ にはマイナスがつくが、$(\cosh x)'=\sinh x$ にはつかない。</p>
+    </div>
+
+    <h3 class="h-mini">電線の形：カテナリー</h3>
+    <p>
+      電柱の間の電線や、両手で持ったネックレスは、どんな曲線の形で垂れ下がっているでしょうか。放物線に見えますが、実は
+    </p>
+    <div class="eq-box">$$y=a\cosh\frac{x}{a}\qquad(a\gt0)$$</div>
+    <p>
+      の形（を上下に平行移動したもの）になります。この曲線を<b>カテナリー</b>（懸垂線）といいます（ラテン語の catena＝鎖 から）。
+      $a$ が大きいほどピンと張り、小さいほど深く垂れます。下の図で、まん中の点を上下に動かして、同じ両端を通る放物線（点線）と比べましょう。
+    </p>
+
+    <div class="widget" id="w-cat">
+      <div class="widget-head">垂れ下がる鎖：$y=\blue{a\cosh\frac{x}{a}}$ <span class="hint">まん中の点を上下にドラッグ（$s$ はたるみの深さ）</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row">
+        <label class="check"><input type="checkbox" data-r="para" checked>同じ両端を通る放物線（点線）と比べる</label>
+        <label class="check"><input type="checkbox" data-r="flip">上下を逆さにする（アーチ）</label></div></div>
+      <div class="stage"><canvas aria-label="垂れ下がる鎖のカテナリー"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">鎖の式</span><span class="tex big" data-r="eq"></span></div>
+          <div class="row"><span class="k">放物線</span><span class="tex" data-r="par"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      浅く垂れるときは放物線とほとんど重なりますが、深く垂れると違いがはっきりします。カテナリーは放物線より<b>底が平らで、両端が急</b>です。
+      なぜ $\cosh$ になるのかは、鎖の各部分にはたらく力のつり合いから「微分方程式」を作って解くとわかります（後の章で）。
+    </p>
+    <div class="callout point">
+      <div class="ttl">小話：吊り橋と電線、アーチ</div>
+      <p>
+        電線は<b>自分の重さ</b>が線に沿って均等にかかるのでカテナリーになります。一方、吊り橋のケーブルは、重い道路（橋げた）を<b>水平方向に均等に</b>つるしているので、ほぼ放物線になります。似ていますが、重さのかかり方で形が変わるのです。
+        また、鎖を上下に逆さにしたアーチは、押す力だけで自分の重さを支えられる、とても丈夫な形です。アメリカ・セントルイスのゲートウェイ・アーチ（高さ約 192 m）はカテナリーをもとにした形で、建築家ガウディは糸に重りをつるした模型を逆さにして教会の形を考えました。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>公式のまとめ</h2>
+
+    <p>
+      ここまでで、よく使う関数の微分の公式がそろいました。下の図で関数を選び、緑の点（接線）を左から右へ動かしてみましょう。
+      各点での<b>傾きの値</b>を高さにとった金色の点が、<b>導関数 $f'(x)$ のグラフ</b>をなぞっていきます。
+      まず「答え」を消したまま、どんな形になるか予想してから ▶ を押すのがおすすめです。
+    </p>
+
+    <div class="widget" id="w-table">
+      <div class="widget-head">関数 $\blue{f(x)}$ と導関数 $\amber{f'(x)}$ <span class="hint">関数を選ぶ／緑の点をドラッグ／▶ でなぞる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="fs"></div>
+        <div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ なぞる</button>
+        <label class="check"><input type="checkbox" data-r="full">答え（導関数のグラフ全体）を表示</label></div></div>
+      <div class="stage"><canvas aria-label="関数と導関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">関数</span><span class="tex big" data-r="f"></span></div>
+          <div class="row"><span class="k">導関数</span><span class="tex big" data-r="df"></span></div>
+          <div class="row"><span class="k">この点</span><span class="tex" data-r="pt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $e^x$ は導関数のグラフが自分自身と重なり、$\sin x$ は左に $\frac{\pi}{2}$ ずれた $\cos x$、$\cosh x$ と $\sinh x$ は互いに入れかわります。
+      グラフの<b>山や谷</b>（接線が水平）のところで、導関数のグラフが $x$ 軸と交わる（$f'(x)=0$）ことにも注目しましょう。これは <a href="4-5.html">4.5節</a>で最大・最小を見つける道具になります。
+    </p>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ（微分の公式）</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>多項式</th><td>$(x^n)'=nx^{n-1}$（4.2節）</td></tr>
+        <tr><th>指数関数</th><td>$(e^x)'=e^x$、$(a^x)'=a^x\log a$</td></tr>
+        <tr><th>対数関数</th><td>$(\log x)'=\dfrac1x$、$(\log|x|)'=\dfrac1x$、$(\log_a x)'=\dfrac{1}{x\log a}$</td></tr>
+        <tr><th>三角関数</th><td>$(\sin x)'=\cos x$、$(\cos x)'=-\sin x$（$x$ はラジアン）</td></tr>
+        <tr><th>双曲線関数</th><td>$(\sinh x)'=\cosh x$、$(\cosh x)'=\sinh x$、$\cosh^2x-\sinh^2x=1$</td></tr>
+        <tr><th>単振動</th><td>$(r\cos\omega t)'=-r\omega\sin\omega t$（$(f(\omega t))'=\omega f'(\omega t)$ を使う）</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：公式タイムアタック</h2>
+
+    <p>
+      出てくる関数の導関数を、4つの中から選びましょう。ステージ1〜4は種類別の 6 問で、<b>まちがい 0 なら★3</b>（2 問までなら★2）。
+      ステージ5は全部の公式をまぜた <b>60 秒タイムアタック</b>です。何問正解できるか挑戦しましょう（最高記録はこのブラウザに保存されます）。
+    </p>
+    <div class="widget" id="w-game-ta">
+      <div class="widget-head">公式タイムアタック <span class="game-total" data-r="total"></span><span class="hint">正しい導関数を選ぶ</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div>
+        <div class="ta-bar"><i data-r="bar"></i></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="d43-q" data-r="q"></div>
+      <div class="panel" style="padding-top:4px;padding-bottom:4px"><div class="chips ta-ans" data-r="ans"></div></div>
+      <div class="stage"><canvas aria-label="問題の関数と導関数のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">進み具合</span><span data-r="prog"></span></div>
+          <div class="row"><span class="k">時間</span><span data-r="time"></span></div>
+          <div class="row"><span class="k">最高記録</span><span data-r="best"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <ol class="quiz">
+      <li>次を求めよ。<br>
+        (1) $(\sqrt{x})'$　(2) $(\sin x)'$　(3) $(\cos x)'$　(4) $(e^x)'$　(5) $(3^x)'$　(6) $(\log x)'$　(7) $(\log_5 x)'$</li>
+      <li>次の関数を微分せよ。ただし、(4) の $x^\circ$ は「$x$ 度」を表す。<br>
+        (1) $2e^x-3\log x$　(2) $4\sin x+\cos x$　(3) $x^3+2^x$　(4) $\sin x^\circ$</li>
+      <li>ばねにつけたおもりの位置が、時刻 $t$ 秒で $x=2\cos3t$ と表される。速度 $v$ を $t$ の式で表し、速さが最大になるときの $x$ と、その速さを求めよ。</li>
+      <li>双曲線関数について、次に答えよ。<br>
+        (1) $\sinh x,\ \cosh x,\ \tanh x$ の定義式を書け。<br>
+        (2) $(\sinh x)',\ (\cosh x)'$ を計算せよ。<br>
+        (3) $\cosh^2x-\sinh^2x=1$ を示せ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>(1) $\sqrt{x}=x^{\frac12}$ なので $(x^{\frac12})'=\dfrac12x^{-\frac12}=\dfrac{1}{2\sqrt{x}}$<br>
+          (2) $(\sin x)'=\cos x$　(3) $(\cos x)'=-\sin x$　(4) $(e^x)'=e^x$<br>
+          (5) $(a^x)'=a^x\log a$ で $a=3$：$(3^x)'=3^x\log3$<br>
+          (6) $(\log x)'=\dfrac1x$<br>
+          (7) $\log_5x=\dfrac{\log x}{\log5}$ なので $(\log_5x)'=\dfrac{1}{x\log5}$</li>
+        <li>和・定数倍はそれぞれ微分して足せばよい（4.2節）。<br>
+          (1) $(2e^x-3\log x)'=2e^x-3\cdot\dfrac1x=2e^x-\dfrac3x$<br>
+          (2) $(4\sin x+\cos x)'=4\cos x-\sin x$<br>
+          (3) $(x^3+2^x)'=3x^2+2^x\log2$<br>
+          (4) $x^\circ=\dfrac{\pi}{180}x$ ラジアンなので、傾きに $\dfrac{\pi}{180}$ がつく：$(\sin x^\circ)'=\dfrac{\pi}{180}\cos x^\circ$</li>
+        <li>$(f(\omega t))'=\omega f'(\omega t)$ を $\omega=3$ で使うと<br>
+          $v=(2\cos3t)'=2\cdot3\cdot(-\sin3t)=-6\sin3t$<br>
+          $-1\leqq\sin3t\leqq1$ なので、速さ $|v|$ が最大になるのは $\sin3t=\pm1$ のとき。このとき $\cos3t=0$ なので $x=0$（まん中を通るとき）、速さは $6$。<br>
+          確かめ：半径 $r=2$、角速度 $\omega=3$ の円運動の速さ $r\omega=6$ と一致する。</li>
+        <li>(1) $\sinh x=\dfrac{e^x-e^{-x}}{2},\quad \cosh x=\dfrac{e^x+e^{-x}}{2},\quad \tanh x=\dfrac{\sinh x}{\cosh x}=\dfrac{e^x-e^{-x}}{e^x+e^{-x}}$<br>
+          (2) $(e^{-x})'=-e^{-x}$ を使う。<br>
+          $(\sinh x)'=\dfrac{e^x-(-e^{-x})}{2}=\dfrac{e^x+e^{-x}}{2}=\cosh x$<br>
+          $(\cosh x)'=\dfrac{e^x+(-e^{-x})}{2}=\dfrac{e^x-e^{-x}}{2}=\sinh x$<br>
+          (3) $\cosh^2x-\sinh^2x=\dfrac{(e^{2x}+2+e^{-2x})-(e^{2x}-2+e^{-2x})}{4}=\dfrac{4}{4}=1$<br>
+          （$e^xe^{-x}=1$ なので、$(e^x\pm e^{-x})^2=e^{2x}\pm2+e^{-2x}$。）</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-2.html"><span class="dir">← 前の節</span><span class="nm">4.2 微分の定義と導関数</span></a>
+    <a class="next" href="4-4.html"><span class="dir">次の節 →</span><span class="nm">4.4 積・商・合成関数の微分</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-3.js?v=202611031018"></script>
+</body>
+</html>

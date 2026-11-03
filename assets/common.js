@@ -178,6 +178,7 @@
       { id: 'polynomial', href: rootPath + 'polynomial/index.html', title: '多項式' },
       { id: 'explog', href: rootPath + 'explog/index.html', title: '指数・対数' },
       { id: 'trig', href: rootPath + 'trig/index.html', title: '三角関数' },
+      { id: 'diff', href: rootPath + 'diff/index.html', title: '微分' },
     ];
     host.className = 'site-header';
     host.innerHTML =

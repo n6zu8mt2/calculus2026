@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610211315"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610211315">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
 </head>
 <body class="chapter ch9 calm">
 <header id="site-header" data-root="../" data-current="trig"></header>
@@ -295,19 +295,19 @@
 
     <p>
       実際のロボットでは、反対に「<b>この点に先をとどかせたい。関節を何度にすればよいか？</b>」を求めることの方が多いです。これを<b>逆運動学</b>といいます。
-      上の図で赤い的をドラッグすると、腕が追いかけてきます。この計算には、<a href="3-4.html">3.4節</a>の余弦定理と <a href="3-7.html">3.7節</a>の $\arccos$・atan2 を使います。
+      上の図で赤い的をドラッグすると、腕が追いかけてきます。この計算には、<a href="3-4.html">3.4節</a>の余弦定理と <a href="3-7.html">3.7節</a>の $\cos^{-1}$・atan2 を使います。
     </p>
     <p>
       肩を O、肘を E、目標の点を P $(x,\ y)$ とします。三角形 OEP の3辺は $l_1$、$l_2$、$D=\sqrt{x^2+y^2}$ とわかっています。
     </p>
     <ol>
-      <li><b>肘の角</b>：肘 E の内側の角を $\varphi$ とすると、余弦定理で $D^2=l_1^2+l_2^2-2l_1l_2\cos\varphi$。ここから $\cos\varphi$ がわかり、$\varphi=\arccos(\cdots)$。曲げる角は $\violet{\theta_2}=\pm(180^\circ-\varphi)$。</li>
+      <li><b>肘の角</b>：肘 E の内側の角を $\varphi$ とすると、余弦定理で $D^2=l_1^2+l_2^2-2l_1l_2\cos\varphi$。ここから $\cos\varphi$ がわかり、$\varphi=\cos^{-1}(\cdots)$。曲げる角は $\violet{\theta_2}=\pm(180^\circ-\varphi)$。</li>
       <li><b>肩の角</b>：肩 O の内側の角を $\alpha$ とすると、余弦定理で $l_2^2=l_1^2+D^2-2l_1D\cos\alpha$ から $\alpha$ がわかる。目標の向き $\mathrm{atan2}(y,\ x)$ から $\alpha$ だけずらして $\blue{\theta_1}=\mathrm{atan2}(y,\ x)\mp\alpha$。</li>
     </ol>
     <div class="eq-box">$$\cos\varphi=\frac{l_1^2+l_2^2-D^2}{2l_1l_2},\qquad \cos\alpha=\frac{l_1^2+D^2-l_2^2}{2l_1D},\qquad \begin{cases}\text{肘下：}&\theta_1=\mathrm{atan2}(y,x)-\alpha,\ \ \theta_2=180^\circ-\varphi\\ \text{肘上：}&\theta_1=\mathrm{atan2}(y,x)+\alpha,\ \ \theta_2=-(180^\circ-\varphi)\end{cases}$$</div>
     <p>
       答えは<b>2通り</b>あります。肘を目標の線の右下側に出す「肘下」と、左上側に出す「肘上」です（人の腕でも、同じ所に手をのばす肘の位置は2通りあります）。
-      また、$D$ が $l_1+l_2$ より大きいと $\cos\varphi\lt-1$ になり、$\arccos$ が計算できません。これは「<b>腕が届かない</b>」ことを表しています。
+      また、$D$ が $l_1+l_2$ より大きいと $\cos\varphi\lt-1$ になり、$\cos^{-1}$ が計算できません。これは「<b>腕が届かない</b>」ことを表しています。
     </p>
 
     <h2 class="h-sub"><span class="tag">(5)</span>ゲームの視界判定</h2>
@@ -424,7 +424,7 @@
           （$t$ が $0$ から $2\pi$ まで進む間に、$\sin(at+\delta)$ は $a$ 回、$\sin bt$ は $b$ 回 $1$ になる。図は $x=\sin\left(3t+\frac{\pi}{4}\right),\ y=\sin4t$）</li>
         <li>(1) $x=4\cos\dfrac{2\pi}{3}=4\cdot\left(-\dfrac12\right)=-2$、$y=4\sin\dfrac{2\pi}{3}=4\cdot\dfrac{\sqrt3}{2}=2\sqrt3$。よって $(-2,\ 2\sqrt3)$<br>
           (2) $r=\sqrt{(-3)^2+3^2}=\sqrt{18}=3\sqrt2$。点は第2象限で、$x$ 軸の負の向きから $45^\circ$ 上なので $\theta=\mathrm{atan2}(3,\ -3)=\dfrac{3\pi}{4}$。よって $(r,\ \theta)=\left(3\sqrt2,\ \dfrac{3\pi}{4}\right)$<br>
-          （$\arctan\dfrac{3}{-3}=-\dfrac{\pi}{4}$ は反対向きなので使えない）</li>
+          （$\tan^{-1}\dfrac{3}{-3}=-\dfrac{\pi}{4}$ は反対向きなので使えない）</li>
         <li>(1) $\theta_1+\theta_2=90^\circ$ なので<br>
           $x=2\cos30^\circ+1\cdot\cos90^\circ=2\cdot\dfrac{\sqrt3}{2}+0=\sqrt3$<br>
           $y=2\sin30^\circ+1\cdot\sin90^\circ=2\cdot\dfrac12+1=2$。よって $(\sqrt3,\ 2)$<br>
@@ -446,10 +446,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610211315"></script>
-<script src="../assets/plot.js?v=202610211315"></script>
-<script src="../assets/game.js?v=202610211315"></script>
-<script src="js/trig-common.js?v=202610211315"></script>
-<script src="js/3-9.js?v=202610211315"></script>
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/trig-common.js?v=202611031018"></script>
+<script src="js/3-9.js?v=202611031018"></script>
 </body>
 </html>

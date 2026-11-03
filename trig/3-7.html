@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3.7 逆三角関数と atan2 | 三角関数 | 解析学 2026</title>
-<meta name="description" content="第3章 三角関数 3.7節：arcsin・arctan・atan2・砲台">
+<meta name="description" content="第3章 三角関数 3.7節：sin⁻¹・tan⁻¹・atan2・砲台">
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202610211315"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202610211315">
-<link rel="stylesheet" href="../assets/chapter.css?v=202610211315">
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
 </head>
 <body class="chapter ch7 calm">
 <header id="site-header" data-root="../" data-current="trig"></header>
@@ -42,8 +42,8 @@
   <div class="goal">
     <div class="goal-ttl">この節のゴール</div>
     <ol>
-      <li>$\arcsin,\ \arccos,\ \arctan$ を「値の範囲を決めた逆関数」として説明できる。</li>
-      <li>$\arctan\frac yx$ ではなく $\mathrm{atan2}(y,x)$ が必要な理由を説明できる。</li>
+      <li>$\sin^{-1},\ \cos^{-1},\ \tan^{-1}$ を「値の範囲を決めた逆関数」として説明できる。</li>
+      <li>$\tan^{-1}\frac yx$ ではなく $\mathrm{atan2}(y,x)$ が必要な理由を説明できる。</li>
       <li>角度の差を $-\pi$ から $\pi$ に折り返せる。</li>
     </ol>
     <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
@@ -100,9 +100,9 @@
     <p>
       そこで、<b>答えの角度の範囲を決めて、その中の1つだけを選ぶ</b>ことにします。
       $\sin$ なら、$-\frac{\pi}{2}$ から $\frac{\pi}{2}$（$-90^\circ$〜$90^\circ$、単位円の右半分）にしぼると、$-1$ から $1$ までのどの値も<b>ちょうど1回ずつ</b>とります。上の図の「範囲をしぼる」をオンにして確かめましょう。
-      こうして作った関数を $\arcsin$（アークサイン）といいます。
+      こうして作った関数を $\sin^{-1}x$（アークサイン）と書きます。
     </p>
-    <div class="eq-box">$$\blue{\arcsin\frac12}=\blue{\frac{\pi}{6}}\qquad\Longleftrightarrow\qquad \red{\sin}\frac{\pi}{6}=\frac12\ \text{ かつ }\ -\frac{\pi}{2}\leqq\frac{\pi}{6}\leqq\frac{\pi}{2}$$</div>
+    <div class="eq-box">$$\blue{\sin^{-1}\frac12}=\blue{\frac{\pi}{6}}\qquad\Longleftrightarrow\qquad \red{\sin}\frac{\pi}{6}=\frac12\ \text{ かつ }\ -\frac{\pi}{2}\leqq\frac{\pi}{6}\leqq\frac{\pi}{2}$$</div>
     <p>
       $\cos$ と $\tan$ も同じように範囲を決めます。$\cos$ は右半分では $\pm$ の区別ができない（$\cos(-\theta)=\cos\theta$）ので、<b>上半分 $0$〜$\pi$</b> にします。
       $\tan$ は $\sin$ と同じ右半分ですが、真上・真下（$\pm\frac{\pi}{2}$）では $\tan$ がないので、端は入れません。
@@ -111,15 +111,15 @@
     <div class="key"><div class="key-ttl">覚える｜逆三角関数の定義と値の範囲</div>
       <p class="key-lead key-big">「$\sin$ が $x$ になる角度」を、決めた範囲の中から1つ選ぶ</p>
       <div class="table-wrap"><table class="key-table"><tbody>
-        <tr><th>$\blue{\arcsin x}$</th><td>$\red{\sin y}=x$ となる $y$ のうち $-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$ のもの（$-1\leqq x\leqq1$）</td></tr>
-        <tr><th>$\blue{\arccos x}$</th><td>$\teal{\cos y}=x$ となる $y$ のうち $0\leqq y\leqq\pi$ のもの（$-1\leqq x\leqq1$）</td></tr>
-        <tr><th>$\blue{\arctan x}$</th><td>$\amber{\tan y}=x$ となる $y$ のうち $-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$ のもの（$x$ はどんな数でもよい）</td></tr>
+        <tr><th>$\blue{\sin^{-1} x}$</th><td>$\red{\sin y}=x$ となる $y$ のうち $-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$ のもの（$-1\leqq x\leqq1$）</td></tr>
+        <tr><th>$\blue{\cos^{-1} x}$</th><td>$\teal{\cos y}=x$ となる $y$ のうち $0\leqq y\leqq\pi$ のもの（$-1\leqq x\leqq1$）</td></tr>
+        <tr><th>$\blue{\tan^{-1} x}$</th><td>$\amber{\tan y}=x$ となる $y$ のうち $-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$ のもの（$x$ はどんな数でもよい）</td></tr>
       </tbody></table></div>
-      <p class="key-note">$\sin^{-1}x,\ \cos^{-1}x,\ \tan^{-1}x$ とも書く。ただし $\sin^{-1}x$ は $\dfrac{1}{\sin x}$ では<b>ない</b>（逆関数の記号 $f^{-1}$ の $-1$）。</p>
+      <p class="key-note">$\sin^{-1}x$ は $\arcsin x$ とも書きます（プログラムでは asin, acos, atan）。$\sin^{-1}x$ は $\frac{1}{\sin x}$ ではありません（逆関数の記号 $f^{-1}$ の $-1$）。$\cos^{-1}x,\ \tan^{-1}x$ も同じで、$\arccos x,\ \arctan x$ とも書きます。</p>
     </div>
 
     <p>
-      グラフも <a href="../explog/2-4.html">2.4節</a>と同じように、範囲をしぼった $y=\sin x$ を直線 $y=x$ で折り返すと $y=\arcsin x$ になります。
+      グラフも <a href="../explog/2-4.html">2.4節</a>と同じように、範囲をしぼった $y=\sin x$ を直線 $y=x$ で折り返すと $y=\sin^{-1} x$ になります。
       関数を切りかえ、青い点をドラッグして確かめましょう。
     </p>
 
@@ -144,16 +144,16 @@
 
     <p>値を求めるときは、「その三角関数の値になる角を、決めた範囲の中で探す」と考えます。単位円をかくと迷いません。</p>
     <div class="eq-box">$$\begin{aligned}
-      \arcsin\frac12&=\frac{\pi}{6} &&\left(\sin\frac{\pi}{6}=\frac12,\ \ -\frac{\pi}{2}\leqq\frac{\pi}{6}\leqq\frac{\pi}{2}\right)\\
-      \arccos\left(-\frac12\right)&=\frac{2\pi}{3} &&\left(\cos\frac{2\pi}{3}=-\frac12,\ \ 0\leqq\frac{2\pi}{3}\leqq\pi\right)\\
-      \arctan1&=\frac{\pi}{4} &&\left(\tan\frac{\pi}{4}=1\right)\\
-      \arctan\sqrt3&=\frac{\pi}{3} &&\left(\tan\frac{\pi}{3}=\sqrt3\right)
+      \sin^{-1}\frac12&=\frac{\pi}{6} &&\left(\sin\frac{\pi}{6}=\frac12,\ \ -\frac{\pi}{2}\leqq\frac{\pi}{6}\leqq\frac{\pi}{2}\right)\\
+      \cos^{-1}\left(-\frac12\right)&=\frac{2\pi}{3} &&\left(\cos\frac{2\pi}{3}=-\frac12,\ \ 0\leqq\frac{2\pi}{3}\leqq\pi\right)\\
+      \tan^{-1}1&=\frac{\pi}{4} &&\left(\tan\frac{\pi}{4}=1\right)\\
+      \tan^{-1}\sqrt3&=\frac{\pi}{3} &&\left(\tan\frac{\pi}{3}=\sqrt3\right)
     \end{aligned}$$</div>
     <p>
-      $\arccos\left(-\frac12\right)$ を $-\frac{2\pi}{3}$ としてはいけません。$\cos\left(-\frac{2\pi}{3}\right)=-\frac12$ ではありますが、$\arccos$ の範囲 $0$〜$\pi$ に入っていないからです。
+      $\cos^{-1}\left(-\frac12\right)$ を $-\frac{2\pi}{3}$ としてはいけません。$\cos\left(-\frac{2\pi}{3}\right)=-\frac12$ ではありますが、$\cos^{-1}$ の範囲 $0$〜$\pi$ に入っていないからです。
     </p>
 
-    <h2 class="h-sub"><span class="tag">(3)</span>点 P の方向の角度：arctan と atan2</h2>
+    <h2 class="h-sub"><span class="tag">(3)</span>点 P の方向の角度：$\tan^{-1}$ と atan2</h2>
 
     <p>
       さて、砲台の問題にもどります。砲台を原点 $\mathrm{O}$ に置き、プレイヤーが点 $\mathrm{P}(\teal{x},\ \red{y})$ にいるとします。知りたいのは次のことです。
@@ -161,29 +161,29 @@
     <div class="eq-box">$$\text{点 }\mathrm{P}(\teal{x},\ \red{y})\text{ の方向の角度 }\blue{\theta}\text{ は？}\qquad\text{（}x\text{ 軸の正の向きから、反時計回りに測る）}$$</div>
     <p>
       $\mathrm{O}$ と $\mathrm{P}$ で直角三角形をつくると、横の長さが $\teal{x}$、縦の長さが $\red{y}$ です。$\amber{\tan\theta}=\dfrac{\red{y}}{\teal{x}}$（傾き）なので、
-      $\theta=\arctan\dfrac{y}{x}$ で求まりそうです。たとえば $\mathrm{P}(3,\ 2)$ なら $\arctan\dfrac23\approx33.7^\circ$。これは正しい答えです。
+      $\theta=\tan^{-1}\dfrac{y}{x}$ で求まりそうです。たとえば $\mathrm{P}(3,\ 2)$ なら $\tan^{-1}\dfrac23\approx33.7^\circ$。これは正しい答えです。
     </p>
     <p>
       では $\mathrm{Q}(-3,\ -2)$ はどうでしょう。$\dfrac{y}{x}=\dfrac{-2}{-3}=\dfrac23$ で、$\mathrm{P}$ と<b>まったく同じ数</b>になります。
-      $\arctan$ には $\dfrac23$ という<b>1つの数</b>しか渡らないので、答えも同じ $33.7^\circ$ です。
+      $\tan^{-1}$ には $\dfrac23$ という<b>1つの数</b>しか渡らないので、答えも同じ $33.7^\circ$ です。
       ところが図を見ると、$\mathrm{Q}$ は左下、$\mathrm{P}$ とは<b>ちょうど反対の方向</b>にあります。
     </p>
 
     <div class="widget" id="w-atan2">
-      <div class="widget-head">$\mathrm{P}$ と $\mathrm{Q}$：$y/x$ は同じでも、方向は反対 <span class="hint">点 P をドラッグ／青の矢印＝本当の方向（atan2）、金の点線＝$\arctan\frac yx$ の答え</span></div>
+      <div class="widget-head">$\mathrm{P}$ と $\mathrm{Q}$：$y/x$ は同じでも、方向は反対 <span class="hint">点 P をドラッグ／青の矢印＝本当の方向（atan2）、金の点線＝$\tan^{-1}\frac yx$ の答え</span></div>
       <div class="panel" style="padding-bottom:0">
         <div class="btn-row"><span class="lbl-sm">点 P</span><div class="chips" data-r="pre"></div></div>
         <div class="btn-row"><label class="check"><input type="checkbox" data-r="showq" checked>反対側の点 $\mathrm{Q}(-x,\ -y)$ もかく</label></div>
       </div>
-      <div class="stage"><canvas aria-label="点 P(x, y) と Q(−x, −y)、arctan(y/x) と atan2(y, x) の向き"></canvas></div>
+      <div class="stage"><canvas aria-label="点 P(x, y) と Q(−x, −y)、tan⁻¹(y/x) と atan2(y, x) の向き"></canvas></div>
       <div class="panel">
-        <div class="table-wrap t37-wrap"><table class="t37"><thead><tr><th>点</th><th>$\dfrac yx$</th><th>$\amber{\arctan\dfrac yx}$</th><th>$\blue{\mathrm{atan2}(y,x)}$</th></tr></thead><tbody data-r="rows"></tbody></table></div>
+        <div class="table-wrap t37-wrap"><table class="t37"><thead><tr><th>点</th><th>$\dfrac yx$</th><th>$\amber{\tan^{-1}\dfrac yx}$</th><th>$\blue{\mathrm{atan2}(y,x)}$</th></tr></thead><tbody data-r="rows"></tbody></table></div>
         <div class="msg" data-r="msg"></div>
       </div>
     </div>
 
-    <p>いくつかの点で表にすると、$\arctan$ のまちがいがはっきりします。</p>
-    <div class="table-wrap"><table class="t37"><thead><tr><th>点 $\mathrm{P}$</th><th>$\dfrac yx$</th><th>$\arctan\dfrac yx$</th><th>正しい角度</th><th>$\mathrm{atan2}(y,x)$</th></tr></thead><tbody>
+    <p>いくつかの点で表にすると、$\tan^{-1}$ のまちがいがはっきりします。</p>
+    <div class="table-wrap"><table class="t37"><thead><tr><th>点 $\mathrm{P}$</th><th>$\dfrac yx$</th><th>$\tan^{-1}\dfrac yx$</th><th>正しい角度</th><th>$\mathrm{atan2}(y,x)$</th></tr></thead><tbody>
       <tr><td>$(3,\ 2)$<br><span class="lbl-sm">右上</span></td><td>$\dfrac23$</td><td>$33.7^\circ$</td><td>$33.7^\circ$</td><td>$33.7^\circ$</td></tr>
       <tr><td>$(-3,\ -2)$<br><span class="lbl-sm">左下</span></td><td>$\dfrac23$</td><td>$33.7^\circ$<br><span class="x37">✗ 反対向き</span></td><td>$-146.3^\circ$</td><td>$-146.3^\circ$</td></tr>
       <tr><td>$(-3,\ 2)$<br><span class="lbl-sm">左上</span></td><td>$-\dfrac23$</td><td>$-33.7^\circ$<br><span class="x37">✗ 反対向き</span></td><td>$146.3^\circ$</td><td>$146.3^\circ$</td></tr>
@@ -192,9 +192,9 @@
     </tbody></table></div>
 
     <p>
-      なぜこうなるのでしょう。$\arctan$ が見ているのは、<b>割り算したあとの $\dfrac yx$ という1つの数だけ</b>です。
+      なぜこうなるのでしょう。$\tan^{-1}$ が見ているのは、<b>割り算したあとの $\dfrac yx$ という1つの数だけ</b>です。
       割り算すると、$x$ と $y$ の符号（$+$ か $-$ か）の情報が消えてしまいます。$\dfrac{-2}{-3}$ も $\dfrac{2}{3}$ も同じ $\dfrac23$ です。
-      これでは「右上」か「左下」かを区別できないので、$\arctan$ は（2）で決めたとおり、<b>いつも右半分（$-90^\circ$〜$90^\circ$）の角</b>を答えます。左半分の点では、180° ずれた反対向きになってしまうのです。
+      これでは「右上」か「左下」かを区別できないので、$\tan^{-1}$ は（2）で決めたとおり、<b>いつも右半分（$-90^\circ$〜$90^\circ$）の角</b>を答えます。左半分の点では、180° ずれた反対向きになってしまうのです。
     </p>
     <p>
       そこで、プログラムには $x$ と $y$ を<b>割らずに、別々に</b>受け取る関数 $\mathrm{atan2}(y,\ x)$ が用意されています。
@@ -209,7 +209,7 @@
     </tbody></table></div>
     <p>
       割り算をしないので、$x=0$（真上・真下）でも困りません。
-      中では、左半分の点のとき $\arctan\dfrac yx$ の答えに $180^\circ$ を足したり引いたりして、反対向きを直しています。たとえば $\mathrm{Q}(-3,-2)$ なら $33.7^\circ-180^\circ=-146.3^\circ$ です。
+      中では、左半分の点のとき $\tan^{-1}\dfrac yx$ の答えに $180^\circ$ を足したり引いたりして、反対向きを直しています。たとえば $\mathrm{Q}(-3,-2)$ なら $33.7^\circ-180^\circ=-146.3^\circ$ です。
     </p>
 
     <h3 class="h-mini">どうして大事？：ゲームやロボットは「向き」から角度を出す</h3>
@@ -220,7 +220,7 @@
       <li><b>ロボットの進む向き</b>：今いる場所から目的地への向き → ロボットが進む方角。</li>
     </ul>
     <p>
-      どれも、向きは上下左右<b>どちらにもなります</b>。右半分しか答えられない $\arctan\dfrac yx$ を使うと、相手が左側に来たとたんに反対を向くバグになります。
+      どれも、向きは上下左右<b>どちらにもなります</b>。右半分しか答えられない $\tan^{-1}\dfrac yx$ を使うと、相手が左側に来たとたんに反対を向くバグになります。
       実際に見てみましょう。
     </p>
 
@@ -229,7 +229,7 @@
       <div class="panel" style="padding-bottom:0">
         <div class="btn-row"><span class="lbl-sm">砲台の作り方</span><div class="chips" data-r="mode"></div><button class="btn" type="button" data-r="play">⏸ 止める</button></div>
       </div>
-      <div class="stage"><canvas aria-label="arctan と atan2 で作った砲台"></canvas></div>
+      <div class="stage"><canvas aria-label="tan⁻¹ と atan2 で作った砲台"></canvas></div>
       <div class="panel two">
         <div class="readout">
           <div class="row"><span class="k">コード</span><span data-r="code"></span></div>
@@ -242,14 +242,14 @@
       </div>
     </div>
 
-    <div class="key"><div class="key-ttl">覚える｜arctan と atan2 の使い分け</div>
-      <p class="key-lead key-big">傾きから角度 → $\amber{\arctan}$<br>向き（ベクトル）から角度 → $\blue{\mathrm{atan2}}$</p>
+    <div class="key"><div class="key-ttl">覚える｜$\tan^{-1}$ と atan2 の使い分け</div>
+      <p class="key-lead key-big">傾きから角度 → $\amber{\tan^{-1}}$<br>向き（ベクトル）から角度 → $\blue{\mathrm{atan2}}$</p>
       <div class="table-wrap"><table class="key-table"><tbody>
-        <tr><th>$\amber{\arctan m}$</th><td>入れるのは<b>傾き $m$（1つの数）</b>。答えは $-90^\circ\lt\theta\lt90^\circ$（右半分だけ）。<br>例：坂や直線の傾きから、傾きの角を出す。傾き $1$ の直線 → $\arctan1=45^\circ$</td></tr>
+        <tr><th>$\amber{\tan^{-1} m}$</th><td>入れるのは<b>傾き $m$（1つの数）</b>。答えは $-90^\circ\lt\theta\lt90^\circ$（右半分だけ）。<br>例：坂や直線の傾きから、傾きの角を出す。傾き $1$ の直線 → $\tan^{-1}1=45^\circ$</td></tr>
         <tr><th>$\blue{\mathrm{atan2}(\red{y},\teal{x})}$</th><td>入れるのは<b>向き $(\teal{x},\ \red{y})$（2つの数）</b>。答えは $-180^\circ\lt\theta\leqq180^\circ$（どの方向でも）。<br>例：砲台・キャラクター・ロボットの向き。$\mathrm{atan2}(-2,\,-3)\approx-146.3^\circ$</td></tr>
       </tbody></table></div>
       <ul>
-        <li>$\arctan\dfrac yx$ は $x$ と $y$ の符号が消えるので、$x\lt0$ のとき<b>反対向き</b>。$x=0$ では計算できない。</li>
+        <li>$\tan^{-1}\dfrac yx$ は $x$ と $y$ の符号が消えるので、$x\lt0$ のとき<b>反対向き</b>。$x=0$ では計算できない。</li>
         <li>プログラムでは <code>Math.atan2(y, x)</code>（JavaScript）、<code>math.atan2(y, x)</code>（Python）。<b>引数は $y$ が先</b>。</li>
       </ul>
       <p class="key-note">砲台が $(a,b)$、プレイヤーが $(p,q)$ なら、向き $(p-a,\ q-b)$ を使って $\theta=\mathrm{atan2}(q-b,\ p-a)$。</p>
@@ -326,12 +326,12 @@ angle += Math.sign(d) * Math.min(Math.abs(d), speed * dt);  // 近い方へ少�
 
     <p>
       スマホの中には<b>加速度センサー</b>があり、重力がスマホの横方向（$x$）と縦方向（$y$）にどれだけかかっているか $(\teal{g_x},\ \red{g_y})$ がわかります。
-      画面の中で「真下」がどちらの向きかは、この2つから $\mathrm{atan2}$ で求まります。画面の向きはどの向きにもなりうるので、$\arctan$ ではなく $\mathrm{atan2}$ が必要です。
+      画面の中で「真下」がどちらの向きかは、この2つから $\mathrm{atan2}$ で求まります。画面の向きはどの向きにもなりうるので、$\tan^{-1}$ ではなく $\mathrm{atan2}$ が必要です。
     </p>
-    <div class="eq-box">$$\text{重力の向き }\blue{\theta}=\mathrm{atan2}(\red{g_y},\ \teal{g_x}),\qquad \text{机からの傾き }\varphi=\arccos(-g_z)$$</div>
+    <div class="eq-box">$$\text{重力の向き }\blue{\theta}=\mathrm{atan2}(\red{g_y},\ \teal{g_x}),\qquad \text{机からの傾き }\varphi=\cos^{-1}(-g_z)$$</div>
     <p>
       スマホをまっすぐ立てると重力は画面の真下なので $\theta=-90^\circ$。そこから何度回したかは $\theta+90^\circ$ です（水準器アプリはこれを表示しています）。
-      また、画面に垂直な方向の重力 $g_z$（重力の大きさを 1 とする）からは、$\cos\varphi=-g_z$ として机からの傾き $\varphi$ が $\arccos$ で求まります。$\varphi$ は $0$〜$\pi$ なので、$\arccos$ の範囲にちょうど合っています。
+      また、画面に垂直な方向の重力 $g_z$（重力の大きさを 1 とする）からは、$\cos\varphi=-g_z$ として机からの傾き $\varphi$ が $\cos^{-1}$ で求まります。$\varphi$ は $0$〜$\pi$ なので、$\cos^{-1}$ の範囲にちょうど合っています。
     </p>
 
     <div class="widget" id="w-phone">
@@ -357,23 +357,23 @@ angle += Math.sign(d) * Math.min(Math.abs(d), speed * dt);  // 近い方へ少�
     </div>
 
     <div class="callout point">
-      <div class="ttl">小話：atan2 と arccos はあちこちで働いている</div>
+      <div class="ttl">小話：atan2 と $\cos^{-1}$ はあちこちで働いている</div>
       <p>
         <b>電子コンパス</b>：スマホの地図アプリは、地磁気センサーで地球の磁場の向き $(m_x,\ m_y)$ を測り、$\mathrm{atan2}(m_y,\ m_x)$ で「北はどちらか」を出しています。
         <b>ゲームのジョイスティック</b>：スティックを倒した量 $(x,\ y)$ から、キャラクターが進む向きを $\mathrm{atan2}(y,\ x)$ で決めます（倒した大きさ $\sqrt{x^2+y^2}$ が速さ）。
-        <b>ロボットアーム</b>：手先を目標の点に届かせるには、関節を何度に曲げればよいか（逆運動学）を求めます。腕の長さと目標までの距離から、<a href="3-4.html">3.4節</a>の余弦定理で $\cos$ の値がわかり、$\arccos$ で角度にもどします（<a href="3-9.html">3.9節</a>で実際に動かします）。
+        <b>ロボットアーム</b>：手先を目標の点に届かせるには、関節を何度に曲げればよいか（逆運動学）を求めます。腕の長さと目標までの距離から、<a href="3-4.html">3.4節</a>の余弦定理で $\cos$ の値がわかり、$\cos^{-1}$ で角度にもどします（<a href="3-9.html">3.9節</a>で実際に動かします）。
       </p>
     </div>
 
     <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
         <tr><th>ひっくり返す</th><td>$\sin x=k$ となる $x$ は無数にある → 範囲を決めて1つ選ぶ</td></tr>
-        <tr><th>arcsin</th><td>$\sin y=x$、$-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$（例：$\arcsin\frac12=\frac{\pi}{6}$）</td></tr>
-        <tr><th>arccos</th><td>$\cos y=x$、$0\leqq y\leqq\pi$（例：$\arccos\left(-\frac12\right)=\frac{2\pi}{3}$）</td></tr>
-        <tr><th>arctan</th><td>$\tan y=x$、$-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$（例：$\arctan1=\frac{\pi}{4}$、$\arctan\sqrt3=\frac{\pi}{3}$）</td></tr>
-        <tr><th>記号</th><td>$\sin^{-1}x=\arcsin x$（$\frac{1}{\sin x}$ ではない）</td></tr>
-        <tr><th>グラフ</th><td>範囲をしぼった $y=\sin x$ と $y=\arcsin x$ は直線 $y=x$ について対称</td></tr>
-        <tr><th>atan2</th><td>$\mathrm{atan2}(y,x)$：向き $(x,y)$ の角度（$-\pi\lt\theta\leqq\pi$）。<code>Math.atan2(y, x)</code> は $y$ が先。傾きから角度 → $\arctan$、向きから角度 → $\mathrm{atan2}$</td></tr>
+        <tr><th>$\sin^{-1}$</th><td>$\sin y=x$、$-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}$（例：$\sin^{-1}\frac12=\frac{\pi}{6}$）</td></tr>
+        <tr><th>$\cos^{-1}$</th><td>$\cos y=x$、$0\leqq y\leqq\pi$（例：$\cos^{-1}\left(-\frac12\right)=\frac{2\pi}{3}$）</td></tr>
+        <tr><th>$\tan^{-1}$</th><td>$\tan y=x$、$-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}$（例：$\tan^{-1}1=\frac{\pi}{4}$、$\tan^{-1}\sqrt3=\frac{\pi}{3}$）</td></tr>
+        <tr><th>記号</th><td>$\sin^{-1}x$ は $\frac{1}{\sin x}$ ではない。$\arcsin x$ とも書く（プログラムでは asin, acos, atan）</td></tr>
+        <tr><th>グラフ</th><td>範囲をしぼった $y=\sin x$ と $y=\sin^{-1} x$ は直線 $y=x$ について対称</td></tr>
+        <tr><th>atan2</th><td>$\mathrm{atan2}(y,x)$：向き $(x,y)$ の角度（$-\pi\lt\theta\leqq\pi$）。<code>Math.atan2(y, x)</code> は $y$ が先。傾きから角度 → $\tan^{-1}$、向きから角度 → $\mathrm{atan2}$</td></tr>
         <tr><th>折り返し</th><td>角度の差 $\Delta$ は $-\pi\lt\Delta\leqq\pi$ に直す（$\pm2\pi$ する）と、近い方へ回る</td></tr>
       </tbody></table></div>
     </div>
@@ -404,24 +404,24 @@ angle += Math.sign(d) * Math.min(Math.abs(d), speed * dt);  // 近い方へ少�
   <section class="sec" id="check">
     <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
     <ol class="quiz">
-      <li>次の値を求めよ。　$\arcsin\dfrac12$、　$\arccos\left(-\dfrac12\right)$、　$\arctan\sqrt3$</li>
-      <li>次の値を求めよ。　$\arctan1$、　$\arccos\left(-\dfrac{\sqrt3}{2}\right)$、　$\arcsin\left(-\dfrac{\sqrt3}{2}\right)$</li>
-      <li>次の値を求めよ（$-\pi\lt\theta\leqq\pi$）。　$\mathrm{atan2}(-1,\ -1)$、　$\mathrm{atan2}(1,\ -\sqrt3)$、　$\mathrm{atan2}(-2,\ 0)$<br>また、$\mathrm{atan2}(-1,-1)$ のかわりに $\arctan\dfrac{-1}{-1}$ を使うとどうなるか。</li>
+      <li>次の値を求めよ。　$\sin^{-1}\dfrac12$、　$\cos^{-1}\left(-\dfrac12\right)$、　$\tan^{-1}\sqrt3$</li>
+      <li>次の値を求めよ。　$\tan^{-1}1$、　$\cos^{-1}\left(-\dfrac{\sqrt3}{2}\right)$、　$\sin^{-1}\left(-\dfrac{\sqrt3}{2}\right)$</li>
+      <li>次の値を求めよ（$-\pi\lt\theta\leqq\pi$）。　$\mathrm{atan2}(-1,\ -1)$、　$\mathrm{atan2}(1,\ -\sqrt3)$、　$\mathrm{atan2}(-2,\ 0)$<br>また、$\mathrm{atan2}(-1,-1)$ のかわりに $\tan^{-1}\dfrac{-1}{-1}$ を使うとどうなるか。</li>
       <li>砲台が $340^\circ$ の向きを向いている。目標の向きが $30^\circ$ のとき、近い方へ回るには、どちら回りに何度回せばよいか。また、今の向きが $\dfrac{3\pi}{4}$、目標が $-\dfrac{3\pi}{4}$ のときはどうか。</li>
     </ol>
     <details class="think">
       <summary>答え（クリックで表示）</summary>
       <ol class="quiz-ans">
-        <li>$\sin y=\dfrac12$、$-\dfrac{\pi}{2}\leqq y\leqq\dfrac{\pi}{2}$ となる $y$ なので $\arcsin\dfrac12=\dfrac{\pi}{6}$<br>
-          $\cos y=-\dfrac12$、$0\leqq y\leqq\pi$ となる $y$ は、単位円の上半分で $x$ 座標が $-\dfrac12$ の点なので $\arccos\left(-\dfrac12\right)=\dfrac{2\pi}{3}$<br>
-          $\tan y=\sqrt3$、$-\dfrac{\pi}{2}\lt y\lt\dfrac{\pi}{2}$ となる $y$ なので $\arctan\sqrt3=\dfrac{\pi}{3}$</li>
-        <li>$\tan\dfrac{\pi}{4}=1$ なので $\arctan1=\dfrac{\pi}{4}$<br>
-          上半分で $x$ 座標が $-\dfrac{\sqrt3}{2}$ の点は $\dfrac{5\pi}{6}\,(=150^\circ)$ なので $\arccos\left(-\dfrac{\sqrt3}{2}\right)=\dfrac{5\pi}{6}$<br>
-          右半分で $y$ 座標が $-\dfrac{\sqrt3}{2}$ の点は $-\dfrac{\pi}{3}$ なので $\arcsin\left(-\dfrac{\sqrt3}{2}\right)=-\dfrac{\pi}{3}$</li>
+        <li>$\sin y=\dfrac12$、$-\dfrac{\pi}{2}\leqq y\leqq\dfrac{\pi}{2}$ となる $y$ なので $\sin^{-1}\dfrac12=\dfrac{\pi}{6}$<br>
+          $\cos y=-\dfrac12$、$0\leqq y\leqq\pi$ となる $y$ は、単位円の上半分で $x$ 座標が $-\dfrac12$ の点なので $\cos^{-1}\left(-\dfrac12\right)=\dfrac{2\pi}{3}$<br>
+          $\tan y=\sqrt3$、$-\dfrac{\pi}{2}\lt y\lt\dfrac{\pi}{2}$ となる $y$ なので $\tan^{-1}\sqrt3=\dfrac{\pi}{3}$</li>
+        <li>$\tan\dfrac{\pi}{4}=1$ なので $\tan^{-1}1=\dfrac{\pi}{4}$<br>
+          上半分で $x$ 座標が $-\dfrac{\sqrt3}{2}$ の点は $\dfrac{5\pi}{6}\,(=150^\circ)$ なので $\cos^{-1}\left(-\dfrac{\sqrt3}{2}\right)=\dfrac{5\pi}{6}$<br>
+          右半分で $y$ 座標が $-\dfrac{\sqrt3}{2}$ の点は $-\dfrac{\pi}{3}$ なので $\sin^{-1}\left(-\dfrac{\sqrt3}{2}\right)=-\dfrac{\pi}{3}$</li>
         <li>点 $(-1,\ -1)$ は第3象限で、$45^\circ$ の三角定規の形。$-\pi\lt\theta\leqq\pi$ で表すと $\mathrm{atan2}(-1,-1)=-\dfrac{3\pi}{4}\,(=-135^\circ)$<br>
           点 $(-\sqrt3,\ 1)$ は第2象限で、$x$ 軸の負の向きから $30^\circ$ 上。$\mathrm{atan2}(1,-\sqrt3)=\pi-\dfrac{\pi}{6}=\dfrac{5\pi}{6}$<br>
-          点 $(0,\ -2)$ は真下なので $\mathrm{atan2}(-2,\ 0)=-\dfrac{\pi}{2}$（$\arctan\dfrac{-2}{0}$ は割り算できない）<br>
-          $\arctan\dfrac{-1}{-1}=\arctan1=\dfrac{\pi}{4}$ となり、本当の向き $-\dfrac{3\pi}{4}$ と<b>ちょうど反対向き</b>（$\pi$ ずれる）になってしまう。</li>
+          点 $(0,\ -2)$ は真下なので $\mathrm{atan2}(-2,\ 0)=-\dfrac{\pi}{2}$（$\tan^{-1}\dfrac{-2}{0}$ は割り算できない）<br>
+          $\tan^{-1}\dfrac{-1}{-1}=\tan^{-1}1=\dfrac{\pi}{4}$ となり、本当の向き $-\dfrac{3\pi}{4}$ と<b>ちょうど反対向き</b>（$\pi$ ずれる）になってしまう。</li>
         <li>$\Delta=30^\circ-340^\circ=-310^\circ$。$-180^\circ$ 以下なので $360^\circ$ 足して $\Delta=50^\circ$。<b>反時計回りに $50^\circ$</b><br>
           $\Delta=-\dfrac{3\pi}{4}-\dfrac{3\pi}{4}=-\dfrac{3\pi}{2}$。$-\pi$ 以下なので $2\pi$ 足して $\Delta=\dfrac{\pi}{2}$。<b>反時計回りに $\dfrac{\pi}{2}\,(=90^\circ)$</b>（$135^\circ$ から $225^\circ=-135^\circ$ へ）</li>
       </ol>
@@ -437,10 +437,10 @@ angle += Math.sign(d) * Math.min(Math.abs(d), speed * dt);  // 近い方へ少�
 
 <footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202610211315"></script>
-<script src="../assets/plot.js?v=202610211315"></script>
-<script src="../assets/game.js?v=202610211315"></script>
-<script src="js/trig-common.js?v=202610211315"></script>
-<script src="js/3-7.js?v=202610211315"></script>
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/trig-common.js?v=202611031018"></script>
+<script src="js/3-7.js?v=202611031018"></script>
 </body>
 </html>

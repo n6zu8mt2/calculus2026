@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.10 誤差逆伝播法 | 微分 | 解析学 2026</title>
+<meta name="description" content="第4章 微分 4.10節：連鎖律・計算グラフ・勾配降下法・誤差逆伝播法（AI の学習）">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<script src="../assets/mathjax.js?v=202611031018"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611031018">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+</head>
+<body class="chapter ch1 calm">
+<header id="site-header" data-root="../" data-current="diff"></header>
+
+<div class="layout">
+  <nav class="toc chapnav" aria-label="第4章の節の一覧">
+    <div class="toc-title">第4章 微分</div>
+    <a href="index.html"><span class="cn">≡</span><span class="ct">第4章の目次</span></a>
+    <a href="4-1.html"><span class="cn">4.1</span><span class="ct">速さと傾き</span></a>
+    <a href="4-2.html"><span class="cn">4.2</span><span class="ct">微分の定義と導関数</span></a>
+    <a href="4-3.html"><span class="cn">4.3</span><span class="ct">いろいろな関数の微分</span></a>
+    <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
+    <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
+    <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
+    <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
+    <a href="4-10.html" class="active" aria-current="page"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
+  </nav>
+
+<main>
+  <header class="chap-hero">
+    <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
+    <div>
+      <div class="eyebrow">第4章 微分 ／ 4.10節</div>
+      <h1><span class="chap-no">4.10</span>誤差逆伝播法：AI はどうやって学ぶか</h1>
+    </div>
+  </header>
+
+  <div class="goal">
+    <div class="goal-ttl">この節のゴール</div>
+    <ol>
+      <li>計算を「計算グラフ」（つないだ装置）として表し、前向きに値を計算できる。</li>
+      <li>連鎖律（合成関数の微分）を使って、誤差がそれぞれの重みにどれだけ影響するかを後ろ向きに計算できる。</li>
+      <li>求めた傾きで勾配降下法を使うと、AI の重みが少しずつ直っていくことを説明できる。</li>
+    </ol>
+    <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ ・ 確認問題 3問</div>
+  </div>
+
+  <p class="prereq">この節で使うこと：<a href="4-4.html">4.4節</a>の 合成関数の微分（連鎖律）とシグモイド関数、<a href="4-9.html">4.9節</a>の 勾配降下法、<a href="4-2.html">4.2節</a>の 平均の傾き</p>
+
+  <section class="sec first" id="main">
+
+    <p>
+      写真を見て「ねこ」と答える AI や、ChatGPT のように文章を書く AI は、どうやって賢くなるのでしょうか。
+      実は、その中心にあるのは、この章で学んできた<b>微分</b>、とくに <a href="4-4.html">4.4節</a>の<b>合成関数の微分（連鎖律）</b>です。
+      この節では、とても小さな AI を自分の手で動かしながら、AI が「学ぶ」しくみ ― <b>誤差逆伝播法</b>（バックプロパゲーション）― を見ていきます。
+      行列などのむずかしい道具は使いません。出てくるのは、かけ算と、これまでに学んだ微分だけです。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(1)</span>AI の「学習」とは？</h2>
+
+    <p>
+      AI の中身は、ひと言でいうと「<b>数を入れると数が出てくる関数</b>」です。ただし、その関数には<b>つまみ</b>がたくさんついていて、つまみを回すと答えが変わります。
+      いちばん小さな AI（<b>ニューロン</b>1個）は、次のような関数です。
+    </p>
+    <div class="eq-box eq-hero">$$y=\sigma(\,w\,x+b\,)$$</div>
+    <ul>
+      <li>$x$：入力（例えば、明日の雲の量）。$y$：AI の答え（例えば、「雨がふる確率」の予想）。</li>
+      <li>$w$：<b>重み</b>（weight）、$b$：<b>バイアス</b>。この2つが<b>つまみ</b>です。</li>
+      <li>$\sigma$：<a href="4-4.html">4.4節</a>の<b>シグモイド関数</b> $\sigma(u)=\dfrac{1}{1+e^{-u}}$。どんな $u$ を入れても、$0$ と $1$ の間の値にしてくれます。</li>
+    </ul>
+    <p>
+      AI には、問題と<b>正解</b>の組（例えば $x=1.5$ のときの正解 $t=0.2$）を見せて練習させます。AI の答え $y$ と正解 $t$ のずれを、次の<b>誤差</b> $E$ で測ります。
+    </p>
+    <div class="eq-box">$$E=(\,y-t\,)^2$$</div>
+    <p>
+      2乗しているので $E$ はいつも $0$ 以上で、ずれが大きいほど大きく、ぴったり正解なら $0$ です。
+      つまり、<b>AI の学習とは、誤差 $E$ が小さくなるように、つまみ $w,\ b$ を少しずつ回すこと</b>です。
+    </p>
+    <p>
+      つまみが1つなら、<a href="4-9.html">4.9節</a>の<b>勾配降下法</b>が使えます。関数 $f(x)$ の谷底を探すとき、傾き $f'(x)$ を見て
+      $x\leftarrow x-\eta f'(x)$（$\eta$ は「歩はば」を決める小さな正の数）と、坂を下る向きに少しずつ動かす方法でした。
+      AI のつまみ $w$ にも同じことをすればよく、そのために必要なのが、次の傾きです。
+    </p>
+    <div class="eq-box">$$\red{\frac{\partial E}{\partial w}}\ =\ \text{「}\,w\,\text{ だけを少し動かしたときの、}\,E\,\text{ の傾き」}$$</div>
+    <p>
+      $\partial$ は「ラウンド・ディー」と読みます。つまみが $w$ と $b$ の2つあるので、「$b$ は止めておいて、$w$ だけを動かす」という意味をこめて、$d$ のかわりに $\partial$ を使います。
+      計算のしかたは、ふつうの微分と同じです（このような微分を<b>偏微分</b>といい、くわしくは後の章で学びます）。
+    </p>
+    <div class="callout warn">
+      <div class="ttl">問題：つまみが多すぎる</div>
+      <p>
+        本物の AI のつまみは、2つどころではありません。画像を見分ける AI で数百万〜数億個、ChatGPT のような大きな言語の AI では<b>数千億個</b>にもなります。
+        学習の1歩ごとに、そのすべてのつまみについて傾き $\dfrac{\partial E}{\partial w}$ が必要です。これを<b>速く</b>求める方法が、この節の主役の<b>誤差逆伝播法</b>です。
+      </p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(2)</span>計算グラフ：つないだ装置で計算する</h2>
+
+    <p>
+      $y=\sigma(wx+b)$ と $E=(y-t)^2$ の計算を、<a href="4-4.html">4.4節</a>の「<b>つないだ装置</b>」のように、小さな計算に分けてみましょう。
+    </p>
+    <div class="eq-box">$$x\ \xrightarrow{\ \times w\ }\ wx\ \xrightarrow{\ +b\ }\ u\ \xrightarrow{\ \ \sigma\ \ }\ y\ \xrightarrow{\ (\ \cdot\ -t)^2\ }\ E$$</div>
+    <div class="table-wrap"><table class="d410-tbl">
+      <thead><tr><th>装置</th><th>入れるもの</th><th>出てくるもの</th><th>例（$x=1.5,\ w=0.8,\ b=-0.5,\ t=0.2$）</th></tr></thead>
+      <tbody>
+        <tr><th>$\times w$</th><td>$x$</td><td>$wx$</td><td>$0.8\times1.5=1.2$</td></tr>
+        <tr><th>$+b$</th><td>$wx$</td><td>$u=wx+b$</td><td>$1.2+(-0.5)=0.7$</td></tr>
+        <tr><th>$\sigma$</th><td>$u$</td><td>$y=\sigma(u)$</td><td>$\sigma(0.7)=\dfrac{1}{1+e^{-0.7}}\approx0.668$</td></tr>
+        <tr><th>$(\ \cdot\ -t)^2$</th><td>$y$</td><td>$E=(y-t)^2$</td><td>$(0.668-0.2)^2\approx0.219$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      このように、計算を<b>装置（箱）と、値が流れる線</b>で表した図を<b>計算グラフ</b>といいます。
+      $E$ は、4つの装置をつないだ<b>合成関数</b>です。どの装置も、1つずつ見ればとても簡単な関数なので、微分もすぐにできます。ここが、この後の大事なポイントになります。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(3)</span>前向きの計算</h2>
+
+    <p>
+      下の計算グラフで、入力 $x$、つまみ $w,\ b$、正解 $t$ を動かしてみましょう。値は<b>左から右へ</b>流れていき、線の上に<span class="t-blue">青い数</span>で表示されます。
+      これを<b>前向きの計算</b>（順伝播）といいます。
+    </p>
+
+    <div class="widget" id="w-fwd">
+      <div class="widget-head">計算グラフ：値は左から右へ <span class="hint">スライダーで $x,\ w,\ b,\ t$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="x から E までの計算グラフ。各線の上に値が表示される"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">足し算まで</span><span class="tex" data-r="u"></span></div>
+          <div class="row"><span class="k">シグモイド</span><span class="tex" data-r="y"></span></div>
+          <div class="row"><span class="k">誤差</span><span class="tex big" data-r="E"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      $w$ を動かすと $E$ が変わります。でも、$w$ を増やすと $E$ は増えるのか減るのか、どのくらいの勢いで変わるのかは、図をながめるだけではわかりません。それを知るのが、次の「後ろ向きの計算」です。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>後ろ向きの計算：連鎖律で傾きを伝える</h2>
+
+    <p>
+      <a href="4-4.html">4.4節</a>の<b>連鎖律</b>（合成関数の微分）を思い出しましょう。
+    </p>
+    <div class="eq-box">$$\bigl(f(g(x))\bigr)'=f'(g(x))\,g'(x)\qquad\text{「つないだ装置の傾きは、それぞれの装置の傾きのかけ算」}$$</div>
+    <p>
+      歯車をつないだとき、全体の回転の速さの比が、それぞれの歯車の比のかけ算になるのと同じでした。
+      そこで、計算グラフの<b>装置1つずつの傾き</b>（<span class="t-amber">局所的な傾き</span>）を調べておきます。
+    </p>
+    <div class="table-wrap"><table class="d410-tbl">
+      <thead><tr><th>装置</th><th>傾き</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><th>$E=(y-t)^2$</th><td>$\amber{\dfrac{dE}{dy}=2(y-t)}$</td><td>$(y^2)'=2y$ と同じ（$t$ は決まった数）</td></tr>
+        <tr><th>$y=\sigma(u)$</th><td>$\amber{\dfrac{dy}{du}=\sigma(u)\bigl(1-\sigma(u)\bigr)=y(1-y)}$</td><td><a href="4-4.html">4.4節</a>のシグモイドの微分</td></tr>
+        <tr><th>$u=wx+b$</th><td>$\amber{\dfrac{\partial u}{\partial w}=x},\quad \amber{\dfrac{\partial u}{\partial b}=1}$</td><td>$w$ だけ動かすと傾き $x$、$b$ だけ動かすと傾き $1$</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      連鎖律により、$w$ を動かしたときの $E$ の傾きは、$w$ から $E$ までの道の上にある傾きを全部かけたものです。
+    </p>
+    <div class="eq-box">$$\red{\frac{\partial E}{\partial w}}=\frac{dE}{dy}\cdot\frac{dy}{du}\cdot\frac{\partial u}{\partial w}=2(y-t)\cdot y(1-y)\cdot x,\qquad \red{\frac{\partial E}{\partial b}}=2(y-t)\cdot y(1-y)\cdot 1$$</div>
+    <p>
+      このかけ算を、<b>出口 $E$ から入口へ向かって</b>（右から左へ）順に行うのが<b>後ろ向きの計算</b>（逆伝播）です。
+      出口では「$E$ を動かしたときの $E$ の傾き」なので $\dfrac{dE}{dE}=1$ から始め、装置を1つ通るたびに、その装置の<span class="t-amber">局所的な傾き</span>をかけていきます。
+      線の下の<span class="t-red">赤い数</span>は「その線の値を少し動かしたときの $E$ の傾き」です。▶ を押して、傾きが流れていく様子を見ましょう。
+    </p>
+
+    <div class="widget" id="w-bwd">
+      <div class="widget-head">後ろ向きの計算：傾きは右から左へ <span class="hint">▶ で傾きを流す／「0.001 動かしてみる」で確かめる</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row">
+        <button class="btn primary" type="button" data-r="play">◀ 後ろ向きに伝える</button>
+        <button class="btn" type="button" data-r="nudge">$w$ を $0.001$ 動かしてみる</button>
+        <label class="check"><input type="checkbox" data-r="local" checked>装置の傾き（金色）も表示</label></div></div>
+      <div class="stage"><canvas aria-label="計算グラフ。後ろ向きに E への傾きが赤で表示される"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">w の傾き</span><span class="tex" data-r="gw"></span></div>
+          <div class="row"><span class="k">b の傾き</span><span class="tex" data-r="gb"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex" data-r="check"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      「$w$ を $0.001$ だけ動かしてみる」と、$E$ の増え方を $0.001$ で割った値（平均の傾き、<a href="4-2.html">4.2節</a>）が、連鎖律で求めた $\red{\dfrac{\partial E}{\partial w}}$ とぴったり合います。
+      赤い数の意味は「$\red{\dfrac{\partial E}{\partial w}}$ が $-0.22$ なら、$w$ を $0.01$ 増やすと $E$ は約 $0.0022$ 減る」ということです。
+      符号がマイナスなら $w$ を<b>増やせば</b>、プラスなら<b>減らせば</b>、誤差が小さくなります。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜計算グラフと連鎖律</div>
+      <p class="key-lead">つまみ $w$ の傾きは、$w$ から誤差 $E$ までの道にある「装置の傾き」のかけ算</p>
+      $$\frac{\partial E}{\partial w}=\frac{dE}{dy}\cdot\frac{dy}{du}\cdot\frac{\partial u}{\partial w}=2(y-t)\cdot y(1-y)\cdot x$$
+      <ul>
+        <li>$\dfrac{\partial E}{\partial w}$ は「$w$ だけを少し動かしたときの $E$ の傾き」（ほかのつまみは止めておく）</li>
+        <li>出口の $\dfrac{dE}{dE}=1$ から始めて、右から左へ、装置の傾きを1つずつかけていく</li>
+        <li>使う傾き：$(y-t)^2\to2(y-t)$、$\sigma\to\sigma(1-\sigma)$、$wx+b\to x$（$w$ について）、$1$（$b$ について）</li>
+      </ul>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>重みを直す：勾配降下法</h2>
+
+    <p>
+      傾きがわかれば、あとは <a href="4-9.html">4.9節</a>の勾配降下法で、つまみを坂の下る向きに動かすだけです。
+    </p>
+    <div class="eq-box eq-hero">$$w\leftarrow w-\eta\,\red{\frac{\partial E}{\partial w}},\qquad b\leftarrow b-\eta\,\red{\frac{\partial E}{\partial b}}$$</div>
+    <p>
+      $\eta$（イータ）は<b>学習率</b>とよばれ、1回にどれだけつまみを回すかを決めます。
+      「前向きの計算 → 後ろ向きの計算 → つまみを直す」を1セットとして、これを何回もくり返すのが AI の<b>学習</b>です。
+      「1回学習」を押して、誤差 $E$ が減っていく様子を見ましょう。
+    </p>
+
+    <div class="widget" id="w-train">
+      <div class="widget-head">1個のニューロンを学習させる <span class="hint">「1回学習」または ▶ 自動／学習率 $\eta$ を変える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row">
+        <button class="btn primary" type="button" data-r="step">1回学習</button>
+        <button class="btn" type="button" data-r="play">▶ 自動</button>
+        <button class="btn" type="button" data-r="reset">最初に戻す</button></div></div>
+      <div class="stage"><canvas aria-label="学習中の計算グラフ"></canvas></div>
+      <div class="stage"><span class="cap">誤差 E の変化（横：学習の回数）</span><canvas aria-label="学習の回数と誤差 E のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">回数</span><span data-r="n"></span></div>
+          <div class="row"><span class="k">w を直す</span><span class="tex" data-r="uw"></span></div>
+          <div class="row"><span class="k">b を直す</span><span class="tex" data-r="ub"></span></div>
+          <div class="row"><span class="k">誤差</span><span class="tex big" data-r="E"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      学習を進めると $y$ が正解 $t$ に近づき、$E$ はどんどん $0$ に近づきます。学習率 $\eta$ が小さすぎると、なかなか進みません。
+      逆に大きすぎると、行き過ぎてしまったり、シグモイドが $0$ や $1$ にはりついて傾きがほとんど $0$ になり、動けなくなったりします（$\eta=10$ で試してみましょう）。
+    </p>
+
+    <div class="key"><div class="key-ttl">覚える｜更新の式</div>
+      <p class="key-lead">求めた傾きで、坂を下る向きに少しだけつまみを回す（勾配降下法）</p>
+      $$w\leftarrow w-\eta\,\frac{\partial E}{\partial w},\qquad b\leftarrow b-\eta\,\frac{\partial E}{\partial b}$$
+      <ul>
+        <li>傾きがマイナスなら増やし、プラスなら減らす。$\eta$（学習率）は歩はば</li>
+        <li>$\eta$ が小さすぎると遅い。大きすぎると行き過ぎたり、うまく進まなくなったりする</li>
+      </ul>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜誤差逆伝播法の手順</div>
+      <p class="key-lead">前向き → 後ろ向き → 更新 を、何回もくり返す</p>
+      <ol class="d410-steps">
+        <li><b>前向き</b>：入力 $x$ から、左から右へ $u,\ y,\ E$ を計算する（途中の値を覚えておく）</li>
+        <li><b>後ろ向き</b>：$\dfrac{dE}{dE}=1$ から、右から左へ装置の傾きをかけて、すべてのつまみの傾き $\dfrac{\partial E}{\partial w}$ を求める</li>
+        <li><b>更新</b>：$w\leftarrow w-\eta\dfrac{\partial E}{\partial w}$ で、すべてのつまみを少し直す</li>
+      </ol>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>小さなニューラルネットワークを学習させる</h2>
+
+    <p>
+      ニューロンを何個かつなぐと、もっと複雑な形を表せるようになります。これを<b>ニューラルネットワーク</b>といいます。
+      ここでは、入力 $x$ を2個のニューロン（$h_1,\ h_2$）に入れて、その出力を重みをつけて足し合わせる、小さなネットワークを使います。
+    </p>
+    <div class="eq-box">$$h_1=\sigma(w_1x+b_1),\qquad h_2=\sigma(w_2x+b_2),\qquad y=v_1h_1+v_2h_2+c$$</div>
+    <p>
+      つまみは $w_1,\ b_1,\ w_2,\ b_2,\ v_1,\ v_2,\ c$ の7個です。シグモイドのグラフは「なめらかな階段」なので、
+      上がる階段と下がる階段を組み合わせると「山（こぶ）」の形も作れます。
+      いくつかの点（データ）$(x_k,\ t_k)$ に曲線を合わせるため、誤差は各点のずれの2乗の<b>平均</b> $E=\dfrac1N\sum(y_k-t_k)^2$ とします（$N$ は点の数）。
+    </p>
+    <p>
+      後ろ向きの計算も、さっきと同じです。例えば $w_1$ の道は $w_1\to h_1\to y\to E$ なので
+    </p>
+    <div class="eq-box">$$\red{\frac{\partial E}{\partial w_1}}=\underbrace{\frac{dE}{dy}}_{2(y-t)/N}\cdot\underbrace{\frac{\partial y}{\partial h_1}}_{v_1}\cdot\underbrace{\frac{dh_1}{du_1}}_{h_1(1-h_1)}\cdot\underbrace{\frac{\partial u_1}{\partial w_1}}_{x}\qquad(u_1=w_1x+b_1)$$</div>
+    <p>
+      を、すべての点について足したものになります。下の表で、7個のつまみの値と傾きが、学習とともに変わっていく様子を見ましょう。
+    </p>
+
+    <div class="widget" id="w-net">
+      <div class="widget-head">ニューラルネットワークで点に曲線を合わせる <span class="hint">データを選ぶ／▶ で学習／$\eta$ を変える</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">データ</span><div class="chips" data-r="data"></div></div>
+        <div class="btn-row">
+        <button class="btn primary" type="button" data-r="play">▶ 学習</button>
+        <button class="btn" type="button" data-r="step">1回</button>
+        <button class="btn" type="button" data-r="reset">最初に戻す</button>
+        <label class="check"><input type="checkbox" data-r="parts" checked>2個のニューロンの出力も表示</label></div></div>
+      <div class="d410-duo">
+        <div class="stage"><canvas aria-label="データの点と、ネットワークの曲線"></canvas></div>
+        <div class="stage"><span class="cap l">ネットワーク（線の数字は重み）</span><canvas aria-label="ネットワークの図"></canvas></div>
+      </div>
+      <div class="stage"><span class="cap">誤差 E の変化</span><canvas aria-label="学習の回数と誤差 E のグラフ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">回数</span><span data-r="n"></span></div>
+          <div class="row"><span class="k">誤差</span><span class="tex big" data-r="E"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+      <div class="table-wrap d410-wtbl-wrap"><table class="d410-wtbl">
+        <thead><tr><th>つまみ</th><th>値</th><th>傾き $\red{\dfrac{\partial E}{\partial(\cdot)}}$</th><th>連鎖律のかけ算（各点で計算して足す）</th></tr></thead>
+        <tbody data-r="tbody"></tbody>
+      </table></div>
+    </div>
+
+    <p>
+      はじめはデタラメな曲線が、学習を重ねるうちに点の並びにぴったり合っていきます。
+      2個のニューロンの出力（点線）を見ると、一方が「上がる階段」、もう一方が「下がる階段」の役をするように、<b>だれも教えていないのに役割分担</b>ができていきます。
+      $\eta$ を大きくしすぎると、誤差がはね上がって<b>発散</b>することもあります。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(7)</span>なぜ「逆」伝播なのか</h2>
+
+    <p>
+      傾きを求めるだけなら、(4) の確かめのように「つまみを $0.001$ 動かして、もう1回前向きの計算をする」方法（<b>数値微分</b>）でもできます。
+      でも、この方法では<b>つまみ1個ごとに1回</b>、前向きの計算をやり直す必要があります。つまみが $n$ 個なら $n+1$ 回です。
+    </p>
+    <p>
+      一方、後ろ向きの計算では、(6) の表の「かけ算」を見るとわかるように、
+      $\frac{\partial E}{\partial w_1}$ と $\frac{\partial E}{\partial b_1}$ はどちらも $2(y-t)\cdot v_1\cdot h_1(1-h_1)$ という<b>同じ部分</b>を使います。
+      $v_1,\ v_2,\ c$ も $2(y-t)$ を共通に使います。出口から入口へ向かって計算すると、この共通部分を<b>1回だけ計算して使い回せる</b>ので、
+      <b>前向き1回＋後ろ向き1回</b>（前向きの計算の2〜3回分の手間）で、<b>すべてのつまみの傾きが一度に</b>そろいます。つまみが何千億個あっても同じです。
+    </p>
+
+    <div class="widget" id="w-why">
+      <div class="widget-head">数値微分と誤差逆伝播法：かかる時間をくらべる <span class="hint">つまみの数と、層の数を変える</span></div>
+      <div class="stage"><span class="cap">すべてのつまみの傾きを1回求める時間</span><canvas aria-label="数値微分と誤差逆伝播法の計算時間の比較"></canvas></div>
+      <div class="stage"><span class="cap">層ごとの傾きの大きさ（1 が入口）<br>金：シグモイド</span><canvas aria-label="層を通るごとに小さくなる傾きの大きさ"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">数値微分</span><span class="tex" data-r="num"></span></div>
+          <div class="row"><span class="k">逆伝播</span><span class="tex" data-r="bp"></span></div>
+          <div class="row"><span class="k">勾配消失</span><span class="tex" data-r="van"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="sub">※ 前向きの計算1回に $0.01$ 秒かかるとして計算しています。後ろ向きの計算は、前向き約2回分の手間とします。</p>
+
+    <div class="callout point">
+      <div class="ttl">小話：勾配消失と ReLU</div>
+      <p>
+        層をたくさん重ねた「深い」ネットワーク（<b>ディープラーニング</b>）では、後ろ向きの計算で、層を1つ通るたびにシグモイドの傾き $\sigma(1-\sigma)$ をかけます。
+        ところが $\sigma(1-\sigma)$ はいちばん大きくても $\frac14$（$\sigma=\frac12$ のとき）なので、10層通ると $\left(\frac14\right)^{10}\approx0.000001$ 倍以下になり、入口に近いつまみの傾きがほとんど $0$ になってしまいます。
+        これを<b>勾配消失</b>といいます。そこで今の AI では、$\mathrm{ReLU}(u)=\max(0,\ u)$（$u\gt0$ なら傾き $1$）のような、傾きが小さくなりにくい関数がよく使われます。
+      </p>
+      <p>
+        ChatGPT のような大きな AI も、基本は同じです。たくさんの文章で「次の言葉」を当てる練習をして、誤差を<b>誤差逆伝播法</b>で全部のつまみに伝え、勾配降下法で少しずつ直していきます。
+        誤差逆伝播法は 1986年にラメルハートらが広め、ヒントンらの研究がいまの AI ブームにつながりました。中身は、高校で学ぶ連鎖律なのです。
+      </p>
+    </div>
+
+    <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
+      <div class="table-wrap"><table class="key-table"><tbody>
+        <tr><th>AI の学習</th><td>誤差 $E=(y-t)^2$ が小さくなるように、つまみ（重み $w$、バイアス $b$）を直すこと</td></tr>
+        <tr><th>傾きの記号</th><td>$\dfrac{\partial E}{\partial w}$：$w$ だけを少し動かしたときの $E$ の傾き</td></tr>
+        <tr><th>計算グラフ</th><td>計算を小さな装置に分けて、つないだ図。$E$ は合成関数</td></tr>
+        <tr><th>連鎖律</th><td>$\dfrac{\partial E}{\partial w}=\dfrac{dE}{dy}\cdot\dfrac{dy}{du}\cdot\dfrac{\partial u}{\partial w}$<br>$\quad=2(y-t)\cdot y(1-y)\cdot x$</td></tr>
+        <tr><th>手順</th><td>前向き（値を計算）→ 後ろ向き（$1$ から傾きをかけて伝える）→ 更新 $w\leftarrow w-\eta\frac{\partial E}{\partial w}$</td></tr>
+        <tr><th>なぜ逆？</th><td>共通のかけ算を使い回せるので、1往復ですべてのつまみの傾きが出る（数値微分はつまみ1個ごとに1回）</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(8)</span>チャレンジ：AI を育てろ</h2>
+
+    <p>
+      誤差逆伝播法の計算と学習を、5つのステージで練習しましょう。どのステージも挑戦は3回まで。<b>1回目で成功すると★3</b>、2回目で★2、3回目で★1 です。
+    </p>
+    <div class="widget" id="w-game">
+      <div class="widget-head">AI を育てろ <span class="game-total" data-r="total"></span><span class="hint">計算する・選ぶ・学習率を決める</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
+      <div class="mission" data-r="mission"></div>
+      <div class="stage"><canvas aria-label="チャレンジの図"></canvas></div>
+      <div class="panel" style="padding-top:10px;padding-bottom:0"><div class="d410-gctl" data-r="gctl"></div></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">残りの回数</span><span class="throws" data-r="throws"></span></div>
+          <div class="row"><span class="k">結果</span><span class="result" data-r="result"></span></div>
+          <div class="row"><span class="k">ヒント</span><span class="game-hint" data-r="hint"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="sec" id="check">
+    <h2 class="h-sub"><span class="tag">確認</span>確認問題</h2>
+    <p>ニューロン1個 $u=wx+b$、$y=\sigma(u)=\dfrac{1}{1+e^{-u}}$、$E=(y-t)^2$ について答えよ。ただし $\sigma'(u)=\sigma(u)\bigl(1-\sigma(u)\bigr)$ を使ってよい。</p>
+    <ol class="quiz">
+      <li>$x=1,\ w=2,\ b=-2,\ t=1$ のとき、前向きの計算で $u,\ y,\ E$ を求め、後ろ向きの計算で $\dfrac{\partial E}{\partial w}$ と $\dfrac{\partial E}{\partial b}$ を求めよ。</li>
+      <li>1 の結果を使い、学習率 $\eta=0.5$ で $w,\ b$ を1回更新せよ。また、更新後の $E$ を求め、誤差が減ったことを確かめよ（$e^{-0.25}\approx0.779$ を使ってよい）。</li>
+      <li>つまみが $100$ 万個ある AI で、すべてのつまみの傾きを求めたい。「1個ずつ $0.001$ 動かして前向きの計算をやり直す方法（数値微分）」と「誤差逆伝播法」では、それぞれ前向きの計算のおよそ何回分の手間がかかるか。また、誤差逆伝播法が速い理由を説明せよ。</li>
+    </ol>
+    <details class="think">
+      <summary>答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li><b>前向き</b>：<br>$u=wx+b=2\cdot1+(-2)=0$<br>
+          $y=\sigma(0)=\dfrac{1}{1+e^{0}}=0.5$<br>
+          $E=(0.5-1)^2=0.25$<br>
+          <b>後ろ向き</b>（右から左へ、$1$ から始めてかける）：<br>
+          $\dfrac{dE}{dy}=2(0.5-1)=-1$<br>
+          $\dfrac{dy}{du}=0.5\times0.5=0.25$<br>
+          $\dfrac{\partial E}{\partial u}=(-1)\times0.25=-0.25$<br>
+          $\dfrac{\partial E}{\partial w}=\dfrac{\partial E}{\partial u}\cdot x=-0.25$<br>
+          $\dfrac{\partial E}{\partial b}=\dfrac{\partial E}{\partial u}\cdot1=-0.25$</li>
+        <li>$w\leftarrow w-\eta\dfrac{\partial E}{\partial w}$<br>$\quad=2+0.125=2.125$<br>
+          $b\leftarrow b-\eta\dfrac{\partial E}{\partial b}$<br>$\quad=-2+0.125=-1.875$<br>
+          更新後：$u=2.125\times1-1.875=0.25$<br>
+          $y=\sigma(0.25)=\dfrac{1}{1+e^{-0.25}}$<br>$\quad\approx\dfrac{1}{1.779}\approx0.562$<br>
+          $E=(0.562-1)^2\approx0.192$<br>
+          $0.25$ から $0.192$ に減った。（傾きがマイナスなので $w,\ b$ を増やした → $y$ が正解 $1$ に近づいた。）</li>
+        <li><b>数値微分</b>：もとの計算1回と、つまみ1個につき1回ずつで、約 $1{,}000{,}001$ 回分。<br>
+          <b>誤差逆伝播法</b>：前向き1回と後ろ向き1回で、前向きの約 $2$〜$3$ 回分。<br>
+          <b>理由</b>：連鎖律のかけ算は、出口に近い部分（例えば $2(y-t)$ や $2(y-t)\cdot v_1\cdot h_1(1-h_1)$）が多くのつまみで<b>共通</b>である。
+          出口から入口へ向かって計算すると、この共通部分を1回だけ計算して使い回せるので、1往復ですべてのつまみの傾きが求まる。</li>
+      </ol>
+    </details>
+  </section>
+
+  <nav class="pager" aria-label="前後の節">
+    <a class="prev" href="4-9.html"><span class="dir">← 前の節</span><span class="nm">4.9 微分を使う</span></a>
+    <a class="next" href="game.html"><span class="dir">ミニゲーム →</span><span class="nm">微分の山脈</span></a>
+  </nav>
+</main>
+</div>
+
+<footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
+
+<script src="../assets/common.js?v=202611031018"></script>
+<script src="../assets/plot.js?v=202611031018"></script>
+<script src="../assets/game.js?v=202611031018"></script>
+<script src="js/diff-common.js?v=202611031018"></script>
+<script src="js/4-10.js?v=202611031018"></script>
+</body>
+</html>
