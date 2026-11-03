@@ -252,6 +252,88 @@
   }
 
   /* ==========================================================
+     4.2(5) 速さを指定してイージングを作る（1.4節）
+     ========================================================== */
+  function initEase() {
+    const root = $id('w-ease');
+    const cvs = root.querySelectorAll('canvas');
+    const pf = new Plot(cvs[0], { xmin: -0.12, xmax: 1.12, ymin: -0.25, ymax: 1.3, height: (w) => clamp(w * 0.5, 190, 300) });
+    const pv = new Plot(cvs[1], { xmin: -0.12, xmax: 1.12, ymin: -1, ymax: 3.4, height: (w) => clamp(w * 0.38, 150, 240) });
+    const pm = new Plot(cvs[2], { xmin: -0.12, xmax: 1.12, ymin: -0.6, ymax: 1.9, height: () => 120 });
+    const st = { v0: 0, v1: 0, t: 0.5, play: false };
+    const ctl = root.querySelector('.controls');
+    const s0 = slider(ctl, { tex: '\\amber{v_0}', min: 0, max: 3, step: 0.5, value: 0, color: 'amber', aria: '出だしの速さ v0' });
+    const s1 = slider(ctl, { tex: '\\teal{v_1}', min: 0, max: 3, step: 0.5, value: 0, color: 'teal', aria: '終わりの速さ v1' });
+    s0.on((v) => { st.v0 = v; update(); });
+    s1.on((v) => { st.v1 = v; update(); });
+    const PRE = [{ label: 'smoothstep', v: [0, 0] }, { label: '等速', v: [1, 1] }, { label: 'ゆっくり止まる', v: [2, 0] }, { label: 'ゆっくり出る', v: [0, 2] }];
+    const chips = chipRow(R(root, 'pre'), PRE, 0, (it) => { st.v0 = it.v[0]; st.v1 = it.v[1]; s0.set(st.v0); s1.set(st.v1); update(); });
+    const co = () => ({ p: st.v0 + st.v1 - 2, q: 3 - 2 * st.v0 - st.v1, r: st.v0 });
+    const f = (t) => { const k = co(); return ((k.p * t + k.q) * t + k.r) * t; };
+    const df = (t) => { const k = co(); return (3 * k.p * t + 2 * k.q) * t + k.r; };
+    const anim = L.animate(root, function (dt) {
+      if (!st.play) return false;
+      st.t += dt * 0.5;
+      if (st.t > 1.4) st.t = -0.2;
+      draw();
+      return true;
+    });
+    const bP = R(root, 'play');
+    const showPlay = () => { bP.textContent = st.play ? '⏸ 止める' : '▶ 動かす'; };
+    bP.addEventListener('click', () => { st.play = !st.play; if (st.play && st.t >= 1) st.t = -0.2; showPlay(); if (st.play) anim.kick(); });
+    const tc = () => clamp(st.t, 0, 1);
+    const term = (a, pw, first) => { if (Math.abs(a) < 1e-9) return ''; const sg = a < 0 ? '-' : first ? '' : '+', m = Math.abs(a); return sg + (Math.abs(m - 1) < 1e-9 && pw ? '' : fmt(m, 2)) + (pw ? 't' + (pw > 1 ? '^' + pw : '') : ''); };
+    const poly = (cs) => { let out = '', first = true; cs.forEach((c) => { const t = term(c[0], c[1], first); if (t) { out += t; first = false; } }); return out || '0'; };
+    function update() {
+      const k = co();
+      chips.forEach((b, i) => b.setAttribute('aria-pressed', String(PRE[i].v[0] === st.v0 && PRE[i].v[1] === st.v1)));
+      tex(root, 'f', '\\blue{f(t)}=' + poly([[k.p, 3], [k.q, 2], [k.r, 1]]));
+      tex(root, 'df', "\\amber{f'(t)}=" + poly([[3 * k.p, 2], [2 * k.q, 1], [k.r, 0]]) + ",\\quad f'(0)=\\amber{" + fmt(st.v0, 1) + "},\\ f'(1)=\\teal{" + fmt(st.v1, 1) + '}');
+      draw();
+    }
+    function draw() {
+      const t = tc();
+      tex(root, 'now', 't=' + fmt(t, 2) + ',\\quad f(t)=' + fmt(f(t), 2) + ",\\quad f'(t)=" + fmt(df(t), 2));
+      pf.invalidate(); pv.invalidate(); pm.invalidate();
+    }
+    pf.draw = function (g) {
+      const c = g.c, t = tc();
+      axes(g, { v: 't', sx: 0.25 }, 'f(t)', 0.5);
+      g.line(0, 0, 1, 1, { color: c.muted, width: 1.5, dash: [5, 5] });
+      g.line(-0.12, -0.12 * st.v0, 0.3, 0.3 * st.v0, { color: c.amber, width: 3 });
+      g.line(0.7, 1 - 0.3 * st.v1, 1.12, 1 + 0.12 * st.v1, { color: c.teal, width: 3 });
+      D.curve(g, f, { x0: 0, x1: 1 });
+      g.dot(0, 0, { r: 5, color: c.amber }); g.dot(1, 1, { r: 5, color: c.teal });
+      g.tex("\\text{傾き }\\amber{v_0}", 0.3, 0.3 * st.v0, { dx: 4, dy: 12, align: 'left', size: 13, color: c.amber, avoid: true });
+      g.tex("\\text{傾き }\\teal{v_1}", 0.7, 1 - 0.3 * st.v1, { dx: -4, dy: -12, align: 'right', size: 13, color: c.teal, avoid: true });
+      g.dot(t, f(t), { r: 6, color: c.primary });
+    };
+    pv.draw = function (g) {
+      const c = g.c, t = tc();
+      axes(g, { v: 't', sx: 0.25 }, "f'(t)", 1);
+      g.line(0, 1, 1, 1, { color: c.muted, width: 1.5, dash: [5, 5] });
+      D.curve(g, df, { x0: 0, x1: 1, color: c.amber });
+      g.dot(0, st.v0, { r: 5, color: c.amber }); g.dot(1, st.v1, { r: 5, color: c.teal });
+      g.line(t, 0, t, df(t), { color: c.amber, width: 1.2, dash: [3, 4] });
+      g.dot(t, df(t), { r: 5.5, color: c.amber });
+      g.tex('\\text{等速}=1', 1, 1, { dx: -4, dy: -10, align: 'right', size: 12, color: c.muted, avoid: true });
+    };
+    pm.draw = function (g) {
+      const c = g.c, t = tc();
+      g.line(0, 1, 1, 1, { color: c.grid, width: 6 });
+      g.line(0, 0, 1, 0, { color: c.grid, width: 6 });
+      [0, 1].forEach((x) => { g.line(x, -0.3, x, 1.3, { color: c.muted, width: 1.2 }); });
+      g.tex('0', 0, -0.3, { dy: 2, align: 'center', valign: 'top', size: 12, color: c.muted });
+      g.tex('1', 1, -0.3, { dy: 2, align: 'center', valign: 'top', size: 12, color: c.muted });
+      g.dot(f(t), 1, { r: 9, color: c.primary });
+      g.dot(t, 0, { r: 7, color: c.muted });
+      g.texPx('\\blue{\\text{イージング}}', 6, g.Y(1) - 12, { align: 'left', valign: 'bottom', size: 12 });
+      g.texPx('\\text{等速}', 6, g.Y(0) - 10, { align: 'left', valign: 'bottom', size: 12, color: c.muted });
+    };
+    update();
+  }
+
+  /* ==========================================================
      4.2(5) 接線の式
      ========================================================== */
   function initTanLine() {
@@ -499,6 +581,7 @@
     [initDef, 'w-def'],
     [initDeriv, 'w-deriv'],
     [initTanLine, 'w-tanline'],
+    [initEase, 'w-ease'],
     [initGameSlope, 'w-game-slope'],
     [initQuizFigs, 'check'],
   ]);

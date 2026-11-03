@@ -741,7 +741,81 @@
     game.setStage(0);
   }
 
+  /* ==========================================================
+     4.10(1) ニューロン1個の図と y = σ(wx+b) のグラフ
+     ========================================================== */
+  function initNeuron() {
+    const root = $id('w-neuron');
+    const cvs = root.querySelectorAll('canvas');
+    const pd = new Plot(cvs[0], { xmin: 0, xmax: 10, ymin: 0, ymax: 4, height: (w) => clamp(w * 0.3, 150, 210) });
+    const pg = new Plot(cvs[1], { xmin: -4.2, xmax: 4.2, ymin: -0.15, ymax: 1.15, height: (w) => clamp(w * 0.46, 200, 300) });
+    const M = { x: 1.5, w: 0.8, b: -0.5, t: 0.2 };
+    const ctl = root.querySelector('.controls');
+    const sW = slider(ctl, { tex: '\\violet{w}', min: -4, max: 4, step: 0.1, value: M.w, color: 'violet', aria: '重み w' });
+    const sB = slider(ctl, { tex: '\\violet{b}', min: -4, max: 4, step: 0.1, value: M.b, color: 'violet', aria: 'バイアス b' });
+    const sX = slider(ctl, { tex: 'x', min: -4, max: 4, step: 0.1, value: M.x, color: 'primary', aria: '入力 x' });
+    sW.on((v) => { M.w = v; update(); });
+    sB.on((v) => { M.b = v; update(); });
+    sX.on((v) => { M.x = v; update(); });
+    function update() {
+      const r = neuron(M);
+      tex(root, 'calc', 'u=\\violet{' + par(M.w, 1) + '}\\times' + par(M.x, 1) + '+\\violet{' + par(M.b, 1) + '}=' + n3(r.u));
+      tex(root, 'out', '\\blue{y}=\\sigma(' + n3(r.u) + ')\\approx\\blue{' + n3(r.y) + '}');
+      const r15 = neuron({ x: 1.5, w: M.w, b: M.b, t: M.t });
+      tex(root, 'tgt', 'x=1.5\\ \\text{で 正解 } t=0.2\\ \\text{（AI は }' + n3(r15.y) + '\\text{）}');
+      tex(root, 'err', '\\red{E}=(' + n3(r15.y) + '-0.2)^2\\approx\\red{' + n3(r15.E) + '}');
+      pd.invalidate(); pg.invalidate();
+    }
+    // ニューロンの図（入力 → ×w → +b → σ → 出力）
+    pd.draw = function (g) {
+      const c = g.c, ctx = g.ctx, r = neuron(M), sc = g.w / 10;
+      const node = (x, y, rad, col, fill) => { ctx.save(); ctx.beginPath(); ctx.arc(g.X(x), g.Y(y), rad, 0, 2 * Math.PI); ctx.fillStyle = fill || c.surface; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = col; ctx.stroke(); ctx.restore(); };
+      const rad = clamp(sc * 0.42, 16, 30), y0 = 1.7;
+      const P = { x: 0.9, s: 4.3, sg: 6.9, y: 9.1 };
+      const ar = (x0, x1, col) => g.arrow(x0 + rad / sc, y0, x1 - rad / sc - 0.05, y0, { color: col, width: 2.5, head: 10 });
+      ar(P.x, P.s, c.violet); ar(P.s, P.sg, c.text); ar(P.sg, P.y, c.primary);
+      g.arrow(P.s, 3.75, P.s, y0 + rad / (g.h / 4) + 0.05, { color: c.violet, width: 2.5, head: 10 });
+      node(P.x, y0, rad, c.text); node(P.s, y0, rad, c.text); node(P.y, y0, rad, c.primary);
+      // σ の箱（中に小さなシグモイドの形）
+      const bx = g.X(P.sg), by = g.Y(y0), bw = rad * 1.25;
+      ctx.save(); ctx.fillStyle = c.surface; ctx.strokeStyle = c.text; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.rect(bx - bw, by - bw * 0.8, 2 * bw, 1.6 * bw); ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      for (let i = 0; i <= 30; i++) { const u = -5 + 10 * i / 30, px = bx - bw * 0.75 + bw * 1.5 * i / 30, py = by + bw * 0.55 - bw * 1.1 * sg(u); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+      ctx.strokeStyle = c.primary; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+      g.tex('x', P.x, y0, { align: 'center', size: 16 });
+      g.tex('u', P.s, y0, { align: 'center', size: 16 });
+      g.tex('\\blue{y}', P.y, y0, { align: 'center', size: 16 });
+      g.tex('\\times\\violet{w}', (P.x + P.s) / 2, y0, { dy: -14, align: 'center', valign: 'bottom', size: 15 });
+      g.tex('+\\violet{b}', P.s, 3.75, { dx: 8, align: 'left', valign: 'top', size: 15 });
+      g.tex('\\sigma', P.sg, y0, { dy: bw * 0.8 + 4, align: 'center', valign: 'top', size: 15 });
+      g.tex('\\text{入力}', P.x, y0, { dy: rad + 6, align: 'center', valign: 'top', size: 12, color: c.muted });
+      g.tex('wx+b', P.s, y0, { dy: rad + 6, align: 'center', valign: 'top', size: 13, color: c.muted });
+      g.tex('\\text{答え}', P.y, y0, { dy: rad + 6, align: 'center', valign: 'top', size: 12, color: c.muted });
+      g.tex(D.fmt(M.x, 1), (P.x + P.s) / 2, y0, { dy: 8, align: 'center', valign: 'top', size: 12, color: c.primary });
+      g.tex(n3(r.u), (P.s + P.sg) / 2, y0, { dy: -10, align: 'center', valign: 'bottom', size: 12, color: c.primary });
+      g.tex(n3(r.y), (P.sg + P.y) / 2, y0, { dy: -10, align: 'center', valign: 'bottom', size: 12, color: c.primary });
+    };
+    pg.draw = function (g) {
+      const c = g.c, r = neuron(M), r15 = neuron({ x: 1.5, w: M.w, b: M.b, t: M.t });
+      g.grid({ step: 1, stepY: 0.5, labels: true, xlabel: 'x', ylabel: 'y' });
+      g.line(g.xmin, 1, g.xmax, 1, { color: c.muted, width: 1.2, dash: [5, 5] });
+      D.curve(g, sg, { color: c.muted, width: 1.5, dash: [4, 4], alpha: 0.7 });
+      D.curve(g, (x) => sg(M.w * x + M.b), { color: c.primary, width: 3 });
+      // 正解の点と誤差
+      g.line(1.5, M.t, 1.5, r15.y, { color: c.accent, width: 2.5 });
+      g.dot(1.5, M.t, { r: 6, color: c.accent });
+      g.tex('\\text{正解 }(1.5,\\ 0.2)', 1.5, M.t, { dx: 10, dy: 8, align: 'left', valign: 'top', size: 12, color: c.accent, avoid: true });
+      g.dot(1.5, r15.y, { r: 5, color: c.primary });
+      g.dot(M.x, r.y, { r: 6.5, color: c.primary });
+      g.tex('y=\\sigma(x)', -3.9, sg(-3.9), { dy: -10, align: 'left', valign: 'bottom', size: 12, color: c.muted, avoid: true });
+      g.texPx('\\blue{y=\\sigma(wx+b)}', 8, 8, { align: 'left', valign: 'top', size: 14 });
+    };
+    update();
+  }
+
   D.boot([
+    [initNeuron, 'w-neuron'],
     [initFwd, 'w-fwd'],
     [initBwd, 'w-bwd'],
     [initTrain, 'w-train'],

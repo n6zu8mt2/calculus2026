@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch5 calm">
 <header id="site-header" data-root="../" data-current="polynomial"></header>
@@ -110,8 +110,8 @@
     <div class="widget" id="w-dc">
       <div class="widget-head">1次・2次・3次のベジェ曲線 <span class="hint">点をドラッグ／再生・停止と t は各図の下</span></div>
       <div class="legend-line">
-        <span><i class="swatch" style="background:var(--accent)"></i>赤：<b>t</b> の長さ（手前側）</span>
-        <span><i class="swatch" style="background:var(--teal)"></i>青緑：<b>1−t</b> の長さ（向こう側）</span>
+        <span><i class="swatch" style="background:var(--accent)"></i>赤：<b>$t$</b> の長さ（手前側）</span>
+        <span><i class="swatch" style="background:var(--teal)"></i>青緑：<b>$1-t$</b> の長さ（向こう側）</span>
         <span><i class="swatch" style="background:var(--primary)"></i>青：ベジェ曲線と、いま求めている点 P(t)</span>
         <span>薄い線ほど、あとの段の内分</span>
       </div>
@@ -172,7 +172,7 @@
       </div>
       <div class="stage"><span class="cap">重み関数 $B_{n,i}(t)$（ベルンシュタイン基底）</span><canvas aria-label="ベルンシュタイン基底多項式"></canvas></div>
     </div>
-    <div class="key"><div class="key-ttl">覚える｜n 次のベジェ曲線</div><p class="key-lead">$n+1$ 個の制御点 $\boldsymbol{P}_0,\ \boldsymbol{P}_1,\ \dots,\ \boldsymbol{P}_n$ で「$t:(1-t)$ に内分」を $n$ 回くり返してできる曲線</p>
+    <div class="key"><div class="key-ttl">覚える｜$n$ 次のベジェ曲線</div><p class="key-lead">$n+1$ 個の制御点 $\boldsymbol{P}_0,\ \boldsymbol{P}_1,\ \dots,\ \boldsymbol{P}_n$ で「$t:(1-t)$ に内分」を $n$ 回くり返してできる曲線</p>
       <ul>
         <li>$\boldsymbol{P}_i$ にかかる重みは「$(1-t)$ を $n-i$ 個」と「$t$ を $i$ 個」かけたものに、<b>係数</b> をつけたもの。</li>
         <li>係数は、2次で計算するとわかります。$\boldsymbol{Q}_0=(1-t)\boldsymbol{P}_0+t\boldsymbol{P}_1$、$\boldsymbol{Q}_1=(1-t)\boldsymbol{P}_1+t\boldsymbol{P}_2$ を使うと
@@ -289,9 +289,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第1章 多項式 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="polynomial.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="polynomial.js?v=202611040605"></script>
 </body>
 </html>

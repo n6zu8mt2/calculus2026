@@ -392,6 +392,68 @@
   }
 
   /* ==========================================================
+     4.3(4) 点 (cosh t, sinh t) は双曲線の上を動く
+     ========================================================== */
+  function initHypCurve() {
+    const root = $id('w-hypc');
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -1.4, xmax: 4.2, equal: true, yc: 0, height: (w) => clamp(w * 0.95, 260, 520) });
+    const st = { t: 1, play: false, dir: 1, circ: true };
+    const ctl = root.querySelector('.controls');
+    const sT = slider(ctl, { tex: '\\blue{t}', min: -1.6, max: 1.6, step: 0.05, value: 1, color: 'primary', aria: 't の値' });
+    sT.on((v) => { st.t = v; st.play = false; showPlay(); update(); });
+    R(root, 'circ').addEventListener('change', (e) => { st.circ = e.target.checked; update(); });
+    const anim = L.animate(root, function (dt) {
+      if (!st.play) return false;
+      st.t += st.dir * dt * 0.8;
+      if (st.t > 1.6) { st.t = 1.6; st.dir = -1; } else if (st.t < -1.6) { st.t = -1.6; st.dir = 1; }
+      sT.set(Math.round(st.t * 20) / 20);
+      update();
+      return true;
+    });
+    const bP = R(root, 'play');
+    const showPlay = () => { bP.textContent = st.play ? '⏸ 止める' : '▶ 動かす'; };
+    bP.addEventListener('click', () => { st.play = !st.play; showPlay(); if (st.play) anim.kick(); });
+    function update() {
+      const t = st.t, ch = cosh(t), sh = sinh(t), ts = fm(t);
+      tex(root, 'pt', '(\\cosh ' + ts + ',\\ \\sinh ' + ts + ')\\approx(\\blue{' + fm(ch, 3) + '},\\ \\blue{' + fm(sh, 3) + '})');
+      tex(root, 'id', 'x^2-y^2=' + fm(ch * ch, 3) + '-' + fm(sh * sh, 3) + '=1');
+      tex(root, 'cpt', '(\\cos ' + ts + ',\\ \\sin ' + ts + ')\\approx(' + fm(Math.cos(t), 3) + ',\\ ' + fm(Math.sin(t), 3) + '),\\ x^2+y^2=1');
+      R(root, 'cpt').closest('.row').hidden = !st.circ;
+      plot.invalidate();
+    }
+    plot.draw = function (g) {
+      const c = g.c, t = st.t, ch = cosh(t), sh = sinh(t);
+      axes(g, {});
+      // 漸近線 y = ±x
+      g.line(g.xmin, g.xmin, g.xmax, g.xmax, { color: c.muted, width: 1.2, dash: [5, 5] });
+      g.line(g.xmin, -g.xmin, g.xmax, -g.xmax, { color: c.muted, width: 1.2, dash: [5, 5] });
+      g.tex('y=x', 3.2, 3.2, { dx: -6, align: 'right', valign: 'bottom', size: 13, color: c.muted, avoid: true });
+      g.tex('y=-x', 3.2, -3.2, { dx: -6, align: 'right', valign: 'top', size: 13, color: c.muted, avoid: true });
+      // 双曲線 x^2 - y^2 = 1（右の枝は実線、左の枝はうすく）
+      const right = [], left = [];
+      for (let i = 0; i <= 120; i++) { const s = -2.6 + 5.2 * i / 120; right.push([cosh(s), sinh(s)]); left.push([-cosh(s), sinh(s)]); }
+      g.poly(left, { color: c.primary, width: 2, alpha: 0.35 });
+      g.poly(right, { color: c.primary, width: 3 });
+      g.tex('x^2-y^2=1', cosh(-1.25), sinh(-1.25), { dx: 10, align: 'left', size: 14, color: c.primary, avoid: true });
+      if (st.circ) {
+        const cp = [];
+        for (let i = 0; i <= 90; i++) { const a = TAU * i / 90; cp.push([Math.cos(a), Math.sin(a)]); }
+        g.poly(cp, { color: c.muted, width: 1.8 });
+        g.line(0, 0, Math.cos(t), Math.sin(t), { color: c.muted, width: 1.2 });
+        g.dot(Math.cos(t), Math.sin(t), { r: 5.5, color: c.muted });
+      }
+      // 座標の目安
+      g.line(ch, 0, ch, sh, { color: c.primary, width: 1.2, dash: [3, 4] });
+      g.line(0, sh, ch, sh, { color: c.primary, width: 1.2, dash: [3, 4] });
+      g.tex('\\cosh t', ch, 0, { dy: sh >= 0 ? 6 : -6, valign: sh >= 0 ? 'top' : 'bottom', align: 'center', size: 13, color: c.primary, avoid: true });
+      g.tex('\\sinh t', 0, sh, { dx: -6, align: 'right', size: 13, color: c.primary, avoid: true });
+      g.dot(ch, sh, { r: 7, color: c.primary });
+      g.tex('(\\cosh t,\\ \\sinh t)', ch, sh, { dx: 10, dy: sh >= 0 ? -12 : 12, align: 'left', size: 13, color: c.primary, avoid: true });
+    };
+    update();
+  }
+
+  /* ==========================================================
      4.3(4) 垂れ下がる鎖：カテナリー
      ========================================================== */
   function initCat() {
@@ -713,6 +775,7 @@
     [initLog, 'w-log'],
     [initSin, 'w-sin'],
     [initHyp, 'w-hyp'],
+    [initHypCurve, 'w-hypc'],
     [initCat, 'w-cat'],
     [initTable, 'w-table'],
     [initGameTA, 'w-game-ta'],

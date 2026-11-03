@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch6 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
@@ -144,7 +144,7 @@
       参考：<a href="https://ja.wikipedia.org/wiki/72%E3%81%AE%E6%B3%95%E5%89%87" target="_blank" rel="noopener">72の法則（Wikipedia）</a></p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(2)</span>利息を細かくつけ続けると e が現れる</h2>
+    <h2 class="h-sub"><span class="tag">(2)</span>利息を細かくつけ続けると $e$ が現れる</h2>
 
     <p>
       年利 100%（$r=1$）という夢のような銀行に、100 万円を 1 年間預けるとします。
@@ -186,7 +186,7 @@
       </div>
     </div>
 
-    <div class="key"><div class="key-ttl">覚える｜ネイピア数 e</div>$$e=\lim_{n\to\infty}\left(1+\frac1n\right)^n=2.718\ldots$$</div>
+    <div class="key"><div class="key-ttl">覚える｜ネイピア数 $e$</div>$$e=\lim_{n\to\infty}\left(1+\frac1n\right)^n=2.718\ldots$$</div>
     <p>毎秒、いや毎瞬間に利息をつけても（<b>連続複利</b>）、1年後は $e$ 倍、約 2.718 倍にしかなりません。</p>
 
     <h2 class="h-sub"><span class="tag">(3)</span>リボ払いの怖さ</h2>
@@ -218,7 +218,7 @@
       </table></div>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(4)</span>e の正体：傾きがちょうど 1</h2>
+    <h2 class="h-sub"><span class="tag">(4)</span>$e$ の正体：傾きがちょうど $1$</h2>
 
     <p>
       $y=a^x$ のグラフは、どの $a$ でも点 $(0,1)$ を通ります。そこでの接線の傾きは $a$ によって変わります。
@@ -226,7 +226,7 @@
       $\left(e^x\right)'=e^x$ を持ち、微分積分で主役になります。
     </p>
     <p class="sub">※ 接線の傾きを求める計算を<b>微分</b>といい、$\left(e^x\right)'$ の $'$ は「微分したもの（傾きを表す関数）」という記号です。微分はまだ学んでいません（<a href="../diff/4-1.html">第4章</a>で学びます。$\left(e^x\right)'=e^x$ は<a href="../diff/4-3.html">4.3節</a>）。ここではグラフで「傾きがちょうど 1 になる底」を探して、$e$ の正体を感じてみましょう。</p>
-    <div class="key"><div class="key-ttl">覚える｜e の正体</div>$$\begin{gathered}y=e^x\ \text{の}\ x=0\ \text{での接線の傾きは}\ 1\\[4pt] \left(e^x\right)'=e^x\end{gathered}$$</div>
+    <div class="key"><div class="key-ttl">覚える｜$e$ の正体</div>$$\begin{gathered}y=e^x\ \text{の}\ x=0\ \text{での接線の傾きは}\ 1\\[4pt] \left(e^x\right)'=e^x\end{gathered}$$</div>
     <div class="widget" id="w-game-e">
       <div class="widget-head">接線の傾きを合わせろ <span class="game-total" data-r="total"></span><span class="hint">底 $a$ を決めて「決定」</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="stages"></div></div>
@@ -287,9 +287,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第2章 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="explog.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="explog.js?v=202611040605"></script>
 </body>
 </html>

@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="trig"></header>
@@ -123,11 +123,11 @@
     <div class="eq-box">$$\sin(\theta+2\pi)=\sin\theta,\qquad \cos(\theta+2\pi)=\cos\theta$$</div>
     <p>コツは、<b>まず金色の直角三角形（$30^\circ$・$45^\circ$・$60^\circ$ の三角定規）で長さを求め、次に点のある向きで符号（＋・−）をつける</b>ことです。</p>
 
-    <h3 class="h-mini">tan は半径の傾き</h3>
+    <h3 class="h-mini">$\tan$ は半径の傾き</h3>
     <p>
       $\tan$ も、三角比のときの「高さ ÷ 底辺」をそのまま使って決めます。
     </p>
-    <div class="key"><div class="key-ttl">覚える｜tan の定義</div>
+    <div class="key"><div class="key-ttl">覚える｜$\tan$ の定義</div>
       <p class="key-lead key-big">$\tan\theta$ ＝ 半径 $\mathrm{OP}$ の傾き</p>
       $$\amber{\tan\theta}=\frac{\red{\sin\theta}}{\teal{\cos\theta}}$$
       <p class="key-note">$\cos\theta=0$（$\theta=\frac{\pi}{2},\ \frac{3\pi}{2}$ など、点が真上・真下）のときは割り算できないので、$\tan\theta$ は考えない。</p>
@@ -138,7 +138,7 @@
       $\tan$（タンジェント）は「接線」という意味で、$x=1$ は単位円の接線なのでこの名前があります。
     </p>
 
-    <h3 class="h-mini">sin² θ + cos² θ = 1</h3>
+    <h3 class="h-mini">$\sin^2\theta+\cos^2\theta=1$</h3>
     <p>
       点 $\mathrm{P}(\teal{\cos\theta},\ \red{\sin\theta})$ は、原点からの距離が 1 の点です。金色の直角三角形に三平方の定理を使うと、どんな角でも次が成り立ちます（$\sin^2\theta$ は $(\sin\theta)^2$ のこと）。
     </p>
@@ -219,7 +219,7 @@
         ホームページの見た目を決める CSS では、色を <code>hsl(120, 85%, 52%)</code> のように書きます。これは「色相 $120^\circ$（緑）、あざやかさ $85\%$、明るさ $52\%$」という意味です。デザインのツールの色選びにも、H・S・L（または H・S・B）の欄があります。
       </p>
       <p>
-        単位円と見くらべると、<b>H は角 $\theta$</b>、<b>S は中心からの距離</b>です。L を決めると、色は円の中の点
+        単位円と見くらべると、<b>$H$ は角 $\theta$</b>、<b>$S$ は中心からの距離</b>です。$L$ を決めると、色は円の中の点
         $(S\cos H,\ S\sin H)$ で決まります。ただし $S$ は $85\%$ なら $0.85$ のように、$0$〜$1$ の数に直します。このように「距離と角」で点を表す方法を<b>極座標</b>といいます。中心は灰色で、外へ行くほどあざやかになります。
         そして角が<b>ちょうど反対（$H+180^\circ$）</b>の色を<b>補色</b>といい、並べると互いを引き立てます。単位円で言えば、点 $\mathrm{P}$ と原点について反対側の点（$\pi+\theta$）です。
       </p>
@@ -332,10 +332,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/trig-common.js?v=202611031018"></script>
-<script src="js/3-3.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/trig-common.js?v=202611040605"></script>
+<script src="js/3-3.js?v=202611040605"></script>
 </body>
 </html>

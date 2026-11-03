@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch6 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -114,7 +114,7 @@
       <p class="key-note">例：$y=\sqrt{x}$ は $x=y^2\ (y\geqq0)$ なので $\dfrac{dx}{dy}=2y$、$\dfrac{dy}{dx}=\dfrac{1}{2y}=\dfrac{1}{2\sqrt{x}}$（4.3節の確認問題と同じ答え）。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(2)</span>log x の微分をもう一度</h2>
+    <h2 class="h-sub"><span class="tag">(2)</span>$\log x$ の微分をもう一度</h2>
 
     <p>
       <a href="4-3.html">4.3節</a>では、$(\log x)'=\dfrac1x$ をグラフの折り返しで説明しました。今の公式で、式でも確かめましょう。
@@ -141,7 +141,7 @@
     </table></div>
     <p class="sub">※ $\sin^{-1}x$ は $\arcsin x$ とも書きます（$\cos^{-1}x=\arccos x$、$\tan^{-1}x=\arctan x$）。$\dfrac{1}{\sin x}$ のことではありません。</p>
 
-    <h3 class="h-mini">sin⁻¹x の微分</h3>
+    <h3 class="h-mini">$\sin^{-1}x$ の微分</h3>
     <p>
       $y=\sin^{-1}x$ とおくと、$x=\sin y$ $\left(-\frac{\pi}{2}\leqq y\leqq\frac{\pi}{2}\right)$ です。$y$ で微分すると $\dfrac{dx}{dy}=\cos y$。
       これを $x$ の式に直すために $\sin^2y+\cos^2y=1$ を使います。$y$ は $-\frac{\pi}{2}$ から $\frac{\pi}{2}$ の角なので $\cos y\geqq0$、よって
@@ -149,7 +149,7 @@
     </p>
     <div class="eq-box">$$\left(\sin^{-1}x\right)'=\frac{1}{\ \dfrac{dx}{dy}\ }=\frac{1}{\cos y}=\frac{1}{\sqrt{1-\sin^2y}}=\frac{1}{\sqrt{1-x^2}}\qquad(-1\lt x\lt1)$$</div>
 
-    <h3 class="h-mini">cos⁻¹x の微分</h3>
+    <h3 class="h-mini">$\cos^{-1}x$ の微分</h3>
     <p>
       同じように、$y=\cos^{-1}x$ とおくと $x=\cos y$ $(0\leqq y\leqq\pi)$ で、$\dfrac{dx}{dy}=-\sin y$ です。
       今度は $y$ が $0$ から $\pi$ の角なので $\sin y\geqq0$、よって $\sin y=\sqrt{1-\cos^2y}=\sqrt{1-x^2}$ です。
@@ -159,7 +159,7 @@
       $\sin^{-1}x$ の微分に、ちょうどマイナスがついた形です。$\sin^{-1}x$ はいつも右上がり、$\cos^{-1}x$ はいつも右下がりのグラフなので、符号はグラフとも合っています。
     </p>
 
-    <h3 class="h-mini">なぜ逆符号？：sin⁻¹x + cos⁻¹x = π/2</h3>
+    <h3 class="h-mini">なぜ逆符号？：$\sin^{-1}x+\cos^{-1}x=\dfrac{\pi}{2}$</h3>
     <p>
       斜辺が $1$、縦の辺が $x$ の直角三角形を考えます（$0\lt x\lt1$）。左下の角を $\alpha$ とすると、$\sin\alpha=\dfrac{x}{1}=x$ なので $\alpha=\sin^{-1}x$。
       上の角を $\beta$ とすると、$\beta$ のとなりの辺が $x$ なので $\cos\beta=x$、つまり $\beta=\cos^{-1}x$。
@@ -189,7 +189,7 @@
       と、さっきの計算をしなくても $\cos^{-1}x$ の微分がわかります。グラフで見ると、$y=\cos^{-1}x$ は $y=\sin^{-1}x$ を<b>上下にひっくり返して $\frac{\pi}{2}$ 上げた</b>形です。上下にひっくり返すと傾きの符号が逆になります。
     </p>
 
-    <h3 class="h-mini">tan⁻¹x の微分</h3>
+    <h3 class="h-mini">$\tan^{-1}x$ の微分</h3>
     <p>
       $y=\tan^{-1}x$ とおくと $x=\tan y$ $\left(-\frac{\pi}{2}\lt y\lt\frac{\pi}{2}\right)$。$(\tan y)'=\dfrac{1}{\cos^2y}$（<a href="4-4.html">4.4節</a>の商の微分）と、
       $1+\tan^2y=\dfrac{1}{\cos^2y}$（$\sin^2y+\cos^2y=1$ の両辺を $\cos^2y$ で割った式）を使うと
@@ -301,10 +301,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-6.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-6.js?v=202611040605"></script>
 </body>
 </html>

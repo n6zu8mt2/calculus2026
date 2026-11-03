@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch2 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -59,7 +59,7 @@
       この節では、この「近づけていく」計算を<b>式で書き</b>、$x^2$ や $x^3$ の接線の傾きを、表やグラフにたよらずに<b>計算で</b>求められるようにします。
     </p>
 
-    <h2 class="h-sub"><span class="tag">(1)</span>h を小さくしていく</h2>
+    <h2 class="h-sub"><span class="tag">(1)</span>$h$ を小さくしていく</h2>
 
     <p>
       関数 $y=\blue{f(x)}$ のグラフの上に、$x=a$ の点 A と、そこから横に $\red{h}$ だけ進んだ $x=a+\red{h}$ の点 B をとります。
@@ -117,7 +117,7 @@
       <p class="key-note">$\lim$ は limit（極限、行き先）の略。「$\displaystyle\lim_{h\to0}$（式）」は「$h$ を $0$ に近づけたときの（式）の行き先」と読む。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(2)</span>x² の微分を計算する</h2>
+    <h2 class="h-sub"><span class="tag">(2)</span>$x^2$ の微分を計算する</h2>
 
     <p>
       では、$f(x)=x^2$ のとき、$f'(a)$ を計算で求めてみましょう。$f(a+\red{h})=(a+\red{h})^2$ なので、割線の傾きは次のように整理できます（$\red{h}$ を赤で書きます）。
@@ -135,7 +135,7 @@
       最後に、$a$ を $x$ に書きかえると $f'(x)=2x$ という<b>新しい関数</b>ができます。「$x$ を入れると、そこでの接線の傾きが出てくる関数」です。これを $f(x)$ の<b>導関数</b>といい、(4) でそのグラフを見ます。
     </p>
 
-    <div class="key"><div class="key-ttl">覚える｜x² の微分</div>
+    <div class="key"><div class="key-ttl">覚える｜$x^2$ の微分</div>
       <p class="key-lead key-big">$y=x^2$ の $x$ での接線の傾きは $2x$</p>
       $$(x^2)'=2x$$
       <ul>
@@ -145,7 +145,7 @@
       <p class="key-note">計算のこつ：展開 → 引き算で消す → $h$ で約分 → $h\to0$。$h$ で約分するまでは $h=0$ を入れない。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(3)</span>xⁿ の微分と多項式</h2>
+    <h2 class="h-sub"><span class="tag">(3)</span>$x^n$ の微分と多項式</h2>
 
     <p>同じやり方で $f(x)=x^3$ も計算できます。$(x+\red{h})^3=x^3+3x^2\red{h}+3x\red{h}^2+\red{h}^3$ を使うと</p>
     <div class="eq-box">$$\begin{aligned}\frac{(x+\red{h})^3-x^3}{\red{h}}&=\frac{3x^2\red{h}+3x\red{h}^2+\red{h}^3}{\red{h}}\\[4pt]&=3x^2+3x\red{h}+\red{h}^2\ \longrightarrow\ 3x^2\quad(\red{h}\to0)\end{aligned}$$</div>
@@ -171,7 +171,7 @@
     <p>これらを組み合わせると、多項式は<b>1つの項ずつ</b>微分すればよいことになります。</p>
     <div class="eq-box">$$\begin{aligned}(2x^3-5x^2+4x-7)'&=2\cdot3x^2-5\cdot2x+4\cdot1-0\\&=6x^2-10x+4\end{aligned}$$</div>
 
-    <div class="key"><div class="key-ttl">覚える｜xⁿ の微分と多項式の微分</div>
+    <div class="key"><div class="key-ttl">覚える｜$x^n$ の微分と多項式の微分</div>
       <p class="key-lead key-big">指数を前に出して、指数を1つ下げる。多項式は項ごとに</p>
       $$\begin{gathered}(x^n)'=n\,x^{n-1}\\[4pt](c)'=0,\qquad (c\,f)'=c\,f',\qquad (f+g)'=f'+g'\end{gathered}$$
       <ul>
@@ -289,8 +289,29 @@
     <p>
       $\amber{v_0}=\teal{v_1}=0$ とすれば $p=-2,\ q=3$ で、smoothstep $3t^2-2t^3$ です。
     </p>
+    <p>
+      つまり、イージングを作るときにしているのは、<b>出だしと終わりの速さ（＝微分 $f'(0),\ f'(1)$）を指定すること</b>です。
+      位置のグラフでは、それは「両端での接線の傾き」を決めることにあたります。下の図で $\amber{v_0}$ と $\teal{v_1}$ を変えて、位置のグラフ（上）・速さのグラフ（中）・実際の動き（下）を見くらべましょう。
+    </p>
 
-    <h2 class="h-sub"><span class="tag">(6)</span>記号 dy/dx</h2>
+    <div class="widget" id="w-ease">
+      <div class="widget-head">速さを指定してイージングを作る <span class="hint">$\amber{v_0},\ \teal{v_1}$ を動かす／▶ で動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 動かす</button><span class="lbl-sm">例</span><div class="chips" data-r="pre"></div></div></div>
+      <div class="stage"><canvas aria-label="位置のグラフ f(t) と、両端の接線"></canvas></div>
+      <div class="stage"><canvas aria-label="速さのグラフ f'(t)"></canvas></div>
+      <div class="stage"><canvas aria-label="イージングで動く点と、等速で動く点"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">位置</span><span class="tex" data-r="f"></span></div>
+          <div class="row"><span class="k">速さ</span><span class="tex" data-r="df"></span></div>
+          <div class="row"><span class="k">いま</span><span class="tex" data-r="now"></span></div>
+        </div>
+      </div>
+    </div>
+    <p class="sub">※ $\amber{v_0}$ や $\teal{v_1}$ を大きくしすぎると、途中で $f(t)$ が $1$ を超えたり $0$ より下がったりします（行き過ぎて戻る動き）。速さのグラフが $0$ より下になるところが「戻っている」時間です。</p>
+
+    <h2 class="h-sub"><span class="tag">(6)</span>記号 $\dfrac{dy}{dx}$</h2>
 
     <p>
       微分は、17世紀後半に、イギリスの<b>ニュートン</b>（1643–1727）とドイツの<b>ライプニッツ</b>（1646–1716）が、ほぼ同じころ別々に考え出しました。
@@ -393,10 +414,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-2.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-2.js?v=202611040605"></script>
 </body>
 </html>

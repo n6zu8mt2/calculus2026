@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch1 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -58,17 +58,25 @@
 
     <p>
       車のスピードメーターの針が「60」を指しているとします。これは時速 60 km、つまり「<b>この速さのまま 1 時間走り続けたら 60 km 進む</b>」という意味です。
-      でも、車は本当に 1 時間走って測ったわけではありません。次の瞬間にはブレーキを踏むかもしれません。
-      メーターが表しているのは、<b>いま、この瞬間</b>の速さです。
     </p>
     <p>
-      ふつう、速さは次の式で計算します。
+      例えば 1 時間で 60 km 進んだら時速 60 km ですし、2 時間で 120 km 進んだら、速さは $120\div2=60$ で時速 60 km です。
+      つまり、速さは次の式で計算できます。
     </p>
     <div class="eq-box">$$\text{速さ}=\frac{\text{進んだ距離}}{\text{かかった時間}}$$</div>
     <p>
-      例えば 2 時間で 120 km 進んだら、速さは $120\div2=60$ で時速 60 km です。
       ただしこれは、2 時間の間に速くなったり遅くなったりしたのをならした<b>平均の速さ</b>です。
-      では「ある一瞬」の速さはどう計算すればよいでしょう。一瞬の間に進む距離は $0$、かかる時間も $0$ なので、そのままでは $0\div0$ になって計算できません。
+    </p>
+    <p>
+      ここで重要なのは、車のスピードメーターが「60」のとき、実際に車を 1 時間運転した結果 60 km になったわけではない、ということです。
+      このスピードメーターが表しているのは、<b>いま、この瞬間</b>の速さです。
+    </p>
+    <p>
+      この「ある一瞬」の速さはどう計算すればよいでしょうか。一瞬の間に進む距離は 0 km、かかる時間は 0 時間なので、そのままでは
+    </p>
+    <div class="eq-box">$$\text{ある一瞬の速さ}=\frac{\text{進んだ距離}}{\text{かかった時間}}=\frac{0}{0}$$</div>
+    <p>
+      となり、計算できません。
     </p>
     <p>
       この節では、この問いに次のように答えます。
@@ -100,8 +108,9 @@
       変化した量を $\Delta$（デルタ）をつけて表し、かかった時間を $\red{\Delta t}=t_2-t_1$、進んだ距離を $\red{\Delta x}$ と書きます。
     </p>
     <p>
-      例えば 1 秒から 3 秒まででは、$\red{\Delta t}=3-1=2$ 秒、$\red{\Delta x}=18-2=16$ m なので、平均の速さは $\dfrac{16}{2}=8$ m/秒です。
+      例えば 1 秒から 3 秒まででは、$\red{\Delta t}=3-1=2$ 秒、$\red{\Delta x}=18-2=16$ m なので、平均の速さは次のようになります。
     </p>
+    <div class="eq-box">$$\text{1 秒から 3 秒までの平均の速さ}=\frac{\red{\Delta x}}{\red{\Delta t}}=\frac{16}{2}=8\ \text{m/秒}$$</div>
     <p>
       これをグラフで見ましょう。横の軸を時刻 $t$、縦の軸を位置 $x$ にすると、$x=2t^2$ のグラフは放物線（<a href="../polynomial/1-3.html">1.3節</a>）になります。
       グラフの上の 2 点 $\mathrm{A}$（$t_1$ 秒の位置）と $\mathrm{B}$（$t_2$ 秒の位置）を結ぶ直線を<b>割線</b>（かっせん：曲線を切る線）といいます。
@@ -162,7 +171,7 @@
 
     <p>
       $\red{\Delta t}$ を小さくすると、平均の速さは $10,\ 9,\ 8.2,\ 8.02,\ 8.002,\ \dots$ と、$8$ にどんどん近づきます。
-      そこで、$t=2$ 秒の<b>瞬間の速さは 8 m/秒</b>（時速 28.8 km）と決めます。スピードメーターが指しているのは、この数です。
+      そこで、$t=2$ 秒の<b>瞬間の速さは $8$ m/秒</b>（時速 28.8 km）と決めます。スピードメーターが指しているのは、この数です。
     </p>
     <p>
       グラフでは、$\red{\Delta t}$ を小さくすると点 B が点 A に近づき、<span class="t-red">割線</span>は点 A で曲線にふれる直線に近づいていきます。この直線を、点 A での<span class="t-teal">接線</span>といいます。
@@ -367,10 +376,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-1.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-1.js?v=202611040605"></script>
 </body>
 </html>

@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="explog"></header>
@@ -91,7 +91,7 @@
     </div>
 
     <p>1回折るごとに厚さは 2 倍。2 回折ると $2\times2=2^2$ 倍、3 回折ると $2^3$ 倍、…となります。</p>
-    <div class="key"><div class="key-ttl">覚える｜倍々を n 回</div>$$\text{2 倍を}\ n\ \text{回くり返すと}\ 2^n\ \text{倍}$$<p>例：厚さ $0.1$ mm の紙を $n$ 回折ると、厚さは $0.1\times2^n$ mm。</p></div>
+    <div class="key"><div class="key-ttl">覚える｜倍々を $n$ 回</div>$$\text{2 倍を}\ n\ \text{回くり返すと}\ 2^n\ \text{倍}$$<p>例：厚さ $0.1$ mm の紙を $n$ 回折ると、厚さは $0.1\times2^n$ mm。</p></div>
     <p>$2^n$ がどれくらいの大きさかは、次の目安でつかめます。$2^{10}=1024$ はほぼ $1000$ なので、2 倍を 10 回くり返すごとに、ほぼ 1000 倍（ケタが3つ増える）です。</p>
     <div class="key"><div class="key-ttl">覚える｜倍々の目安</div>$$2^{10}=1024\approx10^3$$<p>同じことを $2\approx10^{0.3010}$、つまり $\log_{10}2\approx0.3010$ とも書きます（$\log$ は2.4節で学びます）。</p></div>
     <p>
@@ -99,7 +99,7 @@
       $0.1\times2^n\geqq3.8\times10^{11}$、つまり $2^n\geqq3.8\times10^{12}$ となる $n$ を探します。
       このように「$2^n$ が $A$ 以上になる $n$」は、次の手順で求められます。
     </p>
-    <div class="key"><div class="key-ttl">覚える｜何回で A を超えるか</div>$$\begin{gathered}2^n\geqq A\\[4pt] \text{両辺の}\ \log_{10}\ \text{をとる}\\[4pt] n\log_{10}2\geqq\log_{10}A\\[4pt] n\geqq\dfrac{\log_{10}A}{0.3010}\end{gathered}$$<p class="key-note">$\log_{10}A$ は「$10$ を何乗すると $A$ になるか」。$\log_{10}2^n=n\log_{10}2$ を使っています（2.4節）。</p></div>
+    <div class="key"><div class="key-ttl">覚える｜何回で $A$ を超えるか</div>$$\begin{gathered}2^n\geqq A\\[4pt] \text{両辺の}\ \log_{10}\ \text{をとる}\\[4pt] n\log_{10}2\geqq\log_{10}A\\[4pt] n\geqq\dfrac{\log_{10}A}{0.3010}\end{gathered}$$<p class="key-note">$\log_{10}A$ は「$10$ を何乗すると $A$ になるか」。$\log_{10}2^n=n\log_{10}2$ を使っています（2.4節）。</p></div>
     <p>
       月の場合は $A=3.8\times10^{12}$ で、$\log_{10}A\approx12.58$。だから $n\geqq\dfrac{12.58}{0.3010}\approx41.8$。たった 42 回で月に届きます。
     </p>
@@ -216,9 +216,9 @@
 
 <footer class="site-footer">解析学 2026 ／ 第2章 指数関数・対数関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="explog.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="explog.js?v=202611040605"></script>
 </body>
 </html>

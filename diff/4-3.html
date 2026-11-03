@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -135,6 +135,7 @@
       この点の $x$ 座標は $x=e^{t}$ なので、$y=\log x$ の点 $x$ での傾きは $\dfrac1x$ です。
     </p>
     <div class="eq-box eq-hero">$$\left(\log x\right)'=\frac{1}{x}$$</div>
+    <p class="sub">※ 底を書かない $\log x$ は $\log_e x$（自然対数）のことです。$e$ は自然対数の底（ネイピア数）で、$e=2.718\ldots$（<a href="../explog/2-6.html">2.6節</a>）。</p>
     <p>
       つまり、$x=2$ での傾きは $\frac12$、$x=10$ での傾きは $\frac1{10}$ と、<b>右へ行くほど傾きはゆるやか</b>になります。
       下の図で、傾きと $x$ をかけるといつでも $1$ になることを確かめましょう。
@@ -156,12 +157,12 @@
       </div>
     </div>
 
-    <h3 class="h-mini">マイナスの x：log|x|</h3>
+    <h3 class="h-mini">マイナスの $x$：$\log|x|$</h3>
     <p>
       $\log x$ は $x\gt0$ でしか考えられませんが、$y=\log|x|$ なら $x\lt0$ でも使えます。$x\lt0$ の部分は、$y=\log x$ のグラフを $y$ 軸で<b>左右に折り返した</b>形です。
       左右に折り返すと傾きの符号が逆になるので、$x=-b$（$b\gt0$）での傾きは $-\dfrac{1}{b}=\dfrac{1}{x}$。結局、同じ式 $\dfrac1x$ になります（図の「$\log|x|$」で確かめられます）。
     </p>
-    <h3 class="h-mini">底が e でない対数</h3>
+    <h3 class="h-mini">底が $e$ でない対数</h3>
     <p>
       底の変換公式（2.4節）で $\log_a x=\dfrac{\log x}{\log a}$ と、自然対数の定数倍に直せます。$\dfrac{1}{\log a}$ は定数なので、そのままかければよいのです。
     </p>
@@ -278,7 +279,7 @@
     </p>
     <div class="eq-box">$$\begin{aligned}\left(\sinh x\right)'&=\frac{e^x-(-e^{-x})}{2}=\frac{e^x+e^{-x}}{2}=\cosh x\\ \left(\cosh x\right)'&=\frac{e^x+(-e^{-x})}{2}=\frac{e^x-e^{-x}}{2}=\sinh x\end{aligned}$$</div>
     <p>
-      三角関数と違って、<b>マイナスがつかない</b>のがポイントです。$\tanh x$ の微分は <a href="4-4.html">4.4節</a>の商の微分で求めます（答えは $\dfrac{1}{\cosh^2 x}$）。
+      三角関数と違って、<b>マイナスがつかない</b>のがポイントです。$\tanh x$ の微分は <a href="4-4.html">4.4節</a>の商の微分で求めます（答えは $(\tanh x)'=\dfrac{1}{\cosh^2 x}$）。
     </p>
 
     <div class="widget" id="w-hyp">
@@ -297,12 +298,31 @@
       </div>
     </div>
 
-    <h3 class="h-mini">cosh² − sinh² = 1：「双曲線」の名前のわけ</h3>
+    <h3 class="h-mini">$\cosh^2x-\sinh^2x=1$：「双曲線」の名前のわけ</h3>
     <p>$\cos^2x+\sin^2x=1$ に対応する式があります。$e^x e^{-x}=1$ を使って計算すると</p>
     <div class="eq-box">$$\cosh^2x-\sinh^2x=\frac{(e^x+e^{-x})^2-(e^x-e^{-x})^2}{4}=\frac{4e^xe^{-x}}{4}=1$$</div>
     <p>
       $(\cos t,\ \sin t)$ が円 $x^2+y^2=1$ の上を動くのに対して、点 $(\cosh t,\ \sinh t)$ は<b>双曲線</b> $x^2-y^2=1$ の上を動きます。これが「双曲線関数」という名前の由来です。
     </p>
+    <p>
+      下の図で $t$ を動かしてみましょう。青い点 $(\cosh t,\ \sinh t)$ は双曲線の右半分の上を動き、灰色の点 $(\cos t,\ \sin t)$ は円の上を回ります。
+      $t$ を大きくすると、青い点は点線（漸近線 $y=\pm x$）に近づきながら、どこまでも遠ざかっていきます。
+    </p>
+
+    <div class="widget" id="w-hypc">
+      <div class="widget-head">点 $(\blue{\cosh t},\ \blue{\sinh t})$ は双曲線 $x^2-y^2=1$ の上を動く <span class="hint">▶ で動かす／スライダーで $t$ を動かす</span></div>
+      <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn primary" type="button" data-r="play">▶ 動かす</button>
+        <label class="check"><input type="checkbox" data-r="circ" checked>円の点 $(\cos t,\ \sin t)$ も表示</label></div></div>
+      <div class="stage"><canvas aria-label="双曲線 x^2-y^2=1 と、その上を動く点 (cosh t, sinh t)"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">点</span><span class="tex" data-r="pt"></span></div>
+          <div class="row"><span class="k">確かめ</span><span class="tex big" data-r="id"></span></div>
+          <div class="row"><span class="k">円なら</span><span class="tex" data-r="cpt"></span></div>
+        </div>
+      </div>
+    </div>
 
     <div class="key"><div class="key-ttl">覚える｜双曲線関数</div>
       <p class="key-lead key-big">$e^x$ と $e^{-x}$ の平均と差。微分しても符号は変わらない</p>
@@ -469,10 +489,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-3.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-3.js?v=202611040605"></script>
 </body>
 </html>

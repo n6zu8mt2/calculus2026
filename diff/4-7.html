@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch7 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -131,7 +131,7 @@
       <p class="key-note">例：$y=x^3-3x$ は $f''(x)=6x$ なので、$x\lt0$ で上に凸、$x\gt0$ で下に凸。原点が変曲点。</p>
     </div>
 
-    <h3 class="h-mini">n 回微分のパターン</h3>
+    <h3 class="h-mini">$n$ 回微分のパターン</h3>
     <p>
       何回も微分すると、関数によってはきれいなパターンが現れます。下の図で「微分する」を押して、何回も微分してみましょう。
     </p>
@@ -157,7 +157,7 @@
     </ul>
     <p class="sub">※ $n!$（$n$ の階乗）は $1\times2\times\cdots\times n$ のこと。$3!=6,\ 4!=24,\ 5!=120$。また $0!=1$ と約束します。</p>
 
-    <div class="key"><div class="key-ttl">覚える｜n 回微分</div>
+    <div class="key"><div class="key-ttl">覚える｜$n$ 回微分</div>
       <p class="key-lead key-big">$e^x$ は変わらない、$\sin$・$\cos$ は 4 回で一周</p>
       $$\begin{aligned}\left(e^x\right)^{(n)}&=e^x\\ \left(\sin x\right)^{(n)}&=\sin\!\left(x+\frac{n\pi}{2}\right)\\ \left(\cos x\right)^{(n)}&=\cos\!\left(x+\frac{n\pi}{2}\right)\\ \left(\frac1x\right)^{(n)}&=\frac{(-1)^n\,n!}{x^{n+1}}\\ \left(\log x\right)^{(n)}&=\frac{(-1)^{n-1}(n-1)!}{x^n}\end{aligned}$$
       <p class="key-note">$(\log x)'=\dfrac1x$ なので、$\log x$ の $n$ 回微分は $\dfrac1x$ の $(n-1)$ 回微分と同じ。</p>
@@ -326,7 +326,7 @@
     <p>
       これを $x=a$ を中心とする<b>テイラー展開</b>といいます（マクローリン展開は $a=0$ の場合）。1次までで止めると、接線の式 $y=f(a)+f'(a)(x-a)$ そのものです。
     </p>
-    <h3 class="h-mini">例：√x を x = 4 のまわりで</h3>
+    <h3 class="h-mini">例：$\sqrt x$ を $x=4$ のまわりで</h3>
     <p>$f(x)=\sqrt{x}=x^{\frac12}$ とすると</p>
     <div class="eq-box">$$\begin{aligned}f(x)&=x^{\frac12} &&\to\ f(4)=2\\ f'(x)&=\frac{1}{2}x^{-\frac12} &&\to\ f'(4)=\frac14\\ f''(x)&=-\frac14x^{-\frac32} &&\to\ f''(4)=-\frac{1}{32}\end{aligned}$$</div>
     <p>なので、2次までのテイラー展開は</p>
@@ -334,7 +334,7 @@
     <p>
       $x=4.1$ を入れると $\sqrt{4.1}\approx2+0.025-0.00015625$ $=2.02484375$。本当の値は $2.0248456\ldots$ なので、小数第 5 位まで合っています。
     </p>
-    <h3 class="h-mini">例：cos x を x = π/3 のまわりで</h3>
+    <h3 class="h-mini">例：$\cos x$ を $x=\dfrac{\pi}{3}$ のまわりで</h3>
     <p>
       $f(x)=\cos x$ とすると、$f\!\left(\frac{\pi}{3}\right)=\frac12$、$f'\!\left(\frac{\pi}{3}\right)=-\sin\frac{\pi}{3}=-\frac{\sqrt3}{2}$、$f''\!\left(\frac{\pi}{3}\right)=-\cos\frac{\pi}{3}=-\frac12$ なので
     </p>
@@ -366,7 +366,7 @@
       <p class="key-note">知りたい値の近くに、値がわかる点 $a$ を選ぶのがこつ。$\sqrt{4.1}$ なら $a=4$。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(5)</span>計算機の中の sin</h2>
+    <h2 class="h-sub"><span class="tag">(5)</span>計算機の中の $\sin$</h2>
 
     <p>
       いよいよ、計算機がどうやって $\sin0.5$ を計算するかです。マクローリン展開 $\sin x=x-\dfrac{x^3}{3!}+\dfrac{x^5}{5!}-\cdots$ に $x=0.5$ を入れて、項を 1 つずつ足していきます。
@@ -533,10 +533,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-7.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-7.js?v=202611040605"></script>
 </body>
 </html>

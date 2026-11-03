@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch8 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -36,7 +36,7 @@
     <div class="chap-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
     <div>
       <div class="eyebrow">第4章 微分 ／ 4.8節</div>
-      <h1><span class="chap-no">4.8</span>極限のくらべ方：0/0 になったら</h1>
+      <h1><span class="chap-no">4.8</span>極限のくらべ方：$\dfrac{0}{0}$ になったら</h1>
     </div>
   </header>
 
@@ -60,7 +60,7 @@
       この節では、微分（接線の傾き）とテイラー展開（<a href="4-7.html">4.7節</a>）を使って、不定形の極限を求めます。また、$x\to\infty$ で「どの関数がいちばん速く大きくなるか」をくらべます。
     </p>
 
-    <h2 class="h-sub"><span class="tag">(1)</span>0/0 の形の極限</h2>
+    <h2 class="h-sub"><span class="tag">(1)</span>$\dfrac{0}{0}$ の形の極限</h2>
 
     <p>
       まず $\dfrac{\sin x}{x}$ に、$0$ に近い $x$ を入れてみましょう（$x$ はラジアン）。
@@ -85,7 +85,7 @@
     </p>
 
     <div class="widget" id="w-zero">
-      <div class="widget-head">0/0 の極限は、原点での接線の傾き <span class="hint">式を選ぶ／$|h|$ のつまみを右へ（$h$ を小さく）</span></div>
+      <div class="widget-head">$\frac{0}{0}$ の極限は、原点での接線の傾き <span class="hint">式を選ぶ／$|h|$ のつまみを右へ（$h$ を小さく）</span></div>
       <div class="panel" style="padding-bottom:0"><div class="chips" data-r="fs"></div>
         <div class="btn-row"><label class="check"><input type="checkbox" data-r="zoom">$h$ に合わせて拡大</label>
         <label class="check"><input type="checkbox" data-r="neg">$h$ をマイナスに</label></div></div>
@@ -101,7 +101,7 @@
       </div>
     </div>
 
-    <h3 class="h-mini">(1 − cos x)/x² は テイラー展開で</h3>
+    <h3 class="h-mini">$\dfrac{1-\cos x}{x^2}$ はテイラー展開で</h3>
     <p>
       $1-\cos x$ も原点を通りますが、原点での傾きは $\sin0=0$（接線は水平）です。だから $\dfrac{1-\cos x}{x}\to0$ ですが、$x^2$ で割ると話が変わります。
       こういうときは <a href="4-7.html">4.7節</a>のテイラー展開（マクローリン展開）が便利です。
@@ -244,7 +244,7 @@ camera.x += k * (target.x - camera.x);</code></pre>
 
     <div class="key summary"><div class="key-ttl">覚える｜この節のまとめ</div>
       <div class="table-wrap"><table class="key-table"><tbody>
-        <tr><th>0/0 の極限</th><td>$\displaystyle\lim_{x\to0}\frac{\sin x}{x}=\lim_{x\to0}\frac{e^x-1}{x}=\lim_{x\to0}\frac{\log(1+x)}{x}=1$（原点での接線の傾き）</td></tr>
+        <tr><th>$\frac{0}{0}$ の極限</th><td>$\displaystyle\lim_{x\to0}\frac{\sin x}{x}=\lim_{x\to0}\frac{e^x-1}{x}=\lim_{x\to0}\frac{\log(1+x)}{x}=1$（原点での接線の傾き）</td></tr>
         <tr><th>テイラー展開で</th><td>$\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^2}=\frac12$（$1-\cos x\approx\frac{x^2}{2}$）</td></tr>
         <tr><th>増え方の順位</th><td>$\log x\ll x^a\ll e^x$：$\dfrac{x^a}{e^x}\to0$、$\dfrac{\log x}{x^a}\to0$（$x\to\infty,\ a\gt0$）</td></tr>
         <tr><th>ロピタルの定理</th><td>$\frac00$・$\frac{\infty}{\infty}$ の形なら $\displaystyle\lim\frac{f}{g}=\lim\frac{f'}{g'}$（形を確かめてから。テイラー展開のほうが楽なことが多い）</td></tr>
@@ -306,10 +306,10 @@ camera.x += k * (target.x - camera.x);</code></pre>
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-8.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-8.js?v=202611040605"></script>
 </body>
 </html>

@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch4 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -134,11 +134,11 @@
 
     <p>
       わり算は、「逆数をかける」と考えればかけ算になります。そこでまず、逆数 $\dfrac{1}{g(x)}$ の微分を求めましょう。
-      $q=\dfrac1g$ とおくと、$q\cdot g=1$ です。右辺の $1$ は定数なので、微分すると $0$。左辺に積の微分を使うと
+      $\dfrac1g\cdot g=1$ です。右辺の $1$ は定数なので、微分すると $0$。左辺に積の微分を使うと
     </p>
-    <div class="eq-box">$$\begin{gathered}q'\,g+q\,g'=0\\ q'=-\frac{q\,g'}{g}=-\frac{g'}{g^2}\end{gathered}$$</div>
+    <div class="eq-box">$$\begin{gathered}\left(\frac1g\right)'g+\frac1g\,g'=0\\ \left(\frac1g\right)'=-\frac1g\cdot\frac{g'}{g}=-\frac{g'}{g^2}\end{gathered}$$</div>
     <p>
-      となります（$q=\frac1g$ を入れました）。例えば $g=x$ とすると $\left(\dfrac1x\right)'=-\dfrac{1}{x^2}$ で、4.2節の $(x^{-1})'=-x^{-2}$ と同じ答えです。
+      となります（2行目は、1行目の両辺を $g$ でわりました）。例えば $g=x$ とすると $\left(\dfrac1x\right)'=-\dfrac{1}{x^2}$ で、4.2節の $(x^{-1})'=-x^{-2}$ と同じ答えです。
       次に、$\dfrac{f}{g}=f\cdot\dfrac1g$ と見て積の微分を使うと
     </p>
     <div class="eq-box">$$\begin{aligned}\left(\frac fg\right)'&=f'\cdot\frac1g+f\cdot\left(-\frac{g'}{g^2}\right)\\ &=\frac{f'g-fg'}{g^2}\end{aligned}$$</div>
@@ -146,7 +146,7 @@
       分母は $g^2$、分子は「（上の微分）×下 − 上×（下の微分）」です。積の微分と違って<b>引き算</b>なので、順番に注意しましょう。
     </p>
 
-    <h3 class="h-mini">tan x の微分（4.3節の約束）</h3>
+    <h3 class="h-mini">$\tan x$ の微分（4.3節の約束）</h3>
     <p>
       4.3節で残しておいた $\tan x$ の微分です。$\tan x=\dfrac{\sin x}{\cos x}$ に商の微分を使い、$\cos^2x+\sin^2x=1$ でまとめると
     </p>
@@ -161,7 +161,7 @@
       <p class="key-lead key-big">分母は2乗。分子は「上の微分×下 − 上×下の微分」</p>
       $$\begin{gathered}\left(\frac{1}{g}\right)'=-\frac{g'}{g^2}\\[4pt] \left(\frac{f}{g}\right)'=\frac{f'g-fg'}{g^2}\end{gathered}$$
       <ul>
-        <li>$q\cdot g=1$ を積の微分で微分すると、逆数の微分が出る</li>
+        <li>$\dfrac1g\cdot g=1$ を積の微分で微分すると、逆数の微分が出る</li>
         <li>$(\tan x)'=\dfrac{1}{\cos^2x}$、$\left(\dfrac1x\right)'=-\dfrac{1}{x^2}$</li>
       </ul>
       <p class="key-note">分子は引き算なので、順番を逆にすると符号がまちがう。「上の微分」から始める、と決めておく。</p>
@@ -225,7 +225,7 @@
     </p>
     <div class="eq-box">$$\begin{aligned}\left(e^{-x^2}\right)'&=e^{-x^2}\cdot(-x^2)'=-2x\,e^{-x^2}\\ \left(\sin^3x\right)'&=3\sin^2x\cdot(\sin x)'=3\sin^2x\cos x\end{aligned}$$</div>
 
-    <h3 class="h-mini">中身が 1次式のとき：f(ax+b)</h3>
+    <h3 class="h-mini">中身が1次式のとき：$f(ax+b)$</h3>
     <p>
       中身が $u=ax+b$ のときは、$\dfrac{du}{dx}=a$ なので、とても簡単です。
     </p>
@@ -271,7 +271,7 @@
       どちらも、いちばん速いときの速さは $r\omega$ で、<a href="../trig/3-5.html">3.5節</a>の円運動の速さ $v=r\omega$ と一致します。
     </p>
 
-    <h3 class="h-mini">aˣ の微分の理由（4.3節の約束）</h3>
+    <h3 class="h-mini">$a^x$ の微分の理由（4.3節の約束）</h3>
     <p>
       $a=e^{\log a}$ なので、$a^x=e^{(\log a)x}$ です。これは $(e^{kx})'=ke^{kx}$ で $k=\log a$ の場合なので
     </p>
@@ -361,7 +361,7 @@
       です。これを $f'(x)=f(x)\cdot\bigl(\log|f(x)|\bigr)'$ と読みかえると、「対数の微分に、もとの関数をかければ微分になる」ことがわかります。これを<b>対数微分法</b>といいます。
     </p>
 
-    <h3 class="h-mini">x の x 乗</h3>
+    <h3 class="h-mini">$x$ の $x$ 乗</h3>
     <p>
       $y=x^x$（$x\gt0$）の両辺の対数をとると、$\log y=x\log x$。両辺を $x$ で微分します（左辺は合成関数の微分、右辺は積の微分）。
     </p>
@@ -488,10 +488,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-4.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-4.js?v=202611040605"></script>
 </body>
 </html>

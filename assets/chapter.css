@@ -959,7 +959,7 @@ table.d410-wtbl .d410-ch { font-size: 13px; }
 .d410-ans input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
 .d410-opt.ok { background: var(--teal); border-color: var(--teal); color: #fff; }
 .d410-opt.ng { border-color: var(--accent); color: var(--accent); text-decoration: line-through; opacity: .75; }
-#w-fwd .readout, #w-bwd .readout, #w-train .readout, #w-net .readout, #w-why .readout, #w-game .readout { grid-template-columns: minmax(0, 1fr); }
+#w-hypc .readout, #w-ease .readout, #w-neuron .readout, #w-fwd .readout, #w-bwd .readout, #w-train .readout, #w-net .readout, #w-why .readout, #w-game .readout { grid-template-columns: minmax(0, 1fr); }
 @media (max-width: 480px) { #w-fwd .readout .k, #w-bwd .readout .k, #w-train .readout .k, #w-net .readout .k, #w-why .readout .k { min-width: 4.4em; } }
 
 /* == diff game == */
@@ -970,3 +970,4 @@ table.d410-wtbl .d410-ch { font-size: 13px; }
 .mt-tan { stroke: var(--teal); stroke-width: 3; stroke-linecap: round; opacity: .8; }
 .mt-cloud ellipse { fill: var(--surface); opacity: .75; }
 #w-game-range .readout { grid-template-columns: minmax(0, 1fr); }
+#w-hypc .panel.two, #w-neuron .panel.two { grid-template-columns: minmax(0, 1fr); }

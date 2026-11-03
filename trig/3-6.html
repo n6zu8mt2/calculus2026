@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch6 calm">
 <header id="site-header" data-root="../" data-current="trig"></header>
@@ -94,7 +94,7 @@
       $\theta$ の点を $\frac{\pi}{2}$ 先回りさせると、縦の影が今の横の影と同じ長さになるからです（3.3節の $\sin\left(\frac{\pi}{2}-\theta\right)=\cos\theta$ と同じ理由）。
     </p>
 
-    <div class="key"><div class="key-ttl">覚える｜sin・cos のグラフ</div>
+    <div class="key"><div class="key-ttl">覚える｜$\sin$・$\cos$ のグラフ</div>
       <p class="key-lead key-big">高さ $-1$〜$1$ の波を、周期 $2\pi$ でくり返す</p>
       $$\begin{gathered}\red{\sin(x+2\pi)=\sin x},\qquad \teal{\cos(x+2\pi)=\cos x}\\[4pt] \teal{\cos x}=\red{\sin\!\left(x+\frac{\pi}{2}\right)}\end{gathered}$$
       <ul>
@@ -129,14 +129,14 @@
       </div>
     </div>
 
-    <h3 class="h-mini">p と q は平行移動</h3>
+    <h3 class="h-mini">$p$ と $q$ は平行移動</h3>
     <p>
       <a href="../polynomial/1-2.html">1.2節</a>（放物線）と <a href="../explog/2-2.html">2.2節</a>（指数関数）で、グラフを $x$ 方向に $\teal{p}$、$y$ 方向に $\red{q}$ だけ平行移動すると、式の $x$ が $x-\teal{p}$ に、$y$ が $y-\red{q}$ に変わることを学びました。
       $y=\sin x$ でもまったく同じで、平行移動したグラフは $y-\red{q}=\sin(x-\teal{p})$、つまり $y=\sin(x-\teal{p})+\red{q}$ です。
       $\teal{p}$ は波を<b>右に $\teal{p}$ ずらす</b>量（マイナスなら左）、$\red{q}$ は波の<b>中心の線を $y=\red{q}$ に上げる</b>量です。波のずれ $\teal{p}$ のことを<b>位相のずれ</b>ともいいます。
     </p>
 
-    <h3 class="h-mini">A は縦の伸び、B は横の縮み</h3>
+    <h3 class="h-mini">$A$ は縦の伸び、$B$ は横の縮み</h3>
     <p>
       $\violet{A}$ は、$\sin$ の値（$-1$〜$1$）を $\violet{A}$ 倍します。グラフは<b>縦に $\violet{A}$ 倍</b>に伸び、高さは $-\violet{A}$〜$\violet{A}$ になります。この $|\violet{A}|$ を<b>振幅</b>といいます（$\violet{A}$ がマイナスなら上下が逆さまになります）。
     </p>
@@ -149,7 +149,7 @@
       なお、$\teal{p}$ と $\amber{B}$ を両方使うときは、$\sin(\amber{B}x-\teal{p})$ ではなく $\sin\bigl(\amber{B}(x-\teal{p})\bigr)$ と、<b>$x$ だけを $x-\teal{p}$ に入れかえる</b>ことに注意しましょう。例えば $y=\sin\left(2x-\frac{\pi}{3}\right)=\sin\left(2\left(x-\frac{\pi}{6}\right)\right)$ は、右に $\frac{\pi}{3}$ ではなく $\frac{\pi}{6}$ ずれた波です。
     </p>
 
-    <div class="key"><div class="key-ttl">覚える｜A, B, p, q の意味</div>
+    <div class="key"><div class="key-ttl">覚える｜$A,\ B,\ p,\ q$ の意味</div>
       <p class="key-lead key-big">高さは $A$、長さは $B$、位置は $p,\ q$ で決まる</p>
       $$y=\violet{A}\sin\bigl(\amber{B}(x-\teal{p})\bigr)+\red{q}$$
       <ul>
@@ -161,7 +161,7 @@
       <p class="key-note">$\cos$ でも同じ。例：$y=3\sin\frac{x}{2}$ は振幅 $3$、周期 $\frac{2\pi}{1/2}=4\pi$。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(3)</span>合成：sin と cos を1つにまとめる</h2>
+    <h2 class="h-sub"><span class="tag">(3)</span>合成：$\sin$ と $\cos$ を1つにまとめる</h2>
 
     <p>
       $\sin$ の波と $\cos$ の波を足すと、どんな形になるでしょうか。例えば $y=\red{\sin x}+\teal{\cos x}$ を図でかいてみると、少し高くて、少し左にずれた <b>1つの $\sin$ の波</b>になります。
@@ -210,7 +210,7 @@
       例えば $\sin x+\cos x$ の最大値は $2$ ではなく $\sqrt2\approx1.41$ です。山の位置がずれているので、2つの山が同時に来ることはないからです。
     </p>
 
-    <h2 class="h-sub"><span class="tag">(4)</span>tan のグラフ</h2>
+    <h2 class="h-sub"><span class="tag">(4)</span>$\tan$ のグラフ</h2>
 
     <p>
       3.3節で、$\amber{\tan\theta}$ は半径を延ばした直線が、縦の線 $x=1$（単位円の接線）と交わる点の<b>高さ</b>だと見ました。
@@ -237,7 +237,7 @@
       また、点が半周（$\pi$）回ると、半径の直線は元と同じ直線にもどるので（向きが反対なだけ）、$\tan$ は <b>$\pi$ ごと</b>にくり返します。
     </p>
 
-    <div class="key"><div class="key-ttl">覚える｜tan のグラフ</div>
+    <div class="key"><div class="key-ttl">覚える｜$\tan$ のグラフ</div>
       <p class="key-lead key-big">周期は $\pi$。$x=\frac{\pi}{2}+n\pi$ に漸近線</p>
       $$\amber{\tan(x+\pi)=\tan x}$$
       <ul>
@@ -247,7 +247,7 @@
       <p class="key-note">$\sin,\ \cos$ と違って、値に上限・下限がない（どんな実数にもなる）。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(5)</span>sin で作るゆらゆらアニメ</h2>
+    <h2 class="h-sub"><span class="tag">(5)</span>$\sin$ で作るゆらゆらアニメ</h2>
 
     <p>
       ゲームやアニメでは、キャラクターが待っている間にふわふわ上下にゆれたり、旗がはためいたりします。この動きの多くは、時刻 $t$（秒）を使った
@@ -365,10 +365,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第3章 三角関数 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/trig-common.js?v=202611031018"></script>
-<script src="js/3-6.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/trig-common.js?v=202611040605"></script>
+<script src="js/3-6.js?v=202611040605"></script>
 </body>
 </html>

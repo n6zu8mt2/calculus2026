@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611031018"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611031018">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611031018">
+<script src="../assets/mathjax.js?v=202611040605"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611040605">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611040605">
 </head>
 <body class="chapter ch1 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -81,6 +81,27 @@
       2乗しているので $E$ はいつも $0$ 以上で、ずれが大きいほど大きく、ぴったり正解なら $0$ です。
       つまり、<b>AI の学習とは、誤差 $E$ が小さくなるように、つまみ $w,\ b$ を少しずつ回すこと</b>です。
     </p>
+    <p>
+      ニューロン1個を図にすると、次のようになります。入力 $x$ に重み $w$ をかけ、バイアス $b$ を足して $u=wx+b$ を作り、それをシグモイド $\sigma$ に通したものが答え $y$ です。
+      下のグラフは、横に入力 $x$、縦に答え $y$ をとった $y=\sigma(wx+b)$ のグラフです。
+      $w$ を大きくすると坂が急になり（$w$ が負なら右下がり）、$b$ を変えると坂の位置が左右にずれます。つまみを回すと、AI の「答え方」が変わるのです。
+    </p>
+
+    <div class="widget" id="w-neuron">
+      <div class="widget-head">ニューロン1個：$y=\blue{\sigma(wx+b)}$ <span class="hint">つまみ $w,\ b$ と入力 $x$ を動かす</span></div>
+      <div class="stage"><canvas aria-label="ニューロン1個の図：x に w をかけ、b を足し、σ に通して y"></canvas></div>
+      <div class="stage"><canvas aria-label="y = σ(wx+b) のグラフと、正解の点"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">計算</span><span class="tex" data-r="calc"></span></div>
+          <div class="row"><span class="k">答え</span><span class="tex" data-r="out"></span></div>
+          <div class="row"><span class="k">正解</span><span class="tex" data-r="tgt"></span></div>
+          <div class="row"><span class="k">誤差</span><span class="tex big" data-r="err"></span></div>
+        </div>
+      </div>
+    </div>
+    <p class="sub">※ 正解の点（$x=1.5$ で $t=0.2$）に曲線を通すように $w,\ b$ を手で回すと、誤差 $E$ を小さくできます。これを自動でやるのが「学習」です。</p>
     <p>
       つまみが1つなら、<a href="4-9.html">4.9節</a>の<b>勾配降下法</b>が使えます。関数 $f(x)$ の谷底を探すとき、傾き $f'(x)$ を見て
       $x\leftarrow x-\eta f'(x)$（$\eta$ は「歩はば」を決める小さな正の数）と、坂を下る向きに少しずつ動かす方法でした。
@@ -434,10 +455,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611031018"></script>
-<script src="../assets/plot.js?v=202611031018"></script>
-<script src="../assets/game.js?v=202611031018"></script>
-<script src="js/diff-common.js?v=202611031018"></script>
-<script src="js/4-10.js?v=202611031018"></script>
+<script src="../assets/common.js?v=202611040605"></script>
+<script src="../assets/plot.js?v=202611040605"></script>
+<script src="../assets/game.js?v=202611040605"></script>
+<script src="js/diff-common.js?v=202611040605"></script>
+<script src="js/4-10.js?v=202611040605"></script>
 </body>
 </html>
