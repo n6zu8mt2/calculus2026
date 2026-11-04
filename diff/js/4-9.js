@@ -390,6 +390,8 @@
   /* ==========================================================
      4.9(3) 数値微分の誤差と h
      ========================================================== */
+  const SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+  const pow10Str = (p) => (p === 0 ? '1' : '10' + String(p).split('').map((ch) => SUP[ch]).join(''));
   function initNumDiff() {
     const root = $id('w-numdiff');
     const a = 1, T = Math.cos(a), f = Math.sin;
@@ -397,24 +399,32 @@
     const lg = (e) => (e > 0 ? Math.max(-17, Math.log10(e)) : -17);
     const P1 = [], P2 = [];
     for (let p = -16; p <= 0.0001; p += 0.02) { const h = Math.pow(10, p); P1.push([p, lg(Math.abs(fwd(h) - T))]); P2.push([p, lg(Math.abs(cen(h) - T))]); }
+    const at = (P, p) => P[clamp(Math.round((p + 16) / 0.02), 0, P.length - 1)][1];
     const st = { p: -3 };
-    const plot = new Plot(root.querySelector('canvas'), { xmin: -16.8, xmax: 0.6, ymin: -17.5, ymax: 1.5, ratio: [0.85, 0.48] });
-    const sh = slider(root.querySelector('.controls'), { tex: '\\red{h}', min: -16, max: 0, step: 1, value: -3, color: 'accent', aria: 'h の大きさ（10 の何乗か）',
-      fmt: (v) => (v === 0 ? '1' : '10^' + v) });
+    const plot = new Plot(root.querySelector('canvas'), { xmin: -16.8, xmax: 0.6, ymin: -17.5, ymax: 1.5, ratio: [0.85, 0.5] });
+    const sh = slider(root.querySelector('.controls'), { tex: '\\red{h}', min: -16, max: 0, step: 1, value: -3, color: 'accent', aria: 'h の大きさ（10 の何乗か）', fmt: pow10Str });
     sh.on((v) => { st.p = v; update(); });
+    // 引き算する2つの数（16桁）。先頭の同じ桁は引き算で消える
+    function cancelTeX(s, t) {
+      const k = commonPrefix(s, t);
+      return (k ? '\\class{tx-gone}{' + s.slice(0, k) + '}' : '') + s.slice(k);
+    }
     function update() {
       const h = Math.pow(10, st.p), v1 = fwd(h), v2 = cen(h), tS = T.toFixed(15);
       tex(root, 'true', '\\cos1=' + tS);
       tex(root, 'fwd', '\\dfrac{\\sin(1+h)-\\sin1}{h}=' + digitsTeX(v1.toFixed(15), tS));
       tex(root, 'cen', '\\dfrac{\\sin(1+h)-\\sin(1-h)}{2h}=' + digitsTeX(v2.toFixed(15), tS));
-      const how = R(root, 'how');
+      const s1 = f(a + h).toFixed(16), s0 = f(a).toFixed(16);
+      const k = commonPrefix(s1, s0), same = Math.max(0, k - 2);
+      tex(root, 'sub', '\\begin{array}{l}\\sin(1+h)=' + cancelTeX(s1, s0) + '\\\\ \\sin1=' + cancelTeX(s0, s1) + '\\end{array}');
+      R(root, 'left').textContent = same >= 16 ? '0 桁（2つの数がまったく同じ）' : '約 ' + (16 - same) + ' 桁（灰色の ' + same + ' 桁は引き算で消える）';
       let s;
-      if (st.p >= -2) s = '$h$ が<b>大きい</b>：曲線を直線で近似したずれが残っています。中心差分のほうが、ずっと小さいずれです。';
+      if (st.p >= -2) s = '$h$ が<b>大きい</b>：曲線を直線で近似したずれ（近似のずれ）が残っています。中心差分のほうが、ずっと小さいずれです。';
       else if (st.p >= -4) s = '$h$ を小さくするほど正確に。中心差分は $h$ が $\\frac{1}{10}$ になると、誤差が $\\frac{1}{100}$ になります。';
       else if (st.p >= -9) s = 'このあたりが<b>ちょうどよい</b> $h$。前進差分は $10^{-8}$、中心差分は $10^{-5}$ くらいがいちばん正確です。';
-      else if (st.p >= -14) s = '$h$ が<b>小さすぎる</b>：丸め誤差が $\\frac{1}{h}$ 倍にふくらんで、合っている桁（緑）が減っていきます。';
+      else if (st.p >= -14) s = '$h$ が<b>小さすぎる</b>：引き算で消える桁（灰色）が増え、残った少しの桁の丸め誤差が $\\frac{1}{h}$ 倍にふくらみます。';
       else s = '$1+h$ が、コンピュータの中では $1$ とほとんど区別できません。差がほぼ $0$ になり、まったく正しくない値です。';
-      setHTML(how, s + '　緑：正しい値と合っている桁');
+      setHTML(R(root, 'how'), s + '　緑：正しい値と合っている桁');
       plot.invalidate();
     }
     plot.draw = function (g) {
@@ -422,12 +432,21 @@
       g.grid({ stepX: 1, stepY: 1, labels: false, axes: false });
       for (let p = -16; p <= 0; p += 4) g.texPx(p === 0 ? '1' : '10^{' + p + '}', g.X(p), g.h - 4, { align: 'center', valign: 'bottom', size: 12, color: c.muted });
       for (let q = -16; q <= 0; q += 4) if (g.Y(q) > 20 && g.Y(q) < g.h - 30) g.texPx(q === 0 ? '1' : '10^{' + q + '}', 4, g.Y(q), { align: 'left', size: 12, color: c.muted });
-      g.texPx('\\red{h}\\ \\text{→ 大きい}', g.w - 8, g.h - 24, { align: 'right', valign: 'bottom', size: 13, color: c.muted });
+      g.texPx('\\text{← }\\red{h}\\text{ が小さい}\\qquad\\red{h}\\text{ が大きい →}', g.w / 2, g.h - 24, { align: 'center', valign: 'bottom', size: 13, color: c.muted });
       g.texPx('\\text{誤差（上ほど大きい）}', 50, 6, { align: 'left', valign: 'top', size: 13, color: c.muted });
+      // 2つの原因
+      const yR = g.Y(-11.6);
+      const nar = g.w < 520;
+      g.texPx(nar ? '\\text{丸め誤差}' : '\\text{丸め誤差が主役}', 44, yR, { align: 'left', valign: 'bottom', size: 13, color: c.text });
+      g.texPx(nar ? '\\text{（ばらばら→ギザギザ）}' : '\\text{（ばらばらに出るのでギザギザ）}', 44, yR + 4, { align: 'left', valign: 'top', size: 12, color: c.muted });
+      g.texPx(nar ? '\\text{近似のずれ}' : '\\text{近似のずれが主役}', g.w - 10, nar ? g.Y(-14) : yR, { align: 'right', valign: 'bottom', size: 13, color: c.text });
+      g.texPx(nar ? '\\text{（まっすぐ）}' : '\\text{（規則正しいのでまっすぐ）}', g.w - 10, (nar ? g.Y(-14) : yR) + 4, { align: 'right', valign: 'top', size: 12, color: c.muted });
       g.poly(P1, { color: c.accent, width: 2.2 });
       g.poly(P2, { color: c.amber, width: 2.6 });
-      g.tex('\\text{前進差分}', -1.3, P1[Math.round((16 - 1.3) / 0.02)][1], { color: c.accent, size: 14, align: 'right', dx: -6, dy: -14, avoid: true });
-      g.tex('\\text{中心差分}', -3.2, P2[Math.round((16 - 3.2) / 0.02)][1], { color: c.amber, size: 14, align: 'right', dx: -10, avoid: true });
+      g.tex('\\text{前進差分}', -1.3, at(P1, -1.3), { color: c.accent, size: 14, align: 'right', dx: -6, dy: -14, avoid: true });
+      g.tex('\\text{中心差分}', -3.2, at(P2, -3.2), { color: c.amber, size: 14, align: 'right', dx: -10, avoid: true });
+      // いちばん正確な所
+      g.tex('\\uparrow\\text{いちばん正確}', -5.3, -12.6, { color: c.amber, size: 12, align: 'center', valign: 'top' });
       const i = Math.round((st.p + 16) / 0.02);
       g.line(st.p, g.ymin, st.p, g.ymax, { color: c.accent, width: 1.2, dash: [4, 4] });
       g.dot(st.p, P1[i][1], { r: 5.5, color: c.accent });
@@ -443,12 +462,14 @@
     const root = $id('w-noise');
     const cvs = root.querySelectorAll('canvas');
     const DT = 0.05, N = 160;
-    const st = { sig: 0.01, k: 1, seed: 7, x: [] };
+    const st = { sig: 0.01, k: 1, seed: 7, ti: 40 };
     const px = new Plot(cvs[0], { xmin: -0.2, xmax: 8.2, ymin: -1.45, ymax: 1.45, ratio: [0.5, 0.26] });
-    const pv = new Plot(cvs[1], { xmin: -0.2, xmax: 8.2, ymin: -3.2, ymax: 3.2, ratio: [0.5, 0.26] });
+    const pz = new Plot(cvs[1], { xmin: 1.6, xmax: 2.4, ymin: 0.8, ymax: 1, ratio: [0.5, 0.26] });
+    const pv = new Plot(cvs[2], { xmin: -0.2, xmax: 8.2, ymin: -3.2, ymax: 3.2, ratio: [0.5, 0.26] });
     const ctl = root.querySelector('.controls');
     const ss = slider(ctl, { tex: '\\text{ノイズ}', min: 0, max: 0.05, step: 0.005, value: 0.01, color: 'primary', aria: 'ノイズの大きさ', fmt: (v) => '±' + num(v, 3) });
     const sk = slider(ctl, { tex: '\\red{h}', min: 1, max: 10, step: 1, value: 1, color: 'accent', aria: '差分の間隔 h', fmt: (v) => num(v * DT, 2) });
+    const stt = slider(ctl, { tex: 't', min: 0.5, max: 7.5, step: 0.05, value: 2, color: 'amber', aria: '調べる時刻 t', fmt: (v) => num(v, 2) });
     function gen() {
       const r = rng(st.seed);
       st.n = [];
@@ -456,33 +477,77 @@
     }
     ss.on((v) => { st.sig = v; update(); });
     sk.on((v) => { st.k = v; update(); });
+    stt.on((v) => { st.ti = Math.round(v / DT); update(); });
     R(root, 'regen').addEventListener('click', () => { st.seed++; gen(); update(); });
     function data() { const xs = []; for (let i = 0; i <= N; i++) xs.push(Math.sin(i * DT) + st.sig * st.n[i]); return xs; }
     function update() {
-      const h = st.k * DT;
-      tex(root, 'eq', '\\amber{v_i}=\\dfrac{x_{i+' + st.k + '}-x_{i-' + st.k + '}}{2\\times' + num(h, 2) + '}');
+      const h = st.k * DT, xs = data(), i = clamp(st.ti, st.k, N - st.k), t = i * DT;
+      const xa = xs[i + st.k], xb = xs[i - st.k], v = (xa - xb) / (2 * h);
+      tex(root, 'eq', '\\amber{v}=\\dfrac{\\red{x(t+h)}-\\red{x(t-h)}}{2h}');
+      tex(root, 'eqn', '\\dfrac{' + fmt(xa, 4) + '-(' + fmt(xb, 4) + ')}{2\\times' + num(h, 2) + '}=\\amber{' + fmt(v, 3) + '}');
+      tex(root, 'true', '\\cos ' + num(t, 2) + '=' + fmt(Math.cos(t), 3));
       let s;
-      if (st.sig === 0) s = 'ノイズがなければ、差分の速さ（金）は正しい速さ $\\cos t$（点線）とほぼ重なります。';
+      if (st.sig === 0) s = 'ノイズがなければ、差分で求めた速さ（オレンジ）は正しい速さ $\\cos t$（点線）とほぼ重なります。';
       else if (st.k <= 2) s = '位置のノイズは ±' + num(st.sig, 3) + ' と小さいのに、速さでは最大 ±' + num(st.sig / h, 2) + ' くらいまで<b>拡大</b>されます（$\\frac{1}{h}$ 倍）。';
       else s = '間隔 $h$ を広げると、ノイズの影響が $\\frac{1}{h}$ 倍に<b>減って</b>なめらかになります。ただし、$h$ が大きすぎると急な変化がぼやけます。';
       setHTML(R(root, 'how'), s);
+      const z = zoomBox(t, h);
+      pz.setView({ xmin: z.x0, xmax: z.x1, ymin: z.y0, ymax: z.y1 });
       px.invalidate(); pv.invalidate();
     }
+    // 拡大図の範囲（t のまわり。h とノイズが見える大きさ）
+    function zoomBox(t, h) {
+      const w = Math.max(0.25, 1.5 * h);
+      let lo = Infinity, hi = -Infinity;
+      for (let u = t - w; u <= t + w + 1e-9; u += w / 20) { const v = Math.sin(u); lo = Math.min(lo, v); hi = Math.max(hi, v); }
+      const pad = Math.max(0.03, 3.5 * st.sig) + 0.15 * (hi - lo);
+      return { x0: t - w, x1: t + w, y0: lo - pad, y1: hi + pad };
+    }
     px.draw = function (g) {
-      const c = g.c, xs = data();
+      const c = g.c, xs = data(), k = st.k, i = clamp(st.ti, k, N - k), t = i * DT;
       ticks(g, { sx: 1, sy: 1, xl: 't', yl: '' });
-      const pts = xs.map((v, i) => [i * DT, v]);
-      g.poly(pts, { color: c.primary, width: 1.2, alpha: 0.5 });
+      D.curve(g, Math.sin, { x0: 0, x1: N * DT, color: c.muted, width: 1.6, dash: [5, 5] });
+      const pts = xs.map((v, j) => [j * DT, v]);
       pts.forEach((p) => g.dot(p[0], p[1], { r: 2.2, color: c.primary, stroke: false }));
+      g.line(t, g.ymin, t, g.ymax, { color: c.amber, width: 1.2, dash: [4, 4] });
+      const A = pts[i - k], B = pts[i + k], sl = (B[1] - A[1]) / (B[0] - A[0]);
+      const ext = Math.max(0.35, 1.4 * k * DT);
+      g.line(t - ext, A[1] + sl * (t - ext - A[0]), t + ext, A[1] + sl * (t + ext - A[0]), { color: c.accent, width: 2.2 });
+      g.dot(A[0], A[1], { r: 5, color: c.accent });
+      g.dot(B[0], B[1], { r: 5, color: c.accent });
+      const z = zoomBox(t, k * DT);
+      g.poly([[z.x0, z.y0], [z.x1, z.y0], [z.x1, z.y1], [z.x0, z.y1], [z.x0, z.y0]], { color: c.text, width: 1.4 });
+      g.texPx('\\text{点：測った位置}\\ \\ \\text{点線：本当の位置 }\\sin t', g.w - 8, g.h - 6, { align: 'right', valign: 'bottom', size: 12, color: c.muted });
+    };
+    pz.draw = function (g) {
+      const c = g.c, xs = data(), k = st.k, i = clamp(st.ti, k, N - k), t = i * DT;
+      g.grid({ stepX: 0.1, stepY: 0.05, labels: false, axes: false });
+      D.curve(g, Math.sin, { x0: g.xmin, x1: g.xmax, color: c.muted, width: 1.8, dash: [5, 5] });
+      for (let j = 0; j <= N; j++) {
+        const u = j * DT;
+        if (u < g.xmin - 1e-9 || u > g.xmax + 1e-9) continue;
+        g.line(u, Math.sin(u), u, xs[j], { color: c.primary, width: 1, alpha: 0.6 });
+        g.dot(u, xs[j], { r: 3.6, color: c.primary, stroke: false });
+      }
+      g.line(t, g.ymin, t, g.ymax, { color: c.amber, width: 1.2, dash: [4, 4] });
+      const A = [(i - k) * DT, xs[i - k]], B = [(i + k) * DT, xs[i + k]], sl = (B[1] - A[1]) / (B[0] - A[0]);
+      g.line(g.xmin, A[1] + sl * (g.xmin - A[0]), g.xmax, A[1] + sl * (g.xmax - A[0]), { color: c.accent, width: 2.4 });
+      g.dot(A[0], A[1], { r: 6, color: c.accent });
+      g.dot(B[0], B[1], { r: 6, color: c.accent });
+      g.tex('\\red{x(t-h)}', A[0], A[1], { size: 13, align: 'right', dx: -8, dy: sl > 0 ? -12 : 12, avoid: true });
+      g.tex('\\red{x(t+h)}', B[0], B[1], { size: 13, align: 'left', dx: 8, dy: sl > 0 ? 12 : -12, avoid: true });
+      g.texPx('\\text{青い縦線：ノイズ（本当の位置からのずれ）}', g.w - 8, g.h - 6, { align: 'right', valign: 'bottom', size: 12, color: c.muted });
     };
     pv.draw = function (g) {
-      const c = g.c, xs = data(), k = st.k, h = k * DT;
+      const c = g.c, xs = data(), k = st.k, h = k * DT, i0 = clamp(st.ti, k, N - k);
       ticks(g, { sx: 1, sy: 1, xl: 't', yl: '' });
       D.curve(g, Math.cos, { x0: 0, x1: N * DT, color: c.muted, width: 2, dash: [5, 5] });
       const pts = [];
       for (let i = k; i <= N - k; i++) pts.push([i * DT, clamp((xs[i + k] - xs[i - k]) / (2 * h), -3.15, 3.15)]);
       g.poly(pts, { color: c.amber, width: 2.2 });
-      g.texPx('\\text{点線：正しい速さ }\\cos t', g.w - 8, g.h - 6, { align: 'right', valign: 'bottom', size: 13, color: c.muted });
+      g.line(i0 * DT, g.ymin, i0 * DT, g.ymax, { color: c.amber, width: 1.2, dash: [4, 4] });
+      g.dot(i0 * DT, clamp((xs[i0 + k] - xs[i0 - k]) / (2 * h), -3.15, 3.15), { r: 5.5, color: c.amber });
+      g.texPx('\\text{点線：正しい速さ }\\cos t', g.w - 8, g.h - 6, { align: 'right', valign: 'bottom', size: 12, color: c.muted });
     };
     gen(); update();
   }
@@ -505,7 +570,7 @@
     const st = { row: 20, noise: false, blur: false };
     const cImg = R(root, 'img'), cEdge = R(root, 'edge');
     [cImg, cEdge].forEach((cv) => { cv.width = W * S; cv.height = H * S; });
-    const plot = new Plot(root.querySelector('.stage canvas'), { xmin: -4.5, xmax: W + 2, ymin: -0.75, ymax: 1.15, ratio: [0.55, 0.3] });
+    const plot = new Plot(root.querySelector('.stage canvas'), { xmin: -4.5, xmax: W + 2, ymin: -0.75, ymax: 1.4, ratio: [0.55, 0.32] });
     const ctl = root.querySelector('.controls');
     const sr = slider(ctl, { tex: '\\text{行}', min: 0, max: H - 1, step: 1, value: 20, color: 'accent', aria: '調べる行', fmt: (v) => String(v) });
     sr.on((v) => { st.row = v; draw(); });
@@ -553,7 +618,7 @@
       let s;
       if (st.noise && !st.blur) s = 'ノイズの差分も拾ってしまい、エッジの画像が<b>ザラザラ</b>に。「差分の前にぼかす」を試そう。';
       else if (st.noise && st.blur) s = '先にぼかして（となりと平均して）から差分をとると、ノイズが減り、輪郭が見えるようになります。';
-      else s = '明るさ（青）が急に変わる所で、差分（金）が大きくなります。明るさが一定の所では差分は $0$。暗くなる所はマイナス、明るくなる所はプラスです。';
+      else s = '明るさ（青）が急に変わる所で、差分（オレンジ）が大きくなります。明るさが一定の所では差分は $0$。暗くなる所はマイナス、明るくなる所はプラスです。';
       setHTML(R(root, 'how'), s);
       plot.invalidate();
     }
@@ -565,8 +630,6 @@
       for (let x = 0; x < W; x++) { bri.push([x - 0.5, A[y * W + x]], [x + 0.5, A[y * W + x]]); dif.push([x, cur.gx[y * W + x]]); }
       g.poly(bri, { color: c.primary, width: 2.5 });
       g.poly(dif, { color: c.amber, width: 2.5 });
-      g.texPx('\\blue{\\text{明るさ }I_j}', 10, 6, { align: 'left', valign: 'top', size: 13 });
-      g.texPx('\\amber{\\text{差分 }d_j}', 10, g.h - 6, { align: 'left', valign: 'bottom', size: 13 });
     };
     document.addEventListener('themechange', draw);
     draw();

@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611040626"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611040626">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611040626">
+<script src="../assets/mathjax.js?v=202611041300"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611041300">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611041300">
 </head>
 <body class="chapter ch9 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -25,10 +25,9 @@
     <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
     <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
     <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
-    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">テイラー展開と近似</span></a>
     <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
     <a href="4-9.html" class="active" aria-current="page"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
-    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
   </nav>
 
 <main>
@@ -271,10 +270,10 @@
     </div>
 
     <div class="callout point">
-      <div class="ttl">本物の AI では：重みが何十億個（→ 4.10節）</div>
+      <div class="ttl">本物の AI では：重みが何十億個</div>
       <p>
         ここでは $x$ が1つでしたが、本物の AI では、調整する重みが何百万〜何十億個もあります。それぞれの重みについて「その重みだけを少し動かしたときの誤差の傾き」を求め、全部の重みを同時に $w\leftarrow w-\eta\times(\text{傾き})$ と直していきます。
-        重みが10億個あるとき、傾きを1つずつ数値で求めるのは大変です。出口（誤差）から入口へ向かって連鎖律（<a href="4-4.html">4.4節</a>）のかけ算をたどると、<b>すべての重みの傾きを一度に</b>求められます。これが<a href="4-10.html">4.10節</a>の<b>誤差逆伝播法</b>です。
+        重みが10億個あるとき、傾きを1つずつ数値で求めるのは大変です。出口（誤差）から入口へ向かって連鎖律（<a href="4-4.html">4.4節</a>）のかけ算をたどると、<b>すべての重みの傾きを一度に</b>求められます。これが<b>誤差逆伝播法</b>です（くわしくは偏微分の章で学びます）。
       </p>
     </div>
 
@@ -291,7 +290,24 @@
     <div class="eq-box">$$\frac{(x+h)^2-x^2}{h}=2x+\red{h},\qquad \frac{(x+h)^2-(x-h)^2}{2h}=\frac{4xh}{2h}=2x$$</div>
     <p>
       と、前進差分には $h$ のずれが残りますが、中心差分はぴったり $2x$ になります。一般には、前進差分のずれは $h$ に比例し、中心差分のずれは $h^2$ に比例します（テイラー展開、<a href="4-7.html">4.7節</a>）。
-      では、$h$ はどこまでも小さくすればよいのでしょうか。下の図で、$f(x)=\sin x$ の $x=1$ での傾き（正しい値は $\cos1$）を、実際にコンピュータで計算してみます。
+      では、$h$ はどこまでも小さくすればよいのでしょうか。$f(x)=\sin x$ の $x=1$ での傾き（正しい値は $\cos1=0.5403\cdots$）を、いろいろな $h$ で実際にコンピュータに計算させて、正しい値とのずれ（<b>誤差</b>）を調べてみます。
+    </p>
+    <p>
+      先に、下の図の見方です。
+    </p>
+    <ul>
+      <li>横軸は $\red{h}$、縦軸は誤差です。目盛りが1つ進むごとに<b>10倍</b>になる目盛り（$10^{-16},\ 10^{-12},\ \ldots$）なので、とても小さな数まで1枚の図に入ります。</li>
+      <li>赤い線が前進差分、オレンジの線が中心差分の誤差です。<b>下にあるほど正確</b>です。</li>
+    </ul>
+    <p>
+      誤差には、原因が2つあります。
+    </p>
+    <ol>
+      <li><b>近似のずれ</b>（図の右側）：曲線を直線で近似したことによるずれです。$h$ を小さくすると<b>規則正しく</b>減るので、グラフはまっすぐな線になります。</li>
+      <li><b>丸め誤差</b>（図の左側）：コンピュータは数を<b>16桁くらい</b>までしか覚えられないので、17桁目から先は四捨五入（丸め）されます。$h$ がとても小さいと、$\sin(1+h)$ と $\sin1$ は先頭の何桁もが同じになり、引き算でその桁が消えて、<b>最後の数桁の丸めのずれ</b>だけが残ります。このずれは $h$ によって大きくなったり小さくなったり<b>ばらばら</b>に出るので、グラフが<b>ギザギザ</b>になります。しかも、それを小さな $h$ で割るので、$h$ が小さいほど大きくふくらみます。</li>
+    </ol>
+    <p>
+      スライダーで $h$ を小さくしながら、図の下の「引き算する2つの数」の灰色の桁（同じなので消える桁）が増えていく様子も見てください。
     </p>
 
     <div class="widget" id="w-numdiff">
@@ -303,6 +319,8 @@
           <div class="row"><span class="k">正しい値</span><span class="tex" data-r="true"></span></div>
           <div class="row"><span class="k">前進差分</span><span class="tex" data-r="fwd"></span></div>
           <div class="row"><span class="k">中心差分</span><span class="tex big" data-r="cen"></span></div>
+          <div class="row"><span class="k">引き算する2つの数</span><span class="tex" data-r="sub"></span></div>
+          <div class="row"><span class="k">引き算で残る桁</span><span class="note-txt" data-r="left"></span></div>
           <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
         </div>
       </div>
@@ -310,25 +328,38 @@
 
     <p>
       $h$ を小さくすると、はじめは誤差が減っていきます（右から左へ、グラフが下がる）。ところが、ある所から<b>逆に誤差が増えて</b>ギザギザになります。
-      コンピュータは数を<b>16桁くらい</b>までしか覚えていないので、$f(x+h)$ と $f(x)$ がほとんど同じになると、引き算で正しい桁が消えてしまう（<b>丸め誤差</b>）のです。
-      その小さな誤差を、小さな $h$ で割るので、大きくふくらみます。ちょうどよい $h$ は、前進差分で $10^{-8}$、中心差分で $10^{-5}$ くらいです。
+      赤もオレンジも、左側がギザギザなのは同じ理由（丸め誤差）です。
+      つまり、$h$ は小さすぎても大きすぎてもだめで、ちょうどよい $h$ は、前進差分で $10^{-8}$、中心差分で $10^{-5}$ くらいです（図の谷底）。
     </p>
 
     <h3 class="h-mini">測ったデータのノイズ</h3>
     <p>
       測定したデータには、必ず小さな<b>ノイズ</b>（ゆらぎ）が混じっています。<a href="4-1.html#w-finger">4.1節</a>の「自分の指の動きを微分」で、速さのグラフがギザギザになったのを覚えていますか。
-      差分の式は「ノイズの差 ÷ $2h$」も計算してしまうので、間隔 $h$ が小さいほどノイズが拡大されます。下の図で、位置のデータ（青）と、そこから中心差分で求めた速さ（金）を比べましょう。
+      下の図は、そのしくみを確かめる実験です。
+    </p>
+    <ol>
+      <li><b>上の図</b>：物が $x=\sin t$ と動いていて、センサーが $0.05$ 秒ごとに位置を測ります（青い点）。測った値は、本当の位置（点線）から、ほんの少し（±0.01 くらい）<b>ばらばらにずれて</b>います。これがノイズです。上の図では、ずれが小さすぎてほとんど見えないので、その下に時刻 $t$ の近くを<b>拡大</b>した図をつけました。</li>
+      <li>この点だけから速さを求めます。時刻 $t$ の速さは、$t$ の少し前と少し後の2点（<span class="t-red">赤い点</span>）を結んだ直線の傾き、つまり中心差分
+        $\amber{v}=\dfrac{\red{x(t+h)}-\red{x(t-h)}}{2h}$ で求めます。</li>
+      <li><b>下の図</b>：これを全部の時刻で計算した速さ（オレンジの線）です。正しい速さは $\cos t$（点線）です。</li>
+    </ol>
+    <p>
+      分子の引き算には、2点のノイズの差も入ってしまいます。それを小さな $2h$ で割るので、ノイズが<b>拡大</b>されます。
+      $t$ のスライダーで調べる時刻を動かし、$h$ やノイズの大きさを変えて、赤い直線の傾きとオレンジの線の関係を見てみましょう。
     </p>
 
     <div class="widget" id="w-noise">
       <div class="widget-head">センサーのデータを微分する <span class="hint">ノイズの大きさと、差分の間隔 $h$ を変える</span></div>
       <div class="panel" style="padding-bottom:0"><div class="btn-row"><button class="btn" type="button" data-r="regen">ノイズを取り直す</button></div></div>
-      <div class="stage"><span class="cap l">位置（測ったデータ）</span><canvas aria-label="ノイズのある位置のデータ"></canvas></div>
-      <div class="stage d49-sub"><span class="cap l">速さ（中心差分）</span><canvas aria-label="中心差分で求めた速さ"></canvas></div>
+      <div class="stage"><span class="cap l">上：位置（測ったデータ）</span><canvas aria-label="ノイズのある位置のデータ"></canvas></div>
+      <div class="stage d49-sub"><span class="cap l">拡大：上の図の四角の中（<span class="t-red">赤い直線</span>の傾き＝速さ）</span><canvas aria-label="時刻 t の近くを拡大した位置のデータ"></canvas></div>
+      <div class="stage d49-sub"><span class="cap l">下：速さ（中心差分で計算）</span><canvas aria-label="中心差分で求めた速さ"></canvas></div>
       <div class="panel two">
         <div class="controls"></div>
         <div class="readout">
-          <div class="row"><span class="k">計算式</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">時刻 $t$ の速さ</span><span class="tex" data-r="eq"></span></div>
+          <div class="row"><span class="k">数を入れると</span><span class="tex" data-r="eqn"></span></div>
+          <div class="row"><span class="k">正しい速さ</span><span class="tex" data-r="true"></span></div>
           <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
         </div>
       </div>
@@ -344,6 +375,30 @@
       写真の中の物の<b>輪郭（エッジ）</b>は、明るさが急に変わる所です。となりの画素との明るさの差（差分）を計算すると、変化が大きい所だけが明るく光ります。
       これは、カメラのピント合わせや、自動運転の白線の検出、AI の画像認識の第一歩にも使われています。
     </p>
+    <p>
+      デジタルの画像は、小さな正方形（<b>画素</b>）が並んだものです。白黒の画像なら、それぞれの画素の明るさを $0$（黒）から $1$（白）までの数で表します。
+      横一列に並んだ画素の明るさを、左から順に $I_0,\ I_1,\ I_2,\ \ldots$ とします。これは「位置 $j$ の関数 $I_j$」なので、中心差分と同じように、となりどうしの差で傾きを求められます（間隔は画素1個分）。
+    </p>
+    <div class="eq-box">$$\amber{d_j}=\frac{\blue{I_{j+1}}-\blue{I_{j-1}}}{2}$$</div>
+    <p>例えば、明るい所から暗い所へ変わる1行では、次のようになります。</p>
+    <div class="table-wrap d49-tab-wrap" style="margin:8px 0 14px"><table class="d49-tab">
+      <tbody>
+        <tr><th>$j$</th><td>$0$</td><td>$1$</td><td>$2$</td><td>$3$</td><td>$4$</td><td>$5$</td></tr>
+        <tr><th>明るさ $\blue{I_j}$</th><td>$0.8$</td><td>$0.8$</td><td>$0.8$</td><td>$0.2$</td><td>$0.2$</td><td>$0.2$</td></tr>
+        <tr><th>差分 $\amber{d_j}$</th><td></td><td>$0$</td><td>$-0.3$</td><td>$-0.3$</td><td>$0$</td><td></td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      明るさが変わらない所では差分は $0$、明るさが変わる境目（$j=2,\ 3$）だけで差分が大きく（ここでは暗くなるのでマイナスに）なります。下の図では、次の順に見てください。
+    </p>
+    <ol>
+      <li><b>① 左の画像</b>：もとの画像です。点線で囲んだ横一列が、調べている行です（「行」のスライダーで動かせます）。</li>
+      <li><b>② 下のグラフ</b>：その行の明るさ $\blue{I_j}$（青）と、差分 $\amber{d_j}$（オレンジ）です。青い線が段になって変わる所で、オレンジの線が山や谷になります。</li>
+      <li><b>③ 右の画像</b>：同じ計算を<b>すべての行</b>で（さらに縦方向のとなりとも）行い、差分の大きさを明るさで表した画像です。差分が大きい所ほど白いので、<b>輪郭だけが白く浮かび上がります</b>。</li>
+    </ol>
+    <p>
+      「ノイズを加える」にすると、ノイズの差まで拾って右の画像がザラザラになります（前の図と同じ理由です）。そのときは、「差分の前にぼかす」で、先にとなりの画素と平均してから差分をとると、ノイズが減って輪郭が見えるようになります。
+    </p>
 
     <div class="widget" id="w-edge">
       <div class="widget-head">画像の差分でエッジを見つける <span class="hint">調べる行を動かす／ノイズ・ぼかしを切りかえる</span></div>
@@ -351,10 +406,10 @@
         <label class="check"><input type="checkbox" data-r="noise">ノイズを加える</label>
         <label class="check"><input type="checkbox" data-r="blur">差分の前にぼかす</label></div></div>
       <div class="d49-imgs">
-        <figure><canvas class="d49-img" data-r="img" aria-label="元の画像"></canvas><figcaption>元の画像（明るさ）</figcaption></figure>
-        <figure><canvas class="d49-img" data-r="edge" aria-label="差分の大きさの画像"></canvas><figcaption>差分の大きさ（エッジ）</figcaption></figure>
+        <figure><canvas class="d49-img" data-r="img" aria-label="元の画像"></canvas><figcaption>① 元の画像（点線：調べる行）</figcaption></figure>
+        <figure><canvas class="d49-img" data-r="edge" aria-label="差分の大きさの画像"></canvas><figcaption>③ 差分の大きさ（白いほど変化が大きい）</figcaption></figure>
       </div>
-      <div class="stage d49-sub"><canvas aria-label="選んだ行の明るさと、その差分のグラフ"></canvas></div>
+      <div class="stage d49-sub"><span class="cap l">② 点線の行の <span class="t-blue">明るさ $I_j$</span> と <span class="t-amber">差分 $d_j$</span></span><canvas aria-label="選んだ行の明るさと、その差分のグラフ"></canvas></div>
       <div class="panel two">
         <div class="controls"></div>
         <div class="readout">
@@ -379,7 +434,7 @@
         <tr><th>ニュートン法</th><td>$x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$：接線と $x$ 軸の交点をくり返して $f(x)=0$ の解へ。正しい桁が倍々に増える</td></tr>
         <tr><th>勾配降下法</th><td>$x_{n+1}=x_n-\eta f'(x_n)$：傾きと反対向きに進んで最小値へ。学習率 $\eta$ は大きすぎず小さすぎず</td></tr>
         <tr><th>数値微分</th><td>$f'(x)\approx\dfrac{f(x+h)-f(x-h)}{2h}$：$h$ は小さすぎても大きすぎてもだめ。ノイズに弱い</td></tr>
-        <tr><th>AI の学習</th><td>勾配降下法で誤差を小さくする。たくさんの重みの傾きは誤差逆伝播法（4.10節）で求める</td></tr>
+        <tr><th>AI の学習</th><td>勾配降下法で誤差を小さくする。たくさんの重みの傾きは誤差逆伝播法（偏微分の章）で求める</td></tr>
       </tbody></table></div>
     </div>
 
@@ -454,17 +509,17 @@
 
   <nav class="pager" aria-label="前後の節">
     <a class="prev" href="4-8.html"><span class="dir">← 前の節</span><span class="nm">4.8 極限のくらべ方</span></a>
-    <a class="next" href="4-10.html"><span class="dir">次の節 →</span><span class="nm">4.10 誤差逆伝播法</span></a>
+    <a class="next" href="game.html"><span class="dir">ミニゲーム →</span><span class="nm">微分の山脈</span></a>
   </nav>
 </main>
 </div>
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611040626"></script>
-<script src="../assets/plot.js?v=202611040626"></script>
-<script src="../assets/game.js?v=202611040626"></script>
-<script src="js/diff-common.js?v=202611040626"></script>
-<script src="js/4-9.js?v=202611040626"></script>
+<script src="../assets/common.js?v=202611041300"></script>
+<script src="../assets/plot.js?v=202611041300"></script>
+<script src="../assets/game.js?v=202611041300"></script>
+<script src="js/diff-common.js?v=202611041300"></script>
+<script src="js/4-9.js?v=202611041300"></script>
 </body>
 </html>

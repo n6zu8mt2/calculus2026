@@ -971,3 +971,11 @@ table.d410-wtbl .d410-ch { font-size: 13px; }
 .mt-cloud ellipse { fill: var(--surface); opacity: .75; }
 #w-game-range .readout { grid-template-columns: minmax(0, 1fr); }
 #w-hypc .panel.two, #w-neuron .panel.two { grid-template-columns: minmax(0, 1fr); }
+
+/* 4.9 数値微分：引き算で消える桁、読み取り欄は1列 */
+.tx-gone { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); border-radius: 3px; }
+#w-numdiff .panel.two, #w-noise .panel.two, #w-edge .panel.two { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 560px) {
+  #w-numdiff .readout .row, #w-noise .readout .row { flex-wrap: wrap; row-gap: 2px; }
+  #w-numdiff .readout .row > .tex, #w-noise .readout .row > .tex { flex-basis: 100%; }
+}

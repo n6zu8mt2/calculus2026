@@ -2,7 +2,7 @@
  * 依存: assets/common.js (Lab), assets/plot.js, assets/game.js, diff/js/diff-common.js (Diff)
  * 色の約束: 関数 f = 青, 接線 = 緑, 割線・増分 = 赤, 導関数 f' = 金
  *
- *   1. 山脈の地図：各節のチャレンジ（'4-1:game' … '4-10:game'、4.6・4.8 はなし）の★を読んで表示
+ *   1. 山脈の地図：各節のチャレンジ（'4-1:game' … '4-9:game'、4.6・4.8 はなし）の★を読んで表示
  *   2. 総合ステージ「山脈を越えろ」（'4-range:game'、5ステージ）
  *   3. 章のバッジ「微分マスター」（'4-badge' に { master: 1 } を記録）
  */
@@ -26,8 +26,9 @@
     { key: '4-4:game', no: '4.4', name: '装置をつなげ', skill: '合成関数の微分', href: '4-4.html#w-game-chain', x: 250, y: 150 },
     { key: '4-5:game', no: '4.5', name: '最強の缶を作れ', skill: '増減と極値・最適化', href: '4-5.html#w-game-can', x: 372, y: 140 },
     { key: '4-7:game', no: '4.7', name: '近似で当てろ', skill: '1次近似・テイラー展開', href: '4-7.html#w-game-approx', x: 424, y: 236 },
-    { key: '4-9:game', no: '4.9', name: '谷底を探せ', skill: '勾配降下法', href: '4-9.html#w-game-gd', x: 482, y: 176 },
-    { key: '4-10:game', no: '4.10', name: 'AI を育てろ', skill: '誤差逆伝播法', href: '4-10.html#w-game', x: 548, y: 296 },
+    { key: '4-9:game', no: '4.9', name: '谷底を探せ', skill: '勾配降下法', href: '4-9.html#w-game-gd', x: 548, y: 296 },
+    // 4.10 誤差逆伝播法は偏微分の章へ移す予定のため保留：
+    // { key: '4-10:game', no: '4.10', name: 'AI を育てろ', skill: '誤差逆伝播法', href: '4-10.html#w-game', x: 548, y: 296 },
   ];
   const sumStars = (v) => Object.values(v || {}).reduce((a, b) => a + (+b || 0), 0);
   const clearedAll = (v) => { for (let i = 1; i <= NSTAGE; i++) if (!((v || {})[i] > 0)) return false; return true; };

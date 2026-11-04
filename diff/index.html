@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611040626"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611040626">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611040626">
+<script src="../assets/mathjax.js?v=202611041300"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611041300">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611041300">
 </head>
 <body class="chapter calm index-page">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -25,10 +25,9 @@
     <a href="4-4.html"><span class="cn">4.4</span><span class="ct">積・商・合成関数の微分</span></a>
     <a href="4-5.html"><span class="cn">4.5</span><span class="ct">増減と極値</span></a>
     <a href="4-6.html"><span class="cn">4.6</span><span class="ct">逆関数の微分</span></a>
-    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">高階微分と近似</span></a>
+    <a href="4-7.html"><span class="cn">4.7</span><span class="ct">テイラー展開と近似</span></a>
     <a href="4-8.html"><span class="cn">4.8</span><span class="ct">極限のくらべ方</span></a>
     <a href="4-9.html"><span class="cn">4.9</span><span class="ct">微分を使う</span></a>
-    <a href="4-10.html"><span class="cn">4.10</span><span class="ct">誤差逆伝播法</span></a>
   </nav>
 
 <main>
@@ -97,7 +96,7 @@
         <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
         <div>
           <span class="badge">4.7節</span>
-          <h3>高階微分と近似</h3>
+          <h3>テイラー展開と近似</h3>
           <p>2回微分・1次近似・マクローリン展開・テイラー展開</p>
         </div>
       </a>
@@ -115,14 +114,6 @@
           <span class="badge">4.9節</span>
           <h3>微分を使う</h3>
           <p>ニュートン法・勾配降下法・数値微分</p>
-        </div>
-      </a>
-      <a class="card chap-card ch1" href="4-10.html">
-        <div class="chap-icon sm" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M6 50 C 18 50, 24 14, 40 14 S 56 30, 60 34" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/><path d="M14 40 L54 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="26" r="5" fill="currentColor"/></svg></div>
-        <div>
-          <span class="badge">4.10節</span>
-          <h3>誤差逆伝播法</h3>
-          <p>計算グラフ・連鎖律・AI の学習</p>
         </div>
       </a>
     </div>
@@ -154,7 +145,7 @@
         <tr><th>逆関数</th><td>$(f^{-1})'(x)=\dfrac{1}{f'(f^{-1}(x))}$、$(\sin^{-1}x)'=\dfrac1{\sqrt{1-x^2}}$、$(\tan^{-1}x)'=\dfrac1{1+x^2}$<span class="use">傾きは逆数（<a href="4-6.html">4.6</a>）</span></td></tr>
         <tr><th>近似</th><td>$f(a+h)\approx f(a)+f'(a)h$、$e^x=1+x+\dfrac{x^2}{2!}+\cdots$<span class="use">1次近似・テイラー展開（<a href="4-7.html">4.7</a>）</span></td></tr>
         <tr><th>極限</th><td>$\dfrac{\sin x}{x}\to1$、$\log x\ll x^a\ll e^x$<span class="use">（<a href="4-8.html">4.8</a>）</span></td></tr>
-        <tr><th>応用</th><td>ニュートン法 $x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$、勾配降下法 $x\leftarrow x-\eta f'(x)$<span class="use">（<a href="4-9.html">4.9</a>）、誤差逆伝播法＝連鎖律で全部の傾き（<a href="4-10.html">4.10</a>）</span></td></tr>
+        <tr><th>応用</th><td>ニュートン法 $x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$、勾配降下法 $x\leftarrow x-\eta f'(x)$<span class="use">（<a href="4-9.html">4.9</a>）</span></td></tr>
       </tbody></table></div>
     </div>
   </section>
@@ -167,7 +158,7 @@
 </div>
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分</footer>
-<script src="../assets/common.js?v=202611040626"></script>
+<script src="../assets/common.js?v=202611041300"></script>
 <script>
   // 「微分の山脈」カードに、各節のチャレンジで集めた★の合計を表示
   (function () {
@@ -175,11 +166,11 @@
     if (!box || !window.Lab) return;
     function show() {
       var all = Lab.progress.all(), n = 0;
-      ['4-1', '4-2', '4-3', '4-4', '4-5', '4-7', '4-9', '4-10'].forEach(function (k) {
+      ['4-1', '4-2', '4-3', '4-4', '4-5', '4-7', '4-9'].forEach(function (k) {
         var v = all[k + ':game'] || {};
         Object.keys(v).forEach(function (i) { n += +v[i] || 0; });
       });
-      box.textContent = (all['4-badge'] && all['4-badge'].master ? '🏅 ' : '') + '★ ' + n + ' / 120';
+      box.textContent = (all['4-badge'] && all['4-badge'].master ? '🏅 ' : '') + '★ ' + n + ' / 105';
     }
     show();
     document.addEventListener('progress', show);

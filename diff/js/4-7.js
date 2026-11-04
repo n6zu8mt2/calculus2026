@@ -1,4 +1,4 @@
-/* 第4章 4.7節 高階微分と近似 — 図とチャレンジ
+/* 第4章 4.7節 テイラー展開と近似 — 図とチャレンジ
  * 依存: assets/common.js (Lab), assets/plot.js, assets/game.js, diff/js/diff-common.js (Diff)
  *
  * この節だけの部品
