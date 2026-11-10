@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611110358"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611110358">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611110358">
+<script src="../assets/mathjax.js?v=202611110404"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611110404">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611110404">
 </head>
 <body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -181,22 +181,32 @@
     <h2 class="h-sub"><span class="tag">(3)</span>三角関数の微分</h2>
 
     <p>
-      $y=\sin x$ のグラフの傾きを、いくつかの点で読んでみましょう。$x=0$ では傾き $1$（3.2節の「小さい角では $\sin x\approx x$」）、山の頂上 $x=\frac{\pi}{2}$ では傾き $0$、$x=\pi$ では傾き $-1$ です。
-      この $1,\ 0,\ -1$ は、ちょうど $\cos0,\ \cos\frac{\pi}{2},\ \cos\pi$ の値です。実は、どこでも <b>$\sin x$ の傾き ＝ $\cos x$</b> になっています。
+      $\sin t$ のグラフの傾きを、いくつかの点で読んでみましょう。$t=0$ では傾き $1$（3.2節の「小さい角では $\sin t\approx t$」）、山の頂上 $t=\frac{\pi}{2}$ では傾き $0$、$t=\pi$ では傾き $-1$ です。
+      この $1,\ 0,\ -1$ は、ちょうど $\cos0,\ \cos\frac{\pi}{2},\ \cos\pi$ の値です。実は、どこでも <b>$\sin t$ の傾き ＝ $\cos t$</b> になっています。
     </p>
     <p>
-      理由は、<a href="../trig/3-5.html">3.5節</a>の円運動で見えます。単位円の上の点 $\mathrm{P}(\cos x,\ \sin x)$ が、1 秒に $1$ ラジアンずつ回るとします（時刻 $x$ 秒で角 $x$）。
+      理由は、<a href="../trig/3-5.html">3.5節</a>の円運動で見えます。単位円の上を、点 $\mathrm{P}$ が 1 秒に $1$ ラジアンずつ回るとします。時刻 $t$ 秒での角は $t$ なので、点 $\mathrm{P}$ の位置 $(x(t),\ y(t))$ は
+    </p>
+    <div class="eq-box">$$\bigl(x(t),\ y(t)\bigr)=(\cos t,\ \sin t)$$</div>
+    <p>
+      です。この点の<b>速度ベクトル</b>は、横の位置 $x(t)$ と縦の位置 $y(t)$ を、それぞれ時刻 $t$ で微分したもの $\bigl(x'(t),\ y'(t)\bigr)$ です（4.1節：位置の変化の速さ）。一方で、円運動の速度は図形から求められます。
     </p>
     <ul>
       <li><b>速さは 1</b>：弧の長さは（半径）×（角）なので、1 秒に進む道のりは $1\times1=1$。これは角を<b>ラジアン</b>で測ったからです。</li>
-      <li><b>向きは半径に垂直</b>：円の接線の向きなので、半径の向き $(\cos x,\ \sin x)$ を $90^\circ$ 回した $\teal{(-\sin x,\ \cos x)}$。</li>
+      <li><b>向きは半径に垂直</b>：円の接線の向きなので、半径の向き $(\cos t,\ \sin t)$ を $90^\circ$ 回した向き。長さ $1$ のまま回すと $\teal{(-\sin t,\ \cos t)}$。</li>
     </ul>
+    <p>したがって</p>
+    <div class="eq-box">$$\bigl(x'(t),\ y'(t)\bigr)=\teal{(-\sin t,\ \cos t)}$$</div>
     <p>
-      点の高さ $\sin x$ が増える速さは、速度の<b>縦の成分</b> $\amber{\cos x}$ です。同じように、横の位置 $\cos x$ が増える速さは<b>横の成分</b> $\amber{-\sin x}$ です。
+      成分どうしを比べると、縦の成分から $y(t)=\sin t$ の微分は $y'(t)=\amber{\cos t}$、横の成分から $x(t)=\cos t$ の微分は $x'(t)=\amber{-\sin t}$ です。つまり
+    </p>
+    <div class="eq-box">$$(\sin t)'=\cos t,\qquad (\cos t)'=-\sin t$$</div>
+    <p>
+      が、円の上を回る点の速度から納得できます。下の図で、点を回しながら、速度の成分（金）と右のグラフの接線の傾きが同じ数になることを確かめましょう。
     </p>
 
     <div class="widget" id="w-sin">
-      <div class="widget-head">単位円の点の速度と、$y=\blue{\sin x}$ の傾き <span class="hint">▶ で回す／青い点をドラッグ</span></div>
+      <div class="widget-head">単位円の点の速度と、$\blue{\sin t}$ の傾き <span class="hint">▶ で回す／青い点をドラッグ</span></div>
       <div class="panel" style="padding-bottom:0"><div class="btn-row"><span class="lbl-sm">関数</span><div class="chips" data-r="mode"></div>
         <button class="btn primary" type="button" data-r="play">▶ 回す</button>
         <label class="check"><input type="checkbox" data-r="deriv">導関数のグラフも表示</label></div></div>
@@ -207,7 +217,7 @@
       <div class="panel two">
         <div class="controls"></div>
         <div class="readout">
-          <div class="row"><span class="k">角</span><span class="tex" data-r="ang"></span></div>
+          <div class="row"><span class="k">時刻（角）</span><span class="tex" data-r="ang"></span></div>
           <div class="row"><span class="k">点の速度</span><span class="tex" data-r="vel"></span></div>
           <div class="row"><span class="k">接線の傾き</span><span class="tex big" data-r="m"></span></div>
           <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
@@ -219,7 +229,7 @@
       <p class="key-lead key-big">$\sin$ を微分すると $\cos$、$\cos$ を微分すると $-\sin$</p>
       $$\left(\sin x\right)'=\cos x,\qquad \left(\cos x\right)'=-\sin x$$
       <ul>
-        <li>単位円の点 $(\cos x,\ \sin x)$ の速度が $(-\sin x,\ \cos x)$（速さ $1$）だから</li>
+        <li>単位円の点 $\bigl(x(t),\ y(t)\bigr)=(\cos t,\ \sin t)$ の速度が $\bigl(x'(t),\ y'(t)\bigr)=(-\sin t,\ \cos t)$（速さ $1$）だから（文字が $t$ でも $x$ でも同じ公式）</li>
         <li>$x$ は<b>ラジアン</b>で測ること（度では成り立たない）</li>
       </ul>
       <p class="key-note">$\cos$ の微分のマイナスに注意。$x=0$ から右へ行くと、$\cos x$ は $1$ から下がっていく（傾きがマイナス）。</p>
@@ -488,10 +498,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611110358"></script>
-<script src="../assets/plot.js?v=202611110358"></script>
-<script src="../assets/game.js?v=202611110358"></script>
-<script src="js/diff-common.js?v=202611110358"></script>
-<script src="js/4-3.js?v=202611110358"></script>
+<script src="../assets/common.js?v=202611110404"></script>
+<script src="../assets/plot.js?v=202611110404"></script>
+<script src="../assets/game.js?v=202611110404"></script>
+<script src="js/diff-common.js?v=202611110404"></script>
+<script src="js/4-3.js?v=202611110404"></script>
 </body>
 </html>

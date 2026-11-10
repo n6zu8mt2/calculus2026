@@ -248,10 +248,10 @@
     const pg = new Plot(cvs[1], { xmin: -0.55, xmax: TAU + 0.45, ymin: -1.75, ymax: 1.75, height: (w) => (w < 520 ? w * 0.62 : clamp(w * 0.47, 200, 330)) });
     const st = { th: PI / 3, mode: 0, play: false, deriv: false };
     const ctl = root.querySelector('.controls');
-    const sT = slider(ctl, { tex: '\\blue{x}', min: 0, max: 72, step: 1, value: 12, color: 'primary', aria: '角 x（π/36 ごと）', fmt: (k) => (k * PI / 36).toFixed(2) });
+    const sT = slider(ctl, { tex: '\\blue{t}', min: 0, max: 72, step: 1, value: 12, color: 'primary', aria: '時刻 t（π/36 ごと）', fmt: (k) => (k * PI / 36).toFixed(2) });
     sT.on((k) => { st.th = k * PI / 36; st.play = false; showPlay(); update(); });
     const f = (x) => (st.mode ? Math.cos(x) : Math.sin(x)), df = (x) => (st.mode ? -Math.sin(x) : Math.cos(x));
-    chipRow(R(root, 'mode'), [{ tex: 'y=\\sin x' }, { tex: 'y=\\cos x' }], 0, (it, i) => { st.mode = i; update(); });
+    chipRow(R(root, 'mode'), [{ tex: 'y(t)=\\sin t' }, { tex: 'x(t)=\\cos t' }], 0, (it, i) => { st.mode = i; update(); });
     R(root, 'deriv').addEventListener('change', (e) => { st.deriv = e.target.checked; pg.invalidate(); });
     const anim = L.animate(root, function (dt) {
       if (!st.play) return false;
@@ -275,14 +275,14 @@
       const th = st.th, s = Math.sin(th), co = Math.cos(th);
       sT.set(Math.round(th / (PI / 36)));
       const exact = Math.abs(th / (PI / 12) - Math.round(th / (PI / 12))) < 1e-6;
-      tex(root, 'ang', '\\blue{x}=' + angTeX(th) + (exact && Math.round(th / (PI / 12)) ? '\\approx' + num(th, 2) : '') + '\\ (' + Math.round(th * 180 / PI) + '^\\circ)');
-      tex(root, 'vel', '\\teal{(-\\sin x,\\ \\cos x)}=(' + fm(-s) + ',\\ ' + fm(co) + ')');
-      tex(root, 'm', st.mode ? "(\\cos x)'=\\amber{-\\sin x}=" + fm(-s, 3) : "(\\sin x)'=\\amber{\\cos x}=" + fm(co, 3));
+      tex(root, 'ang', '\\blue{t}=' + angTeX(th) + (exact && Math.round(th / (PI / 12)) ? '\\approx' + num(th, 2) : '') + '\\ (' + Math.round(th * 180 / PI) + '^\\circ)');
+      tex(root, 'vel', "\\begin{aligned}&\\bigl(x'(t),\\ y'(t)\\bigr)=\\teal{(-\\sin t,\\ \\cos t)}\\\\&=(" + fm(-s) + ',\\ ' + fm(co) + ')\\end{aligned}');
+      tex(root, 'm', st.mode ? "(\\cos t)'=\\amber{-\\sin t}=" + fm(-s, 3) : "(\\sin t)'=\\amber{\\cos t}=" + fm(co, 3));
       if (lastMode !== st.mode) {
         lastMode = st.mode;
         setHTML(R(root, 'how'), st.mode
-          ? '横の位置 $\\cos x$ の増える速さは、速度の<b>横の成分</b>（金）$-\\sin x$。上半分では点は左へ動くので、$\\cos x$ は減る（傾きマイナス）。'
-          : '高さ $\\sin x$ の増える速さは、速度の<b>縦の成分</b>（金）$\\cos x$。右のグラフの接線の傾きと同じ数になる。');
+          ? '横の位置 $x(t)=\\cos t$ の増える速さは、速度の<b>横の成分</b>（金）$x\'(t)=-\\sin t$。上半分では点は左へ動くので、$\\cos t$ は減る（傾きマイナス）。'
+          : '高さ $y(t)=\\sin t$ の増える速さは、速度の<b>縦の成分</b>（金）$y\'(t)=\\cos t$。右のグラフの接線の傾きと同じ数になる。');
       }
       pc.invalidate(); pg.invalidate();
     }
@@ -291,7 +291,7 @@
       g.line(-1.65, 0, 1.65, 0, { color: c.axis, width: 1.2 });
       g.line(0, g.ymin + 0.05, 0, g.ymax - 0.05, { color: c.axis, width: 1.2 });
       ctx.save(); ctx.strokeStyle = c.muted; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(g.X(0), g.Y(0), g.pxPerX, 0, TAU); ctx.stroke(); ctx.restore();
-      // 弧（角 x）
+      // 弧（角 t）
       const pts = [];
       for (let i = 0; i <= 60; i++) { const a = th * i / 60; pts.push([0.28 * Math.cos(a), 0.28 * Math.sin(a)]); }
       if (th > 0.01) g.poly(pts, { color: c.primary, width: 2 });
@@ -307,13 +307,13 @@
       g.dot(x, y, { r: 4, color: c.primary });
       g.tex('\\mathrm{P}', x * 1.16 - 0.22 * vx, y * 1.16 - 0.22 * vy, { align: 'center', size: 14, color: c.primary, avoid: true });
       // 成分のラベル
-      if (Math.abs(vy) > 0.18) g.tex(hiH ? '' + fm(vy) : '\\cos x', x + vx, y + vy / 2, { align: vx >= 0 ? 'left' : 'right', dx: vx >= 0 ? 6 : -6, size: 13, color: colV, avoid: true });
-      if (Math.abs(vx) > 0.18) g.tex(hiH ? '-\\sin x' : '' + fm(vx), x + vx / 2, y, { align: 'center', valign: y + vy / 2 >= y ? 'top' : 'bottom', dy: y + vy / 2 >= y ? 4 : -4, size: 13, color: colH, avoid: true });
+      if (Math.abs(vy) > 0.18) g.tex(hiH ? '' + fm(vy) : '\\cos t', x + vx, y + vy / 2, { align: vx >= 0 ? 'left' : 'right', dx: vx >= 0 ? 6 : -6, size: 13, color: colV, avoid: true });
+      if (Math.abs(vx) > 0.18) g.tex(hiH ? '-\\sin t' : '' + fm(vx), x + vx / 2, y, { align: 'center', valign: y + vy / 2 >= y ? 'top' : 'bottom', dy: y + vy / 2 >= y ? 4 : -4, size: 13, color: colH, avoid: true });
       g.texPx('\\teal{\\text{速さ } 1}', g.w - 8, g.h - 8, { align: 'right', valign: 'bottom', size: 13 });
     };
     pg.draw = function (g) {
       const c = g.c, th = st.th, y0 = f(th), m = df(th);
-      g.grid({ stepX: H, stepY: 1, labels: false, xlabel: 'x', ylabel: 'y' });
+      g.grid({ stepX: H, stepY: 1, labels: false, xlabel: 't', ylabel: st.mode ? 'x' : 'y' });
       let k = 1;
       while (g.pxPerX * H * k < 36) k *= 2;
       for (let i = 1; i * H <= TAU + 1e-9; i++) {
@@ -330,8 +330,8 @@
       D.curve(g, f, { color: c.primary, width: 3, x0: 0, x1: TAU });
       D.tangent(g, f, th, { df, point: false });
       slopeStep(g, th, y0, m, { left: th > TAU - 1.1 });
-      g.tex(st.mode ? 'y=\\cos x' : 'y=\\sin x', st.mode ? PI : 3 * H, -1, { align: 'center', valign: 'top', dy: 6, size: 15, color: c.primary, avoid: true });
-      if (st.deriv) g.tex(st.mode ? 'y=-\\sin x' : 'y=\\cos x', st.mode ? 3 * H : TAU, 1, { align: st.mode ? 'center' : 'right', valign: 'bottom', dy: -6, size: 14, color: c.amber, avoid: true });
+      g.tex(st.mode ? 'x=\\cos t' : 'y=\\sin t', st.mode ? PI : 3 * H, -1, { align: 'center', valign: 'top', dy: 6, size: 15, color: c.primary, avoid: true });
+      if (st.deriv) g.tex(st.mode ? "x'=-\\sin t" : "y'=\\cos t", st.mode ? 3 * H : TAU, 1, { align: st.mode ? 'center' : 'right', valign: 'bottom', dy: -6, size: 14, color: c.amber, avoid: true });
     };
     showPlay(); update();
   }
