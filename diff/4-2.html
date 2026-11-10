@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611041300"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611041300">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611041300">
+<script src="../assets/mathjax.js?v=202611110358"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611110358">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611110358">
 </head>
 <body class="chapter ch2 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -46,7 +46,7 @@
       <li>$(x^n)'=nx^{n-1}$ を使って多項式を微分できる。</li>
       <li>導関数のグラフと、接線の式 $y-f(a)=f'(a)(x-a)$ を求められる。</li>
     </ol>
-    <div class="goal-meta">図 3つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+    <div class="goal-meta">図 5つ ・ 例題 1問 ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
   </div>
 
   <p class="prereq">この節で使うこと：<a href="4-1.html">4.1節</a>の 割線と接線、<a href="../polynomial/1-4.html">1.4節</a>の イージング、<a href="../explog/2-6.html">2.6節</a>の 記号 $\lim$</p>
@@ -310,7 +310,86 @@
     </div>
     <p class="sub">※ $\amber{v_0}$ や $\teal{v_1}$ を大きくしすぎると、途中で $f(t)$ が $1$ を超えたり $0$ より下がったりします（行き過ぎて戻る動き）。速さのグラフが $0$ より下になるところが「戻っている」時間です。</p>
 
-    <h2 class="h-sub"><span class="tag">(6)</span>記号 $\dfrac{dy}{dx}$</h2>
+    <h2 class="h-sub"><span class="tag">(6)</span>例題：自由落下とグラフの傾き</h2>
+
+    <p>
+      ここまでの道具（平均の速さ、$h$ を $0$ に近づける、接線の式）を、1つの問題でまとめて使ってみましょう。
+    </p>
+    <div class="callout point">
+      <div class="ttl">例題</div>
+      <p>
+        地面から $130$ m の高さで小球を静かに離した。空気抵抗を無視し、離した位置を原点、鉛直<b>下向き</b>を正とする。重力加速度の大きさ $g$ を $10\ \text{m/s}^2$ と近似すると、離してから $t$ 秒後の位置 $x(t)$（単位はメートル）は、$0\leqq t\leqq5$ で $\blue{x(t)=5t^2}$ と表される。
+      </p>
+      <ol class="quiz-ans">
+        <li>$t=0,\ 1,\ 2,\ 3,\ 4,\ 5$ のときの $x(t)$ の表を作り、1 秒ごとに落下する距離がどのように変わるか答えよ。</li>
+        <li>$t=1$ から $t=4$ までの平均の速さを求めよ。</li>
+        <li>$t=3$ から $t=3+\red{h}$ までの平均の速さを、$\red{h}=1,\ 0.5,\ 0.1,\ 0.01,\ 0.001$ について求めよ（$0\lt h\leqq2$）。</li>
+        <li>(3) の平均の速さを $\red{h}$ の式で表せ。また、$\red{h}$ を $0$ に近づけて、離してから 3 秒後の瞬間の速さを求めよ。</li>
+        <li>横軸を $t$、縦軸を $x$ として位置のグラフを描け。$t=3$ での点を $\mathrm{A}$、$t=4$ での点を $\mathrm{B}$ とし、$\mathrm{A}$ と $\mathrm{B}$ を結ぶ直線と $\mathrm{A}$ での接線を描き、それぞれの傾きを答えよ。また、$\mathrm{A}$ での接線の方程式を求めよ。</li>
+      </ol>
+    </div>
+    <p>
+      下の図で確かめながら考えましょう。グラフでは、落ちた距離 $x$ を<b>上向き</b>にとっています（上にいくほど、たくさん落ちている）。
+      $\red{h}$ のボタンを押すと、表に平均の速さが入ります。
+    </p>
+
+    <div class="widget" id="w-fall">
+      <div class="widget-head">自由落下 $\blue{x=5t^2}$：割線と接線 <span class="hint">$h$ のボタン・スライダー／表示を切りかえる</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">$\red{h}$</span><div class="chips" data-r="hs"></div></div>
+        <div class="btn-row">
+          <label class="check"><input type="checkbox" data-r="drop">1 秒ごとの落下距離</label>
+          <label class="check"><input type="checkbox" data-r="tan">$\mathrm{A}$ での接線</label>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="x = 5t² のグラフと、点 A, B を結ぶ割線、A での接線"></canvas></div>
+      <div class="table-wrap d42-fall-wrap"><table class="d42-fall">
+        <tbody>
+          <tr><th>$\red{h}$（秒）</th><td>$1$</td><td>$0.5$</td><td>$0.1$</td><td>$0.01$</td><td>$0.001$</td></tr>
+          <tr><th>平均の速さ（m/秒）</th><td data-r="c0">?</td><td data-r="c1">?</td><td data-r="c2">?</td><td data-r="c3">?</td><td data-r="c4">?</td></tr>
+        </tbody>
+      </table></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">点</span><span class="tex" data-r="pts"></span></div>
+          <div class="row"><span class="k">平均の速さ</span><span class="tex" data-r="avg"></span></div>
+          <div class="row"><span class="k">接線</span><span class="tex" data-r="tl"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <details class="think">
+      <summary>例題の答え（クリックで表示）</summary>
+      <ol class="quiz-ans">
+        <li>
+          <div class="table-wrap"><table class="d42-fall"><tbody>
+            <tr><th>$t$（秒）</th><td>$0$</td><td>$1$</td><td>$2$</td><td>$3$</td><td>$4$</td><td>$5$</td></tr>
+            <tr><th>$x(t)$（m）</th><td>$0$</td><td>$5$</td><td>$20$</td><td>$45$</td><td>$80$</td><td>$125$</td></tr>
+          </tbody></table></div>
+          1 秒ごとに落下する距離は $5,\ 15,\ 25,\ 35,\ 45$ m と、<b>10 m ずつ増えていく</b>（だんだん速くなる）。
+        </li>
+        <li>$\dfrac{x(4)-x(1)}{4-1}=\dfrac{80-5}{3}=\dfrac{75}{3}=25$ m/秒</li>
+        <li>$\dfrac{x(3+h)-x(3)}{h}$ を計算すると
+          <div class="table-wrap"><table class="d42-fall"><tbody>
+            <tr><th>$h$（秒）</th><td>$1$</td><td>$0.5$</td><td>$0.1$</td><td>$0.01$</td><td>$0.001$</td></tr>
+            <tr><th>平均の速さ（m/秒）</th><td>$35$</td><td>$32.5$</td><td>$30.5$</td><td>$30.05$</td><td>$30.005$</td></tr>
+          </tbody></table></div>
+          例：$h=0.5$ なら $\dfrac{5\times3.5^2-45}{0.5}=\dfrac{61.25-45}{0.5}=32.5$
+        </li>
+        <li>$x(3+h)-x(3)$<br>$=5(3+h)^2-5\cdot3^2$<br>$=5(9+6h+h^2)-45$<br>$=30h+5h^2$ なので<br>
+          $\dfrac{x(3+h)-x(3)}{h}=\dfrac{30h+5h^2}{h}=30+5h$<br>（$h\neq0$ なので約分できる。(3) の表は、この式に $h$ を入れた値）<br>
+          $h\to0$ とすると $30+5h\to30$。よって、3 秒後の瞬間の速さは <b>$30$ m/秒</b>。<br>
+          （確かめ：$x'(t)=10t$ に $t=3$ を入れても $30$）</li>
+        <li>$\mathrm{A}(3,\ 45)$、$\mathrm{B}(4,\ 80)$。<br>
+          直線 $\mathrm{AB}$ の傾き：$\dfrac{80-45}{4-3}=35$（＝ $t=3$ から $4$ までの平均の速さ、(3) で $h=1$ のとき）<br>
+          $\mathrm{A}$ での接線の傾き：$30$（＝ 3 秒後の瞬間の速さ、(4)）<br>
+          接線の方程式：$x-45=30(t-3)$ より $\teal{x=30t-45}$<br>
+          （グラフは上の図。「1 秒ごとの落下距離」と「接線」を表示すると確かめられる）</li>
+      </ol>
+    </details>
+
+    <h2 class="h-sub"><span class="tag">(7)</span>記号 $\dfrac{dy}{dx}$</h2>
 
     <p>
       微分は、17世紀後半に、イギリスの<b>ニュートン</b>（1643–1727）とドイツの<b>ライプニッツ</b>（1646–1716）が、ほぼ同じころ別々に考え出しました。
@@ -346,7 +425,7 @@
       </tbody></table></div>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(7)</span>チャレンジ：傾きのグラフを描け</h2>
+    <h2 class="h-sub"><span class="tag">(8)</span>チャレンジ：傾きのグラフを描け</h2>
 
     <p>
       上の青いグラフ $y=\blue{f(x)}$ を見て、その導関数 $y=\amber{f'(x)}$ のグラフを（ア）〜（エ）から選び、「判定」を押しましょう。3回まで判定でき、<b>1回目で正解なら★3</b> です。
@@ -413,10 +492,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611041300"></script>
-<script src="../assets/plot.js?v=202611041300"></script>
-<script src="../assets/game.js?v=202611041300"></script>
-<script src="js/diff-common.js?v=202611041300"></script>
-<script src="js/4-2.js?v=202611041300"></script>
+<script src="../assets/common.js?v=202611110358"></script>
+<script src="../assets/plot.js?v=202611110358"></script>
+<script src="../assets/game.js?v=202611110358"></script>
+<script src="js/diff-common.js?v=202611110358"></script>
+<script src="js/4-2.js?v=202611110358"></script>
 </body>
 </html>
