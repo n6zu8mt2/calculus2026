@@ -976,15 +976,17 @@ table.d410-wtbl .d410-ch { font-size: 13px; }
 .tx-gone { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); border-radius: 3px; }
 #w-numdiff .panel.two, #w-noise .panel.two, #w-edge .panel.two { grid-template-columns: minmax(0, 1fr); }
 @media (max-width: 560px) {
-  #w-numdiff .readout .row, #w-noise .readout .row, #w-fall .readout .row { flex-wrap: wrap; row-gap: 2px; }
-  #w-numdiff .readout .row > .tex, #w-noise .readout .row > .tex, #w-fall .readout .row > .tex { flex-basis: 100%; }
+  #w-numdiff .readout .row, #w-noise .readout .row { flex-wrap: wrap; row-gap: 2px; }
+  #w-numdiff .readout .row > .tex, #w-noise .readout .row > .tex { flex-basis: 100%; }
 }
 
-/* 4.2 例題：自由落下の表 */
-.d42-fall-wrap { margin: 0 14px 12px; }
-table.d42-fall { min-width: 0; font-size: 14px; font-variant-numeric: tabular-nums; margin: 6px 0; }
-table.d42-fall th, table.d42-fall td { padding: 6px 10px; text-align: center; white-space: nowrap; }
-table.d42-fall th { background: var(--surface-2); font-size: 13px; }
-table.d42-fall td.on { background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 700; }
-#w-fall .panel.two { grid-template-columns: minmax(0, 1fr); }
-@media (max-width: 560px) { .d42-fall-wrap { margin: 0 10px 10px; } table.d42-fall th, table.d42-fall td { padding: 5px 6px; } }
+
+/* 4.1(4) ボールを落とす */
+.stage.d41-sub { border-top: 1px solid var(--border); }
+table.d41-drop-table th, table.d41-drop-table td { padding: 6px 8px; white-space: nowrap; }
+table.d41-drop-table td.on { background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 800; }
+#w-drop .panel.two { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 560px) {
+  #w-drop .readout .row { flex-wrap: wrap; row-gap: 2px; }
+  #w-drop .readout .row > .tex { flex-basis: 100%; }
+}

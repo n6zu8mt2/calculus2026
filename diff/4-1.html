@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611110404"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611110404">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611110404">
+<script src="../assets/mathjax.js?v=202611110421"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611110421">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611110421">
 </head>
 <body class="chapter ch1 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -46,7 +46,7 @@
       <li>時間の幅を小さくすると、割線が接線に近づき「瞬間の速さ」になることを説明できる。</li>
       <li>曲線を拡大するとまっすぐに見えることと、接線の関係を説明できる。</li>
     </ol>
-    <div class="goal-meta">図 4つ ・ 計算機 1つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
+    <div class="goal-meta">図 5つ ・ 計算機 1つ ・ チャレンジ 5ステージ ・ 確認問題 4問</div>
   </div>
 
   <p class="prereq">この節で使うこと：<a href="../polynomial/1-1.html">1.1節</a>の 直線の傾き、<a href="../polynomial/1-3.html">1.3節</a>の 放物線（落下の式）</p>
@@ -189,7 +189,64 @@
       <p class="key-note">「どんどん近づけたときの行き先」を<b>極限</b>といい、記号 $\lim$ で書く。式で計算する方法は <a href="4-2.html">4.2節</a>。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(4)</span>虫めがねで曲線を拡大する</h2>
+    <h2 class="h-sub"><span class="tag">(4)</span>ボールを落として、瞬間の速さを求める</h2>
+
+    <p>
+      地面から $130$ m の高さで、ボールを静かに離します。離した位置を原点 $\mathrm{O}$ とし、$x$ 軸を<b>鉛直下向き</b>にとります（下へいくほど $x$ が大きい）。
+      空気抵抗を考えず、重力加速度を $10\ \text{m/秒}^2$ とすると、離してから $t$ 秒後の位置は
+    </p>
+    <div class="eq-box">$$\blue{x=5t^2}\qquad(0\leqq t\leqq5)$$</div>
+    <p>
+      と表されます（地面に着くのは $5t^2=130$ より約 $5.1$ 秒後）。
+      下の図の左はボールが落ちる様子、右はその位置のグラフです。グラフも $x$ を<b>下向き</b>にとってあるので、<b>ボールと、グラフ上の点が同じ高さ</b>に並びます（横の点線でつないであります）。
+      この図では、次のことを試せます。
+    </p>
+    <ul>
+      <li><b>▶ 落とす</b>：ボールが落ちる様子と、グラフの上を点が進む様子を、同時に見る（本当の時間と同じ速さ）。</li>
+      <li><b>1 秒ごとの位置</b>：1 秒ごとに落ちる距離が $5,\ 15,\ 25,\ 35,\ 45$ m と、<b>10 m ずつ増えていく</b>（だんだん速くなる）ことを確かめる。</li>
+      <li><b>$t=3$ 秒から $3+\red{h}$ 秒までの平均の速さ</b>：$\red{h}$ 秒の間に落ちた距離 $\red{\Delta x}$（左の図の赤い矢印）を $\red{h}$ で割る。グラフでは、点 $\mathrm{A}$（3 秒）と点 $\mathrm{B}$（$3+h$ 秒）を結ぶ<span class="t-red">割線</span>の傾きです。$\red{h}$ は (3) の $\Delta t$ と同じ「時間の幅」です（4.2節からは $h$ と書きます）。</li>
+      <li><b>▶ $\red{h}$ を $0$ に近づける</b>：$\red{h}$ を $1$ から $0.001$ まで小さくしていく。点 $\mathrm{B}$ が $\mathrm{A}$ に近づき、平均の速さが $30$ m/秒に近づく様子を、表と拡大図で見る。</li>
+    </ul>
+
+    <div class="widget" id="w-drop">
+      <div class="widget-head">ボールを落とす：$\blue{x=5t^2}$ <span class="hint">▶ 落とす／$h$ のボタン・スライダー／▶ $h$ を $0$ に近づける</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-r="drop">▶ 落とす</button>
+          <label class="check"><input type="checkbox" data-r="strobe">1 秒ごとの位置</label>
+          <label class="check"><input type="checkbox" data-r="tan">$\mathrm{A}$ での接線</label>
+        </div>
+        <div class="btn-row">
+          <button class="btn" type="button" data-r="shrink">▶ <i>h</i> を 0 に近づける</button>
+          <span class="chips" data-r="hs"></span>
+        </div>
+      </div>
+      <div class="stage"><span class="cap l">左：落ちるボール　右：位置のグラフ</span><canvas aria-label="落ちるボールの様子と、x = 5t² のグラフ（x は下向き）"></canvas></div>
+      <div class="stage d41-sub"><span class="cap l">拡大：グラフの四角の中（点 A のまわり）</span><canvas aria-label="点 A のまわりを拡大したグラフ"></canvas></div>
+      <div class="ratio-table-wrap"><table class="ratio-table d41-drop-table">
+        <thead><tr><th>$\red{h}$（秒）</th><th>$1$</th><th>$0.5$</th><th>$0.1$</th><th>$0.01$</th><th>$0.001$</th><th>$\to0$</th></tr></thead>
+        <tbody><tr><th>平均の速さ（m/秒）</th><td data-r="c0">?</td><td data-r="c1">?</td><td data-r="c2">?</td><td data-r="c3">?</td><td data-r="c4">?</td><td data-r="c5">?</td></tr></tbody>
+      </table></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">落ちた距離</span><span class="tex" data-r="dx"></span></div>
+          <div class="row"><span class="k">平均の速さ</span><span class="tex big" data-r="avg"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      表のとおり、$\red{h}$ を小さくすると、平均の速さは $35,\ 32.5,\ 30.5,\ 30.05,\ 30.005$ と $30$ に近づいていきます。式で書くと
+    </p>
+    <div class="eq-box">$$\frac{x(3+\red{h})-x(3)}{\red{h}}=\frac{5(3+\red{h})^2-45}{\red{h}}=\frac{30\red{h}+5\red{h}^2}{\red{h}}=30+5\red{h}$$</div>
+    <p>
+      なので、$\red{h}$ を $0$ に近づけると $5\red{h}$ が $0$ に近づき、平均の速さは $30$ に近づきます。よって、<b>3 秒後の瞬間の速さは $30$ m/秒</b>（時速 108 km）です。
+      グラフでは、点 $\mathrm{B}$ が点 $\mathrm{A}$ に近づくと、<span class="t-red">割線</span>が点 $\mathrm{A}$ での<span class="t-teal">接線</span>に重なっていきます。拡大図で見ると、$\red{h}$ が小さいとき $\mathrm{A}$ から $\mathrm{B}$ までの曲線は<b>ほとんどまっすぐ</b>で、その傾きが瞬間の速さです。
+    </p>
+
+    <h2 class="h-sub"><span class="tag">(5)</span>虫めがねで曲線を拡大する</h2>
 
     <p>
       なぜ、割線は「まっすぐな」接線に近づくのでしょう。地球は丸いのに、足もとの地面は平らに見えます。
@@ -232,7 +289,7 @@
       <p class="key-note">「拡大すると直線」だから、曲線の計算をその点の近くでは直線（接線）の計算でおきかえられる（4.7節の近似）。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(5)</span>自分の指の動きを微分する</h2>
+    <h2 class="h-sub"><span class="tag">(6)</span>自分の指の動きを微分する</h2>
 
     <p>
       今度は、あなたの指（PC ならマウス）の動きの速さを計算してみましょう。
@@ -313,7 +370,7 @@
       </tbody></table></div>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：接線を当てろ</h2>
+    <h2 class="h-sub"><span class="tag">(7)</span>チャレンジ：接線を当てろ</h2>
 
     <p>
       曲線の上の点 $\mathrm{P}$ を通る直線の傾き $\violet{m}$ をスライダーで決めて、<span class="t-teal">接線</span>にぴったり重ねましょう。
@@ -375,10 +432,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611110404"></script>
-<script src="../assets/plot.js?v=202611110404"></script>
-<script src="../assets/game.js?v=202611110404"></script>
-<script src="js/diff-common.js?v=202611110404"></script>
-<script src="js/4-1.js?v=202611110404"></script>
+<script src="../assets/common.js?v=202611110421"></script>
+<script src="../assets/plot.js?v=202611110421"></script>
+<script src="../assets/game.js?v=202611110421"></script>
+<script src="js/diff-common.js?v=202611110421"></script>
+<script src="js/4-1.js?v=202611110421"></script>
 </body>
 </html>

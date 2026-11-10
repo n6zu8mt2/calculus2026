@@ -389,74 +389,7 @@
   }
 
   /* ==========================================================
-     4.2(6) 例題：自由落下とグラフの傾き
-     ========================================================== */
-  function initFall() {
-    const root = $id('w-fall');
-    const X = (t) => 5 * t * t, A = 3;
-    const HS = [1, 0.5, 0.1, 0.01, 0.001];
-    const st = { h: 1, drop: false, tan: false, seen: {} };
-    const plot = new Plot(root.querySelector('canvas'), { xmin: -0.45, xmax: 5.4, ymin: -12, ymax: 138, ratio: [0.85, 0.56] });
-    const ctl = root.querySelector('.controls');
-    const sh = slider(ctl, { tex: '\\red{h}', min: 0.01, max: 2, step: 0.01, value: 1, color: 'accent', aria: '時間の幅 h', fmt: (v) => (st.h < 0.01 ? String(st.h) : num(v, 2)) });
-    const hsTex = (h) => String(h);
-    const avg = (h) => (X(A + h) - X(A)) / h;
-    const avgStr = (h) => String(+avg(h).toFixed(6));
-    const chips = chipRow(R(root, 'hs'), HS.map((h) => ({ tex: hsTex(h) })), 0, (it, i) => setH(HS[i], i));
-    function setH(h, i) {
-      st.h = h; sh.set(Math.max(0.01, h));
-      if (i != null) st.seen[i] = true;
-      chips.forEach((b, j) => b.setAttribute('aria-pressed', String(HS[j] === h)));
-      update();
-    }
-    sh.on((v) => { const i = HS.indexOf(v); setH(v, i >= 0 ? i : null); });
-    R(root, 'drop').addEventListener('change', (e) => { st.drop = e.target.checked; plot.invalidate(); });
-    R(root, 'tan').addEventListener('change', (e) => { st.tan = e.target.checked; update(); });
-    st.seen[0] = true;
-    function update() {
-      const h = st.h, b = A + h, xb = X(b), hs = String(+h.toFixed(3));
-      HS.forEach((v, i) => {
-        const td = R(root, 'c' + i);
-        const val = st.seen[i] ? '$' + avgStr(v) + '$' : '?';
-        if (td._v !== val) { td._v = val; setHTML(td, val); }
-        td.classList.toggle('on', v === h);
-      });
-      tex(root, 'pts', '\\mathrm{A}(3,\\ 45),\\quad \\mathrm{B}(' + String(+(3 + h).toFixed(3)) + ',\\ ' + fmt(xb, 6) + ')');
-      tex(root, 'avg', '\\begin{aligned}&\\dfrac{x(3+\\red{h})-x(3)}{\\red{h}}=\\dfrac{' + fmt(xb, 6) + '-45}{' + hs + '}\\\\&=\\red{' + avgStr(h) + '}\\quad(=30+5\\red{h})\\end{aligned}');
-      tex(root, 'tl', st.tan ? '\\begin{aligned}&\\text{傾き }\\teal{30}\\text{ なので }x-45=30(t-3)\\\\&\\text{つまり }\\teal{x=30t-45}\\end{aligned}' : '\\text{「A での接線」をオンにすると表示}');
-      plot.invalidate();
-    }
-    plot.draw = function (g) {
-      const c = g.c, h = st.h;
-      g.grid({ stepX: 1, stepY: 20, labels: false, xlabel: 't', ylabel: 'x' });
-      for (let t = 1; t <= 5; t++) g.texPx(String(t), g.X(t), g.Y(0) + 4, { align: 'center', valign: 'top', size: 12, color: c.muted });
-      for (let y = 20; y <= 120; y += 20) g.texPx(String(y), g.X(0) - 5, g.Y(y), { align: 'right', size: 12, color: c.muted });
-      g.texPx('\\mathrm{O}', g.X(0) - 5, g.Y(0) + 4, { align: 'right', valign: 'top', size: 12, color: c.muted });
-      if (st.drop) {
-        for (let t = 1; t <= 5; t++) {
-          g.line(t - 1, X(t - 1), t, X(t - 1), { color: c.violet, width: 1.2, dash: [3, 3] });
-          g.line(t, X(t - 1), t, X(t), { color: c.violet, width: 3 });
-          g.tex(String(X(t) - X(t - 1)), t, (X(t) + X(t - 1)) / 2, { color: c.violet, size: 13, align: 'left', dx: 6 });
-        }
-      }
-      D.curve(g, X, { x0: 0, x1: 5, color: c.primary, width: 3.5 });
-      g.line(A, 0, A, X(A), { color: c.muted, width: 1, dash: [3, 4] });
-      if (st.tan) D.tangent(g, X, A, { df: (t) => 10 * t, width: 2.6, point: false });
-      D.secant(g, X, A, h, { width: 2.4 });
-      const ms = (X(A + h) - X(A)) / h;
-      g.tex('\\text{割線 AB}', 1.75, X(A) + ms * (1.75 - A), { color: c.accent, size: 13, align: 'left', dx: 8, dy: 10 });
-      if (st.tan) g.tex('\\text{接線}', 2.05, X(A) + 30 * (2.05 - A), { color: c.teal, size: 13, align: 'right', dx: -8, dy: -8 });
-      g.dot(A, X(A), { r: 6, color: c.accent });
-      g.tex('\\mathrm{A}', A, X(A), { size: 15, align: 'right', dx: -8, dy: -10 });
-      if (h >= 0.15) g.tex('\\mathrm{B}', A + h, X(A + h), { size: 15, align: 'right', dx: -8, dy: -10 });
-      g.tex('x=5t^2', 4.9, X(4.9), { color: c.primary, size: 15, align: 'right', dx: -14, dy: 4 });
-      if (h < 0.15) g.texPx('\\text{A と B がほぼ重なる（割線 ≒ 接線）}', g.X(0) + 30, 8, { align: 'left', valign: 'top', size: 12, color: c.muted });
-    };
-    update();
-  }
-
-  /* ==========================================================
-     4.2(8) チャレンジ：傾きのグラフを描け
+     4.2(7) チャレンジ：傾きのグラフを描け
      ========================================================== */
   const KANA = ['ア', 'イ', 'ウ', 'エ'];
   const SLOPE_STAGES = [
@@ -650,7 +583,6 @@
     [initDeriv, 'w-deriv'],
     [initTanLine, 'w-tanline'],
     [initEase, 'w-ease'],
-    [initFall, 'w-fall'],
     [initGameSlope, 'w-game-slope'],
     [initQuizFigs, 'check'],
   ]);

@@ -172,7 +172,186 @@
   }
 
   /* ==========================================================
-     4.1(4) 虫めがね：拡大するとまっすぐに見える
+     4.1(4) ボールを落とす：x = 5t²（x は下向き）
+       1枚の図の左にボール、右にグラフ。縦の座標 v = −x（下ほど x が大きい）で、
+       ボールとグラフの点が同じ高さに並ぶ。
+     ========================================================== */
+  function initDrop() {
+    const root = $id('w-drop'), cvs = root.querySelectorAll('canvas');
+    const XF = (t) => 5 * t * t, A = 3;
+    const HS = [1, 0.5, 0.1, 0.01, 0.001];
+    const S_MIN = -3, S_MAX = Math.log10(2);
+    const st = { s: 0, t: 0, drop: false, shrink: false, strobe: false, tan: false, seen: {} };
+    const main = new Plot(cvs[0], { xmin: -2.75, xmax: 5.55, ymin: -141, ymax: 13, ratio: [1.2, 0.62] });
+    const zoom = new Plot(cvs[1], { xmin: 2, xmax: 4, ymin: -100, ymax: -20, ratio: [0.75, 0.42] });
+    // h = 10^s。きりのよい値の近くではその値にそろえ、いちばん小さいところでは 0.001 ちょうど
+    const hOf = (s) => {
+      if (s <= S_MIN + 0.03) return 0.001;
+      for (const q of HS) if (Math.abs(s - Math.log10(q)) < 0.03) return q;
+      return +Math.pow(10, s).toPrecision(2);
+    };
+    const H = () => hOf(st.s);
+    const ctl = root.querySelector('.controls');
+    const sh = slider(ctl, { tex: '\\red{h}', min: S_MIN, max: S_MAX, step: 0.01, value: 0, color: 'accent', aria: '時間の幅 h（10 の何乗か）',
+      fmt: () => dec(H(), 4) + ' 秒' });
+    const sT = slider(ctl, { tex: 't', min: 0, max: 5, step: 0.05, value: 0, color: 'primary', aria: 'ボールの時刻 t（秒）', fmt: (v) => v.toFixed(2) + ' 秒' });
+    const chipEls = HS.map(function (q) {
+      const b = el('button', 'chip'); b.type = 'button'; setTex(b, 'h=' + q);
+      b.addEventListener('click', () => { stopShrink(); setS(Math.log10(q)); });
+      R(root, 'hs').append(b);
+      return b;
+    });
+    function setS(s) { st.s = clamp(s, S_MIN, S_MAX); const i = HS.indexOf(H()); if (i >= 0) st.seen[i] = true; update(); }
+    sh.on((v) => { stopShrink(); setS(v); });
+    sT.on((v) => { stopDrop(); st.t = v; update(); });
+    R(root, 'strobe').addEventListener('change', (e) => { st.strobe = e.target.checked; update(); });
+    R(root, 'tan').addEventListener('change', (e) => { st.tan = e.target.checked; update(); });
+    const bDrop = R(root, 'drop'), bShr = R(root, 'shrink');
+    const showDrop = () => { bDrop.textContent = st.drop ? '⏸ 止める' : '▶ 落とす'; };
+    const showShr = () => { bShr.innerHTML = st.shrink ? '⏸ 止める' : '▶ <i>h</i> を 0 に近づける'; };
+    const stopDrop = () => { if (st.drop) { st.drop = false; showDrop(); } };
+    const stopShrink = () => { if (st.shrink) { st.shrink = false; showShr(); } };
+    const anim = L.animate(root, function (dt) {
+      let on = false;
+      if (st.drop) {
+        st.t = Math.min(5, st.t + dt);
+        if (st.t >= 5) { st.drop = false; showDrop(); } else on = true;
+      }
+      if (st.shrink) {
+        const prev = st.s;
+        st.s = Math.max(S_MIN, st.s - dt * 0.8);
+        HS.forEach((q, i) => { const k = Math.log10(q); if (prev >= k - 0.031 && st.s <= k + 0.031) st.seen[i] = true; });
+        if (st.s <= S_MIN) { st.s = S_MIN; st.seen[4] = true; st.shrink = false; showShr(); } else on = true;
+      }
+      update();
+      return on;
+    });
+    bDrop.addEventListener('click', () => { st.drop = !st.drop; if (st.drop && st.t >= 4.99) st.t = 0; showDrop(); if (st.drop) anim.kick(); });
+    bShr.addEventListener('click', () => { st.shrink = !st.shrink; if (st.shrink && st.s <= S_MIN + 0.001) st.s = 0; showShr(); if (st.shrink) anim.kick(); });
+    showDrop(); showShr();
+    st.seen[0] = true;
+
+    // 拡大図の範囲：A と B が入り、縦横の見た目の比がほぼ一定
+    function zoomBox(h) {
+      const t0 = A - 0.6 * h, t1 = A + 1.6 * h;
+      const x0 = XF(t0), x1 = XF(t1), pad = 0.06 * (x1 - x0);
+      return { t0, t1, v0: -(x1 + pad), v1: -(x0 - pad) };
+    }
+    function update() {
+      const h = H(), xa = XF(A), xb = XF(A + h), dx = xb - xa, v = dx / h;
+      const z = zoomBox(h);
+      zoom.setView({ xmin: z.t0, xmax: z.t1, ymin: z.v0, ymax: z.v1 });   // 拡大図の範囲は h で変わる
+      sh.set(st.s); sT.set(st.t.toFixed(2));
+      chipEls.forEach((b, i) => b.setAttribute('aria-pressed', String(HS[i] === h)));
+      HS.forEach((q, i) => {
+        const td = R(root, 'c' + i), val = st.seen[i] ? '$' + dec((XF(A + q) - xa) / q, 4) + '$' : '?';
+        if (td._v !== val) { td._v = val; td.innerHTML = val; typeset(td); }
+        td.classList.toggle('on', q === h);
+      });
+      const lim = R(root, 'c5'), lv = st.seen[4] ? '$\\teal{30}$' : '?';
+      if (lim._v !== lv) { lim._v = lv; lim.innerHTML = lv; typeset(lim); }
+      tex(root, 'dx', '\\red{\\Delta x}=x(' + dec(A + h, 4) + ')-x(3)=' + dec(xb, 6) + '-45=' + dec(dx, 6) + '\\ \\text{m}');
+      tex(root, 'avg', '\\dfrac{\\red{\\Delta x}}{\\red{h}}=\\dfrac{' + dec(dx, 6) + '}{' + dec(h, 4) + '}=\\red{' + dec(v, 4) + '}\\ \\text{m/秒}');
+      let s;
+      if (h >= 0.5) s = '$\\mathrm{A}$ と $\\mathrm{B}$ が離れているので、割線（赤）は接線（緑の点線）からずれています。平均の速さは $30$ より大きい（後半ほど速く落ちるから）。';
+      else if (h > 0.005) s = '$\\mathrm{B}$ が $\\mathrm{A}$ に近づき、割線が接線に重なってきました。平均の速さは $30+5h$ で、$30$ に近づいています。';
+      else s = '$h=0.001$ 秒では、$\\mathrm{A}$ と $\\mathrm{B}$ はほとんど同じ点。拡大図でも曲線はまっすぐに見え、平均の速さは $30.005$。$h$ を $0$ に近づけた行き先 <b>$30$ m/秒</b> が、3 秒後の瞬間の速さです。';
+      if (!st.tan) s += '（「A での接線」をオンにすると、緑の点線で接線が出ます）';
+      const how = R(root, 'how');
+      if (how._v !== s) { how._v = s; how.innerHTML = s; typeset(how); }
+      main.invalidate(); zoom.invalidate();
+    }
+
+    main.draw = function (g) {
+      const c = g.c, ctx = g.ctx, h = H(), V = (t) => -XF(t);
+      const AX = -2.15, BX = -1.15;                       // 左：x 軸とボールの列
+      // 横の目盛り線（左右共通の高さ）
+      for (let x = 20; x <= 120; x += 20) {
+        g.line(AX, -x, 5.4, -x, { color: c.grid, width: 1 });
+        g.texPx(String(x), g.X(AX) - 6, g.Y(-x), { align: 'right', size: 12, color: c.muted });
+      }
+      for (let t = 1; t <= 5; t++) g.line(t, 0, t, -135, { color: c.grid, width: 1 });
+      // 地面（x = 130）
+      ctx.save(); ctx.fillStyle = c.brown; ctx.globalAlpha = 0.25;
+      ctx.fillRect(g.X(-2.75), g.Y(-130), g.X(-0.35) - g.X(-2.75), g.Y(-141) - g.Y(-130));
+      ctx.restore();
+      g.line(-2.75, -130, -0.35, -130, { color: c.brown, width: 2.5 });
+      g.texPx(g.w < 520 ? '\\text{地面}' : '\\text{地面 }(x=130)', g.X(-0.4), g.Y(-130) + 3, { align: 'right', valign: 'top', size: 12, color: c.brown });
+      // 離した位置の台
+      g.line(-1.65, 0, -0.65, 0, { color: c.text, width: 3 });
+      g.texPx('\\mathrm{O}', g.X(AX) - 6, g.Y(0), { align: 'right', size: 12, color: c.muted });
+      // x 軸（下向き）
+      g.arrow(AX, 6, AX, -136, { color: c.axis, width: 1.8, head: 10 });
+      g.texPx('x', g.X(AX) + 6, g.Y(-136), { align: 'left', valign: 'bottom', size: 14, color: c.text });
+      g.texPx('\\text{下向きが正}', g.X(AX) + 4, g.Y(-118), { align: 'left', size: 11, color: c.muted });
+      // グラフの軸：t は右向き（上の辺）、x は下向き
+      g.arrow(0, 0, 5.45, 0, { color: c.axis, width: 1.5, head: 9 });
+      g.arrow(0, 6, 0, -136, { color: c.axis, width: 1.5, head: 9 });
+      g.texPx('t\\ (\\text{秒})', g.X(5.45), g.Y(0) - 4, { align: 'right', valign: 'bottom', size: 13, color: c.text });
+      g.texPx('x\\ (\\mathrm{m})', g.X(0) + 6, g.Y(-136), { align: 'left', valign: 'bottom', size: 13, color: c.text });
+      for (let t = 1; t <= 5; t++) g.texPx(String(t), g.X(t) + 3, g.Y(0) + 3, { align: 'left', valign: 'top', size: 12, color: c.muted });
+      // 1 秒ごとの位置
+      if (st.strobe) {
+        for (let t = 0; t <= 5; t++) {
+          g.dot(BX, V(t), { r: 6, color: c.violet, ring: true, lw: 2 });
+          g.line(BX, V(t), t, V(t), { color: c.violet, width: 1, dash: [2, 4], alpha: 0.7 });
+          g.dot(t, V(t), { r: 3.5, color: c.violet, stroke: false });
+          if (t) {
+            g.line(BX - 0.42, V(t - 1), BX - 0.42, V(t), { color: c.violet, width: 4, alpha: t % 2 ? 1 : 0.45 });
+            g.line(BX - 0.56, V(t), BX - 0.28, V(t), { color: c.violet, width: 1.5 });
+            g.texPx(String(XF(t) - XF(t - 1)), g.X(BX - 0.5), g.Y((V(t) + V(t - 1)) / 2), { align: 'right', size: 12, color: c.violet });
+          }
+        }
+      }
+      // グラフ
+      D.curve(g, V, { x0: 0, x1: 5.1, color: c.primary, width: 3.2 });
+      g.tex('x=5t^2', 1.7, V(1.7), { color: c.primary, size: 15, align: 'right', dx: -8, dy: 14 });
+      if (st.tan) D.tangent(g, V, A, { df: (t) => -10 * t, width: 2, dash: [7, 5], point: false });
+      D.secant(g, V, A, h, { width: 2.4, points: false, rise: false });
+      // A, B とボールをつなぐ点線
+      const ya = V(A), yb = V(A + h);
+      g.line(BX, ya, A, ya, { color: c.accent, width: 1.2, dash: [4, 4] });
+      g.line(BX, yb, A + h, yb, { color: c.accent, width: 1.2, dash: [4, 4] });
+      // Δx の矢印（左）
+      const ax = BX + 0.45;
+      if (g.Y(yb) - g.Y(ya) > 14) { g.arrow(ax, ya, ax, yb, { color: c.accent, width: 2.2, head: 8 }); }
+      else g.line(ax, ya, ax, yb, { color: c.accent, width: 3 });
+      if (g.Y(yb) - g.Y(ya) > 14) g.texPx('\\red{\\Delta x}', g.X(ax) + 5, (g.Y(ya) + g.Y(yb)) / 2, { align: 'left', size: 13 });
+      // A, B（グラフとボール）
+      [[A, ya, 'A', '3'], [A + h, yb, 'B', '3+h']].forEach(function (p, i) {
+        if (i && g.Y(yb) - g.Y(ya) < 12) return;
+        g.dot(BX, p[1], { r: 7, color: c.accent, ring: true });
+        g.dot(p[0], p[1], { r: 5.5, color: c.accent });
+        g.tex('\\mathrm{' + p[2] + '}', p[0], p[1], { size: 14, align: 'left', dx: 8, dy: i ? 10 : -10, color: c.accent });
+      });
+      // 拡大の四角
+      const z = zoomBox(h);
+      if (g.X(z.t1) - g.X(z.t0) > 6) g.poly([[z.t0, z.v0], [z.t1, z.v0], [z.t1, z.v1], [z.t0, z.v1], [z.t0, z.v0]], { color: c.text, width: 1.2 });
+      // いまのボール
+      const yt = V(st.t);
+      g.line(BX, yt, st.t, yt, { color: c.primary, width: 1.2, dash: [3, 4], alpha: 0.8 });
+      g.dot(st.t, yt, { r: 5, color: c.primary });
+      g.dot(BX, yt, { r: 9, color: c.primary });
+      g.texPx('t=' + st.t.toFixed(1), g.X(BX) + 12, g.Y(yt) - 6, { align: 'left', valign: 'bottom', size: 12, color: c.primary });
+    };
+
+    zoom.draw = function (g) {
+      const c = g.c, h = H(), V = (t) => -XF(t), z = zoomBox(h);
+      g.grid({ labels: false, axes: false, stepX: Math.pow(10, Math.floor(Math.log10(z.t1 - z.t0))), stepY: Math.pow(10, Math.floor(Math.log10(z.v1 - z.v0))) });
+      D.curve(g, V, { x0: g.xmin, x1: g.xmax, color: c.primary, width: 3 });
+      if (st.tan) D.tangent(g, V, A, { df: (t) => -10 * t, width: 2, dash: [7, 5], point: false });
+      D.secant(g, V, A, h, { width: 2.4, points: false, rise: false });
+      g.dot(A, V(A), { r: 6, color: c.accent });
+      g.dot(A + h, V(A + h), { r: 6, color: c.accent });
+      g.tex('\\mathrm{A}', A, V(A), { size: 14, align: 'right', dx: -8, dy: -8, color: c.accent });
+      g.tex('\\mathrm{B}', A + h, V(A + h), { size: 14, align: 'left', dx: 8, dy: 8, color: c.accent });
+      g.texPx('\\text{横幅 }' + dec(z.t1 - z.t0, 4) + '\\text{ 秒}', g.w - 8, g.h - 6, { align: 'right', valign: 'bottom', size: 12, color: c.muted });
+    };
+    update();
+  }
+
+  /* ==========================================================
+     4.1(5) 虫めがね：拡大するとまっすぐに見える
      ========================================================== */
   const MAG_F = [
     { name: 'x^2', f: (x) => x * x, df: (x) => 2 * x, a: 1, view: [-2.2, 2.2, -0.9, 4.4], amin: -1.6, amax: 1.6, lab: [1.5, 4.0, 'right'] },
@@ -274,7 +453,7 @@
   }
 
   /* ==========================================================
-     4.1(5) 自分の指の動きを微分する
+     4.1(6) 自分の指の動きを微分する
      ========================================================== */
   const F_DTS = [1 / 60, 0.03, 0.05, 0.1, 0.2, 0.3, 0.5];
   function initFinger() {
@@ -423,7 +602,7 @@
   }
 
   /* ==========================================================
-     4.1(6) チャレンジ：接線を当てろ
+     4.1(7) チャレンジ：接線を当てろ
      ========================================================== */
   const P3 = Math.PI / 3;
   const TG_STAGES = [
@@ -562,6 +741,7 @@
   D.boot([
     [initAvg, 'w-avg'],
     [initShrink, 'w-shrink'],
+    [initDrop, 'w-drop'],
     [initMag, 'w-mag'],
     [initFinger, 'w-finger'],
     [initMario, 'w-mario'],
