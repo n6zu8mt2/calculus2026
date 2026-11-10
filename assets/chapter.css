@@ -982,7 +982,6 @@ table.d410-wtbl .d410-ch { font-size: 13px; }
 
 
 /* 4.1(4) ボールを落とす */
-.stage.d41-sub { border-top: 1px solid var(--border); }
 table.d41-drop-table th, table.d41-drop-table td { padding: 6px 8px; white-space: nowrap; }
 table.d41-drop-table td.on { background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 800; }
 #w-drop .panel.two { grid-template-columns: minmax(0, 1fr); }

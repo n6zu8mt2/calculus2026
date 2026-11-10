@@ -183,7 +183,6 @@
     const S_MIN = -3, S_MAX = Math.log10(2);
     const st = { s: 0, t: 0, drop: false, shrink: false, strobe: false, tan: false, seen: {} };
     const main = new Plot(cvs[0], { xmin: -2.75, xmax: 5.55, ymin: -141, ymax: 13, ratio: [1.2, 0.62] });
-    const zoom = new Plot(cvs[1], { xmin: 2, xmax: 4, ymin: -100, ymax: -20, ratio: [0.75, 0.42] });
     // h = 10^s。きりのよい値の近くではその値にそろえ、いちばん小さいところでは 0.001 ちょうど
     const hOf = (s) => {
       if (s <= S_MIN + 0.03) return 0.001;
@@ -231,16 +230,8 @@
     showDrop(); showShr();
     st.seen[0] = true;
 
-    // 拡大図の範囲：A と B が入り、縦横の見た目の比がほぼ一定
-    function zoomBox(h) {
-      const t0 = A - 0.6 * h, t1 = A + 1.6 * h;
-      const x0 = XF(t0), x1 = XF(t1), pad = 0.06 * (x1 - x0);
-      return { t0, t1, v0: -(x1 + pad), v1: -(x0 - pad) };
-    }
     function update() {
       const h = H(), xa = XF(A), xb = XF(A + h), dx = xb - xa, v = dx / h;
-      const z = zoomBox(h);
-      zoom.setView({ xmin: z.t0, xmax: z.t1, ymin: z.v0, ymax: z.v1 });   // 拡大図の範囲は h で変わる
       sh.set(st.s); sT.set(st.t.toFixed(2));
       chipEls.forEach((b, i) => b.setAttribute('aria-pressed', String(HS[i] === h)));
       HS.forEach((q, i) => {
@@ -255,11 +246,11 @@
       let s;
       if (h >= 0.5) s = '$\\mathrm{A}$ と $\\mathrm{B}$ が離れているので、割線（赤）は接線（緑の点線）からずれています。平均の速さは $30$ より大きい（後半ほど速く落ちるから）。';
       else if (h > 0.005) s = '$\\mathrm{B}$ が $\\mathrm{A}$ に近づき、割線が接線に重なってきました。平均の速さは $30+5h$ で、$30$ に近づいています。';
-      else s = '$h=0.001$ 秒では、$\\mathrm{A}$ と $\\mathrm{B}$ はほとんど同じ点。拡大図でも曲線はまっすぐに見え、平均の速さは $30.005$。$h$ を $0$ に近づけた行き先 <b>$30$ m/秒</b> が、3 秒後の瞬間の速さです。';
+      else s = '$h=0.001$ 秒では、$\\mathrm{A}$ と $\\mathrm{B}$ はほとんど同じ点。割線は接線とほぼ重なり、平均の速さは $30.005$。$h$ を $0$ に近づけた行き先 <b>$30$ m/秒</b> が、3 秒後の瞬間の速さです。';
       if (!st.tan) s += '（「A での接線」をオンにすると、緑の点線で接線が出ます）';
       const how = R(root, 'how');
       if (how._v !== s) { how._v = s; how.innerHTML = s; typeset(how); }
-      main.invalidate(); zoom.invalidate();
+      main.invalidate();
     }
 
     main.draw = function (g) {
@@ -324,9 +315,6 @@
         g.dot(p[0], p[1], { r: 5.5, color: c.accent });
         g.tex('\\mathrm{' + p[2] + '}', p[0], p[1], { size: 14, align: 'left', dx: 8, dy: i ? 10 : -10, color: c.accent });
       });
-      // 拡大の四角
-      const z = zoomBox(h);
-      if (g.X(z.t1) - g.X(z.t0) > 6) g.poly([[z.t0, z.v0], [z.t1, z.v0], [z.t1, z.v1], [z.t0, z.v1], [z.t0, z.v0]], { color: c.text, width: 1.2 });
       // いまのボール
       const yt = V(st.t);
       g.line(BX, yt, st.t, yt, { color: c.primary, width: 1.2, dash: [3, 4], alpha: 0.8 });
@@ -335,18 +323,6 @@
       g.texPx('t=' + st.t.toFixed(1), g.X(BX) + 12, g.Y(yt) - 6, { align: 'left', valign: 'bottom', size: 12, color: c.primary });
     };
 
-    zoom.draw = function (g) {
-      const c = g.c, h = H(), V = (t) => -XF(t), z = zoomBox(h);
-      g.grid({ labels: false, axes: false, stepX: Math.pow(10, Math.floor(Math.log10(z.t1 - z.t0))), stepY: Math.pow(10, Math.floor(Math.log10(z.v1 - z.v0))) });
-      D.curve(g, V, { x0: g.xmin, x1: g.xmax, color: c.primary, width: 3 });
-      if (st.tan) D.tangent(g, V, A, { df: (t) => -10 * t, width: 2, dash: [7, 5], point: false });
-      D.secant(g, V, A, h, { width: 2.4, points: false, rise: false });
-      g.dot(A, V(A), { r: 6, color: c.accent });
-      g.dot(A + h, V(A + h), { r: 6, color: c.accent });
-      g.tex('\\mathrm{A}', A, V(A), { size: 14, align: 'right', dx: -8, dy: -8, color: c.accent });
-      g.tex('\\mathrm{B}', A + h, V(A + h), { size: 14, align: 'left', dx: 8, dy: 8, color: c.accent });
-      g.texPx('\\text{横幅 }' + dec(z.t1 - z.t0, 4) + '\\text{ 秒}', g.w - 8, g.h - 6, { align: 'right', valign: 'bottom', size: 12, color: c.muted });
-    };
     update();
   }
 

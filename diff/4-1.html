@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611110421"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611110421">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611110421">
+<script src="../assets/mathjax.js?v=202611110426"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611110426">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611110426">
 </head>
 <body class="chapter ch1 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -205,7 +205,7 @@
       <li><b>▶ 落とす</b>：ボールが落ちる様子と、グラフの上を点が進む様子を、同時に見る（本当の時間と同じ速さ）。</li>
       <li><b>1 秒ごとの位置</b>：1 秒ごとに落ちる距離が $5,\ 15,\ 25,\ 35,\ 45$ m と、<b>10 m ずつ増えていく</b>（だんだん速くなる）ことを確かめる。</li>
       <li><b>$t=3$ 秒から $3+\red{h}$ 秒までの平均の速さ</b>：$\red{h}$ 秒の間に落ちた距離 $\red{\Delta x}$（左の図の赤い矢印）を $\red{h}$ で割る。グラフでは、点 $\mathrm{A}$（3 秒）と点 $\mathrm{B}$（$3+h$ 秒）を結ぶ<span class="t-red">割線</span>の傾きです。$\red{h}$ は (3) の $\Delta t$ と同じ「時間の幅」です（4.2節からは $h$ と書きます）。</li>
-      <li><b>▶ $\red{h}$ を $0$ に近づける</b>：$\red{h}$ を $1$ から $0.001$ まで小さくしていく。点 $\mathrm{B}$ が $\mathrm{A}$ に近づき、平均の速さが $30$ m/秒に近づく様子を、表と拡大図で見る。</li>
+      <li><b>▶ $\red{h}$ を $0$ に近づける</b>：$\red{h}$ を $1$ から $0.001$ まで小さくしていく。点 $\mathrm{B}$ が $\mathrm{A}$ に近づき、割線が接線に重なり、平均の速さが $30$ m/秒に近づく様子を、図と表で見る。</li>
     </ul>
 
     <div class="widget" id="w-drop">
@@ -222,7 +222,6 @@
         </div>
       </div>
       <div class="stage"><span class="cap l">左：落ちるボール　右：位置のグラフ</span><canvas aria-label="落ちるボールの様子と、x = 5t² のグラフ（x は下向き）"></canvas></div>
-      <div class="stage d41-sub"><span class="cap l">拡大：グラフの四角の中（点 A のまわり）</span><canvas aria-label="点 A のまわりを拡大したグラフ"></canvas></div>
       <div class="ratio-table-wrap"><table class="ratio-table d41-drop-table">
         <thead><tr><th>$\red{h}$（秒）</th><th>$1$</th><th>$0.5$</th><th>$0.1$</th><th>$0.01$</th><th>$0.001$</th><th>$\to0$</th></tr></thead>
         <tbody><tr><th>平均の速さ（m/秒）</th><td data-r="c0">?</td><td data-r="c1">?</td><td data-r="c2">?</td><td data-r="c3">?</td><td data-r="c4">?</td><td data-r="c5">?</td></tr></tbody>
@@ -243,8 +242,19 @@
     <div class="eq-box">$$\frac{x(3+\red{h})-x(3)}{\red{h}}=\frac{5(3+\red{h})^2-45}{\red{h}}=\frac{30\red{h}+5\red{h}^2}{\red{h}}=30+5\red{h}$$</div>
     <p>
       なので、$\red{h}$ を $0$ に近づけると $5\red{h}$ が $0$ に近づき、平均の速さは $30$ に近づきます。よって、<b>3 秒後の瞬間の速さは $30$ m/秒</b>（時速 108 km）です。
-      グラフでは、点 $\mathrm{B}$ が点 $\mathrm{A}$ に近づくと、<span class="t-red">割線</span>が点 $\mathrm{A}$ での<span class="t-teal">接線</span>に重なっていきます。拡大図で見ると、$\red{h}$ が小さいとき $\mathrm{A}$ から $\mathrm{B}$ までの曲線は<b>ほとんどまっすぐ</b>で、その傾きが瞬間の速さです。
+      グラフでは、点 $\mathrm{B}$ が点 $\mathrm{A}$ に近づくと、<span class="t-red">割線</span>が点 $\mathrm{A}$ での<span class="t-teal">接線</span>に重なっていきます。瞬間の速さは、点 $\mathrm{A}$ での<b>接線の傾き</b>です。
     </p>
+    <div class="callout point">
+      <div class="ttl">補足：本当の重力加速度と、速度・加速度</div>
+      <ul>
+        <li>地球の重力加速度は $g\approx9.8\ \text{m/秒}^2$ です。静かに離した物が $t$ 秒間に落ちる距離は、本当は
+          $x=\dfrac12gt^2=\dfrac12\times9.8\times t^2=4.9t^2$ です。ここでは計算しやすいように $g=10$ として、$x=5t^2$ としました（$4.9t^2$ なら、3 秒後の瞬間の速さは $29.4$ m/秒）。</li>
+        <li>位置 $x(t)$ を時刻 $t$ で<b>1回微分</b>すると<b>速度</b>、もう1回微分（<b>2回微分</b>）すると<b>加速度</b>になります。$x(t)=5t^2$ なら
+          $$\amber{x'(t)=10t}\ \ (\text{速度}),\qquad x''(t)=10\ \ (\text{加速度}=g)$$
+          $t=3$ を入れると $x'(3)=30$ で、上で求めた瞬間の速さと一致します。加速度がいつも $10$ なので、速さは 1 秒ごとに $10$ m/秒ずつ増えます（1 秒ごとに落ちる距離が $10$ m ずつ増えるのも、このため）。</li>
+      </ul>
+      <p class="note-small">微分の計算のしかたは <a href="4-2.html">4.2節</a>、2回微分は <a href="4-7.html">4.7節</a>で学びます。</p>
+    </div>
 
     <h2 class="h-sub"><span class="tag">(5)</span>虫めがねで曲線を拡大する</h2>
 
@@ -432,10 +442,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611110421"></script>
-<script src="../assets/plot.js?v=202611110421"></script>
-<script src="../assets/game.js?v=202611110421"></script>
-<script src="js/diff-common.js?v=202611110421"></script>
-<script src="js/4-1.js?v=202611110421"></script>
+<script src="../assets/common.js?v=202611110426"></script>
+<script src="../assets/plot.js?v=202611110426"></script>
+<script src="../assets/game.js?v=202611110426"></script>
+<script src="js/diff-common.js?v=202611110426"></script>
+<script src="js/4-1.js?v=202611110426"></script>
 </body>
 </html>
