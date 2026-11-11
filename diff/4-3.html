@@ -8,9 +8,9 @@
 <script>
   try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<script src="../assets/mathjax.js?v=202611110426"></script>
-<link rel="stylesheet" href="../assets/style.css?v=202611110426">
-<link rel="stylesheet" href="../assets/chapter.css?v=202611110426">
+<script src="../assets/mathjax.js?v=202611120712"></script>
+<link rel="stylesheet" href="../assets/style.css?v=202611120712">
+<link rel="stylesheet" href="../assets/chapter.css?v=202611120712">
 </head>
 <body class="chapter ch3 calm">
 <header id="site-header" data-root="../" data-current="diff"></header>
@@ -43,10 +43,11 @@
     <div class="goal-ttl">この節のゴール</div>
     <ol>
       <li>$(e^x)'=e^x,\ (\log x)'=\dfrac1x$ をグラフの傾きとして説明できる。</li>
-      <li>$(\sin x)'=\cos x,\ (\cos x)'=-\sin x$ を単位円の点の動きから説明できる。</li>
+      <li>平面の上を動く点の速度ベクトル $\mathrm{P}'(t)=\bigl(x'(t),\ y'(t)\bigr)$ の意味（向き・長さ）を説明できる。</li>
+      <li>$(\sin x)'=\cos x,\ (\cos x)'=-\sin x$ を単位円の点の速度ベクトルから説明できる。</li>
       <li>双曲線関数 $\sinh x,\ \cosh x$ を定義し、微分できる。</li>
     </ol>
-    <div class="goal-meta">図 6つ ・ チャレンジ 5ステージ（タイムアタックつき） ・ 確認問題 4問</div>
+    <div class="goal-meta">図 7つ ・ チャレンジ 5ステージ（タイムアタックつき） ・ 確認問題 4問</div>
   </div>
 
   <p class="prereq">この節で使うこと：<a href="4-2.html">4.2節</a>の 導関数、<a href="../explog/2-6.html">2.6節</a>の ネイピア数 $e$、<a href="../explog/2-4.html">2.4節</a>の 対数、<a href="../trig/3-2.html">3.2節</a>の 弧度法、<a href="../trig/3-5.html">3.5節</a>の 円運動</p>
@@ -178,7 +179,83 @@
       <p class="key-note">例：$(\log_{10}x)'=\dfrac{1}{x\log10}\approx\dfrac{0.434}{x}$、$(3\log x)'=\dfrac{3}{x}$。</p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(3)</span>三角関数の微分</h2>
+    <h2 class="h-sub"><span class="tag">(3)</span>平面の上の動きと速度ベクトル</h2>
+
+    <p>
+      三角関数の微分の前に、その準備として「平面の上を動く点の速度」を考えます。
+      4.1節では、まっすぐな線の上の動き（位置が $x(t)$ の1つだけ）を考えました。
+      ここでは、投げたボールや回る点のように、<b>平面の上を動く点</b> $\mathrm{P}(t)=\bigl(x(t),\ y(t)\bigr)$ を考えます。動いた道すじを、点 $\mathrm{P}$ の<b>軌跡</b>といいます。
+    </p>
+
+    <h3 class="h-mini">ベクトル：向きと長さをもつ矢印</h3>
+    <p>
+      「どちらの向きに、どれだけ」を表す矢印を<b>ベクトル</b>といいます。横に $a$、縦に $b$ 進む矢印を、成分を並べて $(a,\ b)$ と書きます。
+      矢印の長さは、三平方の定理から $\sqrt{a^2+b^2}$ です。例えば $(3,\ 4)$ は、横に $3$、縦に $4$ 進む、長さ $\sqrt{9+16}=5$ の矢印です。
+    </p>
+
+    <h3 class="h-mini">速度ベクトルの定義</h3>
+    <p>4.1節の「平均の速さ → 瞬間の速さ」と同じ手順を、横と縦の両方で行います。</p>
+    <ol>
+      <li><b>$h$ 秒間に動いた矢印</b>：時刻 $t$ の点 $\mathrm{P}$ から、$h$ 秒後の点 $\mathrm{Q}=\mathrm{P}(t+h)$ への矢印は
+        $\red{\bigl(x(t+h)-x(t),\ \ y(t+h)-y(t)\bigr)}$ です。</li>
+      <li><b>1 秒あたりにする</b>：これを $h$ で割った矢印 $\red{\left(\dfrac{x(t+h)-x(t)}{h},\ \dfrac{y(t+h)-y(t)}{h}\right)}$ を、<b>平均の速度</b>といいます。向きは矢印 $\mathrm{PQ}$ と同じです。</li>
+      <li><b>$h$ を $0$ に近づける</b>：それぞれの成分は、横の位置 $x(t)$ と縦の位置 $y(t)$ の瞬間の変化の速さ、つまり微分 $x'(t),\ y'(t)$ に近づきます。</li>
+    </ol>
+    <div class="eq-box eq-hero">$$\teal{\mathrm{P}'(t)}=\bigl(x'(t),\ y'(t)\bigr)$$</div>
+    <p>
+      これを、時刻 $t$ での<b>速度ベクトル</b>（または単に速度）といいます。<b>成分ごとに微分する</b>だけです。
+      例えば、斜めに投げたボールの位置が $\mathrm{P}(t)=(2t,\ 3t-t^2)$ なら、$\mathrm{P}'(t)=(2,\ 3-2t)$ です（横には同じ速さ、縦はだんだん遅くなり、$t=1.5$ で $0$ になってから下向きに）。
+    </p>
+
+    <h3 class="h-mini">速度ベクトルの意味</h3>
+    <ul>
+      <li><b>向き</b>：その瞬間に点が進んでいる向きです。ひもで回していた石の手を離すと、石はその瞬間の速度ベクトルの向きにまっすぐ飛んでいきます。</li>
+      <li><b>長さ＝速さ</b>：短い時間 $h$ の間に進む道のりは、矢印 $\mathrm{PQ}$ の長さとほとんど同じです（曲線は拡大するとまっすぐ、<a href="4-1.html#w-mag">4.1節</a>）。道のりを $h$ で割ったものが速さなので、$h\to0$ とすると
+        $$\text{速さ}=\bigl|\mathrm{P}'(t)\bigr|=\sqrt{x'(t)^2+y'(t)^2}$$
+        です（$|\ |$ はベクトルの長さ）。速く動いているほど、矢印は長くなります。</li>
+      <li><b>軌跡に接する</b>：$h\to0$ で点 $\mathrm{Q}$ は $\mathrm{P}$ に近づくので、直線 $\mathrm{PQ}$（割線）は、軌跡の点 $\mathrm{P}$ での<b>接線</b>に近づきます（4.1節と同じ）。平均の速度は $\mathrm{PQ}$ と同じ向きなので、その行き先の速度ベクトル $\mathrm{P}'(t)$ は、<b>軌跡に接する向き</b>を向きます。</li>
+    </ul>
+    <p>
+      下の図で確かめましょう。<span class="t-red">赤い矢印</span>が平均の速度、<span class="t-teal">緑の矢印</span>が速度ベクトル $\mathrm{P}'(t)$ です。
+      「▶ $h$ を $0$ に近づける」を押すと、点 $\mathrm{Q}$ が $\mathrm{P}$ に近づき、赤い矢印が緑の矢印に重なっていきます。
+      「▶ 動かす」で点を動かすと、緑の矢印はいつも軌跡に接し、速いところでは長く、遅いところでは短くなります。
+    </p>
+
+    <div class="widget" id="w-vel">
+      <div class="widget-head">平均の速度 → 速度ベクトル $\teal{\mathrm{P}'(t)}$ <span class="hint">動きを選ぶ／▶ 動かす／$h$ を小さく</span></div>
+      <div class="panel" style="padding-bottom:0">
+        <div class="btn-row"><span class="lbl-sm">動き</span><div class="chips" data-r="mode"></div></div>
+        <div class="btn-row">
+          <button class="btn primary" type="button" data-r="play">▶ 動かす</button>
+          <button class="btn" type="button" data-r="shrink">▶ <i>h</i> を 0 に近づける</button>
+          <label class="check"><input type="checkbox" data-r="avg" checked>平均の速度（赤）</label>
+        </div>
+      </div>
+      <div class="stage"><canvas aria-label="平面の上を動く点の軌跡と、平均の速度・速度ベクトル"></canvas></div>
+      <div class="panel two">
+        <div class="controls"></div>
+        <div class="readout">
+          <div class="row"><span class="k">位置</span><span class="tex" data-r="pos"></span></div>
+          <div class="row"><span class="k">平均の速度</span><span class="tex" data-r="avgv"></span></div>
+          <div class="row"><span class="k">速度ベクトル</span><span class="tex" data-r="vel"></span></div>
+          <div class="row"><span class="k">速さ（長さ）</span><span class="tex big" data-r="spd"></span></div>
+          <div class="row"><span class="k">見方</span><span class="note-txt" data-r="how"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key"><div class="key-ttl">覚える｜速度ベクトル</div>
+      <p class="key-lead key-big">位置 $\mathrm{P}(t)=\bigl(x(t),\ y(t)\bigr)$ を成分ごとに微分したものが速度</p>
+      $$\mathrm{P}'(t)=\bigl(x'(t),\ y'(t)\bigr),\qquad \text{速さ}=\bigl|\mathrm{P}'(t)\bigr|=\sqrt{x'(t)^2+y'(t)^2}$$
+      <ul>
+        <li>平均の速度 $\dfrac{\mathrm{P}(t+h)-\mathrm{P}(t)}{h}$ で $h\to0$ としたもの</li>
+        <li>向き：その瞬間に進む向き。<b>軌跡に接する</b></li>
+        <li>長さ：その瞬間の<b>速さ</b></li>
+      </ul>
+      <p class="key-note">例：$\mathrm{P}(t)=(2t,\ 3t-t^2)$ なら $\mathrm{P}'(t)=(2,\ 3-2t)$。$t=1.5$（いちばん高い所）で $\mathrm{P}'=(2,\ 0)$：真横向き、速さ $2$。</p>
+    </div>
+
+    <h2 class="h-sub"><span class="tag">(4)</span>三角関数の微分</h2>
 
     <p>
       $\sin t$ のグラフの傾きを、いくつかの点で読んでみましょう。$t=0$ では傾き $1$（3.2節の「小さい角では $\sin t\approx t$」）、山の頂上 $t=\frac{\pi}{2}$ では傾き $0$、$t=\pi$ では傾き $-1$ です。
@@ -189,7 +266,7 @@
     </p>
     <div class="eq-box">$$\bigl(x(t),\ y(t)\bigr)=(\cos t,\ \sin t)$$</div>
     <p>
-      です。この点の<b>速度ベクトル</b>は、横の位置 $x(t)$ と縦の位置 $y(t)$ を、それぞれ時刻 $t$ で微分したもの $\bigl(x'(t),\ y'(t)\bigr)$ です（4.1節：位置の変化の速さ）。一方で、円運動の速度は図形から求められます。
+      です。この点の<b>速度ベクトル</b>は、(3) で見たように、成分ごとに微分したもの $\bigl(x'(t),\ y'(t)\bigr)$ で、<b>長さが速さ</b>、<b>向きは軌跡（円）に接する向き</b>です。一方で、円運動の速度は図形から求められます。
     </p>
     <ul>
       <li><b>速さは 1</b>：弧の長さは（半径）×（角）なので、1 秒に進む道のりは $1\times1=1$。これは角を<b>ラジアン</b>で測ったからです。</li>
@@ -266,7 +343,7 @@
       また、端（$x=\pm r$）では $\sin\omega t=0$ なので速さは $0$、まん中（$x=0$）を通るときがいちばん速い、というばねの動きもこの式から読めます。
     </p>
 
-    <h2 class="h-sub"><span class="tag">(4)</span>双曲線関数</h2>
+    <h2 class="h-sub"><span class="tag">(5)</span>双曲線関数</h2>
 
     <p>
       $e^x$ と $e^{-x}$ を半分ずつ足したり引いたりすると、三角関数によく似た性質をもつ関数ができます。これを<b>双曲線関数</b>といいます。
@@ -381,7 +458,7 @@
       </p>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(5)</span>公式のまとめ</h2>
+    <h2 class="h-sub"><span class="tag">(6)</span>公式のまとめ</h2>
 
     <p>
       ここまでで、よく使う関数の微分の公式がそろいました。下の図で関数を選び、緑の点（接線）を左から右へ動かしてみましょう。
@@ -421,7 +498,7 @@
       </tbody></table></div>
     </div>
 
-    <h2 class="h-sub"><span class="tag">(6)</span>チャレンジ：公式タイムアタック</h2>
+    <h2 class="h-sub"><span class="tag">(7)</span>チャレンジ：公式タイムアタック</h2>
 
     <p>
       出てくる関数の導関数を、4つの中から選びましょう。ステージ1〜4は種類別の 6 問で、<b>まちがい 0 なら★3</b>（2 問までなら★2）。
@@ -498,10 +575,10 @@
 
 <footer class="site-footer">解析学 2026 ／ 第4章 微分 ／ 図はすべてブラウザ上で計算・描画しています</footer>
 
-<script src="../assets/common.js?v=202611110426"></script>
-<script src="../assets/plot.js?v=202611110426"></script>
-<script src="../assets/game.js?v=202611110426"></script>
-<script src="js/diff-common.js?v=202611110426"></script>
-<script src="js/4-3.js?v=202611110426"></script>
+<script src="../assets/common.js?v=202611120712"></script>
+<script src="../assets/plot.js?v=202611120712"></script>
+<script src="../assets/game.js?v=202611120712"></script>
+<script src="js/diff-common.js?v=202611120712"></script>
+<script src="js/4-3.js?v=202611120712"></script>
 </body>
 </html>

@@ -239,7 +239,113 @@
   }
 
   /* ==========================================================
-     4.3(3) 単位円の点の速度と sin・cos の傾き
+     4.3(3) 平面の上の動き：平均の速度 → 速度ベクトル
+     ========================================================== */
+  function initVel() {
+    const root = $id('w-vel');
+    const MODES = [
+      { tex: '(2t,\\ 3t-t^2)', name: 'ball', P: (t) => [2 * t, 3 * t - t * t], dP: (t) => [2, 3 - 2 * t], t0: 0, t1: 3, ts: 0.5,
+        view: { xmin: -0.8, xmax: 7.2, yc: 1.55 }, dtex: '(2,\\ 3-2t)' },
+      { tex: '(\\cos t,\\ \\sin t)', name: 'circle', P: (t) => [Math.cos(t), Math.sin(t)], dP: (t) => [-Math.sin(t), Math.cos(t)], t0: 0, t1: TAU, ts: 0.8,
+        view: { xmin: -2.6, xmax: 2.6, yc: 0 }, dtex: null },
+      { tex: '(2\\cos t,\\ \\sin t)', name: 'ellipse', P: (t) => [2 * Math.cos(t), Math.sin(t)], dP: (t) => [-2 * Math.sin(t), Math.cos(t)], t0: 0, t1: TAU, ts: 0.6,
+        view: { xmin: -3.6, xmax: 3.6, yc: 0 }, dtex: null },
+    ];
+    const HS = [1, 0.5, 0.1, 0.01, 0.001];
+    const st = { k: 0, t: 0.5, s: 0, play: false, shrink: false, avg: true };
+    const M = () => MODES[st.k];
+    const plot = new Plot(root.querySelector('canvas'), Object.assign({ equal: true, height: (w) => (w < 520 ? w * 0.85 : clamp(w * 0.52, 260, 420)) }, M().view));
+    const hOf = (s) => {
+      if (s <= -2.97) return 0.001;
+      for (const q of HS) if (Math.abs(s - Math.log10(q)) < 0.03) return q;
+      return +Math.pow(10, s).toPrecision(2);
+    };
+    const H = () => hOf(st.s);
+    const ctl = root.querySelector('.controls');
+    const sT = slider(ctl, { tex: '\\blue{t}', min: 0, max: 3, step: 0.05, value: st.t, color: 'primary', aria: '時刻 t', fmt: (v) => v.toFixed(2) });
+    const sH = slider(ctl, { tex: '\\red{h}', min: -3, max: 0, step: 0.01, value: 0, color: 'accent', aria: '時間の幅 h（10 の何乗か）', fmt: () => String(H()) });
+    sT.on((v) => { stopPlay(); st.t = v; update(); });
+    sH.on((v) => { stopShrink(); st.s = v; update(); });
+    chipRow(R(root, 'mode'), MODES.map((m) => ({ tex: '\\mathrm{P}(t)=' + m.tex })), 0, (it, i) => {
+      st.k = i; const m = M();
+      sT.input.max = m.t1; st.t = clamp(st.t, m.t0, m.t1);
+      plot.setView(Object.assign({ equal: true }, m.view)); update();
+    });
+    R(root, 'avg').addEventListener('change', (e) => { st.avg = e.target.checked; update(); });
+    const bP = R(root, 'play'), bS = R(root, 'shrink');
+    const showP = () => { bP.textContent = st.play ? '⏸ 止める' : '▶ 動かす'; };
+    const showS = () => { bS.innerHTML = st.shrink ? '⏸ 止める' : '▶ <i>h</i> を 0 に近づける'; };
+    const stopPlay = () => { if (st.play) { st.play = false; showP(); } };
+    const stopShrink = () => { if (st.shrink) { st.shrink = false; showS(); } };
+    const anim = L.animate(root, function (dt) {
+      let on = false;
+      if (st.play) {
+        const m = M();
+        st.t += dt * m.ts;
+        if (st.t > m.t1) st.t = m.t0 + (st.t - m.t1);
+        on = true;
+      }
+      if (st.shrink) {
+        st.s = Math.max(-3, st.s - dt * 0.8);
+        if (st.s <= -3) { st.shrink = false; showS(); } else on = true;
+      }
+      update();
+      return on;
+    });
+    bP.addEventListener('click', () => { st.play = !st.play; showP(); if (st.play) anim.kick(); });
+    bS.addEventListener('click', () => { st.shrink = !st.shrink; if (st.shrink && st.s <= -2.999) st.s = 0; showS(); if (st.shrink) anim.kick(); });
+    showP(); showS();
+    plot.addHandle({ get x() { return M().P(st.t)[0]; }, get y() { return M().P(st.t)[1]; }, get color() { return plot.c ? plot.c.primary : '#3355d6'; }, r: 8,
+      drag(x, y) {
+        // 軌跡の上でいちばん近い時刻へ
+        const m = M(); let best = st.t, bd = Infinity;
+        for (let i = 0; i <= 600; i++) { const t = m.t0 + (m.t1 - m.t0) * i / 600, p = m.P(t), d = (p[0] - x) ** 2 + (p[1] - y) ** 2; if (d < bd) { bd = d; best = t; } }
+        stopPlay(); st.t = Math.round(best * 20) / 20; update();
+      } });
+    const n = (v) => fm(v, 3);
+    function update() {
+      const m = M(), t = st.t, h = H(), p = m.P(t), q = m.P(t + h), a = [(q[0] - p[0]) / h, (q[1] - p[1]) / h], v = m.dP(t), sp = Math.hypot(v[0], v[1]);
+      sT.set(t.toFixed(2)); sH.set(st.s);
+      tex(root, 'pos', '\\mathrm{P}(' + fm(t, 2) + ')=(' + n(p[0]) + ',\\ ' + n(p[1]) + ')');
+      tex(root, 'avgv', '\\red{\\dfrac{\\mathrm{P}(t+h)-\\mathrm{P}(t)}{h}}=(' + n(a[0]) + ',\\ ' + n(a[1]) + ')\\quad(h=' + h + ')');
+      tex(root, 'vel', m.dtex ? "\\teal{\\mathrm{P}'(t)}=" + m.dtex + '=(' + n(v[0]) + ',\\ ' + n(v[1]) + ')'
+        : "\\teal{\\mathrm{P}'(t)}=(" + n(v[0]) + ',\\ ' + n(v[1]) + ')');
+      tex(root, 'spd', '|\\mathrm{P}\'(t)|=\\sqrt{(' + n(v[0]) + ')^2+(' + n(v[1]) + ')^2}=\\teal{' + n(sp) + '}');
+      let s;
+      if (m.name === 'ball') s = '横の速さはいつも $2$。縦の速さ $3-2t$ はだんだん減り、$t=1.5$（いちばん高い所）で $0$。そこで緑の矢印は真横を向き、いちばん短くなります。';
+      else if (m.name === 'circle') s = '緑の矢印は<b>いつも長さ $1$</b>（速さが一定）で、半径に垂直、つまり円に接しています。この速度の式を、次の (4) で求めます。';
+      else s = '細長い円（楕円）では、左右のはし（$t=0,\\ \\pi$）では遅く（長さ $1$）、上下（$t=\\frac{\\pi}{2},\\ \\frac{3\\pi}{2}$）では速く（長さ $2$）なります。矢印はいつも軌跡に接しています。';
+      if (h > 0.05) s = '<b>$h$ が大きい</b>と、平均の速度（赤）は $\\mathrm{PQ}$ の向きで、軌跡の接線からずれています。「▶ $h$ を $0$ に近づける」を押してみよう。　' + s;
+      const how = R(root, 'how');
+      if (how._v !== s) { how._v = s; setHTML(how, s); }
+      plot.invalidate();
+    }
+    plot.draw = function (g) {
+      const c = g.c, m = M(), t = st.t, h = H(), p = m.P(t), q = m.P(t + h), v = m.dP(t);
+      g.grid({ step: 1, labels: false, xlabel: 'x', ylabel: 'y' });
+      // 軌跡
+      const pts = [];
+      for (let i = 0; i <= 400; i++) pts.push(m.P(m.t0 + (m.t1 - m.t0) * i / 400));
+      g.poly(pts, { color: c.primary, width: 2.6 });
+      // 接線（うすい点線）
+      g.line(p[0] - 9 * v[0], p[1] - 9 * v[1], p[0] + 9 * v[0], p[1] + 9 * v[1], { color: c.teal, width: 1.2, dash: [5, 5], alpha: 0.7 });
+      if (st.avg) {
+        const a = [(q[0] - p[0]) / h, (q[1] - p[1]) / h];
+        // 割線 PQ（うすく）と、平均の速度の矢印
+        if (h > 0.02) g.line(p[0] - 9 * a[0], p[1] - 9 * a[1], p[0] + 9 * a[0], p[1] + 9 * a[1], { color: c.accent, width: 1, dash: [3, 4], alpha: 0.6 });
+        g.arrow(p[0], p[1], p[0] + a[0], p[1] + a[1], { color: c.accent, width: 2.4, head: 11 });
+        g.dot(q[0], q[1], { r: 5, color: c.accent });
+        if (Math.hypot(g.X(q[0]) - g.X(p[0]), g.Y(q[1]) - g.Y(p[1])) > 16) g.tex('\\mathrm{Q}', q[0], q[1], { size: 14, color: c.accent, align: 'left', dx: 8, dy: 10, avoid: true });
+      }
+      g.arrow(p[0], p[1], p[0] + v[0], p[1] + v[1], { color: c.teal, width: 3.4, head: 13 });
+      g.tex("\\mathrm{P}'(t)", p[0] + v[0], p[1] + v[1], { size: 14, color: c.teal, align: 'left', dx: 8, dy: -8, avoid: true });
+      g.tex('\\mathrm{P}(t)', p[0], p[1], { size: 14, color: c.primary, align: 'right', dx: -10, dy: 12, avoid: true });
+    };
+    update();
+  }
+
+  /* ==========================================================
+     4.3(4) 単位円の点の速度と sin・cos の傾き
      ========================================================== */
   function initSin() {
     const root = $id('w-sin');
@@ -337,7 +443,7 @@
   }
 
   /* ==========================================================
-     4.3(4) 双曲線関数のグラフと接線
+     4.3(5) 双曲線関数のグラフと接線
      ========================================================== */
   function initHyp() {
     const root = $id('w-hyp');
@@ -392,7 +498,7 @@
   }
 
   /* ==========================================================
-     4.3(4) 点 (cosh t, sinh t) は双曲線の上を動く
+     4.3(5) 点 (cosh t, sinh t) は双曲線の上を動く
      ========================================================== */
   function initHypCurve() {
     const root = $id('w-hypc');
@@ -454,7 +560,7 @@
   }
 
   /* ==========================================================
-     4.3(4) 垂れ下がる鎖：カテナリー
+     4.3(5) 垂れ下がる鎖：カテナリー
      ========================================================== */
   function initCat() {
     const root = $id('w-cat');
@@ -522,7 +628,7 @@
   }
 
   /* ==========================================================
-     4.3(5) 関数と導関数：接線の傾きをなぞる
+     4.3(6) 関数と導関数：接線の傾きをなぞる
      ========================================================== */
   const TBL = [
     { t: 'x^2', d: '2x', f: (x) => x * x, df: (x) => 2 * x },
@@ -773,6 +879,7 @@
   D.boot([
     [initExp, 'w-exp'],
     [initLog, 'w-log'],
+    [initVel, 'w-vel'],
     [initSin, 'w-sin'],
     [initHyp, 'w-hyp'],
     [initHypCurve, 'w-hypc'],

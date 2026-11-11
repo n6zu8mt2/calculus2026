@@ -989,3 +989,7 @@ table.d41-drop-table td.on { background: color-mix(in srgb, var(--accent) 12%, t
   #w-drop .readout .row { flex-wrap: wrap; row-gap: 2px; }
   #w-drop .readout .row > .tex { flex-basis: 100%; }
 }
+
+/* 4.3(3) 速度ベクトル */
+#w-vel .panel.two { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 560px) { #w-vel .readout .row { flex-wrap: wrap; row-gap: 2px; } #w-vel .readout .row > .tex { flex-basis: 100%; } }
